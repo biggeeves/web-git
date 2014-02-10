@@ -1,0 +1,28 @@
+PROCEDURE      STATIC_PAGES.ERR_404:T  (157218,48791)  |Last amended Mar 26, 2013,13:33:11
+program
+string * 600 STR$1            | General String use at any time
+
+write '<br> Err 404:' 20T [dsn('err404')]
+
+compute STR$1 = '<' + CHAR(33) + 'DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">'
+open (err404) write lrecl = 600
+. write(err404) STR$1
+. write(err404) '<head ><title >Logged out</title>'
+. write(err404) '<link type="text/css" href="/css/custom.css" rel="stylesheet">'
+. write(err404)  '<meta http-equiv="Content-type" content="text/html;charset=UTF-8">'
+. write(err404) '  <link rel="icon" type="image/ico" href="/images/DCC.ico"  title="DCC Data Management" >'
+. write(err404) '  <script type="text/javascript" src="/js/global.js"></script>'
+. write(err404) '</head>'
+. write(err404) '<body onload="setCookie(''USERID'',''loggedOut'',1);setCookie(''SESSIONID'',''loggedOut'',1)">'
+. write(err404) '  <div id="container">'  |this applies a css for the entire contents (centers it on the page)
+. write(err404) '      <h1>The requested file could not be located<br>'
+. write(err404) '      Error 404</h1>'
+. write(err404) '      <h3><a href = "/index.html">Click here to return to Log In</a></h3>'
+. write(err404) '      <br>'
+. write(err404) '    <h6>Designed by the Data Coordinating Center At Columbia University in New York.</h6>'
+. write(err404) '  </div>'
+. write(err404) '</body></html>'
+close err404
+
+end program
+END PROCEDURE

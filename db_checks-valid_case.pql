@@ -1,0 +1,26 @@
+PROCEDURE      DB_CHECKS.VALID_CASE:T  (157221,61159)  |Last amended Mar 29, 2013,16:59:19
+C CHECK THE CASE ID VALUE AND PREVENT USER FROM GOING TO NON-FUNCTIONING DATA ENTRY SCREEN
+CIF EQ 1, 0<GCASED>
+
+program
+. string  *    32   VNAME$                   | Variable name
+. integer *     1   VALID_RESULT                 | does this value validate?
+. VNAME$ = keyname(0, 1)
+. ifthen(vtype(0, VNAME$ ) eq 1)
+.   VALID_RESULT = validate(0, VNAME$, '<CASEISNQ>')
+. else
+.   VALID_RESULT = validate(0, VNAME$, <CASEISNQ>)
+. endif
+. ifthen (VALID_RESULT ne 0)
+.   ANYNUM__4 = globals('GSOMEMESS', '<CASEISNQ> is not a valid ID.')
+.   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+.   EXECUTE DBMS 'call WPF.CONTROLER.STOP_PAGE'
+. endif
+. ifthen ('<CASEISNQ>' eq '')
+.   ANYNUM__4 = globals('GSOMEMESS', 'Please Specify an ID.')
+.   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+.   EXECUTE DBMS 'call WPF.CONTROLER.STOP_PAGE'
+. endif
+end program
+CIF END
+END PROCEDURE

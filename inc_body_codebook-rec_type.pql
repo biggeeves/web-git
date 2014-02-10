@@ -1,0 +1,223 @@
+PROCEDURE      INC_BODY_CODEBOOK.REC_TYPE:T  (157459,46168)  |Last amended Nov 22, 2013,12:49:28
+program crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+. integer * 2 RECDOCN# EACH_REC_LINE
+. string * 32 CASE$ MISS$ REC$ KEY$
+. string * 255 VARDOC$ RECDOC$ VALLAB$ VARLAB$
+. set RECDOC$ ('')
+
+. write(cgi)'<h3>Codebook for the ' DBNAME__4 ' Database ' [datec(today(0), 'Wwwwwwwww MM/DD/YYYY')] '</h3>'
+|Index of Record Types
+. REC_TYPE_NUMBER = 0<GDBREC>
+.   EACH_VARIABLE = nvarsc(REC_TYPE_NUMBER)
+.   REC$ = trim(recname(REC_TYPE_NUMBER))
+.   HOVER_TITLE  = ' title ="Table# ' + format(REC_TYPE_NUMBER) +' (' + format(numrecs(REC_TYPE_NUMBER)) + ' records in database)"'
+.   RECDOC$ = trimlr(recdoc(REC_TYPE_NUMBER, 0))
+.   ifthen (len(RECDOC$) < 1 and REC$ eq 'CIR')
+.     RECDOC$ = 'Common Information Record'
+.   elseif (len(RECDOC$) < 1)
+.     RECDOC$ = trimlr(recdoc(REC_TYPE_NUMBER, 1))
+.   endif
+.   execute subroutine WPF.TOOLS.HTMLTEXT (RECDOC$, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.   if(RETCODE__4 eq 0) RECDOC$ =  HTMLTEXT
+
+.   write(cgi) '<h3 ' HOVER_TITLE '>'
+.   STR$1 = 'Table ' + format(REC_TYPE_NUMBER) + ': ' + REC$
+.   if (exists(RECDOC$) eq 1) STR$1 = STR$1 + ', "' + RECDOC$ + '"'
+.   write(cgi) STR$1 '</h3>'
+.   write(cgi) '<p>'
+.   write(cgi)  '<div class="left" style="margin-left:20px;">'
+|Get Case Name
+.   CASE$ = upper(trim(varname(0, 1)))
+|List of Variables by Record Type
+
+|Record Documentation, if there is any
+.   RECDOCN# = recdocn(REC_TYPE_NUMBER)
+.   RECDOC$ = ''
+.   ifthen (RECDOCN# > 0)
+.     for EACH_REC_LINE = 1, RECDOCN#
+.       RECDOC$ = trimlr(recdoc(REC_TYPE_NUMBER, EACH_REC_LINE))
+.       ifthen (srst(RECDOC$, '<') <> 0)
+.         RECDOC$ = replace(RECDOC$, '<', '&lt;', 5, 1, 0)
+.       endif
+.       ifthen (srst(RECDOC$, '>') <> 0)
+.         RECDOC$ = replace(RECDOC$, '>', '&gt;', 5, 1, 0)
+.       endif
+.       ifthen (EACH_REC_LINE = 1)
+.         RECDOC$ = 'Record Type Documentation: ' + RECDOC$
+.       endif
+.       execute subroutine WPF.TOOLS.HTMLTEXT (RECDOC$, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.       if(RETCODE__4 eq 0) RECDOC$ = HTMLTEXT
+.       ifthen (len(RECDOC$) > 0)
+.         write(cgi) '<h4>' RECDOC$ '</h4>'
+.       endif
+.     end for
+.     write(cgi)'<br>'
+.   endif
+|
+.   write(cgi) '<p>'
+.   write(cgi) '<dl>'
+.   for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.     VNAME$ = trim(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.     VAR_MIN = nmin(REC_TYPE_NUMBER, VNAME$)
+.     VAR_MAX = nmax(REC_TYPE_NUMBER, VNAME$)
+.     if(VAR_MIN eq 1) VAR_MIN = NMISS__4
+.     if(VAR_MAX eq 3660000) VAR_MAX = NMISS__4
+.     VAR_MIN_STR = smin(REC_TYPE_NUMBER, VNAME$)
+.     VAR_MAX_STR = smax(REC_TYPE_NUMBER, VNAME$)
+.     SIR_VARTYPE = vtype(REC_TYPE_NUMBER,VNAME$)
+.     SIR_VARFORMAT = vformat(REC_TYPE_NUMBER, VNAME$)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'T', '', 1, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
+.     if(SIR_VARTYPE eq 3) SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', '/', 2, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', '', 1, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+
+|Key
+.     ISKEY__4 = 0
+.     for EACH_KEY = dbtype(0), nkeys(REC_TYPE_NUMBER)
+.       KEY$ = upper(trim(keyname(REC_TYPE_NUMBER, EACH_KEY + 1)))
+.       if (KEY$ = VNAME$) ISKEY__4 = 1
+.     end for
+|Common Var
+.     ISCOMVAR__4 = 0
+.     for EACH_COMMON_VAR = 1 + dbtype(0), nvars(0)
+.       if (upper(trim(varname(0, EACH_COMMON_VAR))) eq VNAME$) ISCOMVAR__4 = 1
+.     end for
+|Var Doc
+.     VARDOC$ = trimlr(vardocsn(REC_TYPE_NUMBER, VNAME$, 1))
+.     VARDOC$ = replace (VARDOC$,' ENDHEADER','', 1, 1, 0)
+.     VARDOC$ = replace (VARDOC$, 'HEADER ', '', 1, 1, 0)
+.     execute subroutine WPF.TOOLS.HTMLTEXT (VARDOC$,  1) RETURNING (HTMLTEXT, RETCODE__4)
+.     if(RETCODE__4 eq 0) VARDOC$ = HTMLTEXT
+|Var Label
+.     VARLAB$ = varlabsc(REC_TYPE_NUMBER, VNAME$)
+.     execute subroutine WPF.TOOLS.HTMLTEXT (VARLAB$, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.     if(RETCODE__4 eq 0) VARLAB$ = HTMLTEXT
+|Case
+.     STR$1 = ' - '
+.     ifthen (VNAME$ eq CASE$)
+.       STR$1 = '(Case Variable): '
+.     elseif (ISKEY__4 eq 1)
+.       STR$1 = '(Rec Index Variable): '
+.     elseif (ISCOMVAR__4 eq 1)
+.       STR$1 = '(Common Variable): '
+.     endif
+.     STR$1 = '<dt>' + STR$1 + '<span class="smallfont">' + VNAME$ + '</span> <span class="textbold">"' + VARLAB$ + '"</span></dt>'
+.     write(cgi) STR$1
+.     ifthen (len(VARDOC$) > 0)
+.       write(cgi)'Documentation: "'  VARDOC$  '"<br>'
+.     endif
+.     execute subprocedure MAKE_FORMAT
+.     write(cgi) '<br>'
+|
+.   end for
+. write(cgi) '</dl>'
+. write(cgi) '</p>'
+. write(cgi) '</div>'
+. write(cgi) '</p>'
+
+|
+. subprocedure MAKE_FORMAT
+| Type
+.   ifthen (vtype(REC_TYPE_NUMBER, VNAME$) eq 1) |  string
+.     STR$1 = 'Text (' + vformat(REC_TYPE_NUMBER, VNAME$) + ')'
+.   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 2) |  categorical
+.     STR$1 = 'Categorical: ' + vformat(REC_TYPE_NUMBER, VNAME$)
+.   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 3) |  date
+.     STR$1 = 'Date (' + datemap(REC_TYPE_NUMBER, VNAME$) + ')'
+.   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 4) |  time
+.     STR$1 = 'Time (' + timemap(REC_TYPE_NUMBER, VNAME$) + ')'
+.   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 5) |  integer
+.     STR$1 = 'Integer' | vformat(REC_TYPE_NUMBER, VNAME$)
+.   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 6) |  real (single precision)
+.     STR$1 = 'Decimal' | vformat(REC_TYPE_NUMBER, VNAME$)
+.   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 7) |  real (double precision)
+.     STR$1 = 'Decimal' | vformat(REC_TYPE_NUMBER, VNAME$)
+.   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 8) |  scaled variable
+.     STR$1 = vformat(REC_TYPE_NUMBER, VNAME$)
+.   endif
+.   execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.   if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+.   write(cgi) 2t '<dd>' STR$1
+| Range
+.   ifthen (exists(nmin(REC_TYPE_NUMBER, VNAME$)))
+.       STR$1 = 'Range; '
+.     ifthen (SIR_VARTYPE eq 1)
+.       if(exists(VAR_MIN_STR) eq 1) STR$1 = STR$1 + VAR_MIN_STR
+.       if(exists(VAR_MAX_STR) eq 1) STR$1 = STR$1 + VAR_MAX_STR
+.     elseif (SIR_VARTYPE eq 3) |  date
+.       if(exists(VAR_MIN eq 1)) STR$1 = STR$1 + datec(VAR_MIN, SIR_VARFORMAT)
+.       if(exists(VAR_MAX eq 1)) STR$1 = STR$1 + ' - ' + datec(VAR_MAX, SIR_VARFORMAT)
+.     elseif (SIR_VARTYPE eq 4) |  time
+.       if(exists(VAR_MIN eq 1)) STR$1 = STR$1 + timec(VAR_MIN, SIR_VARFORMAT)
+.       if(exists(VAR_MAX eq 1)) STR$1 = STR$1 + ' - ' + timec(VAR_MAX, SIR_VARFORMAT)
+.     elseif (SIR_VARTYPE ge 5)
+.       if(exists(VAR_MIN eq 1)) STR$1 = STR$1 + format(VAR_MIN)
+.       if(exists(VAR_MAX eq 1)) STR$1 = STR$1 + ' - ' + format(VAR_MAX)
+.     endif
+.     execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.     if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+.     write(cgi) STR$1
+.   elseif (exists(smin(REC_TYPE_NUMBER, VNAME$)))
+.     STR$1 = 'Range: ' + smin(REC_TYPE_NUMBER, VNAME$) +  ' - ' + SMAX(REC_TYPE_NUMBER, VNAME$)
+.     write(cgi) STR$1 '</dd>'
+.   endif
+| Value Labels and Valid Values
+.   ifthen (nvallab(REC_TYPE_NUMBER, VNAME$) > 0)
+.     write(cgi)'<dd>Value Labels: <ul class="nobullets">'
+.     for EACH_VALUE_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$)
+.       VALLAB$ = trim(vallabsn(REC_TYPE_NUMBER, VNAME$, EACH_VALUE_LABEL))
+.       ifthen (srst(VALLAB$, '<') <> 0)
+.         VALLAB$ = replace(VALLAB$, '<', '&lt;', 5, 1, 0)
+.       endif
+.       ifthen (srst(VALLAB$, '>') <> 0)
+.         VALLAB$ = replace(VALLAB$, '>', '&gt;', 5, 1, 0)
+.       endif
+.       execute subroutine WPF.TOOLS.HTMLTEXT (VALLAB$, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.       if(RETCODE__4 eq 0) VALLAB$ = HTMLTEXT
+.       STR$1 = '<li class="spacecompress">(' + vallabsv(REC_TYPE_NUMBER, VNAME$, I) + ') ' + VALLAB$ + '</li>'
+.       write(cgi) 2t STR$1
+.     end for
+.     write(cgi)'</ul></dd>'
+.   elseif (nvalid(REC_TYPE_NUMBER, VNAME$) > 0)
+.     STR$1 = 'Valid Values: '
+.     for EACH_VALID_VALUE = 1,  nvalid(REC_TYPE_NUMBER, VNAME$)
+.       STR$1 = STR$1 + format(nvval(REC_TYPE_NUMBER, VNAME$, EACH_VALID_VALUE)) + ', '
+.     end for
+.     STR$1 = sbst(STR$1, 1, len(trim(STR$1)) - 1)
+.     execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.     if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+
+
+.     write(cgi) STR$1 '</dd>'
+.   endif
+| Missing
+
+.   STR$1 = ''
+.   for EACH_MISSING_VALUE = 1, 3
+.     STR$1 = STR$1  + miss(REC_TYPE_NUMBER, VNAME$, EACH_MISSING_VALUE)  | if any missing value is defined (can have 2nd but not 1st) then add missing values to schema doc
+.   end for
+.   ifthen (len(trim(STR$1)) gt 0)
+.     MISS$ = '(' + trim(miss(REC_TYPE_NUMBER, VNAME$, 1)) + ')'
+.     execute subroutine WPF.TOOLS.HTMLTEXT (MISS$, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.     if(RETCODE__4 eq 0) MISS$ = HTMLTEXT
+.     write(cgi)'Missing Values:'
+.     write(cgi)'<ul class="nobullets">'
+.     write(cgi)'<li>1st ' MISS$
+.     ifthen (exists(miss(REC_TYPE_NUMBER, VNAME$, 2)) eq 1)
+.       MISS$ = '(' + trim(miss(REC_TYPE_NUMBER, VNAME$, 2)) + ')'
+.       write(cgi) '<li>2nd ' MISS$
+.     endif
+.     ifthen (exists(miss(REC_TYPE_NUMBER, VNAME$, 3)) eq 1)
+.       MISS$ = '(' + trim(miss(REC_TYPE_NUMBER, VNAME$, 3)) + ')'
+.       write(cgi) '<li>3rd ' MISS$
+.     endif
+.     write(cgi)'</ul>'
+.   endif
+. end subprocedure
+|
+end program
+END PROCEDURE

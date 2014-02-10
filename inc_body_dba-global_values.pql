@@ -1,0 +1,30 @@
+PROCEDURE      INC_BODY_DBA.GLOBAL_VALUES:T  (157219,51531)  |Last amended Mar 27, 2013,14:18:51
+c CALL this program when you need to see the global values that are set.
+
+program CRWARN
+string  *   600   STR$1                      | General String use at any time
+string  *    32   VNAME$                     | Variable name
+string  *   600   ASCIITEXT                  | HTML to be cleaned
+string  *   600   HTMLTEXT                   | HTML after it has been cleaned
+integer *     4   RETCODE__4                 | Return code for other things
+
+
+
+write(cgi)'<table class="table table-striped table-hover">'
+for EACH_GLOBAL = 1, SYSTEM(53)
+. VNAME$ = globname(EACH_GLOBAL)
+. STR$1  = sglobal (VNAME$)
+. if(exists(STR$1) eq 0) STR$1 = sglobal (VNAME$)
+. if(upper(STR$1) eq '<' + upper(VNAME$) + '>') next for
+
+. execute subroutine WPF.TOOLS.HTMLTEXT (VNAME$, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) VNAME$ = HTMLTEXT
+
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+
+. write(cgi) '<tr><td>'VNAME$ '</td><td>' STR$1 '</td></tr>'
+end for
+write(cgi) '</table>'
+end program
+END PROCEDURE

@@ -1,0 +1,67 @@
+PROCEDURE      JS.CASE_NAV:T  (156811,50091)  |Last amended Feb 13, 2012,13:54:51
+CIF EQ <GCASED>, 1
+retrieval crwarn noautocase
+string  *   600   STR$1                      | General String use at any time
+real    *     8   ANYNUM__4                  | Use any time you want
+string  *    32   VNAME$                     | Variable name
+integer *     1   IOSTAT__4                  | Return code of IOSTAT
+string  *    32   FIRSTCASE__4               | 1st case
+string  *    32   LASTCASE__4                | last case
+string  *    32   CASE_STR                   | Value of CASE
+
+c options can not have onclicks.  Must define function and then CALL it depending on what is passed
+open casenav /write lrecl = 400 IOSTAT =  IOSTAT__4
+
+ifNOTthen (IOSTAT__4  = 0)
+. write 'Error creating casenav files: ' IOSTAT__4
+. exit program
+endif
+
+VNAME$ = trimlr(keyname(0, 1))
+process cases count = 1 lock = 2
+. FIRSTCASE__4 =  trimr(varget(VNAME$))
+end cases
+process cases reverse count = 1 lock = 2
+. LASTCASE__4  =  trimr(varget(VNAME$))
+end cases
+write(casenav) 'var caseArray = new Array(), '
+write(casenav) '    caseNum = 0;'
+ANYNUM__4  = 1
+process cases count = 49 lock = 2
+. CASE_STR = trimr(varget(VNAME$))
+. STR$1  = 'caseArray[' +  format(ANYNUM__4)  + ']="'  + CASE_STR  + '";'
+. ANYNUM__4 = ANYNUM__4 + 1
+. write(casenav) STR$1
+end cases
+ANYNUM__4 = 100
+process cases reverse count = 49 lock = 2
+. CASE_STR = trimr(varget(VNAME$))
+. STR$1 ='caseArray[' +  format(ANYNUM__4)  + ']="'  + CASE_STR  + '";'
+. ANYNUM__4 = ANYNUM__4 - 1
+. write(casenav) STR$1
+end cases
+write(casenav) 'function forwardCase (someNum) {'
+write(casenav) '    caseNum = someNum + 1;'
+write(casenav) '    if(caseArray[caseNum] == null) {'
+write(casenav) '        alert("Please use the list of IDs.");'
+write(casenav) '        caseNum = caseNum - 1;'
+write(casenav) '    }'
+write(casenav) '    else {'
+write(casenav) '        document.getElementById("caseis").value = caseArray[caseNum];'
+write(casenav) '    }'
+write(casenav) '}'
+write(casenav) 'function backwardCase (someNum) {'
+write(casenav) '    caseNum = someNum - 1;'
+write(casenav) '    if(caseArray[caseNum] == null) {'
+write(casenav) '        alert("Please use the list of IDs.");'
+write(casenav) '        caseNum = caseNum + 1;'
+write(casenav) '        }'
+write(casenav) '    else {'
+write(casenav) '        document.getElementById("caseis").value = caseArray[caseNum];'
+write(casenav) '    }'
+write(casenav) '}'
+
+close casenav
+end retrieval
+CIF END
+END PROCEDURE

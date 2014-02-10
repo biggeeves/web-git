@@ -1,0 +1,115 @@
+PROCEDURE      TOOLS.HTMLTEXT:T  (156819,52485)  |Last amended Feb 21, 2012,14:34:45
+c
+c This subroutine translates HTML codes (not tags) to ascii text and vv.
+c input is string to be coded;
+c          direction: 1 = ascii -> html; -1 = html -> ascii
+c output is coded string
+c           rc = 0 normal end
+c           rc not 0 = bad things happened - like there was an unrecognized &code; or invalid &#number;
+c
+SUBROUTINE WPF.TOOLS.HTMLTEXT (STRING, DIR) RETURNING (NEWSTR, RC) NODATABASE REPLACE
+STRING*4094 STRING NEWSTR
+STRING*103 SPECIAL
+STRING*8 ARRAY SPECODE (103)
+STRING*16 HEX
+INTEGER RC
+SET RC (0)
+SET HEX ("0123456789ABCDEF")
+SET SPECIAL ('"&<> ©®´«»¡¿§¶µ¦±·¨¸ªº¬­¯°¹²³¼½¾×÷¢£¤¥ÀàÁáÂâÃãÄäÅåÆæÇçÐðÈèÉéÊêËëÌìÍíÎîÏïÑñÒòÓóÔôÕõÖöØøŒœßÞþÙùÚúÛûÜüÝýŸÿ')
+SET ASCII ("!@#$%^*`_]\[@?=;:'/-")
+SET SPECODE * ('quot','amp','lt','gt','nbsp','copy','reg','acute','laquo','raquo','iexcl','iquest','sect',
+               'para','micro','brvbar','plusmn','middot','uml','cedil','ordf','ordm','not','shy','macr','deg',
+               'sup1','sup2','sup3','frac14','frac12','frac34','times','divide','cent','pound','curren','yen',
+               'Agrave' ,'agrave' ,'Aacute' ,'aacute' ,'Acirc' ,'acirc' ,'Atilde' ,'atilde' ,'Auml' ,'auml',
+               'Aring' ,'aring','AElig' ,'aelig' ,'Ccedil' ,'ccedil' ,'ETH' ,'eth' ,'Egrave' ,'egrave' ,'Eacute'
+               ,'eacute' ,'Ecirc' ,'ecirc' ,'Euml' ,'euml' ,'Igrave' ,'igrave' ,'Iacute' ,'iacute' ,'Icirc'
+               ,'icirc' ,'Iuml' ,'iuml' ,'Ntilde' ,'ntilde' ,'Ograve' ,'ograve' ,'Oacute' ,'oacute' ,'Ocirc'
+               ,'ocirc' ,'Otilde' ,'otilde' ,'Ouml' ,'ouml' ,'Oslash' ,'oslash' ,'OElig' ,'oelig' ,'szlig'
+               ,'THORN' ,'thorn' ,'Ugrave' ,'ugrave' ,'Uacute' ,'uacute' ,'Ucirc' ,'ucirc' ,'Uuml' ,'uuml'
+               ,'Yacute' ,'yacute' ,'Yuml' ,'yuml')
+
+INTEGER DIR | 1 = normal -> HTML ; -1 = HTML -> normal
+
+SET NEWSTR ("")
+
+IFTHEN (DIR eq 1)
+. FOR I = 1, LEN(STRING)
+.   compute CHAR = SBST(STRING, I, 1)
+.   compute ICHAR = ICHAR(CHAR)
+.   compute SPEC = ABS(SRST(SPECIAL, CHAR))
+c
+c Space
+c
+.   IFTHEN (ICHAR eq 32)
+.     IFTHEN (SBST(STRING, I + 1, 1) eq " ")
+.       compute NEWSTR = NEWSTR + "&nbsp;"
+.     ELSE
+.       compute NEWSTR = NEWSTR + " "
+.     endif
+c
+c special code
+c
+.   ELSEIF (SPEC gt 0)
+.     compute NEWSTR = NEWSTR + "&" + SPECODE(SPEC) + ';'
+c
+c ascii code
+c
+.   ELSEIF ((ICHAR lt 33) OR (SRST(ASCII, CHAR) NE 0) OR (ICHAR gt 122))
+.     compute NEWSTR = NEWSTR + "&#" + format(ichar) + ';'
+c
+c standard char
+c
+.   ELSE
+.     compute NEWSTR = NEWSTR + char
+.   endif
+. END FOR
+
+ELSE | html to text
+. SET ISTEXT ISCODE (1, 0)
+
+. FOR I = 1, LEN(STRING)
+.   compute CHAR = SBST(STRING, I, 1)
+.   IFTHEN (CHAR eq "&")
+.     SET CODE ("")
+.     FOR J = I + 1, I + 10
+.       IF (SBST(STRING, J, 1) eq ";") EXIT FOR
+.       compute CODE = CODE + SBST(STRING, J, 1)
+.     END FOR
+.     IFTHEN (J eq I + 11) | no ; found
+.       compute NEWSTR = NEWSTR + "&"
+.     ELSEIF (SBST(CODE, 1, 2) eq "#x")
+.       compute CODE = SBST(CODE, 3, LEN(CODE) - 2)
+.       compute CODE = FORMAT(16*(ABS(SRST(HEX, SBST(CODE, 1, 1)))-1) + ABS(SRST(HEX, SBST(CODE, 2, 1)))-1)
+.       IFTHEN (NUMBR(CODE) gt 0 AND lt 256)
+.         compute NEWSTR = NEWSTR + CHAR(NUMBR(CODE))
+.       ELSE
+.         SET RC (-1)
+.       endif
+.       compute I = J
+.     ELSEIF (SBST(CODE, 1, 1) eq "#")
+.       compute CODE = SBST(CODE, 2, LEN(CODE)-1)
+.       IFTHEN (NUMBR(CODE) gt 0 AND lt 256)
+.         compute NEWSTR = NEWSTR + CHAR(NUMBR(CODE))
+.       ELSE
+.         SET RC (-1)
+.       endif
+.       compute I = J
+.     ELSE
+.       BEGIN
+.       FOR K = 1, LEN(SPECIAL)
+.         IFTHEN (CODE eq SPECODE(K) OR (K lt 39 AND LOWER(CODE) eq SPECODE(K)))
+.           compute NEWSTR = NEWSTR + SBST(SPECIAL, K, 1)
+.           EXIT BEGIN
+.         endif
+.       END FOR
+.       SET RC (-1)
+.       END BEGIN
+.       compute I = J
+.     endif
+.   ELSE
+.     compute NEWSTR = NEWSTR + CHAR
+.   endif
+. END FOR
+endif
+END SUBROUTINE
+END PROCEDURE

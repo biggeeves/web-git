@@ -1,0 +1,75 @@
+PROCEDURE      GLOB_VARS.CGI_DB:T  (156802,43601)  |Last amended Feb 04, 2012,12:06:41
+c Create global values from CGI Vars
+C Only values that can be obtained once through security
+PROGRAM
+string  *   600   STR$1                      | General String use at any time
+integer *     4   ANYNUM__4                  | Use any time you want
+
+. ANYNUM__4 =  globaln ('GCASED', dbtype(0))
+. ANYNUM__4 =  globals ("GDBREC", fst(cgivarpn('gdbrec'), '9999'))
+. ANYNUM__4 =  globals ('GSEARCHTEXT', cgivarpn('gsearchtext'))
+. ANYNUM__4 =  globals ('GVARLABELS', cgivarpn('gvarlabels'))
+. ANYNUM__4 =  globals ('GVARNAMES', cgivarpn('gvarnames'))
+. ANYNUM__4 =  globals ('GVALUELABELS', cgivarpn('gvaluelabels'))
+. ANYNUM__4 =  globals ('GVALUES', cgivarpn('gvalues'))
+. ANYNUM__4 =  globals ('VNUM__4', cgivarpn('webvnum'))
+. ANYNUM__4 =  globals ('GVARNAME', trimlr(varnamec(numbr(cgivarpn('gdbrec')), numbr(cgivarpn('webvnum')))))
+. ANYNUM__4 =  globals ('GOPERATOR', cgivarpn('operator'))
+. ANYNUM__4 =  globals ('GVALUE1', cgivarpn('webvalue1'))
+. ANYNUM__4 =  globals ('GCASEMATCH', cgivarpn('casematch'))
+. ANYNUM__4 =  globals ('GEXACTMATCH', cgivarpn('exactmatch'))
+. ANYNUM__4 =  globals ('GPROG1', fst(cgivarpn('webprog1'), ''))
+. ANYNUM__4 =  globals ('GPROGTITLE', fst(cgivarpn('progtitle'), ''))
+. ANYNUM__4 =  globals ('GSAVECODE', fst(cgivarpn('savecode'), ''))
+. ANYNUM__4 =  globals ('GDAY', fst(cgivarpn('gday'), '-1'))
+
+C CASEIS
+. ifthen (dbtype(0) eq 1) |case structured
+.   ANYNUM__4 = globals ('CASEISNQ', fst(cgivarpn('caseis'), ''))
+.   ANYNUM__4 = globals ('GCASEOPTION', fst(cgivarpn('caseoption'), ''))
+.   ANYNUM__4 = globals ('GCASENAV', fst(cgivarpn('casenav'), ''))
+.   ANYNUM__4 = globals ('GSTARTID', fst(cgivarpn('startid'), ''))
+.   ifthen (vtype (0,  keyname(0, 1)) eq 1)
+.     STR$1  = '"' +  cgivarpn('caseis')  + '"'
+.   else
+.     STR$1  = cgivarpn('caseis')
+.   endif
+.   if (exists(STR$1) eq 0) set STR$1 ('')
+.   ANYNUM__4 =  globals('CASEIS', STR$1)
+. endif
+
+. STR$1  = famname(numbr(cgivarpn('runfamnum')))
+. ANYNUM__4 = globals ('GRUNFAMNAME', fst(STR$1, ''))
+. ANYNUM__4 = globals ('GRUNMEMNAME', fst(cgivarpn('runmemname'), ''))
+. ANYNUM__4 =  globals  ('GRECNAV', trimlr( fst(cgivarpn('grecnav'), cgivarpn('GRECNAV'), '')))
+
+end program
+
+C DEFINE KEYS TO PASS
+program
+. ifthen (system(39) gt 0)  | must have a database attached.
+.   EXECUTE DBMS "call WPF.GLOB_VARS.KEYS"
+. endif
+end program
+
+
+program
+. integer *     2   VNUMBER__4                | Variable number
+. string  *    32   VNAME$                    | Variable name
+. string  *    32   VNAME$CB                  | Variable name
+. VNUMBER__4 = nglobal('VNUM__4')
+. if(exists(VNUMBER__4) eq 0) VNUMBER__4 = 0  | if it is missing, then SIR complains on the following line.  not good.
+. VNAME$ = trimlr(varnamec(<GDBREC>, VNUMBER__4))
+. VNAME$CB = stdname(VNAME$)
+. ifthen(exists(VNAME$) eq 1)
+.   X = GLOBALN('GVTYPE', vtype(<GDBREC>, VNAME$CB))
+. else
+.   X = GLOBALN('GVTYPE', 0)
+. endif
+end program
+
+
+
+
+
+END PROCEDURE

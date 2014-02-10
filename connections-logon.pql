@@ -1,0 +1,30 @@
+PROCEDURE      CONNECTIONS.LOGON:T  (157515,43147)  |Last amended Jan 17, 2014,11:59:07
+c Connects to LOGON database IF NOT ALREADY CONNECTED
+
+PROGRAM crwarn
+STRING  *   254   DBPATH                     | vars for connecting to db
+integer *     4   ANYNUM__4                  | Use any time you want
+integer *     1   IOSTAT__4                  | Return code of IOSTAT
+
+DBPATH  = dsn('LOGON_FOLDER')
+
+ifthen(fileis(DBPATH  + 'logon.sr1') ne 1)
+. ANYNUM__4 = globals( 'GSOMEMESS', 'Oh oh, We are currently updating or system.')
+. ANYNUM__4 = globals( 'G_DEBUG_INFO', 'Could not find the LOGON database.')
+. exit program
+endif
+
+| CHECK TO SEE IF ALREADY CONNECTED
+for EACH_DB= 1, SYSTEM(40)
+. IF ( 'LOGON' EQ DBNAME(EACH_DB) ) EXIT PROGRAM
+END FOR
+
+PQL CONNECT DATABASE 'LOGON' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
+
+IFNOTTHEN (IOSTAT__4 GE 0)
+. ANYNUM__4 = globals( 'GSOMEMESS', 'We are currently updating our system.  Please try back later.')
+. ANYNUM__4 = globals( 'G_DEBUG_INFO', 'Did not connect to logon database')
+endif
+
+END PROGRAM
+END PROCEDURE

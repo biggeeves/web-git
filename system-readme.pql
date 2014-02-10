@@ -1,0 +1,39 @@
+PROCEDURE      SYSTEM.README:T  (157452,40892)  |Last amended Nov 15, 2013,11:21:32
+c The LOGON Database (USER PASSWORD) and the MANAGER DATABASE (DATABASE PATHS AND PERMISSIONS)  handles the sign in process.  You'll have to add some users and a database to it, plus point to it.
+c When created this file matched V39.
+
+SIR Web utilizes Twitter Bootstrap and JQuery.  Download "boostrap.css", "bootstrap.min.js" and "jquery.js".
+Copy the files to your root directory.
+The file structure should look like this for sir web to work:
+
+root/bootstrap/js/bootstrap.min.js
+root/bootstrap/js/jquery.js
+root/bootstrap/css/bootstrap.css
+
+
+YOU MUST CHANGE SYSPROC.CGI.DEFAULT TO POINT TO THE WEB PROC AND TO THE RIGHT MEMBER.
+A Version of CGI.DEFAULT IS INCLUDED IN WEB.SRP AND IS READY TO BE CUSTOMIZED
+
+SYSTEM.INITIALIZE also creates a file attribute for the web.srp.  It needs to be updated to match your system configuration.
+
+SYSTEM.STATIC_ATTS
+c the following attributes need to be configured in SYSTEM.STATIC_ATTS
+web_root: points to your web root folder
+LOGON: needs to point to the LOGON database folder
+manager: needs to point to the manager database folder
+
+
+YOU MUST CHANGE THE FILES LOG IN AND LOG OUT AND JAVASCRIPT IS DISABLED TO REFELCT ANY FILE LOCATION CHANGES.  \
+THESE ARE STATIC FILES WITH STATIC REFERENCES.
+
+
+
+C NOTE.   Run away SIR CGI on IIS
+ Onetime I had a bad program that created some sort of unknown loop.
+ <mycgi> continued to create files and run.
+ I had to manually shut it down using MS Vista "Resource Monitor", click on the "Memory" tab.
+ It will list the processes.
+ Scroll down to <mycgi>. Left click gives the option to end process.
+ I ended the process withoug an discernable negative effects.
+ SIR00000.tmp in the SIR folder really grows fast.  Make sure to check that file size.
+END PROCEDURE

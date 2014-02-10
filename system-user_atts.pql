@@ -1,0 +1,7 @@
+PROCEDURE      SYSTEM.USER_ATTS:T  (157220,57867)  |Last amended Mar 28, 2013,16:04:27
+program
+. string  *  600  STR$1
+. STR$1   = 'attribute err_rep= "'  + dsn('web_root') + 'err\'+ datec(today(0), 'yyyy_mm_dd_at_') + timec(now(0), 'HH_MM')  + '_err_<username>.htm"'
+. EXECUTE DBMS STR$1
+end program
+END PROCEDURE

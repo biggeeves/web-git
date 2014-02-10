@@ -1,0 +1,28 @@
+PROCEDURE      GLOB_VARS.USERID:T  (156563,38382)  |Last amended Jun 10, 2011,10:39:42
+c get cookie values for USERID and SESSIONID
+
+
+program
+. string  *   600   STR$1                      | General String use at any time
+. integer *     4   ANYNUM__4                  | Use any time you want
+
+| must look for ";" and "= " to get cookie name and value
+. STR$1 = fst(cgivarsv('HTTP_COOKIE'), cgivarpn('http_cookie'))
+. ANYNUM__4 = abs(srst(STR$1, "USERID=")) + len("USERID=")
+. STR$1 = substr(STR$1, ANYNUM__4, len(STR$1))
+. ANYNUM__4 = abs(srst(STR$1, '; '))  - 1
+. if(ANYNUM__4 eq -1) ANYNUM__4 = LEN(STR$1)
+. STR$1 =  substr(STR$1, 1, ANYNUM__4)
+. if (exists(STR$1) eq 0) set STR$1 ('')
+. ANYNUM__4 =  globals ('USERID', STR$1)
+c
+. STR$1 = fst(cgivarsv('HTTP_COOKIE'), cgivarpn('http_cookie'))
+. ANYNUM__4 = abs(srst(STR$1, "SESSIONID=")) + len("SESSIONID=")
+. STR$1 = substr(STR$1, ANYNUM__4, len(STR$1))
+. ANYNUM__4 = abs(srst(STR$1, '; '))  - 1
+. if(ANYNUM__4 eq -1) ANYNUM__4 = len(STR$1)
+. STR$1 =  substr(STR$1, 1, ANYNUM__4)
+. if (exists(STR$1) eq 0) set STR$1 ('')
+. ANYNUM__4 =  globals ('SESSIONID', STR$1)
+end program
+END PROCEDURE

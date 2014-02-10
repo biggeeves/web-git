@@ -1,0 +1,341 @@
+PROCEDURE      INC_REPORTS.FREQ_2:T  (157219,58108)  |Last amended Mar 27, 2013,16:08:28
+retrieval crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+REAL * 8 EXTRANUM
+
+set FREQMISS__4  * (0)
+set FREQINT__4   * (0)
+set FREQYEAR__4  * (0)
+set FREQMONTH__4 * (0)
+set FREQDAY__4   * (0)
+set FREQHOUR__4  * (0)
+set AFREQ__4     * ('')
+set SUM_EXISTS     (0)
+set SUM_NOEXISTS   (0)
+set AVE_NUMERATOR   (0)
+set AVE_DENOMINATOR (0)
+
+VNUM__4 = 0<VNUM__4>
+VNAME$ = trimlr(varnamec(REC_TYPE_NUMBER, VNUM__4))
+VNAME$CB = stdname(VNAME$)
+VAR_LABEL  = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
+SIR_VARTYPE = vtype(REC_TYPE_NUMBER, VNAME$CB)
+ifthen (SIR_VARTYPE ge 5)
+. VAR_MIN#  = nmin(REC_TYPE_NUMBER, VNAME$CB)
+. VAR_MAX#  = nmax(REC_TYPE_NUMBER, VNAME$CB)
+endif
+VNAME$CB = stdname(VNAME$)
+TODAYIS__4 = today(0)
+ifthen (SIR_VARTYPE eq 3)
+. SIR_VARFORMAT  = datemap(REC_TYPE_NUMBER, VNAME$CB)
+elseif (SIR_VARTYPE eq 4)
+. SIR_VARFORMAT  = timemap(REC_TYPE_NUMBER, VNAME$CB)
+endif
+
+write(cgi) '<h4 title ="' REC_NAME__4 '">Table: ' REC_LABEL__4 '<br>'
+c show keys for each record type
+STR$2 = 'Table has no key fields.'
+ifthen (nkeys(REC_TYPE_NUMBER) eq 1)
+. STR$2 = 'Table is keyed by: '
+elseif  (nkeys(REC_TYPE_NUMBER) gt 1)
+. STR$2 = 'Tables has key fields: '
+endif
+for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) + dbtype(0)
+. STR$1 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+. if (exists(STR$1) eq 1) STR$2  =  STR$2 + STR$1
+. if(EACH_KEY ne (nkeys(REC_TYPE_NUMBER) + dbtype(0)) ) STR$2 = STR$2 +', '
+end for
+write(cgi) STR$2
+write(cgi) '<br>Frequencies of <span title="' VNAME$ '">' VAR_LABEL '</span></h4>'
+
+CIF EQ 1, 0<GCASED>
+process cases
+. get vars all
+CIF END
+. process rec <GDBREC>
+.   get vars all
+CIF EQ 5,<GVTYPE>
+.   perform procs
+CIF END
+.   set MISSNUM__4 (missing)
+.   set NUM__4     (missing)
+.   set STR__4     (missing)
+.   set DAYIS__4   (missing)
+.   set MONTHIS__4 (missing)
+.   set YEARIS__4  (missing)
+
+.   ifthen (SIR_VARTYPE eq 1) | Strings
+.     STR__4 = sget(VNAME$CB); MISSNUM__4  = misnum(STR__4)
+.     ifNOTthen (MISSNUM__4 eq 0 or 1 or 2 or 3) |NOT a missing value
+.       ANYNUM__4 = ichar(upper(substr(STR__4 , 1, 1)))
+.       IF(ANYNUM__4 lt 100) FREQINT__4(ANYNUM__4) = FREQINT__4(ANYNUM__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.       for ANYNUM__4 = 100, 500
+.         ifthen(AFREQ__4(ANYNUM__4) eq substr(upper(STR__4), 1, 100))
+.           EXIT FOR
+.         elseif (AFREQ__4(ANYNUM__4) eq '' ) | blank spot. take it.
+.           AFREQ__4(ANYNUM__4) = substr(upper(STR__4), 1, 100)
+.           EXIT FOR
+.         endif
+.       end for
+C .       if(ANYNUM__4 eq 501)  FREQVAL_STR = 501  | Other value
+.       FREQINT__4(ANYNUM__4) = FREQINT__4(ANYNUM__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.     endif
+.   elseif (SIR_VARTYPE eq 2) | Cat Vars
+.     NUM__4 = nget(VNAME$CB); MISSNUM__4 = misnum(NUM__4)
+C   DATES
+.   elseif (SIR_VARTYPE eq 3) | Dates
+.     NUM__4 = nget(VNAME$CB); MISSNUM__4 = misnum(NUM__4)
+.     YEARIS__4  = numbr(datec(NUM__4, 'YYYY'))
+.     MONTHIS__4 = numbr(datec(NUM__4, 'MM'))
+.     ifthen(datec(NUM__4, 'WWW') eq 'MON')
+.       DAYIS__4   = 1
+.     elseif(datec(NUM__4, 'WWW') eq 'TUE')
+.       DAYIS__4   = 2
+.     elseif(datec(NUM__4, 'WWW') eq 'WED')
+.       DAYIS__4   = 3
+.     elseif(datec(NUM__4, 'WWW') eq 'THU')
+.       DAYIS__4   = 4
+.     elseif(datec(NUM__4, 'WWW') eq 'FRI')
+.       DAYIS__4   = 5
+.     elseif(datec(NUM__4, 'WWW') eq 'SAT')
+.       DAYIS__4   = 6
+.     elseif(datec(NUM__4, 'WWW') eq 'SUN')
+.       DAYIS__4   = 7
+.     endif
+.     ifthen (exists(YEARIS__4) eq 1) | YEAR frequency
+.       FREQYEAR__4(YEARIS__4) = FREQYEAR__4(YEARIS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.     endif
+.     ifthen (exists(MONTHIS__4) eq 1) | MONTH frequency
+.       FREQMONTH__4(MONTHIS__4) = FREQMONTH__4(MONTHIS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.     endif
+.     ifthen (exists(DAYIS__4) eq 1) | DAY frequency
+.       FREQDAY__4(DAYIS__4) = FREQDAY__4(DAYIS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.     endif
+c     change NUM__4 to something I can work with
+.     NUM__4 = NUM__4 - TODAYIS__4
+.     IF (NUM__4 LE  - 365) NUM__4 =  -365  | over 1 year in the past
+.     IF (NUM__4 GE 365)  NUM__4 =  365   | over 1 year in the future
+.     ifthen (exists(VAR_MIN#) eq 0)
+.       VAR_MIN# =  NUM__4; VAR_MAX# = NUM__4
+.     else
+.       if (NUM__4 lt VAR_MIN#) VAR_MIN# = NUM__4
+.       if (NUM__4 gt VAR_MAX#) VAR_MAX# = NUM__4
+.     endif
+.   elseif (SIR_VARTYPE eq 4) | Times
+.     NUM__4 = nget(VNAME$CB); MISSNUM__4  = misnum(NUM__4)
+.     ifthen (exists(numbr(timec(NUM__4, 'HH'))) eq 1)
+.       FREQHOUR__4(numbr(timec(NUM__4, 'HH')))  = FREQHOUR__4(numbr(timec(NUM__4, 'HH'))) + 1
+.     endif
+.     ifthen (exists(VAR_MIN#) eq 0)
+.       VAR_MIN# =  NUM__4; VAR_MAX# = NUM__4
+.     else
+.       if (NUM__4 lt VAR_MIN#) VAR_MIN# = NUM__4
+.       if (NUM__4 gt VAR_MAX#) VAR_MAX# = NUM__4
+.     endif
+.   elseif (SIR_VARTYPE ge 5)
+.     NUM__4 = nget(VNAME$CB); MISSNUM__4  = misnum(NUM__4)
+.     ifthen (exists(VAR_MIN#) eq 0)
+.       VAR_MIN# =  NUM__4; VAR_MAX# = NUM__4
+.     else
+.       if (NUM__4 lt VAR_MIN#) VAR_MIN# = NUM__4
+.       if (NUM__4 gt VAR_MAX#) VAR_MAX# = NUM__4
+.     endif
+.   else
+.     STR__4 = sget(VNAME$CB); MISSNUM__4  = misnum(STR__4)
+.   endif
+
+c   missing values and real values totals
+.   ifthen(exists(MISSNUM__4) eq 1)
+.     FREQMISS__4(MISSNUM__4) =  FREQMISS__4(MISSNUM__4)  + 1
+.     SUM_NOEXISTS = SUM_NOEXISTS  + 1
+.   else
+.     SUM_EXISTS = SUM_EXISTS + 1
+.   endif
+
+.   if(NUM__4 gt 200000)NUM__4  = 200000
+.   if(NUM__4 lt -1000) NUM__4  = -1000
+.   ifthen(exists(NUM__4) eq 1)
+.     FREQINT__4(NUM__4) = FREQINT__4(NUM__4)  + 1
+.     AVE_NUMERATOR   = AVE_NUMERATOR  + NUM__4
+.     AVE_DENOMINATOR = AVE_DENOMINATOR  + 1
+.   endif
+.   ifthen(exists(STR__4) eq 1)
+C .     FREQINT__4(STR__4) = FREQINT__4(STR__4)  + 1
+.   endif
+. end rec
+CIF EQ 1, 0<GCASED>
+end cases
+CIF END
+
+
+c display Mins and Maxs
+ifthen (SIR_VARTYPE ge 5)
+C NOTE THAT I SHOULD ADD SOMETHING TO TELL IF THIS WAS A CALCULATED MIN AND MAX OR A SCHEMA MIN AND MAX     WORK HERE
+. write(cgi) '<h4>Minimum: ' VAR_MIN# ' Maximum: ' VAR_MAX# '</h4>'
+endif
+
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '<tr><th>Data Value</th><th>Label</th><th>Frequency</th><th>Percentage</th></tr>'
+
+c display dates and times by differnt sorts
+ifthen (SIR_VARTYPE eq 3) | Dates
+. write(cgi) '<tr class = "success"><td colspan="2">by year</td><td colspan="2">&nbsp;</td></tr>'
+. for EACH_NUMBER = 1500, 2500
+.   ifthen (FREQYEAR__4(EACH_NUMBER) ne 0 )
+.     write(cgi) '<tr><td colspan="2">' EACH_NUMBER '</td><td>'  FREQYEAR__4(EACH_NUMBER) '</td><td>&nbsp;</td></tr>'
+.   endif
+. end for
+. write(cgi) '<tr class = "success" ><td colspan="2">by months</td><td colspan="2">&nbsp;</td></tr>'
+. for EACH_NUMBER =  1, 12
+.   STR$1 =  trimlr(vallabsc(-1, 'MONTHIS__4', EACH_NUMBER))
+.   write(cgi) '<tr><td colspan="2">' STR$1 '</td><td>'  FREQMONTH__4(EACH_NUMBER) '</td><td>&nbsp;</td></tr>'
+. end for
+. write(cgi) '<tr class = "alt"><td colspan="2">by weekday</td><td colspan="2">&nbsp;</td></tr>'
+. for EACH_NUMBER =  1, 7
+.   STR$1 = trimlr(vallabsc(-1, 'DAYIS__4', EACH_NUMBER))
+.   write(cgi) '<tr><td colspan="2">' STR$1 '</td><td>'  FREQDAY__4(EACH_NUMBER) '</td><td>&nbsp;</td></tr>'
+. end for
+. write(cgi) '<tr><td>by day</td><td colspan="3">&nbsp;</td></tr>'
+elseif (SIR_VARTYPE eq 4) | Times
+. write(cgi) '<tr class = "success" ><td colspan="2">by Hour</td><td colspan="2">&nbsp;</td></tr>'
+. for EACH_NUMBER =  0, 23
+.   STR$1 =  trimlr(vallabsc(-1, 'HOURIS__4', EACH_NUMBER))
+.   write(cgi) '<tr><td colspan="2">' STR$1 '</td><td>'  FREQHOUR__4(EACH_NUMBER) '</td><td>&nbsp;</td></tr>'
+. end for
+. write(cgi) '<tr class = "success" ><td colspan="2">by Exact Time</td><td colspan="2">&nbsp;</td></tr>'
+endif
+
+
+for ANYNUM__4 = -1000, 200000
+. ifthen(SIR_VARTYPE ne 1)
+.   ifthen(FREQINT__4(ANYNUM__4) ne 0)
+.     write(cgi) '<tr><td>'
+.     ifthen (SIR_VARTYPE eq 2) | Dates
+.       STR$1 = svval(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4) + '</td><td>'
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, svval(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4))) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, svval(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4)))
+.       else
+.         STR$1 = STR$1 +' &nbsp;'
+.       endif
+.     elseif (SIR_VARTYPE eq 3) | Dates
+.       ifthen (ANYNUM__4 eq -365)
+.         STR$1 = 'Before 1 Year Ago </td><td>'
+.       elseif (ANYNUM__4 eq 365)
+.         STR$1 = 'After 1 Year</td><td>'
+.       else
+.         STR$1 = datec(ANYNUM__4 + TODAYIS__4, SIR_VARFORMAT)  + '</td><td>'
+.       endif
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4)) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4))
+.       else
+.         STR$1 = STR$1 +' &nbsp;'
+.       endif
+.     elseif (SIR_VARTYPE eq 4) | Times
+.       STR$1 = timec(ANYNUM__4, SIR_VARFORMAT)  + '</td><td>'
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, timec(ANYNUM__4, SIR_VARFORMAT) )) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, timec(ANYNUM__4, SIR_VARFORMAT) ))
+.       else
+.         STR$1 = STR$1 +' &nbsp;'
+.       endif
+.     else
+.       STR$1 = format(ANYNUM__4)
+.       ifthen (ANYNUM__4 eq -1000)
+.         STR$1 = STR$1 + ' and less'
+.       elseif (ANYNUM__4 eq 200000)
+.         STR$1 = STR$1 + ' and more'
+.       endif
+.       STR$1 = STR$1  + '</td><td>'
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4)) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4))
+.       else
+.         STR$1 = STR$1 +' &nbsp;'
+.       endif
+.     endif
+.     STR$2 = format(rnd(100*FREQINT__4(ANYNUM__4)/SUM_EXISTS,  -1)) + '&#37;'
+.     write(cgi) STR$1 "</td><td> " FREQINT__4(ANYNUM__4) '</td><td>' STR$2
+.     write(cgi) '</td></tr>'
+.   endif
+. elseif (ANYNUM__4 GE 48 AND LE 501)  | this should catch strings
+.   ifthen (FREQINT__4(ANYNUM__4) ne 0)
+.     ifthen ((ANYNUM__4 le 57) or (ANYNUM__4 gt 65 and le 90))  | STARTING LETTER AND NUMBER
+.       write(cgi) '<tr><td>'
+.       write(cgi) 'Starts with: ' [char(ANYNUM__4)] "</td><td> " AFREQ__4(ANYNUM__4) '</td><td>' FREQINT__4(ANYNUM__4)
+.       write(cgi) '</td><td>&nbsp;</td></tr>'
+.     elseif (ANYNUM__4 ge 100 and le 500)  | Free text
+.       write(cgi) '<tr><td>'
+.       write(cgi) "&nbsp;</td><td> " AFREQ__4(ANYNUM__4) '</td><td>' FREQINT__4(ANYNUM__4)
+.       write(cgi) '</td><td>&nbsp;</td></tr>'
+.     elseif (ANYNUM__4 eq 501)  | Free text - other
+.       write(cgi) '<tr><td>'
+.       write(cgi) "Other than first 400 free text found</td><td> " AFREQ__4(ANYNUM__4) '</td><td>' FREQINT__4(ANYNUM__4)
+.       write(cgi) '</td><td>&nbsp;</td></tr>'
+.     endif
+.   endif
+. endif
+
+end for
+write(cgi) '<tr class = "total"><td colspan="2">Total</td><td>'SUM_EXISTS'</td><td>100&#37;</td></tr>'
+ifthen (SIR_VARTYPE ge 5)
+. STR$1 = format((AVE_NUMERATOR / SUM_EXISTS))
+. write(cgi) '<tr><td colspan="2">Average</td><td>'STR$1'</td><td>&nbsp;</td></tr>'
+endif
+
+
+write(cgi) '<tr  class="missing alt" ><td colspan="4">Missing Values</td></tr>'
+STR$2 = format(rnd(100*FREQMISS__4(0)/SUM_NOEXISTS, -1))
+ifnot (len(STR$2) gt 0) STR$2 =  ''
+write(cgi) '<tr><td>System Missing</td><td>&nbsp;</td><td>' FREQMISS__4(0) '</td><td>'STR$2'</td></tr>'
+for EACH_MISSING = 1, 3
+. STR$1 = MISS(REC_TYPE_NUMBER, VNAME$CB, EACH_MISSING)
+. if (exists(STR$1) eq 0) NEXT FOR
+. write(cgi) '<tr><td>' STR$1  '</td>'
+. STR$1 = pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB,  miss(REC_TYPE_NUMBER, VNAME$CB, EACH_MISSING)))
+. ifthen (len(STR$1) gt 0)
+.   write(cgi) '<td>' STR$1 '</td>'
+. else
+.   write(cgi) '<td>&nbsp;</td>'
+. endif
+. STR$2 = format(rnd(100*FREQMISS__4(EACH_MISSING)/SUM_NOEXISTS, -1))
+. ifnot (len(STR$2) gt 0) STR$2 =  ''
+. write(cgi) '<td> ' FREQMISS__4(EACH_MISSING) '</td><td>'STR$2'</td></tr>'
+end for
+write(cgi) '<tr class = "total"><td colspan="2">Missing Total</td><td>' SUM_NOEXISTS '</td><td>100&#37;</td></tr>'
+write(cgi) '</table>'
+
+CIF EQ 5, <GVTYPE>
+. descriptive variable = <GVARNAME>
+            filename = user_rep
+CIF END
+
+end retrieval
+
+
+CIF EQ 5, <GVTYPE>
+program
+integer *     1   IOSTAT__4                  | Return code of IOSTAT
+string  *   600   STR$1                      | General String use at any time
+integer *     1   GOON__4                    | Control flow variable
+write(cgi) '<table class="table table-striped table-hover"><tr><th colspan="2">Additional Stats Provided by SIR</th></tr>'
+. open (user_rep) read iostat = IOSTAT__4 lrecl = 300
+|BEGIN
+.   GOON__4 = 0
+.   LOOP
+.     read(user_rep, END = DONE) STR$1 (A300)
+.     STR$1 = trimlr(STR$1)
+.     if (substr(STR$1, 1, 4) eq 'N   ') GOON__4 = 1
+.     ifthen (GOON__4 eq 1)
+.       STR$1 = '<tr><td>' + substr(STR$1, 1, 26) +  '</td><td>'  + substr(STR$1, 27, len(STR$1)) + '</td></tr>'
+.       STR$1 = pack(STR$1)
+.       write(cgi) STR$1
+.     endif
+.     ifthen(pattern(STR$1, 'Insufficient Observations for Statistics') = 1)
+.       write (cgi) 'Insufficient Observations for More Statistics'
+.     endif
+.   END LOOP
+.   DONE:
+. close (user_rep)
+write(cgi) '</table>'
+end program
+CIF END
+END PROCEDURE

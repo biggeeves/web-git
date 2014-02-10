@@ -1,0 +1,3 @@
+PROCEDURE      INC_ELEMENTS.HEADER_END:T  (157452,47382)  |Last amended Nov 15, 2013,13:09:42
+write(cgi) '</head>'
+END PROCEDURE

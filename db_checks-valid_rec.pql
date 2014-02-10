@@ -1,0 +1,30 @@
+PROCEDURE      DB_CHECKS.VALID_REC:T  (157452,52645)  |Last amended Nov 15, 2013,14:37:25
+c check that a record type exists
+c
+program
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+ifthen (REC_TYPE_NUMBER EQ 9999)
+. ANYNUM__4 = globals('GSOMEMESS', 'Record number not specified')
+. ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+elseif (exists(REC_TYPE_NUMBER) eq 0)
+. ANYNUM__4 = globals('GSOMEMESS', 'Record number is missing')
+. ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+end if
+
+GOON__4 = 0 | maybe the record type got deleted and the user has old information.  doubtful, but still not nice.
+for EACH_RECORD_NUMBER = 1, nrecs(0)
+. IFNOT (LEN( RECNAME( EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4 = 1
+end for
+ifthen (GOON__4 = 0)
+. ANYNUM__4 = globals( 'GSOMEMESS', 'The table number <GDBREC> was not found')
+. ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+endif
+
+end program
+END PROCEDURE

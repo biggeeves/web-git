@@ -1,0 +1,22 @@
+PROCEDURE      MAIN_NAV.LINK_FORMS:T  (157219,48124)  |Last amended Mar 27, 2013,13:22:04
+write(cgi) 10t '<li class="dropdown">'
+write(cgi) 10t '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Forms<b class="caret"></b></a>'
+write(cgi) 10t '  <ul class="dropdown-menu">'
+ifthen(nglobal('GVIEWRECS') eq 1)  | Can see Records Menu
+. ifthen ('<CASEIS>' ne '')
+C   DO NOT ADD EXTRA SPACES OR LINE BREAKS
+.   LINK__4 = ' href="<mycgi>?member=WPF.CONTROLER.CASE_CONTROL&amp;caseis=<CASEISNQ>"'
+. else
+.   ifthen (dbtype(0) eq 0)
+.     LINK__4 =  ' href="<mycgi>?member=WPF.INC_BODY_FORMS.REC_NAV"'
+.   else
+.     LINK__4 =  ' href="<mycgi>?member=WPF.INC_BODY_FORMS.REC_LIST"'
+.   endif
+. endif
+. write(cgi) '<li><a ' LINK__4 '><CASEISNQ> Forms</a></li>'
+else
+. write(cgi) '<li><a href="#">Forms Unavailable</a></li>'
+endif
+write(cgi) 10t '  </ul>'
+write(cgi) 10t '</li>'
+END PROCEDURE

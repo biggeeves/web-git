@@ -1,0 +1,58 @@
+PROCEDURE      JS.SHOW_VARS:T  (156664,48771)  |Last amended Sep 19, 2011,13:32:51
+program crwarn
+string  *   600   STR$1                      | General String use at any time
+string  *    32   VNAME$                     | Variable name
+string  *    32   VNAME$CB                   | Variable name with curly brackets if needed
+integer *     2   EACH_RECORD_NUMBER                  | cycle through record types
+string  *   100   VAR_LABEL                    | Variable Label
+integer *     1   IOSTAT__4                  | Return code of IOSTAT
+
+
+c options can not have onclicks.  Must define function and then CALL it depending on what is passed
+open showvars /write lrecl = 400 IOSTAT =  IOSTAT__4
+
+ifNOTthen (IOSTAT__4  = 0)
+. write 'Error creating showvars files: ' IOSTAT__4
+. exit program
+endif
+
+c define switch for showing record type variables
+. write(showvars) 'function whichrec (recordNumber, selectId){'
+. write(showvars) 5t 'var optionVar = document.getElementById(selectId)'
+. write(showvars) 5t 'optionVar.length = 0;'           | 0=first choice.  returns number selected
+. write(showvars) 5t 'switch (recordNumber){'
+. for EACH_RECORD_NUMBER = 1, nrecs(0)
+.   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
+.   STR$1 = 'case "'  + format(EACH_RECORD_NUMBER) +  '":'
+.   write(showvars) 5t STR$1
+.   STR$1 = 'recnum' + format(EACH_RECORD_NUMBER)  + '(optionVar);'
+.   write(showvars) 10t STR$1 'break;'
+. end for
+. write(showvars) 5t 'default:'
+. write(showvars) 10t 'alert("default recnum: " + d);'
+. write(showvars) 5t '}'
+. write(showvars) 5t 'optionVar.selectedIndex = 0;'  |select the first choice.
+. write(showvars) '}'
+
+c define the function and show the record type variables
+. for EACH_RECORD_NUMBER = 1, nrecs(0)
+.   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
+.   STR$1 = 'function recnum' + format(EACH_RECORD_NUMBER)  + '(optionVar) {'
+.   write(showvars) STR$1
+.   for EACH_VARIABLE  = 1, nvarsc(EACH_RECORD_NUMBER)
+.     VNAME$ =  trimlr(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE ))
+.     VNAME$CB = stdname(VNAME$)
+.     VAR_LABEL = varlabsc(EACH_RECORD_NUMBER, VNAME$CB)
+.     VAR_LABEL = replace(VAR_LABEL, '"', '\"', 99, 2, 0)
+.     STR$1 = 'optionVar.options[' + format(EACH_VARIABLE -1) + '] = new Option("' + VAR_LABEL + '", "' + format(EACH_VARIABLE) + '"'
+.     STR$1 = STR$1 + ');'
+.     write(showvars) 5t STR$1
+.   end for
+.   write(showvars) '}'
+. end for
+
+close showvars
+end program
+
+
+END PROCEDURE

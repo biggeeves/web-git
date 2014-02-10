@@ -1,0 +1,97 @@
+PROCEDURE      CONTROLER.REC_CHANGE_KEYS:T  (156803,48653)  |Last amended Feb 05, 2012,13:30:53
+C GET THE NEXT OR PREVIOUS KEYS.
+
+retrieval crwarn noautocase
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+REC_TYPE_NUMBER = nglobal('GDBREC')
+
+CIF EQ 1, 0<GCASED>
+CASE IS <CASEIS>
+CIF END
+
+ifthen (sglobal('GRECNAV') eq 'First' or 'Last')
+. ANYNUM__4 = 1
+else
+. ANYNUM__4 = 0
+endif
+
+process rec <GDBREC> <GPROCESS>
+
+. ANYNUM__4 = ANYNUM__4 + 1;
+. IFNOT (ANYNUM__4  = 2) NEXT REC
+
+| must reset globals and then re-assign them so they don't cary past information.
+. ANYNUM__4 = globals('REC_STAT', '2') |OLD
+. ANYNUM__4 = globals('GKEY1#', '')
+. ANYNUM__4 = globals('GKEY2#', '')
+. ANYNUM__4 = globals('GKEY3#', '')
+. ANYNUM__4 = globals('GKEY4#', '')
+. ANYNUM__4 = globals('GKEY5#', '')
+. ANYNUM__4 = globals('GKEY6#', '')
+. ANYNUM__4 = globals('GKEY7#', '')
+. for EACH_KEY =  1 +  DBTYPE(0), nkeys(REC_TYPE_NUMBER) + DBTYPE(0)
+.   KEYVNAME__4 = keyname(REC_TYPE_NUMBER, EACH_KEY)
+.   STRING_VARGET = varget(KEYVNAME__4)
+.   ifthen (vtype(REC_TYPE_NUMBER, KEYVNAME__4) eq 3)
+.     SIR_VARFORMAT = datemap(REC_TYPE_NUMBER, KEYVNAME__4)
+.     STRING_VARGET = datec(cdate(STRING_VARGET, SIR_VARFORMAT), SIR_VARFORMAT)
+.     STRING_VARGET = replace(STRING_VARGET, " ", "/", 2, 1, 0)
+.   elseif (vtype(REC_TYPE_NUMBER, KEYVNAME__4) eq 4)
+      SIR_VARFORMAT = timemap(REC_TYPE_NUMBER, KEYVNAME__4)
+.     STRING_VARGET = timec(ctime(STRING_VARGET, SIR_VARFORMAT), SIR_VARFORMAT)
+.     STRING_VARGET = replace(STRING_VARGET, " ", ":", 2, 1, 0)
+.   endif
+
+.   ifthen (vtype(REC_TYPE_NUMBER, KEYVNAME__4) eq 1 or 3 or 4 )
+.     STRING_VARGET  = '"' + STRING_VARGET  + '"'  | Need qoutes for via like this: ("Key1")
+.   endif
+.   if (exists(STRING_VARGET ) eq 0) set STRING_VARGET ('')
+.   ifthen (DBTYPE(0) eq 1) | case structured.
+.     ifthen (EACH_KEY eq 2)
+.       ANYNUM__4 =  globals('GKEY1#', STRING_VARGET )
+.     elseif (EACH_KEY eq 3)
+.       ANYNUM__4 =  globals('GKEY2#', STRING_VARGET )
+.     elseif (EACH_KEY eq 4)
+.       ANYNUM__4 =  globals('GKEY3#', STRING_VARGET )
+.     elseif (EACH_KEY eq 5)
+.       ANYNUM__4 =  globals('GKEY4#', STRING_VARGET )
+.     elseif (EACH_KEY eq 6)
+.       ANYNUM__4 =  globals('GKEY5#', STRING_VARGET )
+.     elseif (EACH_KEY eq 7)
+.       ANYNUM__4 =  globals('GKEY6#', STRING_VARGET )
+.     elseif (EACH_KEY eq 8)
+.       ANYNUM__4 =  globals('GKEY7#', STRING_VARGET )
+.     endif
+.   else
+.     ifthen (EACH_KEY eq 1)
+.       ANYNUM__4 =  globals('GKEY1#', STRING_VARGET )
+.     elseif (EACH_KEY eq 2)
+.       ANYNUM__4 =  globals('GKEY2#', STRING_VARGET )
+.     elseif (EACH_KEY eq 3)
+.       ANYNUM__4 =  globals('GKEY3#', STRING_VARGET )
+.     elseif (EACH_KEY eq 4)
+.       ANYNUM__4 =  globals('GKEY3#', STRING_VARGET )
+.     elseif (EACH_KEY eq 5)
+.       ANYNUM__4 =  globals('GKEY4#', STRING_VARGET )
+.     elseif (EACH_KEY eq 6)
+.       ANYNUM__4 =  globals('GKEY5#', STRING_VARGET )
+.     elseif (EACH_KEY eq 7)
+.       ANYNUM__4 =  globals('GKEY6#', STRING_VARGET )
+.     elseif (EACH_KEY eq 8)
+.       ANYNUM__4 =  globals('GKEY7#', STRING_VARGET )
+.     endif
+.   endif
+. END FOR
+. EXIT REC
+end rec
+CIF EQ 1, 0<GCASED>
+end case is
+CIF END
+end retrieval
+
+CALL WPF.DB_CHECKS.VALID_KEYS
+CALL WPF.GLOB_VARS.VIA_FROM_THRU
+CALL WPF.DB_CHECKS.VALID_VIA
+END PROCEDURE

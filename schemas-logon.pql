@@ -1,0 +1,60 @@
+PROCEDURE      SCHEMAS.LOGON:T  (157511,49338)  |Last amended Jan 13, 2014,13:42:18
+c create for version 3.0
+
+PROGRAM
+EXECUTE DBMS ['CREATE DATABASE LOGON PREFIX= "' + DSN('LOGON_FOLDER') + '"']
+END PROGRAM
+
+DATABASE LABEL  'LOG IN DATA'
+JOURNAL         ON
+ENCRYPT         ON
+NO CASE ID
+N OF RECORDS    1023000
+MAX INPUT COLS  3000
+RECTYPE COLS    1  2
+MAX REC TYPES   30
+MAX REC COUNT   3000000
+MAX KEY SIZE    35
+
+RECORD SCHEMA   3  USER_PW 'User Sign In Data'
+KEY FIELDS      USER_NAME(A)
+MAX REC COUNT   3000000
+DATA LIST
+                USER_NAME                            * (A32)
+                PW                                   * (A32)
+                START_DATE                           * (DATE'MMIDDIYYYY')
+                END_DATE                             * (DATE'MMIDDIYYYY')
+                RESET_PW                             * (I1)
+                RESET_CODE                           * (A32)
+                RESET_EXPIRES_DATE                   * (DATE'MMIDDIYYYY')
+                RESET_EXPIRES_TIME                   * (TIME 'HHIMMISS')
+                LOGIN_SUCESS_DATE                           * (DATE'MMIDDIYYYY')
+                LOGIN_SUCESS_TIME                           * (TIME 'HHIMMISS')
+                LOGIN_FAIL_DATE                           * (DATE'MMIDDIYYYY')
+                LOGIN_FAIL_TIME                           * (TIME 'HHIMMISS')
+                LOGIN_DATE                           * (DATE'MMIDDIYYYY')
+                LOGIN_TIME                           * (TIME 'HHIMMISS')
+                LOGIN_TRIES                          * (I2)
+
+
+VAR RANGES      START_DATE END_DATE                        ('01/01/2011' '03/01/2050')
+                RESET_PW                          (0 1)
+                RESET_EXPIRES_DATE                ('01/01/2011' '01/01/2050')
+                LOGIN_DATE                        ('01/01/2011' '01/01/2050')
+VALUE LABELS    RESET_PW                          (0)'No'
+                                                 (1)'Yes'
+VAR LABEL       USER_NAME                         'User Name'
+                PW                                'Password'
+                START_DATE                        'Password Start Date'
+                END_DATE                          'Password End Date'
+                RESET_PW                          'Reset This PW'
+                RESET_CODE                        'Type in a code for the link'
+                RESET_EXPIRES_DATE                     'Reset option expires Date'
+                RESET_EXPIRES_TIME                     'Reset option expires Time'
+                LOGIN_SUCESS_DATE 'Last Log In Success Date'
+                LOGIN_SUCESS_TIME 'Last Log In Success Time'
+                LOGIN_FAIL_DATE 'Last Log In Attempt Date.'
+                LOGIN_FAIL_TIME 'Last Log In Attempt Time.'
+                LOGIN_TRIES 'FAILED LOGIN ATTEMPS'
+END SCHEMA
+END PROCEDURE

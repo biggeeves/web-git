@@ -1,0 +1,34 @@
+PROCEDURE      DB_CHECKS.VALID_VIA:T  (157452,40256)  |Last amended Nov 15, 2013,11:10:56
+c check the via and see if it access a record
+
+ERROR LIMIT NONE
+PROGRAM
+. ANYNUM__4 = globalN( 'GERROR_CHECK', nglobal('GERROR') )
+END PROGRAM
+
+retrieval
+CIF EQ 1, 0<GCASED>
+process cases
+| old case is <CASEIS>
+CIF END
+
+. process rec <GDBREC> | <GVIA#>
+. end rec
+
+CIF EQ 1, 0<GCASED>
+end case | is
+CIF END
+end retrieval
+
+program
+. ifthen ( nglobal('GERROR_CHECK') LT nglobal('GERROR'))
+.   ANYNUM__4 = globals( 'GSOMEMESS', 'Via did not work')
+.   EXECUTE DBMS 'CALL WPF.INC_BODY_FORMS.UNK_ERR'
+. endif
+end program
+
+ERROR LIMIT 99
+
+
+
+END PROCEDURE

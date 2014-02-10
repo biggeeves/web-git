@@ -1,0 +1,13 @@
+PROCEDURE      INC_BODY_FORMS.WELCOME:T  (157452,47333)  |Last amended Nov 15, 2013,13:08:53
+C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
+
+PROGRAM CRWARN
+
+write(cgi) '<h3>Welcome!</h3>'
+
+end program
+
+c since the program can be called if the user has one database.  this is the exception to the full_exit standard
+c CALL WPF.CONNECTIONS.FULL_EXIT
+
+END PROCEDURE

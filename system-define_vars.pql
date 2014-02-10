@@ -1,0 +1,183 @@
+PROCEDURE      SYSTEM.DEFINE_VARS:T  (157221,47133)  |Last amended Mar 29, 2013,13:05:33
+string  *   256   WPF                    | File location of web proc file, used in system.initialize
+string  *    32   USERNAME__4                | username
+string  *    32   USERID                     | unique ID for the user for this particular session.  Will also get a session ID.  | also cookie
+string  *    32   SESSIONID                  | After log in and selection of database will get a session ID.                     | also cookie
+string  *    32   PASSWORD__4                | password
+string  *    50   UPICK__4                | Input from user to pick New, Old, Table.  May expand defintion.
+
+
+string  *   600   ASCIITEXT                  | HTML to be cleaned
+string  *   600   HTMLTEXT                   | HTML after it has been cleaned
+
+string  *    32   DBNAME__4                  | Database Name
+string  *    72   FAMILY_NAME                     | Family Name
+string  *    72   MEMBER_NAME                     | Member Name
+
+string  *    32   CASE_STR                   | Value of CASE
+string  *    32   FIRSTCASE__4               | 1st case
+string  *    32   LASTCASE__4                | last case
+string  *    32   STARTCASE__4               | Start case for going backwards
+integer *     1   FOUNDCASE__4               | Case already exists
+
+integer *     2   REC_TYPE_NUMBER                 | Easy to remember record type number
+string  *    32   REC_NAME__4                | Record Name
+string  *    72   REC_LABEL__4               | Record Label
+integer *     4   RECCNT__4                  | Record count
+integer *     1   RECACCESSED__4             | Does a specifi record exist already
+string  *   255   RECDOC__4                  | Record Document.  Usualy line 0 or line 1
+string  *   210   REC1 REC2 REC3 REC4 REC5   | a string of rec#s for each global
+
+integer *     2   EACH_RECORD_NUMBER              | cycle through record types
+integer *     2   EACH_KEY                  | cycle through keys
+integer *     2   EACH_VARIABLE                  | cycle through variables
+integer *     2   EACH_LABEL                  | cycle through value labels
+integer *     2   EACH_COMMON_VAR               | cylce thru common variable
+integer *     2   EACH_VALID_VALUE                 | cylce thru valid values
+integer *     4   EACH_NUMBER                  | cylce any number
+integer *     1   EACH_MISSING_VALUE                 | cylce thru missing values
+
+integer *     4   COUNTS__4                  | Total that meets all criterias
+
+
+string  *    32   CASENAME$                  | Case name
+string  *    78   CASE_LABEL                  | Case Var Label
+string  *    32   VNAME$                     | Variable name
+string  *    34   VNAME$CB                   | Variable name with Curly Brackets, useful for non-standard variable names
+integer *     2   VNUM__4                    | Variable number
+string  *   254   VAR_LABEL                  | Variable Label  | bigger than normal as HTML character codes must be used (&gt; instead of>)
+real    *     8   VAR_MAX                    | Variable Max
+real    *     8   VAR_MIN                    | Variable Min
+string  *    32   VAR_MAX_STR                 | Variable Max
+string  *    32   VAR_MIN_STR                 | Variable Min
+string  *    32   KEYVNAME__4                | Variable name
+integer *     1   ISKEY__4                   | it is a key field
+string  *    32   KEYVALUE__4                | Key field value
+integer *     4   VALLAB_POS                 | Value label nth position of the for a given value
+string  *   100   VALLAB_VALUE               | Value Label value
+integer *     1   SIR_VARTYPE                 | What is the variable type that vtype returns
+string  *    32   SIR_VARFORMAT               | What is the variable FORMAT that vformat returns
+integer *     1   ISCOMVAR__4                | it is a common variable
+
+c Look and Feel
+string  *    32   RCLASS__4                  | Web CSS, formating for alt row color and key field color
+string  *    32   VAR_DISPLAY_CLASS              | Web CSS, interacts with Colspand to get right width for edit box
+string  *   100   VALLAB_DISPLAY_CLASS           | Web CSS, right width for value label choices
+string  *   300   LINK__4                    | LINK
+string  *   300   CLASS__4                   | CLASS
+string  *   300   HOVER_TITLE                   | TITLE
+string  *   300   JS__4                      | JS
+string  *    20   SELECTED__4                | Should that option be the one selected?
+integer *     2   TAB_INDEX                | The tab order for data entry
+
+
+integer *     1   VALID_RESULT                   | does this value validate?
+integer *     2   ERR__4                     | How many fields are not valid
+
+string  *  1000   STRING_VARGET              | Varget, format(nget), or sget
+string  *  1000   CGI__4                     | get the value of the CGI variable
+
+string  *  1000   STR$1                      | General String use at any time
+string  *  1000   STR$2                      | General String use at any time
+string  *  1000   STR$3                      | General String use at any time
+
+real    *     8   ANYNUM__4                  | Use any time you want
+integer *     1   GOON__4                    | Control flow variable
+
+string  *   600   ANY_DIR__4                 | log in folder location
+string  *   300   FPATH__4                   | File Path
+integer *     1   IOSTAT__4                  | Return code of IOSTAT
+integer *     4   RETCODE__4                 | Return code for other things
+string  *  1000   LINE__4                    | Line read from a file or member
+
+
+integer *     1   ISMISS__4                  | 0-3 missing value can be used to compare two missing values- MISSNUM__4 and ISMISS_#
+integer *     1   NMISS__4                   | numeric system missing
+string  *     1   SMISS__4                   | string system missing
+real    *     8   NUM__4                     | number for validiting data and ngets
+string  *   300   STR__4                     | string for validating data and sgets
+integer *     1   MISSNUM__4                 | which user defined missing number, 1, 2, 3
+real    *     8   QNUM__4                    | Numeric Query value
+string  *   300   QSTR__4                    | String Query value
+integer *     1   SIGNNUM__4                 | String Query value
+
+date              VARDATE__4 ('MMIDDIYYYY')  | Validating Date values
+time              VARTIME__4 ('HHIMMISS')    | Validating Time valuess
+
+real    *     8   TODAYIS__4                        | numeric today
+integer *     4   array FREQINT__4   (-1000:200000) | Hold the most important value
+real    *     8   array FREQYEAR__4  (1500:2500)  | sum/year
+real    *     8   array FREQMONTH__4 (1:12)       | sum/month
+real    *     8   array FREQDAY__4   (1:7)        | sum/DAY
+real    *     8   array FREQHOUR__4  (0:23)       | sum/HOUR
+integer *     4   array FREQMISS__4   (0:3)       | sum/missing values 1 2 3
+string  *   100   array AFREQ__4 (1:501)          | What is the open text value.
+integer *     4   SUM_EXISTS                      | sum for frequencies
+integer *     4   SUM_NOEXISTS                    | sum for missing values
+real    *     8   AVE_NUMERATOR                   | average numerator
+real    *     8   AVE_DENOMINATOR                 | average demoninator
+real    *     4   VAR_MIN# VAR_MAX#               | either defined max and min or actual data value max and mins
+integer *     2   YEARIS__4                       | 4 digit year
+integer *     1   MONTHIS__4                      | 2 digit month
+integer *     1   DAYIS__4                        | 1=MON,2=TUE, ETC
+integer *     1   HOURIS__4                       | am pm hOURS
+
+
+string  *   300   FINDTEXT__4                     | What is the text we are searching for
+string  *   300   SHOWKEYS__4                     | What are the keys so you can navigate to that record
+
+real    *     8   SUPER_TOT                        | Running total
+real    *     8   SUM__4                          | particular value to add to the sum
+real    *     8   RECTOT__4                       | Record or record type total
+integer *     2   CHAR__4                         | What numeric value is that charicter?
+integer *     1   SCH_VARNAME                     | Is it in a Variable Name
+integer *     1   SCH_VARLABEL                    | Is it in a Variable Label
+integer *     1   SCH_VALVALUE                    | Is it in a value label
+integer *     1   SCH_RANGE                       | Is it in a range, missing value, or valid value?
+integer *     1   DISPLAY_AS                       | Radio, Text, Date, Dropdown, check box.
+
+time              TIME1__4   ('HHIMMISS')         | Time varialbe 1
+time              TIME2__4   ('HHIMMISS')         | Time varialbe 2
+
+
+
+integer *     4   array RECSTATS__4   (0:4095,0:1000 ) | Number of record types, (note: 2147483648 maximum records in DB)
+
+
+value labels VALID_RESULT (0)'Valid' (1)'Wrong data type/Not valid value'
+                         (2)'Violation of valid values or ranges'
+                         (3)'Sys Miss' (4)'M1' (5)'M2' (6)'M3' (7)'String Truncated'
+
+value labels MONTHIS__4   (1) 'Jan.'   (2) 'Feb.'      (3) 'March'     (4) 'April'
+                          (5) 'May' (6) 'June'  (7) 'July'  (8) 'August'
+                          (9) 'Sept.' (10) 'Oct.' (11) 'Nov.' (12) 'Dec.'/
+value labels DAYIS__4     (1) 'Monday'  (2) 'Tuesday'   (3) 'Wednesday' (4) 'Thursday'
+                          (5) 'Friday'  (6) 'Saturday'  (7) 'Sunday'/
+
+value labels HOURIS__4 (0) 'Midnight to 1 am'
+                          (1)  '1am - 2am'   (2)  '2am - 3am'
+        (3)  '3am - 4am'   (4)  '4am - 5am'
+                          (5)  '5am - 6am'   (6)  '6am - 7am'
+                          (7)  '7am - 8am'   (8)  '8am - 9am'
+                          (9)  '9am - 10am'  (10) '10am - 11am'
+                          (11) '11am - Noon' (12) 'Noon - 1pm'
+                          (13) '1pm - 2pm'   (14) '2pm - 3pm'
+                          (15) '3pm - 4pm'   (16) '4pm - 5pm'
+                          (17) '5pm - 6pm'   (18) '6pm - 7pm'
+                          (19) '7pm - 8pm'   (20) '8pm - 9pm'
+                          (21) '9pm - 10pm'  (22) '10pm - 11pm'
+                          (23) '11pm - 12pm' (24) 'opps'
+
+value labels SIR_VARTYPE    (1)'string'  (2)'categorical' (3)'date'       (4)'time'
+                           (5)'integer' (6)'real (single precision)'     (7)'real (double precision)'
+                         (8)'scaled variable'
+
+value labels DISPLAY_AS    (0)'Text' (1) 'Radio' (2) 'Dropdown' (3)'Checkbox' (4)'Memo'
+
+missing values STR__4        (blank, blank, blank)
+missing values NUM__4        (blank, blank, blank)
+missing values STRING_VARGET (blank, blank, blank)
+
+set NMISS__4 (nmissing)
+set SMISS__4 (smissing)
+END PROCEDURE

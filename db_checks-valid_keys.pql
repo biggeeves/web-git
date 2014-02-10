@@ -1,0 +1,74 @@
+PROCEDURE      DB_CHECKS.VALID_KEYS:T  (157452,48177)  |Last amended Nov 15, 2013,13:22:57
+
+
+PROGRAM crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+REC_TYPE_NUMBER = nglobal('GDBREC')
+
+for EACH_VARIABLE = 1 + dbtype(0),nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+. KEYVNAME__4 = trimlr(keyname(REC_TYPE_NUMBER, EACH_VARIABLE))  | tricky because Key1 in a case structured DB is actually 2!
+. SIR_VARTYPE = vtype(REC_TYPE_NUMBER, KEYVNAME__4)
+. ifthen (EACH_VARIABLE eq 1 + dbtype(0) )
+.   STR__4 = sglobal('GKEY1#')
+. elseif (EACH_VARIABLE eq 2 + dbtype(0) )
+.   STR__4 = sglobal('GKEY2#')
+. elseif (EACH_VARIABLE eq 3 + dbtype(0) )
+.   STR__4 = sglobal('GKEY3#')
+. elseif (EACH_VARIABLE eq 4 + dbtype(0) )
+.   STR__4 = sglobal('GKEY4#')
+. elseif (EACH_VARIABLE eq 5 + dbtype(0) )
+.   STR__4 = sglobal('GKEY5#')
+. elseif (EACH_VARIABLE eq 6 + dbtype(0) )
+.   STR__4 = sglobal('GKEY6#')
+. elseif (EACH_VARIABLE eq 7 + dbtype(0) )
+.   STR__4 = sglobal('GKEY7#')
+. end if
+. ifthen (SIR_VARTYPE EQ 1 or 2 or 3 or 4)  | STRINGS, DATES, TIMES
+.   STR__4 = substr(STR__4, 2, len(STR__4) - 2)  | remove the qoutes
+. endif
+. ifthen (SIR_VARTYPE EQ 1 or 2)
+.   VALID_RESULT = validate(REC_TYPE_NUMBER, KEYVNAME__4, STR__4)
+. elseif (SIR_VARTYPE eq 3)  | STRINGS, DATES, TIMES
+.   VALID_RESULT = validate(REC_TYPE_NUMBER, KEYVNAME__4, STR__4)
+.   ifthen(VALID_RESULT eq 0)
+.     SIR_VARFORMAT = datemap(REC_TYPE_NUMBER, KEYVNAME__4)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'M', 'd', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', 'd', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'Y', 'd', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, '/', 'x', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', 'x', 4, 1, 0)
+.     if (picture(STR__4,SIR_VARFORMAT) ne 0)   VALID_RESULT = -1
+.   endif
+. elseif (SIR_VARTYPE eq 4)  | STRINGS, DATES, TIMES
+.   VALID_RESULT = validate(REC_TYPE_NUMBER, KEYVNAME__4, STR__4)
+.   ifthen(VALID_RESULT eq 0)
+.     SIR_VARFORMAT = timemap(REC_TYPE_NUMBER,KEYVNAME__4)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'H', 'd', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'M', 'd', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'S', 'd', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, ':', 'x', 4, 1, 0)
+.     SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', 'x', 4, 1, 0)
+.     if (picture(STR__4,SIR_VARFORMAT) ne 0)   VALID_RESULT = -1
+.   endif
+. elseif (SIR_VARTYPE EQ 5 or 6 or 7 or 8) |NUMBERS
+.   VALID_RESULT = validate(REC_TYPE_NUMBER, KEYVNAME__4, STR__4)
+. endif
+
+. ifNOTthen (VALID_RESULT eq 0)
+.   STR$3 = 'The value ' + fst(STR__4,'') + ' for ' + KEYVNAME__4 + ' is not valid.'
+.   ANYNUM__4 = globals('GSOMEMESS', STR$3)
+.   ifthen(sglobal('GUPICK') eq 'New')
+.     ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
+.   elseif(sglobal('GUPICK') eq 'Edit' or 'View')
+.     ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.   else
+.     ANYNUM__4 = globals('GMEMSTOP', 'CALL WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.   endif
+.   EXECUTE DBMS 'call WPF.CONTROLER.STOP_PAGE'
+. endif
+end for
+
+end PROGRAM
+END PROCEDURE

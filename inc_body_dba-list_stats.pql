@@ -1,0 +1,92 @@
+PROCEDURE      INC_BODY_DBA.LIST_STATS:T  (157221,42267)  |Last amended Mar 29, 2013,11:44:27
+program
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+write(cgi)'<h3>List Stats:</h3>'
+write(cgi)'<table class="table table-striped table-hover">'
+write(cgi)'<tr><td>Date:</td><td> ' [datec(today(0), 'MMM. dd yyyy')]'</td></tr>'
+write(cgi)'<tr><td>Time:</td><td> ' [timec(now(0), 'hh:mm')]'</td></tr>'
+write(cgi)'<tr><td>Databases attached:</td><td> ' [system(40)]'</td></tr>'
+write(cgi)'<tr><td>Database name:</td><td> ' DBNAME__4 '</td></tr>'
+write(cgi)'<tr><td>Jounaling:</td><td> ' [jouflag(0)]' (0=No, 1=Yes)</td></tr>'
+write(cgi)'<tr><td>Encrypted</td><td>' [system(44)]'(0=No, 1=Yes)</td></tr>'
+write(cgi)'<tr><td>Database type:</td><td> ' [dbtype(0)]'(0=Caseless, 1=Case)</td></tr>'
+if(dbtype(0) eq 1) write(cgi)'<tr><td>Case ID</td><td>' [keyname(0,1)]'</td></tr>'
+write(cgi)'<tr><td>Update Level</td><td>' [updlevel (0)]'</td></tr>'
+write(cgi)'<tr><td>Cases in database</td><td>' [system(24)]'</td></tr>'
+write(cgi)'<tr><td>Cases allowed</td><td>' [nofcases(0)]'</td></tr>'
+write(cgi)'<tr><td>Records in database</td><td>' [system(25)]'</td></tr>'
+write(cgi)'<tr><td>Current User has DBA rights</td><td>' [system(45)]'(0=No, 1=Yes)</td></tr>'
+write(cgi)'<tr><td>SIR User name</td><td>' [SIRUSER ('')]'&nbsp;</td></tr>'
+write(cgi)'<tr><td>Number of data dictionary UPDATEs</td><td><CBLEVEL>&nbsp;</td></tr>'
+write(cgi)'<tr><td>Number of data files (0=normal)</td><td>' [system(54)] '</td></tr>'
+write(cgi)'</table><br>'
+write(cgi)'<table class="table table-striped table-hover">'
+write(cgi)  '<th>No.</th><th>Record</th><th>Record Label</th>'
+write(cgi)  '<th>Keys</th>'
+write(cgi)  '<th>Number of vars</th>'
+write(cgi)  '<th>Max per case</th>'
+write(cgi)  '<th>Total in DB</th>'
+write(cgi)  '</tr>'
+
+. for EACH_RECORD_NUMBER = 1, nrecs(0)
+.   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
+.   ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+.   elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+.   else
+.     REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+.   endif
+.   write(cgi) '<tr>'
+.   STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;gdbrec=' +  format(EACH_RECORD_NUMBER ) +  '" >'  + format(EACH_RECORD_NUMBER) + ' </a>'
+
+.   write(cgi)  '<td>' STR$1 '</td><td>'[trimlr(recname(EACH_RECORD_NUMBER))] '</td><td>' REC_LABEL__4 '</td>'
+.   ifthen (nkeys(EACH_RECORD_NUMBER) eq 0)
+.     write(cgi)  '<td>None</td>'
+.   else
+.     write(cgi)  '<td>'
+.     ANYNUM__4 = 0
+.     for EACH_KEY = 1 + dbtype(0),  nkeys(EACH_RECORD_NUMBER) + dbtype(0)
+.       if(ANYNUM__4 eq 1) write(cgi)'<br>'; ANYNUM__4 = 0
+.       STR$1 = lower(trimlr(keyname(EACH_RECORD_NUMBER,  EACH_KEY)))
+.       write(cgi) STR$1
+.       ANYNUM__4 = 1
+.     end for
+.     write(cgi)  '</td>'
+.   endif
+
+.   write(cgi)  '<td>' [nvarsc(EACH_RECORD_NUMBER)]  '</td>'
+.   write(cgi)  '<td>' [maxrecs(EACH_RECORD_NUMBER)]  '</td>'
+.   ifthen (numrecs(EACH_RECORD_NUMBER) eq 0)
+.     write(cgi)  '<td>' [numrecs(EACH_RECORD_NUMBER)]  '</td>'
+.   else
+.     STR$2 = 'href="<mycgi>?member=WPF.INC_BODY_FORMS.REC_TABLE&amp;upick=ALLCASES&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '"'
+.     write(cgi)  '<td><a ' STR$2 '>' [numrecs(EACH_RECORD_NUMBER)]  '</a></td>'
+.   endif
+.   write(cgi) '</tr>'
+. end for
+. write(cgi) '</table><br>'
+
+c indexes
+ifthen(dbinds(40) gt 0)
+. write(cgi)'<table class="table table-striped table-hover">'
+. write(cgi)  '<tr><th>Index Name</th><th>Unique (0=No)</th><th>Record Type</th><th>Variables</th>'
+. write(cgi)  '</tr>'
+. for EACH_NUMBER = 1, dbinds(0)
+.   write(cgi)  '<tr>'
+.   write(cgi) '<td>'EACH_NUMBER ': ' [dbindn(EACH_NUMBER)] '</td>' |name
+.   write(cgi) '<td>' [dbindu(EACH_NUMBER)] '</td>' |unique
+.   write(cgi) '<td>' [trimlr(recname(dbindr(EACH_NUMBER)))] '</td>' |record name
+.   write(cgi) '<td>'
+.   for ANYNUM__4 = 1, dbindv(EACH_NUMBER)
+.     write(cgi) [dbindt(EACH_NUMBER,  ANYNUM__4)] |variable name
+.   end for
+. end for
+. write(cgi) '</td>'
+. write(cgi)  '</tr>'
+. write(cgi)'</table>'
+endif
+
+end program
+END PROCEDURE

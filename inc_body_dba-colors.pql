@@ -1,0 +1,65 @@
+PROCEDURE      INC_BODY_DBA.COLORS:T  (156819,51834)  |Last amended Feb 21, 2012,14:23:54
+program
+write (cgi) '<h1>h1</h1>'
+write (cgi) '<h2>h2</h2>'
+write (cgi) '<h3>h3</h3>'
+write (cgi) '<h4>h4</h4>'
+write (cgi) '<h5>h5</h5>'
+write (cgi) '<h6>h6</h6>'
+write (cgi) '<table width="700px">'
+write (cgi) '<tr><th width="50%">Color</th><th wdith="50%">Code</th></tr>'
+write (cgi) '<tr><td bgcolor="#FFFFFF">-<td>#FFFFFF</td></tr>'
+write (cgi) '<tr><td bgcolor="#EEE"   >-<td>#EEE   </td></tr>'
+write (cgi) '<tr><td bgcolor="#DDD"   >-<td>#DDD   </td></tr>'
+write (cgi) '<tr><td bgcolor="#CCC"   >-<td>#CCC   </td></tr>'
+write (cgi) '<tr><td bgcolor="#000000">-<td>#000000</td></tr>'
+write (cgi) '<tr><td bgcolor="#FFF8DC">-<td>#FFF8DC</td></tr>'
+write (cgi) '<tr><td bgcolor="#0000cc">-<td>#0000cc</td></tr>'
+write (cgi) '<tr><td bgcolor="#82CAFF">-<td>#82CAFF</td></tr>'
+c blues
+write (cgi) '<tr><td bgcolor="#143d52">-<td>143d52</td></tr>'
+write (cgi) '<tr><td bgcolor="#194c66">-<td>194c66</td></tr>'
+write (cgi) '<tr><td bgcolor="#297aa3">-<td>297aa3</td></tr>'
+write (cgi) '<tr><td bgcolor="#3399cc">-<td>3399cc</td></tr>'
+write (cgi) '<tr><td bgcolor="#7aa3b8">-<td>7aa3b8</td></tr>'
+write (cgi) '<tr><td bgcolor="#99cce6">-<td>99cce6</td></tr>'
+write (cgi) '<tr><td bgcolor="#a3b7c2">-<td>a3b7c2</td></tr>'
+write (cgi) '<tr><td bgcolor="#cce5f2">-<td>cce5f2</td></tr>'
+write (cgi) '<tr><td bgcolor="#eeffff">-<td>eeffff</td></tr>'
+
+
+
+c browns
+write (cgi) '<tr><td bgcolor="#522914">-<td>522914</td></tr>'
+write (cgi) '<tr><td bgcolor="#663319">-<td>663319</td></tr>'
+write (cgi) '<tr><td bgcolor="#a35229">-<td>a35229</td></tr>'
+write (cgi) '<tr><td bgcolor="#cc6633">-<td>cc6633</td></tr>'
+write (cgi) '<tr><td bgcolor="#b88f7a">-<td>b88f7a</td></tr>'
+write (cgi) '<tr><td bgcolor="#e6b399">-<td>e6b399</td></tr>'
+write (cgi) '<tr><td bgcolor="#c2aea3">-<td>c2aea3</td></tr>'
+write (cgi) '<tr><td bgcolor="#f2d9cc">-<td>f2d9cc</td></tr>'
+
+
+c yellows
+write (cgi) '<tr><td bgcolor="#665e00">-<td>665e00</td></tr>'
+write (cgi) '<tr><td bgcolor="#7f7600">-<td>7f7600</td></tr>'
+write (cgi) '<tr><td bgcolor="#ccbe00">-<td>ccbe00</td></tr>'
+write (cgi) '<tr><td bgcolor="#ffed00">-<td>ffed00</td></tr>'
+write (cgi) '<tr><td bgcolor="#ccc566">-<td>ccc566</td></tr>'
+write (cgi) '<tr><td bgcolor="#fff680">-<td>fff680</td></tr>'
+write (cgi) '<tr><td bgcolor="#ccc899">-<td>ccc899</td></tr>'
+write (cgi) '<tr><td bgcolor="#fffabf">-<td>fffabf</td></tr>'
+
+
+c reds
+write (cgi) '<tr><td bgcolor="#660005">-<td>660005</td></tr>'
+write (cgi) '<tr><td bgcolor="#750006">-<td>750006</td></tr>'
+write (cgi) '<tr><td bgcolor="#cc000a">-<td>cc000a</td></tr>'
+write (cgi) '<tr><td bgcolor="#ff000d">-<td>ff000d</td></tr>'
+write (cgi) '<tr><td bgcolor="#cc666b">-<td>cc666b</td></tr>'
+write (cgi) '<tr><td bgcolor="#ff8086">-<td>ff8086</td></tr>'
+write (cgi) '<tr><td bgcolor="#cc999b">-<td>cc999b</td></tr>'
+write (cgi) '<tr><td bgcolor="#ffbfc2">-<td>ffbfc2</td></tr>'
+write (cgi) '</table>'
+end program
+END PROCEDURE

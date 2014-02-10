@@ -1,0 +1,20 @@
+PROCEDURE      CONNECTIONS.DISCONNECT_ALL_DBS:T  (157515,44081)  |Last amended Jan 17, 2014,12:14:41
+c PQL disconnect  database and  DFC
+
+PROGRAM
+string  *    32   DBNAME__4                  | Database Name
+real    *     8   ANYNUM__4                  | Use any time you want
+
+while (system( 40 ) gt 0 )
+. DBNAME__4 = DBNAME(0)
+. PQL DISCONNECT DATABASE DBNAME__4
+end while
+
+ifthen (system(38) eq 1) | Using master.  Try a difference file copy.
+. ANYNUM__4 = setdfc( 0, 'a' )
+. if (ANYNUM__4 lt 0)  write 'DFC ERROR While Disconnecting' | FROM THE SYSPROC WHERE I COPIED THE ERROR MESSAGE MSGTXT(9035)
+endif
+
+END PROGRAM
+
+END PROCEDURE

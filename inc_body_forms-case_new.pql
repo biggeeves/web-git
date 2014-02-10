@@ -1,0 +1,25 @@
+PROCEDURE      INC_BODY_FORMS.CASE_NEW:T  (157220,68890)  |Last amended Mar 28, 2013,19:08:10
+C Create a new case
+
+PROGRAM
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+write(cgi) '<h4>Create a new ' CASE_LABEL '</h4>'
+ifthen (0<GSECLEVEL> ne 0)
+. write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
+. write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLER.CASE_CONTROL">'
+. write(cgi) '  <input type="hidden" name="caseoption" id="caseoption" value="new">'
+. write(cgi) '    <br><p><div id="caseidlabel" class ="indent">' CASE_LABEL '</div>'
+. write(cgi) '      <input type="text" id="caseis" class="input_medium" name="caseis">'
+. write(cgi) '      <input type="submit" value="Create" accesskey="z" class="btn btn-success"><br>'
+. write(cgi) '</form>'
+else
+. write(cgi) 'Sorry, please ask your manager for permission to create new IDs'
+endif
+write(cgi) '<p>&nbsp</p>'
+
+c this sets the focues after the input has loaded.   Must be located after the input loads.
+write(cgi) '<script type="text/javascript">document.getElementById("caseis").focus();</script>'
+
+end PROGRAM
+END PROCEDURE

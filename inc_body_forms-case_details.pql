@@ -1,0 +1,84 @@
+PROCEDURE      INC_BODY_FORMS.CASE_DETAILS:T  (157221,47100)  |Last amended Mar 29, 2013,13:05:00
+c Show all of the record types, records and pertaining keys that belong to a case.
+
+retrieval crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+set ANYNUM__4  (0)
+
+write(cgi)  '<h3>' CASE_LABEL  ' <CASEISNQ> Detailed Case Summary </h3>'
+write(cgi)  '<h6 class="smallfont" >Report created on ' [datec(today(0), 'mm/dd/yy')] ' by ' [sglobal('username')]  '</h6>'
+CIF EQ <GCASED>, 1
+old case is <CASEIS>
+CIF END
+. do repeat RECN = <GREC1>
+                 <GREC2>
+                 <GREC3>
+                 <GREC4>
+                 <GREC5>
+.   REC_TYPE_NUMBER = RECN
+.   ifthen (len(trimlr(recdoc(REC_TYPE_NUMBER, 0))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(REC_TYPE_NUMBER, 0))
+.   elseif (len(trimlr(recdoc(REC_TYPE_NUMBER, 1))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(REC_TYPE_NUMBER, 1))
+.   else
+.     REC_LABEL__4 = trimlr(recname(REC_TYPE_NUMBER))
+.   endif
+.   ANYNUM__4 = ANYNUM__4  + count(REC_TYPE_NUMBER)
+.   STR$1 = '' ; STR$2 = ''
+.   ifthen (count(REC_TYPE_NUMBER) gt 0)
+.     STR$2 = 'onclick="showhide(''record' + format(REC_TYPE_NUMBER) + ''');changesign(''plusminus' + format(REC_TYPE_NUMBER) + ''');"'
+.     STR$1 = '<a href="#here" class="bluetext" id=plusminus'  + format(REC_TYPE_NUMBER) + ' ' + STR$2   + '>+</a>'
+.   endif
+.   write(cgi) '<p>' STR$1 REC_LABEL__4 '(' [count(REC_TYPE_NUMBER)]  ') '
+.   STR$1 = '"record' + format(REC_TYPE_NUMBER) +  '"'
+c   display each record and corresponding key values
+.   write(cgi) 2t '<ul id=' STR$1 ' style="display:none;">'
+.   process rec RECN
+.     compute SHOWKEYS__4 = ''
+.     execute subprocedure START_ROW
+.   end rec
+.   STR$1 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;caseis=' + sglobal('CASEISNQ')+ '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Table"'
+.   if(count(REC_TYPE_NUMBER) gt 0) write(cgi) '<li><a href=' STR$1 '> Table</a></li>'
+.   write(cgi) 2t '</ul>'
+.   write(cgi) '</p>'
+
+. end repeat
+. write(cgi) 'Total Number of Records in Database:' ANYNUM__4
+CIF EQ <GCASED>, 1
+end case is
+CIF END
+
+
+subprocedure START_ROW
+.   COUNTS__4 = COUNTS__4 + 1
+.   STR$2 = ''
+.   SHOWKEYS__4 = ''
+.   ifthen (dbtype(0) eq 1)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
+.     CASE_STR = trimlr(varget(KEYVNAME__4))
+.     SHOWKEYS__4 = '<li> ' + SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + CASE_STR  + '</b><br> '
+.   endif
+
+.   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.     STRING_VARGET = trimlr(varget(KEYVNAME__4))
+.     SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET  + '</b><br> '
+.   end for
+
+c   Keys (used for the link)
+.   STR$2 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.     STRING_VARGET = trimlr(varget(KEYVNAME__4))
+.     STR$2 = STR$2 +  '&key' + format(EACH_KEY - dbtype(0)) + '='  + STRING_VARGET
+.   end for
+.   STR$2 = STR$2 + '"'
+.   write(cgi) 4t '<a href=' STR$2 '>'
+.   write(cgi) 4t SHOWKEYS__4 '</a></li>'
+end subprocedure
+
+
+end retrieval
+END PROCEDURE

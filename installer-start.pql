@@ -1,0 +1,9 @@
+PROCEDURE      INSTALLER.START:T  (157511,43930)  |Last amended Jan 13, 2014,12:12:10
+remark 'Starting Installer'
+
+c compile the necessary tools.
+CALL TOOLS.MAKEDIRS
+
+C RUN GUI TO GET CUSTOM FILE/DB LOCATIONS
+CALL INSTALLER.GUI
+END PROCEDURE

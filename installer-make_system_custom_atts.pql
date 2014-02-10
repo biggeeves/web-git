@@ -1,0 +1,29 @@
+PROCEDURE      INSTALLER.MAKE_SYSTEM_CUSTOM_ATTS:T  (157515,44409)  |Last amended Jan 17, 2014,12:20:09
+program
+. string * 4000 STR$1
+. STRING * 100 PATH$
+. integer * 2 my_iostat
+. PATH$ = 'INSTALL_FILE.SYSTEM.CUSTOM_ATTS'
+. open CATTS DSNVAR = PATH$ write iostat = my_iostat lrecl= 600 REPLACE member
+.   write (CATTS) 'C CREATED BY THE WEB INSTALLER ON ' [DATEC(TODAY(0),'Mmm. DD, YYYY')] /
+.   WRITE (CATTS) 'C WPF ATTRIBUTE IS A COPY.  GOLD STANDARD IS IN THE FILE DEFAULT.PQL!!!'
+
+.   STR$1 = 'ATTRIBUTE WPF = "' + dsn('WPF') + '" | ' + DATEC(TODAY(0),'MMDD') + TIMEC(NOW(0),'HHMM')
+.   WRITE (CATTS) STR$1
+
+.   STR$1 = 'ATTRIBUTE WEB_ROOT = "' + dsn('web_root') + '"'
+.   WRITE (CATTS) STR$1
+.   STR$1 = 'ATTRIBUTE WEBPROC_FOLDER = "' + DSN('WEBPROC_FOLDER') + '"'
+.   WRITE (CATTS) STR$1
+.   STR$1 = 'ATTRIBUTE LOGON_FOLDER = "' + DSN('LOGON_FOLDER') +  '"'
+.   WRITE (CATTS) STR$1
+.   STR$1 = 'ATTRIBUTE MANAGER_FOLDER = "' + DSN('MANAGER_FOLDER') + '"'
+.   WRITE (CATTS) STR$1
+c   create global values for master.  will use these for the login and manager database
+.   STR$1 = 'GLOBAL GMSTIP = <GMSTIP>'
+.   WRITE (CATTS) STR$1
+.   STR$1 = 'GLOBAL GMSTPORT = <GMSTPORT> '
+.   WRITE (CATTS) STR$1
+. close CATTS
+end program
+END PROCEDURE

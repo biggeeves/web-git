@@ -1,0 +1,27 @@
+PROCEDURE      INC_BODY_FORMS.CASEDEL:T  (156629,30815)  |Last amended Aug 15, 2011,08:33:35
+C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
+
+PROGRAM
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+write(cgi) '<h4>Delete a ' CASE_LABEL '</h4>'
+ifthen (0<GSECLEVEL> ne 0)
+. write(cgi) '<br>'
+. write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
+. write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLER.CASE_CONTROL">'
+. write(cgi) '  <input type="hidden" name="caseoption" id="caseoption" value="delete">'
+. write(cgi) '    <div id="caseidlabel" class ="indent">' CASE_LABEL '</div>'
+. write(cgi) '      <input type="text" id="caseis" class="input_medium" name="caseis" value="<CASEISNQ>">'
+. write(cgi) '      <input type="submit" value="Delete" accesskey="z" class="mediumbtn"><br>'
+. write(cgi) '</form>'
+else
+. write(cgi) 'Sorry, please ask your manager for permission to create Delete IDs'
+endif
+write(cgi) '<p>&nbsp</p>'
+
+c this sets the focues after the input has loaded.   Must be located after the input loads.
+write(cgi) '<script type="text/javascript">document.getElementById("caseis").focus();</script>'
+
+end PROGRAM
+END PROCEDURE

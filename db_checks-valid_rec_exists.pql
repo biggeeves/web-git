@@ -1,0 +1,27 @@
+PROCEDURE      DB_CHECKS.VALID_REC_EXISTS:T  (157452,40288)  |Last amended Nov 15, 2013,11:11:28
+c Check if the record actually exists.  If not send them to PICKOLDKEYS
+
+retrieval
+integer *     1   GOON__4                    | Control flow variable
+integer *     1   ANYNUM__4
+GOON__4 = 0
+CIF EQ 1, 0<GCASED>
+old case is <CASEIS>
+CIF END
+
+. old rec is <GDBREC> <GVIA#>
+.   GOON__4 = 1
+. end rec
+
+. ifthen(sglobal('GUPICK') eq 'Select')
+.   ANYNUM__4 = globals( 'GSOMEMESS', 'Please choose existing keys. Use "New" to create a new record.')
+.   ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+. endif
+
+
+CIF EQ 1, 0<GCASED>
+end case is
+CIF END
+
+end retrieval
+END PROCEDURE

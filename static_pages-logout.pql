@@ -1,0 +1,44 @@
+PROCEDURE      STATIC_PAGES.LOGOUT:T  (157220,66515)  |Last amended Mar 28, 2013,18:28:35
+program
+string * 600 STR$1            | General String use at any time
+
+write '<br> STATIC_PAGES.Log out' 20t [dsn('logout')]
+
+compute STR$1  = '<' + CHAR(33) + 'DOCTYPE html>'
+open (logout) write lrecl = 600
+. write(logout) STR$1
+. write(logout) '<head ><title >Logged out</title>'
+                '  <script type="text/javascript" src="/js/global.js"></script>'/
+                '  <link rel="icon" type="image/ico" href="/images/DCC.ico"  title="DCC Data Management" >'/
+                '  <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">'/
+                '  <link href="/css/custom.css" rel="stylesheet">'/
+                '  <meta charset="UTF-8">'/
+                '  <meta content="noindex,nofollow,noarchive" name="robots">'/
+                '  <meta http-equiv="Pragma" content="no-cache">'/
+                '  <meta http-equiv="expires" content="0">'/
+                '  <meta http-equiv="window-target" content="_top">'/
+                '  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->'/
+                '  <!--[if lt IE 9]>'/
+                '    <script src="/bootstrap/js/html5shiv.js"></script>'/
+                '  <![endif]-->'/
+                '  <style type="text/css">'/
+                '  body {'/
+                '    padding-top: 40px;'/
+                '    padding-bottom: 40px;'/
+                '    background-color: #f5f5f5;'/
+                '  }'/
+                '  </style>'/
+                '</head>'/
+
+
+
+. write(logout) '<body onload="setCookie(''USERID'',''loggedOut'',1);setCookie(''SESSIONID'',''loggedOut'',1)">'
+                '  <div class="smallcontainer">'
+. write(logout) '      <h3 title="Autolog out happens after 10 minutes.">You have been logged out.</h3>'
+. write(logout) '      <a href = "/index.html" class="btn btn-info">Click here to return to Log In</a>'
+. write(logout) '  </div>'
+. write(logout) '</body></html>'
+close logout
+
+end program
+END PROCEDURE

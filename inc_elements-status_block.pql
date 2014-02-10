@@ -1,0 +1,7 @@
+PROCEDURE      INC_ELEMENTS.STATUS_BLOCK:T  (157452,47067)  |Last amended Nov 15, 2013,13:04:27
+write(cgi) '<div id="statusblock">Loading</div>'
+write(cgi) ' <script type="text/javascript">'
+write(cgi) '   statusMessage("Loading");'
+write(cgi) ' </script>'
+
+END PROCEDURE

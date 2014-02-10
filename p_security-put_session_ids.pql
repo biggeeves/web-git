@@ -1,0 +1,30 @@
+PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157221,48637)  |Last amended Mar 29, 2013,13:30:37
+C UPDATE MANAGER WITH USERNAME, REMOTE ADDRESS START DATE AND TIME
+
+retrieval UPDATE CRWARN
+integer *     4   ANYNUM__4                    | Use any time you want
+integer *     1   GOON__4                    | Control flow variable
+
+ifthen ('<USERID>' NE '')
+. ifthen ('<SESSIONID>' NE '')
+.   record is SESSIONS via ('<USERID>' '<SESSIONID>')
+.     if(exists(STARTDATE) eq 0)  STARTDATE = today(0)
+.     if(exists(STARTTIME) eq 0)  STARTTIME = NOW(0)
+.     USERNAMEIS = sglobal('USERNAME')
+.     REMOTE_ADDR =  cgivarsv('REMOTE_ADDR')
+.   end rec
+. ELSE
+.   ANYNUM__4 =  globals('GSOMEMESS', 'Sorry.  Please contact the D.C.C. Error Location: Paris')
+.   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. endif
+ELSE
+.   ANYNUM__4 =  globals('GSOMEMESS', 'Sorry.  Please contact the D.C.C. Error Location: Madrid')
+.   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+endif
+
+end retrieval
+
+CIF EQ '<GMEMSTOP>', 'WPF.INC_BODY_FORMS.UNK_ERR'
+. CALL WPF.CONTROLER.STOP_PAGE
+CIF END
+END PROCEDURE

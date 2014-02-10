@@ -1,0 +1,15 @@
+PROCEDURE      P_SECURITY.CHECK_REFERER:T  (157452,52692)  |Last amended Nov 15, 2013,14:38:12
+program
+ifthen(exists(cgivarsv('HTTP_REFERER')) eq 0)
+. | no reference
+. | this should allow someone to pass a link to a specific page.
+elseif (pattern(cgivarsv('HTTP_REFERER'), "@localhost@") eq 1)
+. | for local debuging
+
+elseifNOT (pattern(cgivarsv('HTTP_REFERER'), "@piweb.nyspi.org@") eq 1)
+. ANYNUM__4 =  globals('GSOMEMESS', 'That form of entry is not allowed.')
+. ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+endif
+end program
+END PROCEDURE

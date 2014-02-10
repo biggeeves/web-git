@@ -1,0 +1,33 @@
+PROCEDURE      GLOB_VARS.ALL_RECS:T  (156563,37948)  |Last amended Jun 10, 2011,10:32:28
+c creates globals GREC1 thru GREC6
+
+program CRWARN
+real    *     8   ANYNUM__4                    | Use any time you want
+string  *   210   REC1 REC2 REC3 REC4 REC5 REC6   | used for setting record number globals
+
+. set ANYNUM__4 (1)
+      REC1 REC2 REC3 REC4 REC5 REC6 ('')
+. for REC_TYPE_NUMBER = 1, nrecs(0)
+.   IFNOT (len(recname(REC_TYPE_NUMBER)) gt 0) NEXT FOR
+.   REC1 to REC6(ANYNUM__4) = REC1 to REC6(ANYNUM__4) + format(REC_TYPE_NUMBER) + ','
+.   if (len(REC1 to REC6(ANYNUM__4)) > 200) ANYNUM__4 = ANYNUM__4 + 1
+. end for
+. REC1 to REC6(ANYNUM__4) = sbst(REC1 to REC6(ANYNUM__4), 1, len(REC1 to REC6(ANYNUM__4)) - 1)
+. ANYNUM__4 = globals('GREC1', REC1)
+. ifthen (len(REC2) > 0)
+.   ANYNUM__4 = globals('GREC2', REC2)
+.   ifthen (len(REC3) > 0)
+.     ANYNUM__4 = globals('GREC3', REC3)
+.     ifthen (len(REC4) > 0)
+.       ANYNUM__4 = globals('GREC4', REC4)
+.       ifthen (len(REC4) > 0)
+.         ANYNUM__4 = globals('GREC5', REC5)
+.         ifthen (len(REC4) > 0)
+.           ANYNUM__4= globals('GREC6', REC6)
+.         endif
+.       endif
+.     endif
+.   endif
+. endif
+end program
+END PROCEDURE

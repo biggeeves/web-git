@@ -1,0 +1,128 @@
+PROCEDURE      INC_REPORTS.QUERY_1:T  (157219,58220)  |Last amended Mar 27, 2013,16:10:20
+c Query, Calls Query2 which is the retrieval portion of the program
+c must re-set the globals to first record type, first var, for the first loading of the query1
+
+program
+ANYNUM__4 = 0<GDBREC>
+ifthen(ANYNUM__4 eq 9999 OR 0)
+. for EACH_RECORD_NUMBER  = 1, nrecs(0)
+.   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+.   ANYNUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   EXIT FOR
+. end for
+endif
+if (0<VNUM__4> eq 0)  ANYNUM__4 = globaln('VNUM__4', 1)
+end program
+
+PROGRAM crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+execute subprocedure GET_SIGN_NUM
+
+set ANYNUM__4 (0)
+
+write(cgi) '<h3>Query'
+ifthen('<GSUBMIT>' eq 'Run Query')
+. write(cgi) 'report created ' [datec(today(0), 'mm/dd/yyyy')] ' at ' [timec(now(0), 'hh:mm')] ' by ' [sglobal('username')]
+endif
+write(cgi) '</h3>'
+
+write(cgi) '<form name="query1" action="<mycgi>" method="post" >'
+write(cgi) '<input type="hidden" id="member" name="member" value="WPF.INC_REPORTS.QUERY_1">'
+
+CALL WPF.INC_ELEMENTS.GDB_REC | NECESSARY FOR PASSING THE RECORD TYPE NUMBER
+
+ifthen ("<VNUM__4>" eq "")
+. write(cgi) '<input type="hidden" name="webvnum" id="webvnum" value="1">'
+else
+. write(cgi) '<input type="hidden" name="webvnum" id="webvnum" value="<VNUM__4>">'
+endif
+
+write(cgi) '  <table class="leftindent"><tr>'
+write(cgi) '  <th>Choose a table</th><th>Choose a Variable</th><th>&nbsp;</th><th>Choose a criteria</th></tr>'
+write(cgi) '  <tr class="padded">'
+write(cgi) '  <td><select class="widthwide" id ="recselect" onchange="whichrec(this.value,''varselect'');document.getElementById(''gdbrec'').value =this.value;">'
+
+for EACH_RECORD_NUMBER = 1, nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+. elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+. else
+.   REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+. endif
+. STR$1 = 'value="' + format(EACH_RECORD_NUMBER )  + '"'
+. STR$2 = 'title="'  + format(EACH_RECORD_NUMBER) + ': ' + trimlr(recname(EACH_RECORD_NUMBER))  + '"'
+. if (nglobal('GDBREC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + ' selected="selected"'
+. write(cgi) 4t '<option ' STR$1 ' ' STR$2    ' >' REC_LABEL__4 '</option>'
+end for
+write(cgi) '  </select>'
+write(cgi) '  </td><td>'
+write(cgi) '  <select  name="varselect" id ="varselect" class="widthwide" onchange="setVarNum()">'
+
+C SELECT THE PROPER VARIABLE.
+ANYNUM__4 = 0<VNUM__4>
+if(ANYNUM__4 eq 0) ANYNUM__4 = 1
+
+for EACH_RECORD_NUMBER  = 1,  nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. for EACH_VARIABLE = 1,  nvarsc(EACH_RECORD_NUMBER)
+.   VNAME$ = trimlr(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE))
+.   VNAME$CB = stdname(VNAME$)
+.   STR$1 = 'value="' + format(EACH_VARIABLE) + '" title="' + VNAME$ + '"'
+.   STR$2 = trimlr(varlabsc(EACH_RECORD_NUMBER, VNAME$CB))
+.   if (EACH_VARIABLE eq ANYNUM__4) STR$1 = STR$1 + ' selected="selected"'
+.   write(cgi) 4t '<option ' STR$1 '>' STR$2  '</option>'
+. end for
+. exit for | this should only run the very first time
+end for
+write(cgi) '  </select></td>'
+write(cgi) '  <td><select name="operator" id="operator"  style="position:relative;">'
+write(cgi) '    <option value="eq">&#61;</option>'       |index =0
+write(cgi) '    <option value="lt">&#60;</option>'       |index =1
+write(cgi) '    <option value="le">&#61;&#60;</option>'  |index =2
+write(cgi) '    <option value="gt">&#62;</option>'       |index =3
+write(cgi) '    <option value="ge">&#61;&#62;</option>'  |index =4
+write(cgi) '    <option value="ne">ne</option>'          |index =5
+write(cgi) '  </select></td>'
+write(cgi) '  <td><input type="text" id="webvalue1" name="webvalue1" class="widthwide" value="<GVALUE1>"></td>'
+write(cgi) '</tr>'
+
+write(cgi) '  <tr><td class="padded" colspan="4"> <input type="submit" name="submit" class="btn btn-primary" value="Run Query" onclick="document.getElementById(''member'').value =''WPF.INC_REPORTS.QUERY_1'';">'
+write(cgi) '  <div id="reporttext" style="display:inline;"></div></td></tr>'
+write(cgi) '</table>'
+write(cgi) '</form>'
+write(cgi) '<script type="text/javascript">'
+write(cgi) ' whichrec(''<gdbrec>'',''varselect'');'
+write(cgi) ' document.getElementById(''gdbrec'').value =<gdbrec>;'
+write(cgi) ' document.getElementById("varselect").selectedIndex = <VNUM__4> - 1;'
+write(cgi) ' document.getElementById("operator").selectedIndex = ' SIGNNUM__4 ';'
+write(cgi) '</script>'
+
+ifthen('Run Query' eq '<GSUBMIT>')
+. EXECUTE DBMS 'CALL WPF.INC_REPORTS.QUERY_2'
+end if
+
+
+subprocedure GET_SIGN_NUM
+. ifthen('<GOPERATOR>' eq 'eq')
+.   SIGNNUM__4 = 0
+. elseif('<GOPERATOR>' eq 'lt')
+.   SIGNNUM__4 = 1
+. elseif('<GOPERATOR>' eq 'le')
+.   SIGNNUM__4 = 2
+. elseif('<GOPERATOR>' eq 'gt')
+.   SIGNNUM__4 = 3
+. elseif('<GOPERATOR>' eq 'ge')
+.   SIGNNUM__4 = 4
+. elseif('<GOPERATOR>' eq 'ne')
+.   SIGNNUM__4 = 5
+. else
+.   SIGNNUM__4 = 0
+. endif
+end subprocedure
+
+end program
+END PROCEDURE

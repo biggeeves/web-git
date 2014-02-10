@@ -1,0 +1,100 @@
+PROCEDURE      INC_BODY_DBA.CXSUM:T  (157219,58952)  |Last amended Mar 27, 2013,16:22:32
+retrieval CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+set EACH_NUMBER SUPER_TOT SUM__4 RECTOT__4 (0)
+
+write(cgi)'<h3>Check Sum: '
+write(cgi) [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '<br>'
+write(cgi) '</h3>'
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '<tr><th>Rec. Number:</th><th>Rec. Name </th>'
+write(cgi) '  <th><p class="text-right">Record Count</p></th><th><p class="text-right">Check Sum</p></th></tr>'
+
+do repeat RECN = <GREC1>
+                 <GREC2>
+                 <GREC3>
+                 <GREC4>
+                 <GREC5>
+
+. write(cgi) '    <tr>'
+. write(cgi) '    <td><p class="text-center">'
+. RECCNT__4 = numrecs(RECN)
+. ifthen (len(recdoc(RECN, 0)) gt 0)
+.   REC_LABEL__4 = pack(recdoc(RECN, 0))
+. elseif (len(recdoc(RECN, 1)) gt 0)
+.   REC_LABEL__4 = pack(recdoc(RECN, 1))
+. else
+.   REC_LABEL__4 = pack(recname(RECN))
+. endif
+. write(cgi) 'RECN:</p></td><td>' REC_LABEL__4 '</td><td><p class="text-right">' RECCNT__4 '</p></td>'
+. RECTOT__4 = 0
+
+CIF EQ 1, 0<GCASED>
+process cases
+CIF END
+
+
+. process rec RECN
+.   REC_TYPE_NUMBER = RECN
+.   for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.     VNAME$ = stdname(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.     if (VNAME$ = 'DWHO' or 'DCCWHO' or 'DSTAMP' or 'DCCDATE' or 'DCCTIME' or 'DCCEDITS') next for
+.     STR__4 = varget(VNAME$)
+.     SIR_VARTYPE = vtype(REC_TYPE_NUMBER, VNAME$)
+.     ifthen (exists(STR__4) eq 0) |Missing Values
+.       ifthen (SIR_VARTYPE >= 1 and SIR_VARTYPE <= 4)
+.         STR__4 = sget(VNAME$)
+.         MISSNUM__4 = misnum(STR__4)
+.         ifthen(MISSNUM__4 eq 0)
+.           SUM__4 = .001
+.         else
+.           STR__4 = miss(REC_TYPE_NUMBER, VNAME$, MISSNUM__4) | Get the original value of the user defined missing value
+.           for EACH_NUMBER = 1,  len(STR__4 )
+.             SUM__4 = SUM__4 + (ichar(sbst(STR__4, EACH_NUMBER, 1)))
+.           end for
+.           if(exists(SUM__4) eq 0) SUM__4 = MISSNUM__4 | THIS TAKES CARE OF "BLANK" USER DEFINED MISSING VALUES (1-3)
+.         endif
+.       else
+.         NUM__4 = nget(VNAME$)
+.         MISSNUM__4 = misnum(NUM__4)
+.         ifthen(MISSNUM__4 eq 0)
+.           SUM__4 = .001
+.         else
+.           SUM__4 = numbr(miss(REC_TYPE_NUMBER, VNAME$, MISSNUM__4)) | Get the original value of the user defined missing value
+.           if(exists(SUM__4) eq 0) SUM__4 = MISSNUM__4 | THIS TAKES CARE OF "BLANK" USER DEFINED MISSING VALUES (1-3)
+.         endif
+.       endif
+.     elseif (SIR_VARTYPE eq 1 or 2)|Strings
+.       for EACH_NUMBER = 1, len(STR__4)
+.         SUM__4 = SUM__4 + (ichar(sbst(STR__4, EACH_NUMBER, 1)))
+.       end for
+.     elseif (SIR_VARTYPE eq 3)|Dates
+.       ifthen (cdate(STR__4, datemap(REC_TYPE_NUMBER, VNAME$)) < 517687)  | March of the year 3000
+.         SUM__4 = cdate(STR__4, datemap(REC_TYPE_NUMBER, VNAME$))
+.       else
+.         SUM__4 = -1
+.       endif
+.     elseif (SIR_VARTYPE eq 4) |Time
+.       SUM__4 = (ctime(STR__4, timemap(REC_TYPE_NUMBER, VNAME$)))
+.     elseif (SIR_VARTYPE >= 5)|Integers, REAL*4, REAL*8, Scaled
+.       SUM__4 = numbr(STR__4)
+.     endif
+.     RECTOT__4 = RECTOT__4  + SUM__4
+.     SUPER_TOT = SUPER_TOT  +  SUM__4
+.   end for
+. end rec
+CIF EQ 1, 0<GCASED>
+end cases
+CIF END
+
+write(cgi) '<td><p class="text-right">' RECTOT__4 '</p></td></tr>'
+
+end repeat
+
+write(cgi) '<tr><td colspan="3"><p class="text-right">Super Total:</p></td><td><p class="text-right">' SUPER_TOT '</p></td></tr>'
+write(cgi) '</table>'
+
+end retrieval
+END PROCEDURE

@@ -1,0 +1,127 @@
+PROCEDURE      INC_BODY_FORMS.PICK_NEW_KEYS:T  (157221,45696)  |Last amended Mar 29, 2013,12:41:36
+PROGRAM
+print back noremarks nocommands
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+ifthen(dbtype(0) eq 1)
+. write(cgi) '<h3>' CASE_LABEL': <CASEISNQ></h3>'
+endif
+
+write(cgi) '<h3 title = "' [pack(recname(REC_TYPE_NUMBER))]  '">' REC_LABEL__4 '</h3>'
+write(cgi)  '<form method="post" action="<mycgi>">'
+write(cgi)  '<input type="hidden" name="member" value="WPF.DB_UPDATE.REC_NEW">'
+write(cgi)  '<input type="hidden" name="upick" value="New">'
+
+CALL WPF.INC_ELEMENTS.CASE_IS
+CALL WPF.INC_ELEMENTS.GDB_REC
+CALL WPF.INC_ELEMENTS.KEYS
+write(cgi)  '  <table class="table table-hover"> '
+for EACH_VARIABLE = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER)  +  dbtype(0)
+. VNAME$ = trimlr(keyname(REC_TYPE_NUMBER, EACH_VARIABLE))
+. VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$))
+. execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) VAR_LABEL = HTMLTEXT
+. HOVER_TITLE = 'title="' + VNAME$ | to start out the title
+. VAR_MIN = nmin(REC_TYPE_NUMBER, VNAME$)
+. VAR_MAX = nmax(REC_TYPE_NUMBER, VNAME$)
+. if(VAR_MIN eq 1) VAR_MIN = NMISS__4
+. if(VAR_MAX eq 3660000) VAR_MAX = NMISS__4
+. VAR_MIN_STR = smin(REC_TYPE_NUMBER, VNAME$)
+. VAR_MAX_STR = smax(REC_TYPE_NUMBER, VNAME$)
+. SIR_VARTYPE = vtype(REC_TYPE_NUMBER,VNAME$)
+. SIR_VARFORMAT = vformat(REC_TYPE_NUMBER, VNAME$)
+. SIR_VARFORMAT = replace(SIR_VARFORMAT, 'T', '', 1, 1, 0)
+. SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
+. if(SIR_VARTYPE eq 3) SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', '&#47;', 2, 1, 0)
+. SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', '', 1, 1, 0)
+. SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+
+. ifthen (SIR_VARTYPE eq 1)
+.   HOVER_TITLE = HOVER_TITLE + ' String: '
+. elseif (SIR_VARTYPE eq 2)
+.   HOVER_TITLE = HOVER_TITLE + ' Categorical: '
+. elseif (SIR_VARTYPE eq 3)
+.   if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + datec(VAR_MIN, SIR_VARFORMAT)
+.   if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + datec(VAR_MAX, SIR_VARFORMAT)
+. elseif (SIR_VARTYPE eq 4)
+.   if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + timec(VAR_MIN, SIR_VARFORMAT)
+.   if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + timec(VAR_MAX, SIR_VARFORMAT)
+. else
+.   HOVER_TITLE = HOVER_TITLE + ' Number: '
+.   if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + format(VAR_MIN)
+.   if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + format(VAR_MAX)
+.   if(exists(VAR_MIN_STR) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + VAR_MIN_STR
+.   if(exists(VAR_MAX_STR) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + VAR_MAX_STR
+. endif
+. HOVER_TITLE = HOVER_TITLE +'"'
+
+. write(cgi) 4t '<tr>'
+
+C LABEL COLUMN
+. write(cgi) 4t '<td class="textbold"> '
+. STR$1 = '<label for= "' + VNAME$ + '"'
+. write(cgi)  STR$1
+. STR$1 = ' ' + HOVER_TITLE + '>' + VAR_LABEL + ' .... </label></td>'
+. write(cgi) 6t STR$1
+
+C INPUT COLUMN
+. write(cgi) 4t '<td> '
+. STR$1 = '<input type="text" name= "' + VNAME$  + '" id ="' + VNAME$ + '"'
+. write(cgi)  STR$1
+c If String,  set max string length
+. ifthen (SIR_VARTYPE eq 1)
+.   STR$1 = " maxlength = " + substr(SIR_VARFORMAT, 2, len(SIR_VARFORMAT))
+.   write(cgi)  STR$1
+. endif
+c construct the key field updating
+. STR$2 = 'onchange="newkeys(this,key' + format(EACH_VARIABLE -dbtype(0))  + '); '
+. write(cgi)  4t STR$2
+. ifthen (nvallab(REC_TYPE_NUMBER, VNAME$) gt 0)
+.   STR$1 = ' SelectListByValue(''' + VNAME$ + ''',''' + VNAME$ + '_list'');'
+.   write(cgi)  STR$1
+. endif
+c create javascript CALL to validate
+. STR$1 = '  checkVartype(this,''' + format(SIR_VARTYPE) + "' , '"   + SIR_VARFORMAT  + "'" + ')"'
+. write(cgi)  STR$1 '>'
+
+. if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
+
+. ifthen(vtype(REC_TYPE_NUMBER, VNAME$) NE 1)  | for right now, lets stick with non-string key value labels
+.   ifthen (nvallab(REC_TYPE_NUMBER, VNAME$) ge 1)
+.     write(cgi)  ''
+.     STR$1 = '<select class="widthmed"  id="'  + VNAME$  + '_list" '
+.     write(cgi)  4t STR$1
+.     STR$2 = 'newkeys(this, key' + format(EACH_VARIABLE - dbtype(0))  + '); '
+.     STR$1 = 'onchange="SelectValueByList(this, ''' + VNAME$ + ''');' +  STR$2  + '">'
+.     write(cgi)  4t STR$1
+c     MUST MATCH UP WITH DATA ENTRY VALUES BECAUSE JAVASCRIPT IS THE SAME FOR EACH OF THESE!
+.     write(cgi)  '  <option value=""></option>'
+.     for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$)
+.       STR$1 = trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
+.       STR$2 = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
+.       execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.       if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+.       STR$2 = '<option value="'  + STR$2  + '">'
+.       write(cgi)  6t STR$2  STR$1 '</option>'
+.     end for
+.     write(cgi)  '</select>'
+.   endif
+. endif
+. write(cgi)  '</td>'
+end for
+write(cgi)  '  <td class="left"><input type="submit" name="gotorecord" value="New" class="btn btn-success"></td>'
+write(cgi)  '</tr>'
+write(cgi)  '</table>'
+write(cgi)  '</form>'
+c this sets the focues after the input has loaded.   Must be located after the input loads.
+
+VNAME$ = trimlr(keyname(REC_TYPE_NUMBER, 1 + dbtype(0)))
+STR$1 = '<script type="text/javascript"> document.forms[0].' +  VNAME$  + '.focus();</script>'
+write(cgi)  STR$1
+
+
+
+
+end retrieval
+END PROCEDURE

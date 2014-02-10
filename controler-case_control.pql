@@ -1,0 +1,39 @@
+PROCEDURE      CONTROLER.CASE_CONTROL:T  (156652,36066)  |Last amended Sep 07, 2011,10:01:06
+CALL WPF.DB_CHECKS.VALID_CASE
+
+c create a new case if that was selected
+CIF EQ 'new', '<GCASEOPTION>'
+CALL WPF.DB_CHECKS.VALID_CASE
+CALL WPF.DB_UPDATE.CASE_NEW
+CIF END
+
+
+retrieval crwarn noautocase
+integer *     1   FOUNDCASE__4                | Case already exists
+integer *     1   ANYNUM__4                    | Use any time you want
+
+. set FOUNDCASE__4  (0)
+. OLD case is <CASEIS>
+.   compute FOUNDCASE__4 = 1
+. end case is
+. ifthen (FOUNDCASE__4 = 0)
+.   ANYNUM__4= globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+.   ifthen ('new' = '<GCASEOPTION>')
+.     ANYNUM__4 =  globals( 'GSOMEMESS', 'WARNING! <CASEISNQ> was not created!')
+.   else
+.     ANYNUM__4 =  globals( 'GSOMEMESS', '<CASEISNQ> was not found')
+.   endif
+. else
+.   ifthen ('delete' = '<GCASEOPTION>')
+.     ANYNUM__4= globals( 'GSOMEMESS', 'Do you want to delete <CASEISNQ>?')
+.     ANYNUM__4= globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_SUMMARY')
+.   else
+.     ANYNUM__4= globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_NAV')
+.   endif
+. endif
+end retrieval
+
+CIF EQ '<GMEMSTOP>', 'WPF.INC_BODY_FORMS.CASE_NAV'
+CALL WPF.CONTROLER.STOP_PAGE
+CIF END
+END PROCEDURE

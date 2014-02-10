@@ -1,0 +1,60 @@
+PROCEDURE      TOOLS.ERR_REP:T  (157220,57713)  |Last amended Mar 28, 2013,16:01:53
+program CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+open (err_rep) write iostat = IOSTAT__4
+ifNOT (IOSTAT__4 eq 0) EXIT PROGRAM
+
+write(err_rep) '<html>'
+write(err_rep) '<body>'
+write(err_rep) '<h3>err page</h3>'
+write(err_rep) '<table class="table table-striped table-hover">'
+write(err_rep) '<tr><td>Date:</td><td> ' [datec(today(0), 'MMM. dd yyyy')]'</td></tr>'
+write(err_rep) '<tr><td>Time:</td><td> ' [timec(now(0), 'hh:mm')]'</td></tr>'
+write(err_rep) '<tr><td>Databases attached:</td><td> ' [system(40)]'</td></tr>'
+write(err_rep) '<tr><td>Database name:</td><td> ' DBNAME__4 '</td></tr>'
+
+c global values
+for EACH_GLOBAL = 1,  SYSTEM(53)
+. VNAME$ = globname(EACH_GLOBAL)
+. STR$1  = sglobal (VNAME$)
+. if(exists(STR$1) eq 0) STR$1 = sglobal (VNAME$)
+. if(upper(STR$1) ='<' + upper(VNAME$) + '>') next for
+
+. execute subroutine WPF.TOOLS.HTMLTEXT (VNAME$, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) VNAME$ = HTMLTEXT
+
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+
+. write(err_rep) '<tr><td>'VNAME$ '</td><td>' STR$1 '</td></tr>'
+end for
+
+write(err_rep) '<tr><td><hr></td><td><hr></td></tr>'
+
+for EACH_ATTRIBUTE = 1, SYSTEM(52)
+c attribute
+. STR$1 = attrname(EACH_ATTRIBUTE)
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+. write(err_rep) '<tr><td>' STR$1    '</td>'
+
+C path
+. STR$1 = dsn(STR$1)
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) STR$1= HTMLTEXT
+. write(err_rep) '<td>' STR$1    '</td></tr>'
+end for
+
+write(err_rep) '<tr><td>HTTP Referer</td><td>' [cgivarsv('HTTP_REFERER')] '</td></tr> '
+
+write(err_rep) '</table>'
+write(err_rep) '</body>'
+write(err_rep) '</html>'
+
+close (err_rep)
+end program
+
+
+END PROCEDURE

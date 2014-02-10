@@ -1,0 +1,16 @@
+PROCEDURE      TRIGGERS.WHOWHEN:T  (156430,45559)  |Last amended Jan 28, 2011,12:39:19
+SUBPROCEDURE WHOWHEN
+. ANYNUM__4 = varput('DCCDATE',datec(today(0), 'mm/dd/yyyy'))
+. ANYNUM__4 = varput('DCCTIME', timec(now(0), 'hh:mm'))
+. ANYNUM__4 = varput('DWHO', upper(sglobal('USERNAME')))
+. ANYNUM__4 = varput('DCCWHO', upper(sglobal('USERNAME')))
+. ifthen (exists(varget('DSTAMP')) eq 0)
+.   ANYNUM__4 = varput('DSTAMP', datec(today(0), 'mm/dd/yyyy'))
+. endif
+. ifthen (exists (nget('DCCEDITS')) eq 0)
+.   ANYNUM__4 = nput('DCCEDITS', 0)
+. else
+.   ANYNUM__4 = nput('DCCEDITS', nget('DCCEDITS') + 1)
+. endif
+END SUBPROCEDURE
+END PROCEDURE

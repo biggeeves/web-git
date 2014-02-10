@@ -1,0 +1,3 @@
+PROCEDURE      INC_ELEMENTS.GDB_REC:T  (156498,51875)  |Last amended Apr 06, 2011,14:24:35
+write(cgi) '<input type="hidden" id="gdbrec" name="gdbrec"  value="<GDBREC>">'
+END PROCEDURE

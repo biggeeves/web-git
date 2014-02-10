@@ -1,0 +1,47 @@
+PROCEDURE      INC_BODY_FORMS.CASE_NAV:T  (157220,68556)  |Last amended Mar 28, 2013,19:02:36
+C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
+
+PROGRAM CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+ifthen ('<CASEIS>' ne '')
+. STR$1 = 'value="<CASEISNQ>" '
+else
+. STR$1 = 'value="" '
+endif
+write(cgi) '<h3>Navigate IDs</h3>'
+write(cgi) '<div class="row">'
+write(cgi) '<div class="span2 offset1">'
+write(cgi) '  <ul class="nav nav-tabs nav-stacked">'
+write(cgi) '  <li class="nav-header">ID Navigation</li>'
+ifthen (0<GSECLEVEL> ne 0)
+. write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NEW"> - New ID</a></li>'
+. ifthen (0<GDELCASE> eq 1)
+.   write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASEDEL"> - Delete an ID</a></li>'
+. endif
+endif
+write(cgi) '</ul>'
+write(cgi) '</div>'
+write(cgi) '<div class="span6 offset1 well text-center">'
+write(cgi) 6t '<h4>' CASE_LABEL '</h4>'
+write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
+write(cgi) 6t '<input type="hidden" name="member" id="member" value="WPF.CONTROLER.CASE_CONTROL">'
+write(cgi) 6t '<input type="text" id="caseis" style="margin-bottom:0;" name="caseis"' STR$1 '>'
+write(cgi) 6t '<input type="submit" value="View forms" class="btn btn-success"><br><br>'
+write(cgi) 6t '<input type="button" value="First"    class="btn btn-primary" onclick="forwardCase(0);">'
+write(cgi) 6t '<input type="button" value="Previous" class="btn btn-primary" onClick="backwardCase(caseNum);">'
+write(cgi) 6t '<input type="button" value="Next"     class="btn btn-primary" onClick="forwardCase(caseNum);">'
+write(cgi) 6t '<input type="button" value="Last"     class="btn btn-primary" onClick="backwardCase(101);">'
+write(cgi) '</form>'
+
+
+write(cgi) '</div>'
+write(cgi) '</div>'
+
+write(cgi) '<script type="text/javascript">document.getElementById("caseis").focus();</script>'
+
+END PROGRAM
+
+c style="border-top: 1px solid #CCC;
+END PROCEDURE

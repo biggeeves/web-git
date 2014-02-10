@@ -1,0 +1,104 @@
+PROCEDURE      INC_BODY_DBA.CASERECS:T  (157219,59306)  |Last amended Mar 27, 2013,16:28:26
+retrieval | CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+set RECTOT__4 (0)
+
+write(cgi) '<h3>Cases and Records Table ' [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '</h3>'
+write(cgi) '<form name = "gotocase" action="<mycgi>" method="post">'
+write(cgi) '<input type="hidden" name="member" value="WPF.INC_BODY_FORMS.REC_NAV">'
+write(cgi) '<div style="overflow:auto; width:870px; "> '
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) 2t '<tr>'
+VNAME$ = trimlr(keyname(0, 1))
+VAR_LABEL = trimlr(varlabsc(0, VNAME$))
+if(VAR_LABEL eq '') VAR_LABEL = VNAME$
+write(cgi) '<th title="Case">' VAR_LABEL  '</th>'
+for EACH_RECORD_NUMBER = 1, nrecs(0)
+. ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
+. REC_NAME__4 = trimlr(recname(EACH_RECORD_NUMBER))
+. ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+. elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+. else
+.   REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+. endif
+. RECCNT__4 = numrecs(EACH_RECORD_NUMBER)
+. STR$1 = ' title="' + REC_LABEL__4 + ' Total Recs: '  + format(RECCNT__4) +  '"'
+. write(cgi) '<th' STR$1 '>' REC_NAME__4 '</th>'
+end for
+write(cgi) '<th title="Total Records">Total</th>'
+write(cgi) 2t '</tr>'
+
+CIF EQ 1, 0<GCASED>
+process cases
+
+c to make specific IDs selected insert the code here
+. write(cgi) '    <tr>'
+. KEYVNAME__4 = varname(0, 1)
+. VNAME$CB = stdname(KEYVNAME__4)
+. CASE_STR = trim(varget(VNAME$CB))
+. LINK__4 = '<a class="btn btn-primary" href ="<mycgi>?member=WPF.CONTROLER.CASE_CONTROL&caseis=' + CASE_STR + '"> ' + CASE_STR +'</a>'
+. STR$1 = '  <td>' + LINK__4  + '</td>'
+. write(cgi) STR$1
+
+CIF END
+
+RECTOT__4 = 0
+do repeat RECN = <GREC1>
+                 <GREC2>
+                 <GREC3>
+                 <GREC4>
+                 <GREC5>
+
+. REC_TYPE_NUMBER = RECN
+. STR$1 = pack(recname(REC_TYPE_NUMBER))
+
+. write(cgi) '<td class= "alt" title="' CASE_STR ':' STR$1 '">'
+. ANYNUM__4 = 0
+. RECCNT__4 = 0
+. process rec RECN
+.   ANYNUM__4 = 1
+.   RECTOT__4 = RECTOT__4  + 1
+.   RECCNT__4 = RECCNT__4  + 1
+.   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.     VNAME$CB  = stdname(KEYVNAME__4)
+.     STRING_VARGET = pack(varget(VNAME$CB))
+.     ifthen (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 3)
+.       SIR_VARFORMAT = datemap(REC_TYPE_NUMBER, VNAME$CB)
+.       STRING_VARGET = datec(cdate(STRING_VARGET, SIR_VARFORMAT), SIR_VARFORMAT)
+.       STRING_VARGET = replace(STRING_VARGET, " ", "/", 2, 1, 0)
+.     elseif (vtype(REC_TYPE_NUMBER, KEYVNAME__4) eq 4)
+        SIR_VARFORMAT = timemap(REC_TYPE_NUMBER, KEYVNAME__4)
+.       STRING_VARGET = timec(ctime(STRING_VARGET, SIR_VARFORMAT), SIR_VARFORMAT)
+.     endif
+.     write(cgi) STRING_VARGET
+.   end for
+.   ifnot (count(REC_TYPE_NUMBER) eq RECCNT__4 ) write(cgi) ','
+. end rec
+. ifthen (nkeys(REC_TYPE_NUMBER) eq 0)
+.   ifthen (ANYNUM__4 eq 1)
+.     write(cgi) 'Y'
+.   else
+.     write(cgi) '&nbsp;'
+.   endif
+. else
+.   if (ANYNUM__4 eq 0) write(cgi) '&nbsp;'
+. endif
+. write(cgi) '</td>'
+end repeat
+
+write(cgi) '<td class="right">' RECTOT__4 '</td>'
+CIF EQ 1, 0<GCASED>
+. write(cgi) '</tr>'
+end cases
+CIF END
+
+write(cgi) '</table></div>'
+write(cgi) '</form>'
+
+end retrieval
+END PROCEDURE

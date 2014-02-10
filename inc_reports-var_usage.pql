@@ -1,0 +1,135 @@
+PROCEDURE      INC_REPORTS.VAR_USAGE:T  (157221,45374)  |Last amended Mar 29, 2013,12:36:14
+retrieval CRWARN NOAUTOCASE
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+integer *     4   array VAREXISTS   (0:20000)
+real    *     8   array VARMIN      (0:20000)
+real    *     8   array VARMAX      (0:20000)
+integer *     4   array VARMISSING0 (0:20000)
+integer *     4   array VARMISSING1 (0:20000)
+integer *     4   array VARMISSING2 (0:20000)
+integer *     4   array VARMISSING3 (0:20000)
+
+
+write(cgi)'<h3>Variable Usage ' [datec(today(0),'MM.DD.YYYY')] '</h3>'
+
+c record count
+. RECCNT__4 = numrecs(REC_TYPE_NUMBER)
+. write(cgi) '<p>' REC_LABEL__4 '<br> Count: <span class="textbold">' RECCNT__4 '</span>'
+c show keys for each record type
+. STR$2 ='No Keys'
+. ifthen (nkeys(REC_TYPE_NUMBER) eq 1)
+.   STR$2 = 'Key: '
+. elseif  (nkeys(REC_TYPE_NUMBER) gt 1)
+.   STR$2 = 'Keys: '
+. endif
+. for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) + dbtype(0)
+.   STR$1 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.   if (exists(STR$1) eq 1) STR$2 = STR$2 + STR$1
+.   if(EACH_KEY ne (nkeys(REC_TYPE_NUMBER) + dbtype(0)) ) STR$2 = STR$2 +', '
+. end for
+. write(cgi) 4t '<br>' STR$2 '</p>'
+
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) 2t '<tr>'
+write(cgi) 4t '<th>Variable</th>'
+write(cgi) 4t '<th>Label</th>'
+write(cgi) 4t '<th>Exists</th>'
+write(cgi) 4t '<th>Min - Max</th>'
+write(cgi) 4t '<th title="blank or system missing">System Missing</th>'
+write(cgi) 4t '<th title="Missing 1, 2, and 3">M1, M2, M3 </th>'
+write(cgi) 2t '<th>Freq.</th>'
+write(cgi) 2t '</tr>'
+
+set VAREXISTS   * (0)
+set VARMISSING0 * (0)
+set VARMISSING1 * (0)
+set VARMISSING2 * (0)
+set VARMISSING3 * (0)
+
+CIF EQ 1, 0<GCASED>
+process cases
+get vars all
+CIF END
+CIF NE 0, <GDBREC>
+. process rec <GDBREC>
+CIF END
+.   for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.     VNAME$ = varnamec(REC_TYPE_NUMBER, EACH_VARIABLE)
+.     VNAME$CB = stdname(VNAME$)
+.     VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
+.     VAR_MIN = nmin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.     VAR_MAX = nmax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.     SIR_VARTYPE   = vtype(REC_TYPE_NUMBER,VNAME$CB)
+.     STR__4 = varget(VNAME$CB)
+.     ifTHEN( SIR_VARTYPE eq 3 OR 4)
+.       STR__4 = format(nget(VNAME$CB))
+.     endif
+.
+.     ifthen (exists(STR__4) eq 0) |Missing Values
+.       MISSNUM__4 = misnum(STR__4)
+.       ifthen(MISSNUM__4 eq 0)
+.         VARMISSING0(EACH_VARIABLE) = VARMISSING0(EACH_VARIABLE) + 1
+.       elseif(MISSNUM__4 eq 1)
+.         VARMISSING1(EACH_VARIABLE) = VARMISSING1(EACH_VARIABLE) + 1
+.       elseif(MISSNUM__4 eq 2)
+.         VARMISSING2(EACH_VARIABLE) = VARMISSING2(EACH_VARIABLE) + 1
+.       elseif(MISSNUM__4 eq 3)
+.         VARMISSING3(EACH_VARIABLE) = VARMISSING3(EACH_VARIABLE) + 1
+.       endif
+.     else
+.       ifNOT(numbr(STR__4) gt VARMIN(EACH_VARIABLE) ) VARMIN(EACH_VARIABLE) = numbr(STR__4)
+.       ifNOT(numbr(STR__4) lt VARMAX(EACH_VARIABLE) ) VARMAX(EACH_VARIABLE) = numbr(STR__4)
+.       VAREXISTS(EACH_VARIABLE) = VAREXISTS(EACH_VARIABLE) + 1
+.     endif
+.   end for
+CIF NE 0, <GDBREC>
+. end rec
+CIF END
+CIF EQ 1, 0<GCASED>
+end cases
+CIF END
+. for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.   VNAME$ = varnamec(REC_TYPE_NUMBER, EACH_VARIABLE)
+.   VNAME$CB = stdname(VNAME$)
+.   VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
+.   SIR_VARTYPE   = vtype(REC_TYPE_NUMBER, VNAME$CB)
+.   SIR_VARFORMAT = vformat(REC_TYPE_NUMBER, VNAME$)
+.   SIR_VARFORMAT = replace(SIR_VARFORMAT, 'T', '', 1, 1, 0)
+.   SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
+.   if(SIR_VARTYPE eq 3) SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', '&#47;', 2, 1, 0)
+.   SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', '', 1, 1, 0)
+.   SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+
+.   write(cgi) 2t '<tr>'
+.   write(cgi) 4t '<td>' VNAME$   '</td>'
+.   write(cgi) 4t '<td>' VAR_LABEL '</td>'
+.   write(cgi) 4t '<td>' VAREXISTS(EACH_VARIABLE) '</td>'
+.   ifthen(exists(VARMIN(EACH_VARIABLE)) eq 1)  | if a minimum exists, than a maximum must exist too.
+.     ifthen (SIR_VARTYPE eq 3)
+.       write(cgi) 4t '<td>' [datec(VARMIN(EACH_VARIABLE), SIR_VARFORMAT )] ' - ' [datec(VARMAX(EACH_VARIABLE), SIR_VARFORMAT )] '</td>'
+.     elseif (SIR_VARTYPE eq 4)
+.       write(cgi) 4t '<td>' [timec(VARMIN(EACH_VARIABLE), SIR_VARFORMAT )] ' - ' [timec(VARMAX(EACH_VARIABLE), SIR_VARFORMAT )] '</td>'
+.     else
+.       write(cgi) 4t '<td>' VARMIN(EACH_VARIABLE) ' - ' VARMAX(EACH_VARIABLE) '</td>'
+.     endif
+.   else
+.     write(cgi) 4t '<td>n.a. - n.a.</td>'
+.   endif
+.   write(cgi) 4t '<td>' VARMISSING0(EACH_VARIABLE) '</td>'
+.   write(cgi) 4t '<td>' VARMISSING1(EACH_VARIABLE) ',  ' VARMISSING2(EACH_VARIABLE) ',  ' VARMISSING3(EACH_VARIABLE) '</td>'
+.   ifthen (REC_TYPE_NUMBER eq 0)
+.     write(cgi) 2t '<td>n.a.</td>'
+.   else
+.     STR$1 = '"<mycgi>?member=WPF.INC_REPORTS.FREQ_1&amp;submit=Frequencies&amp;gdbrec=' + sglobal('gdbrec')  + '&amp;webvnum=' + format(EACH_VARIABLE) + '"'
+.     write(cgi) 4t '<td><a class="bluetext" href=' STR$1 '>Freq.</a></td>'
+.   endif
+.   write(cgi) 2t '</tr>'
+. end for
+
+write(cgi) '  </table>'
+
+
+end retrieval
+END PROCEDURE

@@ -1,0 +1,29 @@
+PROCEDURE      MAIN_NAV.LINK_CODEBOOK:T  (157219,49738)  |Last amended Mar 27, 2013,13:48:58
+
+write(cgi) 10t '<li class="dropdown">'
+write(cgi) 10t '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Codebook<b class="caret"></b></a>'
+write(cgi) 10t '  <ul class="dropdown-menu">'
+
+ifthen (nglobal('GVIEWSCHEMA') eq 1)
+. STR$1 = '<li><a href="<mycgi>?member=WPF.INC_ELEMENTS.CODEBOOK_NAV_BAR'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '"'
+. write(cgi) 4T STR$1 '>Codebook</a></li>'
+
+. STR$1 = '<li><a href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.SEARCH'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1  + '"'
+. write(cgi) 4T STR$1'>Search Codebook</a></li>'
+
+
+. STR$1 = '<li><a href="<mycgi>?member=WPF.INC_REPORTS.KEYMAP'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1  + '"'
+. write(cgi) 4T STR$1'>Database Key Map</a></li>'
+else
+. write(cgi) 4T '<li class="divider"></li>'
+endif
+
+write(cgi) 10t '  </ul>'
+write(cgi) 10t '</li>'
+END PROCEDURE

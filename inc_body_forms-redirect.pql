@@ -1,0 +1,24 @@
+PROCEDURE      INC_BODY_FORMS.REDIRECT:T  (156659,59145)  |Last amended Sep 14, 2011,16:25:45
+PROGRAM
+string * 600 STR$1            | General String use at any time
+
+. compute STR$1  = '<' + CHAR(33) + 'DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">'
+. write(cgi) STR$1
+. write(cgi) '<html>'
+. write(cgi) '<head>'
+. write(cgi) '<script type="text/javascript">'
+. write(cgi) '<!--'
+. write(cgi) 'function delayer(){'
+. write(cgi) '    window.location = "<GREDIRECT>"'
+. write(cgi) '}'
+. write(cgi) '//-->'
+. write(cgi) '</script>'
+. write(cgi) '</head>'
+. write(cgi) '<body onLoad="setTimeout(''delayer()'', 2)">'
+. write(cgi) '<h2>Prepare to be redirected!</h2>'
+. write(cgi) '<p>This page will direct you to the requested page'
+. write(cgi) 'location!</p>'
+. write(cgi) '</body>'
+. write(cgi) '</html>'
+END PROGRAM
+END PROCEDURE

@@ -1,0 +1,32 @@
+PROCEDURE      INC_BODY_FORMS.CASE_DEL_CONFIRM:T  (156629,47899)  |Last amended Aug 15, 2011,13:18:19
+retrieval crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+RECCNT__4     = 0
+FOUNDCASE__4  = 0
+
+write(cgi) '<h2 class="center">YOU ARE ABOUT TO DELETE AN ENTIRE CASE IN THE DATABASE!</h2>'
+old case is <CASEIS>
+. FOUNDCASE__4 = 1
+. for EACH_RECORD_NUMBER = 1, nrecs(0)
+.   if(exists(count(EACH_RECORD_NUMBER)) eq 1)  RECCNT__4 = RECCNT__4 + count(EACH_RECORD_NUMBER)
+. end for
+. STR$1 =  CASE_LABEL + ': <CASEISNQ>'
+. write(cgi) '<br><span class="redfont textbold " style="padding: 30px;"> ' STR$1 '</span><br><br>'
+. write(cgi) '<span class="redfont textbold " style="padding: 30px;"> There are ' RECCNT__4 ' records in the database under this ID.</span><br>'
+. write(cgi) '<form action="<mycgi>" name="deleteacase" method="post">'
+. write(cgi) '<br>'
+. write(cgi)  '<input type="hidden" name="member" id="member" value="WPF.INC_BODY_FORMS.CASE_SUMMARY">'
+. CALL WPF.INC_ELEMENTS.CASE_IS
+. write(cgi) '<span class="redfont" style="padding: 30px;" > Required: </span> Reason for deleting this ID.'
+. write(cgi) '<input type="text" class="widthwidest" id="reason" name="reason">'
+. write(cgi) '<input type="submit" name="submit" value="Delete" onclick="return reasonBlank();">'
+. write(cgi) '</form>'
+end case is
+
+ifNOT (FOUNDCASE__4 eq 1) write(cgi) '<br><br><br><br>That ID was not found. Unable to delete <CASEISNQ> at this time.'
+write(cgi) '<br><br><br><br>' | give it some space from the footer.
+
+end retrieval
+END PROCEDURE

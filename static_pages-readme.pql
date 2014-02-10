@@ -1,0 +1,5 @@
+PROCEDURE      STATIC_PAGES.README:T  (157462,40177)  |Last amended Nov 25, 2013,11:09:37
+These files are created one time.
+Create these files by running initialize.
+If these files change run initialize again to push these files to the web root.
+END PROCEDURE

@@ -1,0 +1,44 @@
+PROCEDURE      SYSTEM.INITIALIZE:T  (157515,44254)  |Last amended Jan 17, 2014,12:17:34
+PRINT BACK OFF
+
+CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
+
+CIF EQ 1,2  | THIS WOULD BE A GOOD COMMENT SYSTEM TO ROLE OUT.  TIMES ARE ADDED SO THAT THE PROGRAM IS NOT A NULL PROGRAM
+PROGRAM
+integer *     1   ANYNUM__4                    | Use any time you want
+. ANYNUM__4= globals("RUNCOMMENT", ".")
+END PROGRAM
+
+program
+time SHOWTIME# ('HH:MM:SS')
+SHOWTIME#=now(0)
+<RUNCOMMENT> write SHOWTIME# 'system.initialize<br>'
+end program
+CIF END
+
+C CHECK TO SEE IF THE WPF ATTRIBUTE IS DEFINE.  IF IT IS NOT DEFINED, THIS CAN NOT GO AHEAD!
+program crwarn
+. string * 256 WPF
+. for EACH_ATTRIBUTE = 1,  SYSTEM(52)
+. if (pack( upper( attrname( EACH_ATTRIBUTE) ) ) eq 'WPF') EXIT PROGRAM | IT IS DEFINED.  DO NOT REDIFINE IT.
+. end for
+end program
+
+program
+write 'Note that everything must be in a folder called sirweb'
+end program
+
+CALL WPF.GLOB_VARS.HTMLCODE       | HTML CODE LIKE <JAVASCRIPT>
+CALL WPF.SYSTEM.STATIC_ATTS       | File locations for all files
+CALL WPF.STATIC_PAGES.LOGON           | Static Page: Initial log on
+CALL WPF.STATIC_PAGES.LOGOUT          | Static Page: log out
+
+CALL WPF.JS.ALLCALL               | Creates the javascript globals, file and "Java disabled web page"
+
+CALL WPF.CSS.CUSTOM               | CSS file contains look and feel
+
+CALL WPF.TOOLS.HTMLTEXT           | Cleans up text for HTML output.  Example: "<"
+
+CALL WPF.STATIC_PAGES.ERR_403          | Error page for 403  Access Denied
+CALL WPF.STATIC_PAGES.ERR_404          | Error page for 404  Page not found
+END PROCEDURE

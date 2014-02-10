@@ -1,0 +1,51 @@
+PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157452,52573)  |Last amended Nov 15, 2013,14:36:13
+retrieval crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+CALL WPF.INC_ELEMENTS.HEADER_START
+CALL WPF.INC_ELEMENTS.JAVASCRIPT
+CALL WPF.INC_ELEMENTS.HEADER_END
+CALL WPF.INC_ELEMENTS.BODY_START
+CALL WPF.INC_ELEMENTS.BODY_END
+CALL WPF.INC_ELEMENTS.STATUS_BLOCK
+CALL WPF.INC_ELEMENTS.BODY_HEADER
+
+COUNTS__4 = 0
+write(cgi) '<h3 class="text-center">Welcome.</h3>'
+write(cgi) '<div class="row">'
+write(cgi) '<div class="span6 offset3 text-center">'
+write(cgi) '<form class="center" name="dbchoose" action="<mycgi>" method="post">'
+write(cgi) '<input type="hidden" name="redirect" value="<REDIRECT>">'
+write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLER.FIRST_PAGE">'
+write(cgi) '<p class="text-center"><strong>Choose a Database<strong></p>'
+write(cgi) '<select name="dbpick" size="10" id="dblist">'
+GOON__4 = 0
+. ifthen(sglobal('USERNAME') eq 'Greg Neils')
+.   process rec DBADMIN
+.     STR$1 = '<option value = "'  + trimlr(SESSIONDB) + '">' + trimlr(SESSIONDB) +  '</OPTION>'  | user trimlr since case ids are always padded
+.     write(cgi) STR$1
+.   end rec
+. else
+.   process rec DBUSERS
+.     ifNOT (sglobal('USERNAME') eq USERNAMEIS) NEXT REC
+.     COUNTS__4 = COUNTS__4 +1
+write counts__4
+.     STR$1 = '<option value = "'  + trimlr(SESSIONDB) + '"'
+.     if(COUNTS__4 = 1) STR$1 = STR$1 + ' selected ="selected"'
+.     STR$1 = STR$1 + '>' + trimlr(SESSIONDB) +  '</OPTION>'  | user trimlr since case ids are always padded
+.     write(cgi) STR$1
+.   end rec
+. endif
+write(cgi) '</select>'
+write(cgi) '<br><input type="submit" name="submit" value="Connect DB" class="btn btn-primary"><br>'
+write(cgi) '</form>'
+write(cgi) '</div>'
+write(cgi) '</div>'
+
+CALL WPF.INC_ELEMENTS.SOME_MESSAGE
+
+CALL WPF.JS.SESSION_COOKIES
+CALL WPF.INC_ELEMENTS.FOOTER
+
+END RETRIEVAL
+END PROCEDURE

@@ -1,0 +1,95 @@
+PROCEDURE      CONTROLER.REC_NAV:T  (157452,52665)  |Last amended Nov 15, 2013,14:37:45
+c hub for record navigation.  All trafic to and from a record should go here.
+
+CALL WPF.DB_CHECKS.VALID_REC
+
+CALL WPF.DB_CHECKS.VALID_CASE
+
+CALL WPF.CONTROLER.REC_ONLY_ONE       | see if there is only one record.  no need to choose keys then.  CAREFUL.  USER CAN PICK TABLE VIEW!
+
+program
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+UPICK__4  = sglobal('GUPICK')
+
+ifthen (UPICK__4 = 'New')
+. ifthen (dbtype(0) = nkeys(REC_TYPE_NUMBER) +  dbtype(0)) | has no keys
+.   ANYNUM__4 =  globaln('REC_STAT', 1)
+.   EXECUTE DBMS 'CALL WPF.DB_UPDATE.REC_NEW'
+. else
+.   ANYNUM__4 =  globaln('REC_STAT', 1)
+.   ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
+. endif
+
+elseif (UPICK__4 = 'View')
+. ANYNUM__4 =  globaln('REC_STAT', 2)
+. ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_READONLY')
+
+
+elseif (UPICK__4 = 'Edit')
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_KEYS'
+
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_VIA'
+
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_REC_EXISTS'
+. ANYNUM__4 =  globaln('REC_STAT', 2)
+. ifthen (meminfo('SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)) + ':T', 1) = 1)
+.   ANYNUM__4 =  globals('GMEMOUT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
+.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+. else
+.   ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_EDIT')
+. endif
+
+elseif (UPICK__4 = 'Select') | Multiple Records to choose.
+. ifthen (dbtype(0) = nkeys(REC_TYPE_NUMBER) +  dbtype(0)) | Keys
+.   ANYNUM__4 =  globaln('REC_STAT', 2)
+.   ifthen (meminfo('SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)) + ':T', 1) = 1)
+.     ANYNUM__4 =  globals('GMEMOUT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
+.     EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.   else
+.     EXECUTE DBMS 'CALL WPF.CONTROLER.DATA_ENTRY'
+.   endif
+. else | No keys
+.   ANYNUM__4= globaln('REC_STAT', 2)
+.   EXECUTE DBMS 'CALL WPF.CONTROLER.REC_ONLY_ONE'
+. endif
+
+elseif(UPICK__4 eq 'Save')
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_KEYS'
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_VIA'
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_REC_EXISTS'
+. ANYNUM__4 = globaln('REC_STAT', 4) | Let us assume that no errors
+. EXECUTE DBMS 'CALL WPF.DB_UPDATE.REC_SAVE'
+
+elseif (UPICK__4 = 'Table')
+. ANYNUM__4 =  globaln('REC_STAT', 1)
+. ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_TABLE')
+elseif (UPICK__4 eq 'First' or 'Previous' or 'Next' or 'Last' )
+. ANYNUM__4 =  globaln('REC_STAT', 2)
+. EXECUTE DBMS 'CALL WPF.CONTROLER.REC_CHANGE_KEYS'
+. EXECUTE DBMS 'CALL WPF.CONTROLER.DATA_ENTRY'
+
+elseif (UPICK__4 eq 'Delete')
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_KEYS'
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_VIA'
+. EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_REC_EXISTS'
+. EXECUTE DBMS 'CALL WPF.DB_UPDATE.REC_DEL'
+
+else
+. ANYNUM__4 =  globals( 'GSOMEMESS', 'un-specified choice:' + UPICK__4)
+. ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+endif
+
+GOON__4  = 0 | May the record type got deleted and the user has old information.  doubtful, but still not nice.
+for EACH_RECORD_NUMBER = 1, nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4  = 1
+end for
+ifthen (GOON__4  = 0)
+. ANYNUM__4  =  globals( 'GSOMEMESS', 'The table number <GDBREC> was not found')
+. ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+endif
+
+end PROGRAM
+END PROCEDURE

@@ -1,0 +1,71 @@
+PROCEDURE      MAIN_NAV.LINK_REPORTS_DBA:T  (157221,46684)  |Last amended Mar 29, 2013,12:58:04
+c DBA Reports
+. write(cgi) '<li class="divider"></li>'
+|List Stats
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.LIST_STATS'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: List Stats</a></li>'
+. write(cgi) 4T STR$1
+
+|DB USAGE
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.USAGE'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: DB Usage</a></li>'
+. write(cgi) 4T STR$1
+
+|CHECK SUM
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.CXSUM'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: Check Sum</a></li>'
+. write(cgi) 4T STR$1
+
+|Cases Recs
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.CASERECS'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: Cases: List all records</a></li>'
+. write(cgi) 4T STR$1
+
+|Variable Name Frequencies
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.VAR_NAME_FREQ'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: Var Name Frequencies</a></li>'
+. write(cgi) 4T STR$1
+
+
+|Variable with no defined ranges
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.CHK_NO_RANGES'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: No defined ranges</a></li>'
+. write(cgi) 4T STR$1
+
+| Dates: Oct. 15th 1585.
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.CHECK_DATES'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: Oct. 15th 1585</a></li>'
+. write(cgi) 4T STR$1
+
+|Find Blank Records
+. STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.CHK_BLANK_REC'
+. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. STR$1 = STR$1 + '">DBA: Blank records</a></li>'
+. write(cgi) 4T STR$1
+
+
+|Rec Frequencies
+. ifthen (dbtype(0) eq 1)
+.   STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.RECORDFREQS'
+.   if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+.   STR$1 = STR$1 + '">DBA: Record frequencies</a></li>'
+.   write(cgi) 4T STR$1
+
+|N Cases by N Recs
+.   STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.N_CASES'
+.   if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+.   STR$1 = STR$1 + '">DBA: N Cases by N Recs</a></li>'
+.   write(cgi) 4T STR$1
+. endif
+|Todays Data Entry
+.   STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.DAYS_ENTRY">DBA: Daily Data Entry</a></li>'
+.   write(cgi) 4T STR$1
+
+END PROCEDURE

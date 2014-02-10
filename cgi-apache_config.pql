@@ -1,0 +1,21 @@
+PROCEDURE      CGI.APACHE_CONFIG:T  (157451,50716)  |Last amended Nov 14, 2013,14:05:16
+To configure apache to let SIR handle things these lines must be included in the httpd.conf file
+"#" means comment line to appache
+sirweb.cgi is a global variable in the webprocf, which means it can change.  if it changes the apache config needs to change too.
+Note that all forms submit to "sirweb.cgi"
+all l=links are of the form "sirweb.cgi"
+
+
+------------------ Apache .htaccess Sample Configuration ----------------------
+Add these lines  in the appropriate place:
+
+# tells apache everything with this alias is treated as a script and will run instead of being served back
+ScriptAlias /sirweb/ "C:/Program Files (x86)/SIR XS/"
+
+# tells apache that this folder is ok.
+<Directory "C:/Program Files (x86)/SIR XS">
+    AllowOverride None
+    Options None
+    Require all granted
+</Directory>
+END PROCEDURE

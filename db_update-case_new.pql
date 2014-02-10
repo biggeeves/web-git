@@ -1,0 +1,16 @@
+PROCEDURE      DB_UPDATE.CASE_NEW:T  (156629,48115)  |Last amended Aug 15, 2011,13:21:55
+retrieval crwarn noautocase UPDATE
+integer *     1   FOUNDCASE__4                | Case already exists
+
+. set FOUNDCASE__4  (0)
+. OLD case is <CASEIS>
+.   compute FOUNDCASE__4 = 1
+. end case is
+. ifthen(FOUNDCASE__4 = 0)  | CASE already existsed don't try to create a new one
+.   ifthen ('new' = '<GCASEOPTION>')
+.     new case is <CASEIS>
+.     end case is
+.   endif
+. endif
+end retrieval
+END PROCEDURE

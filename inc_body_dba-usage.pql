@@ -1,0 +1,263 @@
+PROCEDURE      INC_BODY_DBA.USAGE:T  (157221,43884)  |Last amended Mar 29, 2013,12:11:24
+retrieval CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+real    *  8  array DSTAMP_MAX     (1:200)
+real    *  8  array DSTAMP_MIN     (1:200)
+integer *  2  array DSTAMPYEAR    (1:200)
+integer *  1  array DSTAMPMONTH   (1:200)
+integer *  1  array DSTAMPDAY     (1:200)
+
+real    *  8  array DCC_DATE_MAX    (1:200)
+
+integer *  4  array DCC_TIME_MAX    (1:200)
+integer *  4  array DCC_TIME_MIN    (1:200)
+
+integer *  4  array DCC_EDITS_MAX   (1:200)
+integer *  4  array DCC_EDITS_MIN   (1:200)
+
+string  * 16  array ADWHO         (1:200)
+string  * 16  array ADCCWHO       (1:200)
+string  * 32  DATEFORMAT
+string  * 16  TIMEFORMAT
+
+real    *  4  array DB_MONTH  (1:12)
+real    *  4  array DB_DAY    (1:7)
+real    *  4  array DB_HOUR   (0:24)
+real    *  4  array DB_YEAR   (1900:2030)
+
+set DB_YEAR   * (0)
+set DB_MONTH  * (0)
+set DB_DAY    * (0)
+set DB_HOUR   * (0)
+
+ifthen (exists(upget('user.datemap')) eq 0)
+. DATEFORMAT = 'MM/DD/YYYY' | Not specified
+else
+. DATEFORMAT = upget('user.datemap')
+endif
+TIMEFORMAT = 'HH:MM'
+
+
+write(cgi)'<h3>Database Usage as of '
+write(cgi) [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '<br>'
+write(cgi) '</h3>'
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '<tr><th class="left">Rec. Name </th>'
+c write(cgi) '  <th class="right">DWHO</th><th class="right">DCCWHO</th>'
+write(cgi) '  <th class="right">Date Created Min</th><th class="right">Date Created Max</th>'
+write(cgi) '  <th class="right">Date Edited Max</th>'
+write(cgi) '  <th class="right">Time Min</th><th class="right">Time Max</th>'
+write(cgi) '  <th class="right">Edits Min</th><th class="right">Edits Max</th></tr>'
+
+do repeat RECN = <GREC1>
+                 <GREC2>
+                 <GREC3>
+                 <GREC4>
+                 <GREC5>
+
+set DSTAMP_MIN * (300000)
+set DSTAMP_MAX * (-1)
+set DCC_DATE_MAX * (-1)
+set DCC_TIME_MIN * (300000)
+set DCC_TIME_MAX * (-1)
+set DCC_EDITS_MIN * (300000)
+set DCC_EDITS_MAX * (-1)
+
+. RECCNT__4 = numrecs(RECN)
+. ifthen (len(recdoc(RECN, 0)) gt 0)
+.   REC_LABEL__4 = pack(recdoc(RECN, 0))
+. elseif (len(recdoc(RECN, 1)) gt 0)
+.   REC_LABEL__4 = pack(recdoc(RECN, 1))
+. else
+.   REC_LABEL__4 = pack(recname(RECN))
+. endif
+. write(cgi) '    <tr>'
+. write(cgi) '    <td class="right" title ="RECN: count:' RECCNT__4 '">'
+. write(cgi) 4t  REC_LABEL__4 '</td>'
+
+CIF EQ 1, 0<GCASED>
+process cases
+CIF END
+
+
+. process rec RECN
+.   REC_TYPE_NUMBER = RECN
+.   for EACH_VARIABLE = 1,  nvarsc(REC_TYPE_NUMBER)
+.       VNAME$ = stdname(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.       ifNOT (VNAME$ eq 'DWHO' or 'DCCWHO' or 'DSTAMP' or 'DCCDATE' or 'DCCTIME' or 'DCCEDITS') next for
+.       STR__4    = varget(VNAME$)
+.       SIR_VARTYPE = vtype(REC_TYPE_NUMBER, VNAME$)
+.     ifthen ((VNAME$ eq 'DSTAMP') )
+.       NUM__4 = nget(VNAME$)
+.       if (NUM__4 lt DSTAMP_MIN(REC_TYPE_NUMBER)) DSTAMP_MIN(REC_TYPE_NUMBER) = NUM__4
+.       if (NUM__4 gt DSTAMP_MAX(REC_TYPE_NUMBER)) DSTAMP_MAX(REC_TYPE_NUMBER) = NUM__4
+.     elseif ((VNAME$ eq 'DCCDATE') )
+.       NUM__4 = nget(VNAME$)
+.       if (NUM__4 gt DCC_DATE_MAX(REC_TYPE_NUMBER)) DCC_DATE_MAX(REC_TYPE_NUMBER) = NUM__4
+.       set DAYIS__4 (missing)
+.       ifthen(datec(NUM__4, 'WWW') eq 'MON')
+.         DAYIS__4   = 1
+.       elseif(datec(NUM__4, 'WWW') eq 'TUE')
+.         DAYIS__4   = 2
+.       elseif(datec(NUM__4, 'WWW') eq 'WED')
+.         DAYIS__4   = 3
+.       elseif(datec(NUM__4, 'WWW') eq 'THU')
+.         DAYIS__4   = 4
+.       elseif(datec(NUM__4, 'WWW') eq 'FRI')
+.         DAYIS__4   = 5
+.       elseif(datec(NUM__4, 'WWW') eq 'SAT')
+.         DAYIS__4   = 6
+.       elseif(datec(NUM__4, 'WWW') eq 'SUN')
+.         DAYIS__4   = 7
+.       endif
+.       ifthen (exists(DAYIS__4 ) eq 1)
+.         DB_DAY(DAYIS__4) = DB_DAY(DAYIS__4)  + 1
+.       endif
+.       ifthen (exists(numbr(datec(NUM__4, 'MM'))) eq 1)
+.         DB_MONTH(numbr(datec(NUM__4, 'MM'))) = DB_MONTH(numbr(datec(NUM__4, 'MM')))  + 1
+.       endif
+.       ifthen (exists(numbr(datec(NUM__4, 'YYYY'))) eq 1)
+.         DB_YEAR(numbr(datec(NUM__4, 'YYYY'))) = DB_YEAR(numbr(datec(NUM__4, 'YYYY')))  + 1
+.       endif
+.     elseif ((VNAME$ eq 'DCCTIME') )
+.       NUM__4 = nget(VNAME$)
+.       if (NUM__4 lt DCC_TIME_MIN(REC_TYPE_NUMBER)) DCC_TIME_MIN(REC_TYPE_NUMBER) = NUM__4
+.       if (NUM__4 gt DCC_TIME_MAX(REC_TYPE_NUMBER)) DCC_TIME_MAX(REC_TYPE_NUMBER) = NUM__4
+.       ifthen (exists(numbr(timec(NUM__4, 'HH'))) eq 1)
+.         DB_HOUR(numbr(timec(NUM__4, 'HH'))) = DB_HOUR(numbr(timec(NUM__4, 'HH')))  + 1
+.       endif
+.     elseif ((VNAME$ eq 'DCCEDITS') )
+.       NUM__4 = nget(VNAME$)
+.         if (NUM__4 lt DCC_EDITS_MIN(REC_TYPE_NUMBER)) DCC_EDITS_MIN(REC_TYPE_NUMBER) = NUM__4
+.         if (NUM__4 gt DCC_EDITS_MAX(REC_TYPE_NUMBER)) DCC_EDITS_MAX(REC_TYPE_NUMBER) = NUM__4
+.     endif
+.   end for
+. end rec
+CIF EQ 1, 0<GCASED>
+end cases
+CIF END
+
+c DSTAMP min
+STR$1 = '&nbsp;'
+ifNOT(DSTAMP_MIN(REC_TYPE_NUMBER) eq 300000) STR$1 = datec(DSTAMP_MIN(REC_TYPE_NUMBER), DATEFORMAT)
+write(cgi) '<td class="right">' STR$1 '</td>'
+
+c DSTAMP max
+STR$1 = '&nbsp;'
+ifNOT(DSTAMP_MAX(REC_TYPE_NUMBER) eq -1) STR$1 = datec(DSTAMP_MAX(REC_TYPE_NUMBER), DATEFORMAT)
+write(cgi) '<td class="right">' STR$1 '</td>'
+
+c DCCDATE max
+STR$1 = '&nbsp;'
+ifNOT (DCC_DATE_MAX(REC_TYPE_NUMBER) eq -1) STR$1 = datec(DCC_DATE_MAX(REC_TYPE_NUMBER), DATEFORMAT)
+write(cgi) '<td class="right">' STR$1 '</td>'
+
+c time min
+STR$1 = '&nbsp;'
+ifNOT (DCC_TIME_MIN(REC_TYPE_NUMBER) eq 300000) STR$1 = timec(DCC_TIME_MIN(REC_TYPE_NUMBER), TIMEFORMAT)
+write(cgi) '<td class="right">' STR$1 '</td>'
+
+c time max
+STR$1 = '&nbsp;'
+ifNOT(DCC_TIME_MAX(REC_TYPE_NUMBER) eq -1) STR$1 = timec(DCC_TIME_MAX(REC_TYPE_NUMBER), TIMEFORMAT)
+write(cgi) '<td class="right">' STR$1 '</td>'
+
+c dccedits min
+STR$1 = '&nbsp;'
+ifnot(DCC_EDITS_MIN(REC_TYPE_NUMBER) eq 300000) STR$1 = format(DCC_EDITS_MIN(REC_TYPE_NUMBER))
+write(cgi) '<td class="right">' STR$1 '</td>'
+
+c dccedits max
+STR$1 = '&nbsp;'
+ifNOT(DCC_EDITS_MAX(REC_TYPE_NUMBER) eq -1) STR$1 = format(DCC_EDITS_MAX(REC_TYPE_NUMBER))
+write(cgi) '<td class="right">' STR$1 '</td>'
+
+end repeat
+
+for EACH_NUMBER = 1, 199
+. if(DSTAMP_MIN(EACH_NUMBER) lt DSTAMP_MIN(200)) DSTAMP_MIN(200) = DSTAMP_MIN(EACH_NUMBER)
+. if(DSTAMP_MAX(EACH_NUMBER) gt DSTAMP_MAX(200)) DSTAMP_MAX(200) = DSTAMP_MAX(EACH_NUMBER)
+end for
+
+for EACH_NUMBER = 1, 199
+. if(DCC_DATE_MAX(EACH_NUMBER) gt DCC_DATE_MAX(200)) DCC_DATE_MAX(200) = DCC_DATE_MAX(EACH_NUMBER)
+end for
+
+for EACH_NUMBER = 1, 199
+. if(DCC_TIME_MIN(EACH_NUMBER) lt DCC_TIME_MIN(200)) DCC_TIME_MIN(200) = DCC_TIME_MIN(EACH_NUMBER)
+. if(DCC_TIME_MAX(EACH_NUMBER) gt DCC_TIME_MAX(200)) DCC_TIME_MAX(200) = DCC_TIME_MAX(EACH_NUMBER)
+end for
+
+for EACH_NUMBER = 1, 199
+. if(DCC_EDITS_MIN(EACH_NUMBER) lt DCC_EDITS_MIN(200)) DCC_EDITS_MIN(200) = DCC_EDITS_MIN(EACH_NUMBER)
+. if(DCC_EDITS_MAX(EACH_NUMBER) gt DCC_EDITS_MAX(200)) DCC_EDITS_MAX(200) = DCC_EDITS_MAX(EACH_NUMBER)
+end for
+
+write(cgi) '<tr><td class="right">Entire database: </td>'
+STR$1 = '&nbsp;' ; STR$2 = '&nbsp;'
+ifNOT (DSTAMP_MIN(200) eq 300000) STR$1 = datec(DSTAMP_MIN(200), DATEFORMAT)
+ifNOT (DSTAMP_MAX(200) eq -1)     STR$2 = datec(DSTAMP_MAX(200), DATEFORMAT)
+write(cgi) '  <td class="right">' STR$1 '</td><td class="right">' STR$2 '</td>'
+
+STR$1 = '&nbsp;'
+ifNOT(DCC_DATE_MAX(200) eq -1)     STR$1 = datec(DCC_DATE_MAX(200), DATEFORMAT)
+write(cgi) '  <td class="right">' STR$1 '</td>'
+
+STR$1 = '&nbsp;' ; STR$2 = '&nbsp;'
+ifNOT (DCC_TIME_MIN(200) eq 300000) STR$1 = timec(DCC_TIME_MIN(200), TIMEFORMAT);
+ifNOT (DCC_TIME_MAX(200) eq -1)     STR$2 = timec(DCC_TIME_MAX(200), TIMEFORMAT)
+write(cgi) '  <td class="right">' STR$1 '</td><td class="right">' STR$2 '</td>'
+
+STR$1 = '&nbsp;' ; STR$2 = '&nbsp;'
+ifNOT(DCC_EDITS_MIN(200) eq 300000) STR$1 = format(DCC_EDITS_MIN(200))
+ifNOT(DCC_EDITS_MAX(200) eq -1)     STR$2 = format(DCC_EDITS_MAX(200))
+write(cgi) '  <td class="right">' STR$1 '</td><td class="right">' STR$2 '</td>'
+
+write(cgi) '</tr></table>'
+
+C HOUR
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '  <tr><th class="right">Hour</th><th class="right">Number of entries</th></tr>'
+for EACH_NUMBER = 0, 24
+. STR$1 =  trimlr(vallabsc(-1, 'HOURIS__4', EACH_NUMBER))
+. ifthen (DB_HOUR(EACH_NUMBER) NE 0)
+.   write(cgi) '<tr><td class="right">' STR$1 '</td><td class="right">' DB_HOUR(EACH_NUMBER) '</td></tr>'
+. endif
+end for
+write(cgi) '</table>'
+
+C DAY
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '  <tr><th class="right">Day</th><th class="right">Number of entries<br>Based on edit date</th></tr>'
+for EACH_NUMBER = 1, 7
+. STR$1 =  trimlr(vallabsc(-1, 'DAYIS__4', EACH_NUMBER))
+. ifthen (DB_DAY(EACH_NUMBER) NE 0)
+.   write(cgi) '<tr><td class="right">' STR$1 '</td><td class="right">' DB_DAY(EACH_NUMBER) '</td></tr>'
+. endif
+end for
+write(cgi) '</table>'
+
+C MONTH
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '  <tr><th class="right">Month</th><th class="right">Number of entries<br>Based on edit date</th></tr>'
+for EACH_NUMBER = 1, 12
+. STR$1 = trimlr(vallabsc(-1, 'MONTHIS__4', EACH_NUMBER))
+. ifthen (DB_MONTH(EACH_NUMBER) NE 0)
+.   write(cgi) '<tr><td class="right">' STR$1 '</td><td class="right">' DB_MONTH(EACH_NUMBER) '</td></tr>'
+. endif
+end for
+write(cgi) '</table>'
+
+C YEAR
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '  <tr><th class="right">Year</th><th class="right">Number of entries<br>Based on edit date</th></tr>'
+for EACH_NUMBER = 1900, 2030
+. ifthen (DB_YEAR(EACH_NUMBER) NE 0)
+.   write(cgi) '<tr><td class="right">' EACH_NUMBER '</td><td class="right">' DB_YEAR(EACH_NUMBER) '</td></tr>'
+. endif
+end for
+write(cgi) '</table>'
+end retrieval
+END PROCEDURE

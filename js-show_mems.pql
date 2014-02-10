@@ -1,0 +1,48 @@
+PROCEDURE      JS.SHOW_MEMS:T  (156617,57557)  |Last amended Aug 03, 2011,15:59:17
+program crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+open showmems /write lrecl=400 IOSTAT= IOSTAT__4
+
+ifNOTthen (IOSTAT__4 =0)
+. write 'Error creating js files: ' IOSTAT__4
+. exit program
+endif
+
+c define the function and show the possible members
+
+c members
+for EACH_FAMILY =  1, system(57)
+. FAMILY_NAME = famname(EACH_FAMILY)
+. STR$1 = 'function famNumber' + format(EACH_FAMILY) +'() {'
+. write(showmems) STR$1
+. STR$1 = ',true'  | Used here for default selected
+. for EACH_MEMBER = 1, MEMCOUNT(FAMILY_NAME)
+.   MEMBER_NAME = MEMNAME(FAMILY_NAME, EACH_MEMBER)
+.   write(showmems) 4t 'document.pickmem.runmemname.options[' [format(EACH_MEMBER -1)] ']=new Option("'MEMBER_NAME'",  "' MEMBER_NAME  '");'
+. end for
+. write(showmems) '}'
+end for
+
+c define switch for showing record variables
+write(showmems) 'function selFamily (famNumber){'
+write(showmems) 2t 'document.pickmem.runmemname.options.length=0;'           | 0=first choice.  returns number selected
+write(showmems) 2t 'var d =famNumber;'
+write(showmems) 2t 'switch (d){'
+for EACH_FAMILY = 1, system(57)
+. STR$1 = 'case "'  + format(EACH_FAMILY) +  '":'
+. write(showmems) 2t STR$1
+. STR$1 = 'famNumber' + format(EACH_FAMILY)  + '();'
+. write(showmems) 4t STR$1
+. write(showmems) 4t 'break;'
+end for
+write(showmems) 2t 'default:'
+write(showmems) 4t 'alert("default famNumber: " + d);'
+write(showmems) 2t '}'
+write(showmems) '}'
+close showmems
+
+
+end program
+END PROCEDURE

@@ -1,0 +1,3 @@
+PROCEDURE      INC_ELEMENTS.BODY_START:T  (157452,47372)  |Last amended Nov 15, 2013,13:09:32
+write(cgi) '<body '
+END PROCEDURE

@@ -1,0 +1,56 @@
+PROCEDURE      INC_ELEMENTS.CODEBOOK_NAV_BAR:T  (157459,46626)  |Last amended Nov 22, 2013,12:57:06
+program crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+. set REC_LABEL__4 ('')
+
+
+. write(cgi) '<h3>' DBNAME__4 ' Codebook</h3>'
+. write(cgi) '<table class="table table-striped table-hover">'
+. write(cgi) '<tr><th>Table</th><th>Form</th><th>Variable Usage<br>takes a long time.</th><th>Sample Form</th></tr>'
+|Index of Record Types
+. for EACH_RECORD_NUMBER = 1 - dbtype(0), nrecs(0)
+.   EACH_VARIABLE = nvarsc(EACH_RECORD_NUMBER)
+.   if (EACH_VARIABLE eq 0) next for
+.   REC_NAME__4 = trim(recname(EACH_RECORD_NUMBER))
+.   HOVER_TITLE  = ' title="Record# ' + format(EACH_RECORD_NUMBER) + ' (' + format(numrecs(EACH_RECORD_NUMBER)) + ' records in database)"'
+.   write(cgi)  '<tr'  HOVER_TITLE '>'
+.   STR$1 = '"<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;gdbrec=' + format(EACH_RECORD_NUMBER) +'"'
+.   write(cgi) '<td><a class="bluetext" href= ' STR$1  '>' REC_NAME__4 '</a></td>'
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+.   ifthen (len(REC_LABEL__4) < 1 and REC_NAME__4 eq 'CIR')
+.     REC_LABEL__4 = 'Common Information Record'
+.   elseif ((len(REC_LABEL__4) < 1) or (exists(REC_LABEL__4) eq 0))
+.     REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+.   endif
+.   ifthen (srst(REC_LABEL__4, '<') <> 0)
+.     REC_LABEL__4 = replace(REC_LABEL__4, '<', '&lt;', 5, 1, 0)
+.   endif
+.   ifthen (srst(REC_LABEL__4, '>') <> 0)
+.     REC_LABEL__4 = replace(REC_LABEL__4, '>', '&gt;', 5, 1, 0)
+.   endif
+.   if (exists(REC_LABEL__4) eq 0) REC_LABEL__4  ='&nbsp;'
+.   write(cgi) '<td><a class="bluetext" href= ' STR$1  '>' REC_LABEL__4  '</a></td>'
+c   Var Usage
+.   ifthen(0<GREPGEN> eq 1)
+.     STR$1 ='<a class="bluetext" href="<mycgi>?member=WPF.INC_REPORTS.VAR_USAGE&amp;gdbrec=' + format(EACH_RECORD_NUMBER)  + '">View</a>'
+.   else
+.     STR$1 = '&nbsp;'
+.   endif
+.   write(cgi) '<td>' STR$1  '</td>'
+c   Sample Rec
+.   ifNOTthen(EACH_RECORD_NUMBER eq 0) | no blank forms for CIR record right now.
+.     STR$1 = '"<mycgi>?member=WPF.DB_CHECKS.VALID_REC&amp;gdbrec=' + format(EACH_RECORD_NUMBER)  + '"'
+.     write(cgi) '<td><a class="bluetext" href= ' STR$1  '>Sample Form</a></td>'
+.   else
+.     write(cgi) '<td>&nbsp;</td>'
+.   endif
+.   write(cgi) '</tr>'
+. end for
+
+. write(cgi) '</table>'
+
+
+end program
+END PROCEDURE

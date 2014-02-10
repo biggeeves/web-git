@@ -1,0 +1,122 @@
+PROCEDURE      DB_UPDATE.REC_SAVE:T  (156819,58335)  |Last amended Feb 21, 2012,16:12:15
+c Saves data to a record.
+GLOBAL ERR__4 = 999  | SET TO ONE ERROR AND IF THE RETRIEVAL UPDATE DOESN'T WORK IT WILL GET REPORTED BACK TO THE USER
+
+
+retrieval UPDATE crwarn showmiss | LOADMAP VARMAP UPSTAT
+print back noremarks NOcommands
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+set ERR__4 (-1)
+REC_TYPE_NUMBER = 0<GDBREC>
+
+
+CIF EQ 1, 0<GCASED>
+old case is <CASEIS>
+CIF END
+process rec <GDBREC> <GVIA#>
+. if(ERR__4 = -1) ERR__4 = 0 | made it into the record
+. ANYNUM__4 = globaln('ERR__4', 0)
+. for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.   ISKEY__4 = 0
+.   VNAME$ = trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  | works with non standard variable names
+
+c
+c   DO NOT SAVE VARIABLES THAT WERE NOT SENT.  SKIP THEM OR THEY WILL TURN INTO SYSTEM MISSING.
+.   if (EXISTS(CGIVARPN(VNAME$)) eq 0) NEXT FOR
+c
+.   VALID_RESULT = -1
+.   for EACH_KEY = 1, nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.      compute KEYVNAME__4 = trimlr(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.      compute KEYVNAME__4 = REPLACE(KEYVNAME__4, '{', '', 1, 0, 0)
+.      compute KEYVNAME__4 = REPLACE(KEYVNAME__4, '}', '', 1, 0, 0)
+.     if (VNAME$ = KEYVNAME__4) ISKEY__4 = 1
+.   end for
+c   do nothing if key variable
+.   IF (ISKEY__4 = 1) NEXT FOR
+
+
+.   SIR_VARTYPE = vtype(REC_TYPE_NUMBER, '{' + VNAME$ + '}')
+c optional things for debugging
+.   VAR_MIN = nmin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.   VAR_MAX = nmax(REC_TYPE_NUMBER,  varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.   VAR_MIN_STR = smin(REC_TYPE_NUMBER,  trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE)))
+.   VAR_MAX_STR = smax(REC_TYPE_NUMBER,  trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE)))
+
+.   compute STR__4  = trimlr(cgivarpn(VNAME$))
+
+.   compute VNAME$ = '{' + VNAME$ + '}'
+
+C SIRS BUILT IN VARIABLE SECURITY
+.   ifthen (wvarsec(REC_TYPE_NUMBER, VNAME$) gt WACCESS(0))  | WRITE SECURITY FOR VARIABLE IS GREATER THAN USER SECURITY CLEARENCE
+.     NEXT FOR
+.   endif
+
+
+.   if (STR__4 eq '') STR__4 = SMISS__4
+.   if (exists(STR__4) eq 0) STR__4 = SMISS__4
+.   VALID_RESULT = validate(REC_TYPE_NUMBER, VNAME$, STR__4)
+C write SIR_VARTYPE  VNAME$ VALID_RESULT 'string: 'STR__4 '  number:' NUM__4'<br>'
+.   ifNOTthen (VALID_RESULT eq 0 or 3 or 4 or 5 or 6)
+.     ERR__4 = ERR__4  + 1
+.     ANYNUM__4 = globaln('REC_STAT', 3)
+.     ANYNUM__4 = globaln('ERR__4', ERR__4)
+CIF EQ 1,2 | KEEP FOR DEBUG
+.     write(cgi) 'validate: '   VALID_RESULT '<br>'
+            'cgi: '        [CGIVARPN(VNAME$)] '<br>'
+            'name$:'       VNAME$     '<br>'
+            'VAR_MIN_STR:'       VAR_MIN_STR     '<br>'
+            'VAR_MAX_STR:'       VAR_MAX_STR     '<br>'
+            'SIR_VARTYPE:'  SIR_VARTYPE '<br>'
+CIF END
+.   else
+.     ANYNUM__4 = varput(VNAME$, STR__4)
+.     ifnotthen (ANYNUM__4 = 0 or 3 or 4 or 5 or 6 or 7)
+.       write 'error in var put!' ANYNUM__4 ':' VNAME$  ":" STR__4 ' Type: ' SIR_VARTYPE 'Len: ' [len(STR__4)] '<br>'
+.       ERR__4 = ERR__4  + 1
+.       ANYNUM__4 = globaln('REC_STAT', 3)
+.       ANYNUM__4 = globaln('ERR__4', ERR__4)
+.       ANYNUM__4 = globals( 'GSOMEMESS',  '<GSOMEMESS>,<br>' + VNAME$)
+.     endif
+.   endif
+
+end for
+execute subprocedure WHOWHEN
+end rec
+CIF EQ 1, 0<GCASED>
+end case is
+CIF END
+
+
+INCLUDE MEMBER WPF.TRIGGERS.WHOWHEN
+
+end retrieval
+
+
+
+PROGRAM
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+ifthen (0<ERR__4> eq 0)
+. ANYNUM__4 = globals('GSOMEMESS', REC_LABEL__4 + ' was saved')
+. ifthen ('<USERNAME>' = 'Greg Neils' or 'Ming')
+.   ANYNUM__4 = globals('GUPICK', 'Edit')
+.   EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+. else
+.   ANYNUM__4 = globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_NAV')
+. endif
+elseif (0<ERR__4> eq 999)
+. ANYNUM__4 = globals('GUPICK', 'Edit')
+. ANYNUM__4 = globals( 'GSOMEMESS',  'There was an issue trying to save the record' + REC_LABEL__4 )
+. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+else
+. ANYNUM__4 = globals('GUPICK', 'Edit')
+. ANYNUM__4 = globals( 'GSOMEMESS', 'Data Validation Errors' + '<GSOMEMESS>')
+. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+endif
+END PROGRAM
+
+
+END PROCEDURE

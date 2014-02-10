@@ -1,0 +1,144 @@
+PROCEDURE      CSS.CUSTOM:T  (157459,52109)  |Last amended Nov 22, 2013,14:28:29
+c Style sheets, should be incuded in every page
+
+program crwarn
+write '<br> CSS.CUSTOM:' 20T [dsn('customcss')]
+open customcss /write lrecl = 600
+
+
+c when using bootstrap 3.2 and a fixed navbar at the top you must add padding-top to the body!  ATLEAST 50PX PADDING-TOP.
+write(customcss) 'body {' /
+                 5t 'padding-top: 60px;' /
+                 '}'/
+
+
+write(customcss) '.smallcontainer {' /
+                 5t 'max-width: 480px;' /
+                 5t 'padding: 19px 29px 29px;' /
+                 5t 'margin: 0 auto 20px;' /
+                 5t 'background-color: #fff;' /
+                 5t 'border: 1px solid #e5e5e5;' /
+                 5t '-webkit-border-radius: 5px;'/
+                 5t '-moz-border-radius: 5px;' /
+                 5t 'border-radius: 5px;' /
+                 5t '-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);' /
+                 5t '-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);' /
+                 5t 'box-shadow: 0 1px 2px rgba(0,0,0,.05);' /
+                 '}'
+write(customcss) 'textarea {width:auto;}'/
+
+write(customcss) 'h1 {'
+                 5t 'background-color: #3399CC;' /
+                 5t 'text-align: center;' /
+                 5t 'color:  #FFFFFF;' /
+                 5t 'text-shadow:2px 3px 0 #555 ;' /
+                 5t 'border-bottom-color: #B0E0E6;' /
+                 '}'/
+write(customcss) 'h2 {'/
+                 5t 'color: #000;'/
+                 5t 'font-family: "Times New Roman", Times, serif;'/
+                 5t 'text-align: left;'/
+                 '}'/
+write(customcss) 'h3 {'/
+                 5t 'font-family: "Times New Roman", Times, serif;'/
+                 5t 'text-align: left;'/
+                 5t 'color: #522914;'/
+                 '}'/
+write(customcss) 'h5 {'/
+                 5t 'background-color: #fff680;'/
+                 5t 'padding: 5px;'/
+                 5t 'text-align: left;'/
+                 '}'/
+c write(customcss) 'table {text-align:left;'/
+c                  5t 'width: 100%;'/
+c                  5t 'padding: 10px 20px 5px 20px;' /
+c                  '}'/
+write(customcss) 'p {'/
+                 5t 'text-align:left;'/
+                 5t 'padding-left:20px;'/
+                 '}'/
+write(customcss) 'dl {font-weight:bold;}'/
+                 'dd {font-weight:normal;}'/
+
+
+
+
+write(customcss) '#statusblock {'/
+                 5t 'position: absolute;'/
+                 5t 'padding: 0;'/
+                 5t 'height:  0;'/
+                 5t 'font-size: 20pt;'/
+                 5t 'margin-top:  10px;'/
+                 5t 'margin-left: 20px;'/
+                 5t 'color: #82CAFF;'/
+                 5t 'z-index: 401;'/
+                 '}'/
+write(customcss) '#dblist {'/
+                 5t 'width: 200px;'/
+                 5t 'vertical-align: middle;'/
+                 5t 'background: #82CAFF;'/
+                 5t 'font-family: Tahoma;'/
+                 5t 'letter-spacing: 1px;'/
+                 5t 'margin-left:  30px;'/
+                 5t 'margin-right: 30px;'/
+                 5t 'padding-left: 10px;'/
+                 '}'
+write(customcss) '#dccvars {'/
+                 5t 'text-align: right;'/
+                 5t 'padding-right: 5px;'/
+                 5t 'border-top:2px solid #CCC;'/
+                 '}'/
+write(customcss) '#caseidlabel{'/
+                 5t 'font-weight: bold;'/
+                 5t 'display: inline;'/
+                 5t 'text-indent: 30pt;'/
+                 '}'
+write(customcss) '#selectpage{'/
+                 5t 'float: right;'/
+                 5t 'padding-right: 15px;'/
+                 '}'
+write(customcss) '.title{'/
+                 5t 'font-weight: bold;'/
+                 5t 'background-color: #000;'/
+                 '}'/
+write(customcss) '.indent { margin-right: 5%; margin-left: 5%} '/
+
+write(customcss) '.xsmallfont{ font-size: x-small;}'/
+write(customcss) '.smallfont{'/
+                 5t 'font-size: small;'/
+                 5t 'font-style: italic;'/
+                 '}'
+write(customcss) '.textbold  {font-weight: bold;}'/
+write(customcss) '.left      {text-align: left;}'/
+write(customcss) '.center    {text-align: center;}'/
+write(customcss) '.right     {text-align: right;} '/
+write(customcss) '.redbkg    {background-color: #fd5;}'/
+write(customcss) '.h3bkg     {background-color: #CCE5F2;}'/
+write(customcss) '.tanbkg    {background-color: #FFF8DC;}'/
+write(customcss) '.redfont   {color: #FF000d;}'/
+write(customcss) '.whitefont {color: #FFF;}'/
+write(customcss) '.inputtext_read  { font-weight: bold; font-size: medium; border-style:none; background-color:#DDD;}'/
+write(customcss) '.leftindent      {text-indent: 20px;}'/
+
+write(customcss) '.spacecompress {'/
+                 5t 'margin-top: 0px;'/
+                 5t 'margin-bottom: 0px;'/
+                 '}'/
+write(customcss) '.nobullets {'/
+                 5t 'list-style-type: none;'/
+                 5t 'margin-top: 0px;'/
+                 5t 'margin-bottom: 0px;'/
+                 '} '/
+write(customcss) '.varprompts {'/
+                 5t 'width: 400px;'/
+                 '}'/
+write(customcss) '.padded {padding: 10px 10px 10px 10px;}' /
+write(customcss) '.widthsmall  { width: 100px;}'/
+write(customcss) '.widthmed    { width: 200px;}'/
+write(customcss) '.widthwide   { width: 240px;}'/
+write(customcss) '.widthwidest { width: 450px;}'/
+write(customcss) '.label_rec   {font-style: italic; font-weight: bold; font-size: 120%;}'/
+write(customcss) 'input.readonly {background-color: #DDD;}'/
+close customcss
+end program
+END PROCEDURE

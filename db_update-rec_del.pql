@@ -1,0 +1,45 @@
+PROCEDURE      DB_UPDATE.REC_DEL:T  (157452,48201)  |Last amended Nov 15, 2013,13:23:21
+GLOBAL GOON__4 = -1
+
+retrieval UPDATE crwarn | LOADMAP VARMAP UPSTAT
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+CIF EQ 1, 0<GCASED>
+old case is <CASEIS>
+CIF END
+old rec is <GDBREC> <GVIA#>
+. ANYNUM__4 = globaln('GOON__4', 1)
+. delete rec
+end rec is
+c test to see if deleted
+old rec is <GDBREC> <GVIA#>
+. ANYNUM__4 = globaln('GOON__4', 0)
+end rec
+CIF EQ 1, 0<GCASED>
+end case is
+CIF END
+end retrieval
+
+PROGRAM
+ifthen (nglobal('GOON__4')  eq 1)
+. ANYNUM__4 = globals( 'GSOMEMESS', 'Record deleted')
+. ifthen ('<USERNAME>' = 'Greg Neils')
+.   ANYNUM__4 = globaln('REC_STAT', 5)
+.   ANYNUM__4 = globals('GUPICK', 'Edit')
+.   EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+. else
+.   ANYNUM__4 = globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_NAV')
+. endif
+elseif (nglobal('GOON__4')  eq -1)
+. ANYNUM__4 = globaln('REC_STAT', 6)
+. ANYNUM__4 = globals( 'GSOMEMESS',  'Could not access record.  NOT DELETED.  PLEASE TRY AGAIN LATER.')
+. ANYNUM__4 = globals('GUPICK', 'Edit')
+. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+elseif (nglobal('GOON__4') eq 0)
+. ANYNUM__4 = globals( 'GSOMEMESS', 'RECORD STILL EXISTS.  NOT DELETED.  PLEASE TRY AGAIN LATER.')
+. ANYNUM__4 = globals('GUPICK', 'Edit')
+. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+endif
+END PROGRAM
+END PROCEDURE

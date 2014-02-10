@@ -1,0 +1,254 @@
+PROCEDURE      INSTALLER.APACHE_CONFIG_ORIGINAL:T  (157539,54896)  |Last amended Feb 10, 2014,15:14:56
+# This file will be copied to your apache config folder
+# Globals are set by the installer GUI.
+# this file should be customized to your set up.
+# Examples include
+# ServerRoot "c:/Apache"
+# ServerRoot "C:/Program Files (x86)/Apache Software Foundation/Apache2.2"
+# "WP_" prefixed variables are the one need setting
+# File was created 2/10/2014.... Apache Config tempalte is from same date.
+ServerRoot "WP_SERVERROOT"
+Listen 80
+
+LoadModule actions_module modules/mod_actions.so
+LoadModule alias_module modules/mod_alias.so
+LoadModule asis_module modules/mod_asis.so
+LoadModule auth_basic_module modules/mod_auth_basic.so
+LoadModule authn_default_module modules/mod_authn_default.so
+LoadModule authn_file_module modules/mod_authn_file.so
+LoadModule authz_default_module modules/mod_authz_default.so
+LoadModule authz_groupfile_module modules/mod_authz_groupfile.so
+LoadModule authz_host_module modules/mod_authz_host.so
+LoadModule authz_user_module modules/mod_authz_user.so
+LoadModule autoindex_module modules/mod_autoindex.so
+LoadModule cgi_module modules/mod_cgi.so
+LoadModule dir_module modules/mod_dir.so
+LoadModule env_module modules/mod_env.so
+LoadModule include_module modules/mod_include.so
+LoadModule isapi_module modules/mod_isapi.so
+LoadModule log_config_module modules/mod_log_config.so
+LoadModule mime_module modules/mod_mime.so
+LoadModule negotiation_module modules/mod_negotiation.so
+LoadModule setenvif_module modules/mod_setenvif.so
+
+<IfModule !mpm_netware_module>
+<IfModule !mpm_winnt_module>
+User daemon
+Group daemon
+</IfModule>
+</IfModule>
+
+ServerAdmin YourName@YourDomain.com
+
+# Example: DocumentRoot "C:/Program Files (x86)/Apache Software Foundation/Apache2.2/htdocs"
+DocumentRoot "WP_DOCUMENTROOT"
+#
+# Each directory to which Apache has access can be configured with respect
+# to which services and features are allowed and/or disabled in that
+# directory (and its subdirectories).
+#
+# First, we configure the "default" to be a very restrictive set of
+# features.
+#
+<Directory />
+    Options FollowSymLinks
+    AllowOverride None
+    Order deny,allow
+    Deny from all
+</Directory>
+
+#
+# Note that from this point forward you must specifically allow
+# particular features to be enabled - so if somethings not working as
+# you might expect, make sure that you have specifically enabled it
+# below.
+#
+
+#
+# This should be changed to whatever you set DocumentRoot to.
+#
+<Directory "WP_DOCUMENTROOT/">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+</Directory>
+
+#
+# DirectoryIndex: sets the file that Apache will serve if a directory
+# is requested.
+#
+<IfModule dir_module>
+    DirectoryIndex index.html
+</IfModule>
+
+#
+# The following lines prevent .htaccess and .htpasswd files from being
+# viewed by Web clients.
+#
+<FilesMatch "^\.ht">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</FilesMatch>
+
+#
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that hosts errors will be logged there and not here.
+#
+ErrorLog "logs/error.log"
+
+#
+# LogLevel: Control the number of messages logged to the error_log.
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+#
+LogLevel warn
+
+<IfModule log_config_module>
+    #
+    # The following directives define some format nicknames for use with
+    # a CustomLog directive (see below).
+    #
+    LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+    LogFormat "%h %l %u %t \"%r\" %>s %b" common
+
+    <IfModule logio_module>
+      # You need to enable mod_logio.c to use %I and %O
+      LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O" combinedio
+    </IfModule>
+
+    #
+    # The location and format of the access logfile (Common Logfile Format).
+    # If you do not define any access logfiles within a <VirtualHost>
+    # container, they will be logged here.  Contrariwise, if you *do*
+    # define per-<VirtualHost> access logfiles, transactions will be
+    # logged therein and *not* in this file.
+    #
+    CustomLog "logs/access.log" common
+
+    #
+    # If you prefer a logfile with access, agent, and referer information
+    # (Combined Logfile Format) you can use the following directive.
+    #
+    #CustomLog "logs/access.log" combined
+</IfModule>
+
+<IfModule alias_module>
+    #
+    # Redirect: Allows you to tell clients about documents that used to
+    # exist in your servers namespace, but do not anymore. The client
+    # will make a new request for the document at its new location.
+    # Example:
+    # Redirect permanent /foo http://localhost/bar
+
+    #
+    # Alias: Maps web paths into filesystem paths and is used to
+    # access content that does not live under the DocumentRoot.
+    # Example:
+    # Alias /webpath /full/filesystem/path
+    #
+    # If you include a trailing / on /webpath then the server will
+    # require it to be present in the URL.  You will also likely
+    # need to provide a <Directory> section to allow access to
+    # the filesystem path.
+
+    #
+    # ScriptAlias: This controls which directories contain server scripts.
+    # ScriptAliases are essentially the same as Aliases, except that
+    # documents in the target directory are treated as applications and
+    # run by the server when requested rather than as documents sent to the
+    # client.  The same rules about trailing "/" apply to ScriptAlias
+    # directives as to Alias.
+    #
+    # SAMPLE: ScriptAlias /sirweb/ "C:/Program Files (x86)/Apache Software Foundation/Apache2.2/sirweb/"
+    ScriptAlias /sirweb/ "WP_SCRIPTALIAS/"
+
+</IfModule>
+
+#
+# "C:/Program Files (x86)/Apache Software Foundation/Apache2.2/cgi-bin" should be changed to whatever your ScriptAliased
+# CGI directory exists, if you have that configured.
+#
+# SAMPLE: <Directory "C:/Program Files (x86)/Apache Software Foundation/Apache2.2/sirweb">
+<Directory "WP_SCRIPTALIAS">
+    AllowOverride None
+    Options None
+    Order allow,deny
+    Allow from all
+</Directory>
+
+#
+# DefaultType: the default MIME type the server will use for a document
+# if it cannot otherwise determine one, such as from filename extensions.
+# If your server contains mostly text or HTML documents, "text/plain" is
+# a good value.  If most of your content is binary, such as applications
+# or images, you may want to use "application/octet-stream" instead to
+# keep browsers from trying to display binary files as though they are
+# text.
+#
+DefaultType text/plain
+
+<IfModule mime_module>
+    #
+    # TypesConfig points to the file containing the list of mappings from
+    # filename extension to MIME-type.
+    #
+    TypesConfig conf/mime.types
+
+    AddType application/x-compress .Z
+    AddType application/x-gzip .gz .tgz
+
+    #
+    # AddHandler allows you to map certain file extensions to "handlers":
+    # actions unrelated to filetype. These can be either built into the server
+    # or added with the Action directive (see below)
+    #
+    # To use CGI scripts outside of ScriptAliased directories:
+    # (You will also need to add "ExecCGI" to the "Options" directive.)
+    #
+    #AddHandler cgi-script .cgi
+
+    # For type maps (negotiated resources):
+    #AddHandler type-map var
+
+    #
+    # Filters allow you to process content before it is sent to the client.
+    #
+    # To parse .shtml files for server-side includes (SSI):
+    # (You will also need to add "Includes" to the "Options" directive.)
+    #
+    #AddType text/html .shtml
+    #AddOutputFilter INCLUDES .shtml
+</IfModule>
+
+#
+# The mod_mime_magic module allows the server to use various hints from the
+# contents of the file itself to determine its type.  The MIMEMagicFile
+# directive tells the module where the hint definitions are located.
+#
+#MIMEMagicFile conf/magic
+
+#
+# Customizable error responses come in three flavors:
+# 1) plain text 2) local redirects 3) external redirects
+#
+# Some examples:
+#ErrorDocument 500 "The server made a boo boo."
+#ErrorDocument 404 /missing.html
+#ErrorDocument 404 "/cgi-bin/missing_handler.pl"
+#ErrorDocument 402 http://localhost/subscription_info.html
+#
+
+# Note: The following must must be present to support
+#       starting without SSL on platforms with no /dev/random equivalent
+#       but a statically compiled-in mod_ssl.
+#
+<IfModule ssl_module>
+SSLRandomSeed startup builtin
+SSLRandomSeed connect builtin
+</IfModule>
+END PROCEDURE

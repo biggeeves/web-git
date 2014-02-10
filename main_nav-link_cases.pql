@@ -1,0 +1,28 @@
+PROCEDURE      MAIN_NAV.LINK_CASES:T  (157220,67372)  |Last amended Mar 28, 2013,18:42:52
+ifthen ('<GCASED>' eq '1')
+. ifthen(nglobal('GVIEWIDS') eq 1)  | Can see IDs and Records Menu
+.   write(cgi) 10t '<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">IDs<b class="caret"></b></a>'
+.   write(cgi) 10t '  <ul class="dropdown-menu">'
+.   ifthen ('<CASEIS>' ne '')
+.     write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.CONTROLER.CASE_CONTROL&amp;caseis=<CASEISNQ>"><CASEISNQ>: Forms</a></li>'
+.     write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_SUMMARY&amp;caseis=<CASEISNQ>"><CASEISNQ>: Summary</a></li>'
+.     write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_DETAILS&amp;caseis=<CASEISNQ>">'
+.     write(cgi) 4t '<CASEISNQ>: Details</a></li>'
+.     write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.CONTROLER.CASE_CONTROL&amp;caseis=<CASEISNQ>&amp;caseoption=delete">'
+.     write(cgi) 4t '<CASEISNQ>: Delete</a></li>'
+.   endif
+.   write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NAV">- Navigate IDs</a></li>'
+.   ifthen ('<CASEIS>' ne '')
+.     write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_LIST&amp;caseis=<CASEISNQ>">- List of IDs</a></li>'
+.   else
+.     write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_LIST">- List of IDs</a></li>'
+.   endif
+.   write(cgi) 2t '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NEW">- New ID</a></li>'
+.   write(cgi) 10t '  </ul>'
+.   write(cgi) 10t '</li>'
+. endif
+endif
+
+
+
+END PROCEDURE

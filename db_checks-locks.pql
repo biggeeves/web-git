@@ -1,0 +1,15 @@
+PROCEDURE      DB_CHECKS.LOCKS:T  (156665,49866)  |Last amended Sep 20, 2011,13:51:06
+program
+C check for locks then check if user can lock and unlock record.
+. write 'in checking for locks'
+. ifthen (recname(98) eq 'LOCKEDCASES')
+.   write 'has lock CASES schema. must now look for a lock on this case.'
+c .   EXECUTE DBMS "call WPF.DB_CHECKS.SETCASELOCK"
+. endif
+
+. ifthen (recname(99) eq 'LOCKEDRECORDS')
+.   write 'has lock REC schema. must now look for a lock on this record.'
+C .   EXECUTE DBMS "call WPF.DB_CHECKS.SETRECLOCK"
+. endif
+end program
+END PROCEDURE

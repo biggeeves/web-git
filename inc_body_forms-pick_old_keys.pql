@@ -1,0 +1,154 @@
+PROCEDURE      INC_BODY_FORMS.PICK_OLD_KEYS:T  (157220,44540)  |Last amended Mar 28, 2013,12:22:20
+retrieval progress CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+if(dbtype(0) eq 1) write(cgi) '<h3>' CASE_LABEL': <CASEISNQ></h3>'
+
+write(cgi) '<h3 title = "' [pack(recname(REC_TYPE_NUMBER))]  '">'
+write(cgi) REC_LABEL__4 '</h3>'
+
+write(cgi) '<h4>Option A: Choose an existing record below</h4>'
+CIF EQ 1, 0<GCASED>
+old case is <CASEIS>
+CIF END
+. write(cgi) '<table class="table table-hover">'
+. write(cgi) '<tr><th>Keys</th><th>View</th><th>Edit</th></tr>'
+. process rec <GDBREC>
+.   execute subprocedure START_ROW
+. end rec
+CIF EQ 1, 0<GCASED>
+end case
+CIF END
+write(cgi) '</table><br>'
+
+
+write(cgi) '<h4>Option B: Choose your own keys</h4>'
+write(cgi) '<form method="post" action="<mycgi>">'
+write(cgi) '<input type="hidden" id="member" name="member" value="WPF.CONTROLER.REC_NAV">'
+write(cgi) '<input type="hidden" id="upick" name="upick" value="Edit">'
+CALL WPF.INC_ELEMENTS.CASE_IS
+CALL WPF.INC_ELEMENTS.GDB_REC
+CALL WPF.INC_ELEMENTS.KEYS
+write(cgi) '  <table class="table"> '   | OTHER COLOR I LIKE "#D5CCBB"
+
+for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+. VNAME$ = trimlr(keyname(REC_TYPE_NUMBER, EACH_KEY))
+. VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$))
+. execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) VAR_LABEL =  HTMLTEXT
+. HOVER_TITLE = 'title="' + VNAME$ | to start out the title
+. VAR_MIN = nmin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_KEY))
+. VAR_MAX = nmax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_KEY))
+. VAR_MIN_STR = smin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_KEY))
+. VAR_MAX_STR = smax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_KEY))
+. SIR_VARTYPE = vtype(REC_TYPE_NUMBER,VNAME$)
+. SIR_VARFORMAT = vformat(REC_TYPE_NUMBER, VNAME$)
+. SIR_VARFORMAT = replace(SIR_VARFORMAT, 'T', '', 1, 1, 0)
+. SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', '', 1, 1, 0)
+. SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+. ifthen (SIR_VARTYPE eq 3) |Date
+.   if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + datec(VAR_MIN, SIR_VARFORMAT)
+.   if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + datec(VAR_MAX, SIR_VARFORMAT)
+. elseif (SIR_VARTYPE eq 4) |Time
+.   if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + timec(VAR_MIN, SIR_VARFORMAT)
+.   if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + timec(VAR_MAX, SIR_VARFORMAT)
+. else
+.   if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + format(VAR_MIN)
+.   if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + format(VAR_MAX)
+.   if(exists(VAR_MIN_STR) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + VAR_MIN_STR
+.   if(exists(VAR_MAX_STR) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + VAR_MAX_STR
+. endif
+. HOVER_TITLE = HOVER_TITLE  + '"'
+
+c LABEL
+. write(cgi) '  <tr><td ' HOVER_TITLE  '>' VAR_LABEL  '</td>'
+
+
+C INPUT COLUMN
+. STR$1 = '    <td><input type="text" '
+. write(cgi)  STR$1
+. STR$1 = 'name= "' + VNAME$  + '"'
+. write(cgi)  STR$1
+. STR$1 = 'id ="' + VNAME$  + '"'
+. write(cgi)  STR$1
+c If String, set max string length
+. ifthen (SIR_VARTYPE eq 1)
+.   STR$1 = " maxlength = " + substr(SIR_VARFORMAT, 2, len(SIR_VARFORMAT))
+.   write(cgi)  STR$1
+. endif
+c construct the key field updating
+. STR$2 = 'this,'
+. STR$2 = STR$2 + 'key' + format(EACH_KEY-dbtype(0))
+. write(cgi)  'onchange="newkeys(' STR$2 '); '
+. ifthen (nvallab(REC_TYPE_NUMBER, VNAME$) gt 0)
+.   STR$1 = ' SelectListByValue(''' + VNAME$ + ''',''' + VNAME$ + '_list'');'
+.   write(cgi)  STR$1
+. endif
+c create javascript CALL to validate
+. STR$1 = '  checkVartype(this,''' + format(SIR_VARTYPE) + "' , '"   + SIR_VARFORMAT  + "'" + ')"'
+. write(cgi)  STR$1
+. write(cgi)  '>' | close the edit/input area
+
+. if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
+
+. ifthen(vtype(REC_TYPE_NUMBER, VNAME$) NE 1)  | for right now, lets stick with non-string key value labels
+.   ifthen (nvallab(REC_TYPE_NUMBER, VNAME$) ge 1)
+.     write(cgi)  '<select class="widthmed" '
+.     STR$1 = ' id="'  + VNAME$  + '_list" '
+.     write(cgi)  STR$1
+.     STR$1 = 'onchange="SelectValueByList(this,''' + VNAME$ + ''');newkeys('  + STR$2  + ');">'
+.     write(cgi)  STR$1
+c     MUST MATCH UP WITH DATA ENTRY VALUES BECAUSE JAVASCRIPT IS THE SAME FOR EACH OF THESE!
+.     write(cgi)  '  <option value=""></option>'
+.     for EACH_LABEL = 1,  nvallab(REC_TYPE_NUMBER, VNAME$)
+.       STR$1 = trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
+.       STR$2 = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
+
+.       execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.       ifthen(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+.       else STR$1 = 'Oh oh'
+.       endif
+
+.       STR$2 = '  <option value="'  + STR$2  + '">'
+.       write(cgi)  STR$2  STR$1 '</option>'
+.     end for
+.     write(cgi)  '</select>'
+.   endif
+. endif
+. write(cgi)  '</td></tr>'
+end for
+write(cgi)  '  <tr><td>&nbsp;</td><td><input type="submit" value="Edit" onclick="document.getElementById(''upick'').value =this.value;">'
+write(cgi)  '  <input type="submit" value="View" onclick="document.getElementById(''upick'').value =this.value;">'
+write(cgi)  '</td></tr></table>'
+write(cgi) '</form>'
+
+
+subprocedure START_ROW
+.   SHOWKEYS__4 = ''
+.   LINK__4 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER)
+.   if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis=' +  sglobal('CASEISNQ')
+.   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.     STRING_VARGET = trimlr(varget(KEYVNAME__4))
+.     execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.     ifthen(RETCODE__4 eq 0) SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + HTMLTEXT + '</b><br> '
+.     else LINK__4 = 'Oh oh'
+.     endif
+.     LINK__4 =  LINK__4 +  '&amp;key' + format(EACH_KEY - dbtype(0)) + '='  + STRING_VARGET
+.   end for
+
+c   Keys (used for the link)
+.   write(cgi) 4t '<tr><td>' SHOWKEYS__4 '</td>'
+.   LINK__4 = LINK__4 + '&amp;upick=View"'
+.   write(cgi) 4t '<td><a href=' LINK__4 '>View</a></td>'
+.   LINK__4 = substr(LINK__4, 1, len(LINK__4) -  5)
+.   LINK__4 = LINK__4 + 'Edit"'
+.   write(cgi) 4t '<td><a href=' LINK__4 '>Edit<br></a></td>'
+.   write(cgi) 2t '</tr>'
+
+end subprocedure
+
+
+end retrieval
+END PROCEDURE

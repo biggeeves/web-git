@@ -1,0 +1,114 @@
+PROCEDURE      INC_REPORTS.COMPLEX_QUERY:T  (156612,51195)  |Last amended Jul 29, 2011,14:13:15
+C COMPLEX QUERY
+
+program crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+write(cgi) '<h3>Complex Query- IN DEVELOPMENT</h3>'
+write(cgi) '<form name="complexquery" action="<mycgi>" method="post" >'
+write(cgi) '<input type="hidden" id="member" name="member" value="WPF.INC_REPORTS.COMPLEX_QUERY">'
+CALL WPF.INC_ELEMENTS.CASE_IS
+CALL WPF.INC_ELEMENTS.KEYS
+
+write(cgi) '  <table class="leftindent tanbkg">'
+write(cgi) '  <tr><th>Choose a table</th><th>Choose a Variable</th><th>&nbsp;</th><th>Choose a criteria</th></tr>'
+
+. do repeat RECORDER = 1,1,1,1,1,1,2,2,2, 2, 2, 2, 3, 3, 3, 3, 3, 3 /
+            VARORDER = 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
+.   write(cgi) '  <tr class="padded">'
+
+|   add record types
+.   ifthen (VARORDER eq 1 or 7 or 13)
+.     write(cgi) '  <td><select class="widthmed" id ="rec!RECORDER" '
+.     ifthen (VARORDER eq 1)
+.       write(cgi) ' onchange="whichrec(document.getElementById(''rec1'').value,''var1'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec1'').value,''var2'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec1'').value,''var3'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec1'').value,''var4'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec1'').value,''var5'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec1'').value,''var6'')"'
+.     elseif(VARORDER eq 7)
+.       write(cgi) ' onchange="whichrec(document.getElementById(''rec2'').value,''var7'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec2'').value,''var8'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec2'').value,''var9'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec2'').value,''var10'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec2'').value,''var11'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec2'').value,''var12'')"'
+.     elseif(VARORDER eq 13)
+.       write(cgi) ' onchange="whichrec(document.getElementById(''rec3'').value,''var13'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec3'').value,''var14'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec3'').value,''var15'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec3'').value,''var16'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec3'').value,''var17'');'
+.       write(cgi) ' whichrec(document.getElementById(''rec3'').value,''var18'')"'
+.     endif
+.     write(cgi) '>'
+.     execute subprocedure ADD_REC_OPTIONS
+.     write(cgi) '  </select><br>'
+.     write(cgi) '  </td>'
+.   else
+.     write(cgi) '  <td>&nbsp;</td>'
+.   endif
+|   add initial variables
+.   write(cgi) '  <td><select  name="var!VARORDER" id ="var!VARORDER" class="widthmed" >'
+.     for EACH_RECORD_NUMBER  = 1, nrecs(0)
+.     IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+.     execute subprocedure ADD_VAR_OPTIONS
+.     exit for | this should only run the very first time
+.   end for
+.   write(cgi) '  </select></td>'
+
+|   add operators
+.   write(cgi) '  <td><select name="operator!VARORDER" style="position:relative;">'
+.   execute subprocedure ADD_OPERATORS
+.   write(cgi) '  </select></td>'
+
+|   add write in value
+.   write(cgi) '  <td><input type="text" name="webvalue!VARORDER" class="widthmed"></td>'
+.   write(cgi) '</tr>'
+
+. end repeat
+
+write(cgi) '  <tr><td class="padded" colspan="4"> <input type="submit" name="submit" class="widthmed" value="Run Query">'
+write(cgi) '  </td></tr>'
+write(cgi) '</table>'
+write(cgi) '</form>'
+
+subprocedure ADD_REC_OPTIONS
+. for EACH_RECORD_NUMBER  = 1, nrecs(0)
+.   IFNOT (len(recname(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+.   ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+.   elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+.   else
+.     REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+.   endif
+.   STR$1 = 'value="' + format(EACH_RECORD_NUMBER )  + '"'
+.   STR$2 = 'title="'  + format(EACH_RECORD_NUMBER) + ': ' + trimlr(recname(EACH_RECORD_NUMBER))  + '"'
+.   write(cgi) 4t '<option ' STR$1 ' ' STR$2    ' >'
+.   write(cgi) 4t REC_LABEL__4 '</option>'
+. end for
+end subprocedure
+
+subprocedure ADD_VAR_OPTIONS
+. for EACH_VARIABLE = 1, nvarsc(EACH_RECORD_NUMBER)
+.   VNAME$ = trimlr(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE))
+.   VNAME$CB = stdname(VNAME$)
+.   STR$1 = 'title="'  + VNAME$ +  '"' + ' value="' + format(EACH_VARIABLE)  + '"'
+.   STR$2 = trimlr(varlabsc(EACH_RECORD_NUMBER, VNAME$CB))
+.   write(cgi) 4t '<option ' STR$1 '>' STR$2  '</option>'
+. end for
+end subprocedure
+
+subprocedure ADD_OPERATORS
+write(cgi) '    <option value="eq">&#61;</option>'       |index =0
+write(cgi) '    <option value="lt">&#60;</option>'       |index =1
+write(cgi) '    <option value="le">&#61;&#60;</option>'  |index =2
+write(cgi) '    <option value="gt">&#62;</option>'       |index =3
+write(cgi) '    <option value="ge">&#61;&#62;</option>'  |index =4
+write(cgi) '    <option value="ne">ne</option>'          |index =5
+end subprocedure
+end program
+END PROCEDURE

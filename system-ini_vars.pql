@@ -1,0 +1,22 @@
+PROCEDURE      SYSTEM.INI_VARS:T  (156618,57170)  |Last amended Aug 04, 2011,15:52:50
+. DBNAME__4 = trim(dbname(0))
+
+. CASENAME$ = trimlr(keyname(0, 1))
+. CASE_LABEL = trimlr(varlabsc(0, CASENAME$))
+. if(CASE_LABEL = '') CASE_LABEL = CASENAME$
+
+. REC_TYPE_NUMBER  = nglobal('GDBREC')
+. if(exists(REC_TYPE_NUMBER) = 0) REC_TYPE_NUMBER  = 9999
+
+. REC_NAME__4 = trimlr(recname(REC_TYPE_NUMBER))
+. ifthen (len(recdoc(REC_TYPE_NUMBER, 0)) gt 0)
+.   REC_LABEL__4 = pack(recdoc(REC_TYPE_NUMBER, 0))
+. elseif (len(recdoc(REC_TYPE_NUMBER, 1)) gt 0)
+.   REC_LABEL__4 = pack(recdoc(REC_TYPE_NUMBER, 1))
+. else
+.   REC_LABEL__4 = pack(recname(REC_TYPE_NUMBER))
+. endif
+
+. TODAYIS__4 = today(0)
+
+END PROCEDURE

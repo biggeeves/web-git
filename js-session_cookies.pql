@@ -1,0 +1,8 @@
+PROCEDURE      JS.SESSION_COOKIES:T  (157220,42693)  |Last amended Mar 28, 2013,11:51:33
+C setCookie(c_name, valueX, expiredays, path, domain, secure )'
+
+write(cgi) ' <script type="text/javascript">'
+write(cgi) '   setCookie(''USERID'', ''<USERID>'', 1);'
+write(cgi) '   setCookie(''SESSIONID'', ''<SESSIONID>'', 1);'
+write(cgi) ' </script>'
+END PROCEDURE

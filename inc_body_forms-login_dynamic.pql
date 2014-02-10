@@ -1,0 +1,44 @@
+PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157452,52670)  |Last amended Nov 15, 2013,14:37:50
+
+
+program crwarn
+string  * 600   STR$1            | General String use at any time
+integer *   1   IOSTAT__4        | Return code of IOSTAT
+INTEGER *   1   GOON__4          | CONTROL FLOW
+integer *   1   ANYNUM__4
+
+
+c note: JavaScript is required for form validation, drop downs, querries.
+c Perhaps I can figure out a way to know if Javascript is enabled by the browser, virus software, firewalls, etc.  Pass info to server and re-direct as neccessary.
+
+c note!  This does not write out to CGI
+
+open (index) read lrecl = 600 iostat = IOSTAT__4
+. ifthen (iostat__4 ne 0)
+.   ANYNUM__4 = globals('GSOMEMESS', 'The sign in page was unavailable.')
+.   ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.   exit program
+. endif
+. open (index) read iostat = IOSTAT__4 lrecl = 300
+.   GOON__4 = 0
+.   LOOP
+.     read(index, END = DONE) STR$1 (A300)
+.     STR$1 = trimlr(STR$1)
+.     write(cgi) STR$1
+.     ifthen (pattern(STR$1, "@loginmessage@") eq 1)
+.       write(cgi) '<script type="text/javascript">'
+.       write(cgi)  ' document.getElementById(''redirect'').value=window.location.href'
+.       write(cgi) '</script>'
+.       if('<GSOMEMESS>' ne '') write(cgi) '<p class="text-error"><GSOMEMESS></p>'
+.     endif
+.   END LOOP
+.   DONE:
+. close (index)
+
+end program
+
+program
+EXECUTE DBMS "call WPF.CONNECTIONS.FULL_EXIT"
+end program
+END PROCEDURE

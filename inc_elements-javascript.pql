@@ -1,0 +1,35 @@
+PROCEDURE      INC_ELEMENTS.JAVASCRIPT:T  (157452,36967)  |Last amended Nov 15, 2013,10:16:07
+. write(cgi) '<script type="text/javascript" src="../js/global.js"></script>'
+ifthen (system(40) eq 1)
+. STR$1 =  '"/' + DBNAME__4 + '../js/casenav.js"'
+. write(cgi) '<script type="text/javascript" src=' STR$1 '></script>'
+. STR$1 =  '"/' +  DBNAME__4  + '../js/showmems.js"'
+. write(cgi) '<script type="text/javascript" src=' STR$1 '></script>'
+. STR$1 =  '"/' + DBNAME__4 + '../js/showvars.js"'
+. write(cgi) '<script type="text/javascript" src=' STR$1 '></script>'
+
+c record specific JS
+. REC_NAME__4 = trimlr(recname(nglobal('GDBREC')))
+. if(exists(REC_NAME__4) eq 0) REC_NAME__4 = 'noexist'
+. if(len(REC_NAME__4) eq 0) REC_NAME__4 = 'noexist'
+. compute MEMBER_NAME = 'SIR0' +  format(system(39)) + '4.' + 'JS' +  REC_NAME__4  + '.'
+. ifthen (meminfo(MEMBER_NAME +  'ONLOAD:T', 1) eq 1)
+.   EXECUTE DBMS 'call ' + MEMBER_NAME +  'ONLOAD:T'
+. else
+.   write(cgi) '<script type="text/javascript">'
+.   write(cgi) '  function goro(field1, field2, focusfield){var dumbvar};'  |Grey Out, Read Only
+.   write(cgi) '  function ngoro(field1, field2){var dumbvar;}'  |NOT Grey Out, Read Only
+.   write(cgi) '</script>'
+. endif
+. ifthen (meminfo(MEMBER_NAME + 'ONCHANGE:T', 1) eq 1)
+.   EXECUTE DBMS 'call ' + MEMBER_NAME +  'ONCHANGE:T'
+. endif
+. ifthen (meminfo(MEMBER_NAME + 'AFTERBLUR:T', 1) eq 1)
+.   EXECUTE DBMS 'call ' + MEMBER_NAME +  'AFTERBLUR:T'
+. else
+.   write(cgi) '<script type="text/javascript">'
+.   write(cgi) '  function afterBlur() {var dumbvar};'
+.   write(cgi) '</script>'
+. endif
+endif
+END PROCEDURE

@@ -1,0 +1,9 @@
+PROCEDURE      CGI.DEFAULT:T  (157462,39317)  |Last amended Nov 25, 2013,10:55:17
+c this member is the initial call to SIR web.
+c 1) Modify the file to point to your SIR web procedure file (web.srp)
+c 2) call WEBPROC.CONTROLLER.WEB_START
+
+attribute WPF = "G:\DCC\WEBPROCF\web.srp"
+
+CALL WPF.CONTROLLER.WEB_START
+END PROCEDURE

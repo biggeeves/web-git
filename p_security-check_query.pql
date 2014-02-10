@@ -1,0 +1,13 @@
+PROCEDURE      P_SECURITY.CHECK_QUERY:T  (157452,52688)  |Last amended Nov 15, 2013,14:38:08
+program
+ifthen(exists(cgivarsv('QUERY_STRING')) eq 0)
+. | no query string
+. | this should allow someone to pass a link to a specific page.
+elseif (pattern(cgivarsv('QUERY_STRING'), "@#@") eq 1)
+| at this time, SIR truncates the value if the character # is in the link.  This is not good.
+. ANYNUM__4 =  globals('GSOMEMESS', 'That link needs to be fixed.')
+. ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+endif
+end program
+END PROCEDURE

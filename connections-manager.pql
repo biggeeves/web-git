@@ -1,0 +1,46 @@
+PROCEDURE      CONNECTIONS.MANAGER:T  (157512,44712)  |Last amended Jan 14, 2014,12:25:12
+c Establish database connection to MANGAER database
+
+PROGRAM CRWARN
+string  *   254   DBPATH                     | vars for connecting to db
+string  *     4   MST                        | vars for connecting to db
+integer *     4   ANYNUM__4                  | Use any time you want
+integer *     1   IOSTAT__4                  | Return code of IOSTAT
+string  *   600   STR$1
+
+c this connects to the Manager database
+DBPATH  = dsn('MANAGER_FOLDER')
+MST = ''
+c MST = '3010'  | uncomment this line to use master 3010.
+
+IF (MST ne '') EXECUTE DBMS "SET MASTER <GMASTER_IP>:" + MST
+
+ifthen (MST ne '')
+. ifthen (system(38) eq 0)
+. execute subprocedure SHOWERRORS
+.   ANYNUM__4 = globals( 'GSOMEMESS', 'Sorry, ' +  MST + ' is being worked on.  Access temporarily unavailable.')
+.   ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+. endif
+endif
+
+PQL CONNECT DATABASE 'MANAGER' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
+
+
+ifnotthen (IOSTAT__4 GE 0)
+. if(nglobal('GSECLEVEL') = 30) execute subprocedure SHOWERRORS
+. STR$1 = 'Error getting through the security. Contact Administrator. code:'
+. ifthen(exists(IOSTAT__4 ) eq 1) STR$1 = STR$1 + format(IOSTAT__4)
+. else STR$1 = STR$1 + ' Canada'
+. endif
+. ANYNUM__4 = globals('GSOMEMESS',STR$1)
+. ANYNUM__4 = globals('GMEMSTOP','WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+. EXECUTE DBMS 'CALL WPF.CONTROLER.STOP_PAGE'
+endif
+
+subprocedure SHOWERRORS
+. write(cgi) '<hr>DB: Manager<br>Prefix: ' DBPATH  '<br>' iostat__4 '<br>' STR$1
+end subprocedure
+
+end program
+END PROCEDURE

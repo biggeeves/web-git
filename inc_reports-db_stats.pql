@@ -1,0 +1,34 @@
+PROCEDURE      INC_REPORTS.DB_STATS:T  (157221,46977)  |Last amended Mar 29, 2013,13:02:57
+program CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+write(cgi) '<h3>Database Summary</h3>'
+
+write(cgi) '<table class="table table-striped table-hover">'
+ifthen (dbtype(0) eq 1)
+. write(cgi) '<tr class="info"><td>DB Cases:</td><td>' [comma(format(SYSTEM(24)))] ' Total Cases</td></tr>'
+endif
+write(cgi) '<tr class="info"><td>DB Records:</td><td>' [comma(format(SYSTEM(25)))] ' Total Records</td></tr>'
+
+
+for EACH_RECORD_NUMBER  = 1, nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. write(cgi)  '<tr>'
+. STR$1 = '<td title="'  + format(EACH_RECORD_NUMBER) + ": "  + trimlr(recname(EACH_RECORD_NUMBER)) + '">'
+. write(cgi) STR$1
+. REC_LABEL__4 = ''
+. ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.   REC_LABEL__4 = REC_LABEL__4  + trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+. elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.   REC_LABEL__4 = REC_LABEL__4  + trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+. else
+.   REC_LABEL__4 = REC_LABEL__4 + format(EACH_RECORD_NUMBER) + ': ' + trimlr(recname(EACH_RECORD_NUMBER))
+. endif
+. STR$2 = REC_LABEL__4 + '</td> <td><p class="text-right">' + comma(format(numrecs(EACH_RECORD_NUMBER))) + ' </p></td>'
+. write(cgi) STR$2  '</tr>'
+end for
+write(cgi) '</table>'
+
+end program
+END PROCEDURE

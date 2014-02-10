@@ -1,0 +1,80 @@
+PROCEDURE      CONTROLER.PW_RESET:T  (157452,47302)  |Last amended Nov 15, 2013,13:08:22
+c What to do when user comes from the Sign in page
+
+c comments are inserted because blank lines do NOT let the global values get set intime for the CIFs
+
+CALL WPF.CONNECTIONS.LOGON
+
+
+
+program
+. CALL WPF.SYSTEM.DEFINE_VARS
+. EXECUTE SUBROUTINE SYSPROC.TOOLS.URLCODE(cgivarsv('QUERY_STRING'), 0) RETURNING (STR$1)
+. STR$1 = substr(STR$1, REGEXP(STR$1, 'username=', 1, 1) + 9, len(STR$1))
+. STR$1 = substr(STR$1, 1, REGEXP(STR$1, '&', 1, 1) - 1)
+. ANYNUM__4 = globals('username', STR$1)
+
+. EXECUTE SUBROUTINE SYSPROC.TOOLS.URLCODE(cgivarsv('QUERY_STRING'), 0) RETURNING (STR$1)
+. STR$1 = substr(STR$1, REGEXP(STR$1, 'resetcode=', 1, 1) + 10, len(STR$1))
+. STR$1 = substr(STR$1, 1, REGEXP(STR$1, '&', 1, 1) - 1)
+. ANYNUM__4 = globals('resetcode', STR$1)
+end program
+
+
+
+CIF EQ '<GMEMIN>', 'WPF.CONTROLER.PW_RESET'
+C FIRST CHECK TO SEE IF PASSWORD RESET IS OK.  SHOULD STOP LINKS FROM BEING FOREVER ACTIVE.
+. retrieval
+.   STR$1 = sglobal('USERNAME')
+.   ANYNUM__4 = globalN('GOON__4',  0)
+.   ANYNUM__4 = globals( 'GSOMEMESS', 'Please contact your manager and ask for a PW reset')
+.   old rec is  3 (STR$1)
+.     ifNOT (RESETPW = 1) write 'noped' ;exit rec
+.     ifNOT (RESETEXPIRES gt TODAY(0))  exit rec
+.     ANYNUM__4 = globaln('GOON__4', 1)
+.   end rec
+. end retrieval
+
+. CIF EQ <GOON__4>, 1
+.   CALL WPF.INC_BODY_FORMS.PW_RESET
+. CIF FALSE
+.   CALL WPF.CONTROLER.STOP_PAGE
+. CIF END
+CIF END
+
+CIF EQ '<GMEMIN>', 'WPF.CONTROLER.PW_RESET2'
+. GLOBAL GOON__4 = 0
+| test the new password
+. program
+.   STR$1 =cgivarpn('password')
+.   ifthen (len(STR$1) gt 32)
+.     ANYNUM__4 = globaln('GOON__4', 0)
+.   elseif (regexp(STR$1, '[!a-zA-Z0-9#@%_]', 1, 1) gt 0  )
+.     ANYNUM__4 = globaln('GOON__4', 0)
+.   else
+.     ANYNUM__4 = globaln('GOON__4', 1)
+.   endif
+. end program
+
+. CIF EQ <GOON__4>, 1
+. retrieval UPDATE
+.   STR$1 = cgivarpn('username')
+.   old rec is  3 (STR$1)
+.     PW = cgivarpn('password')
+.     ANYNUM__4 = globaln('GOON__4', 1)
+.     RESETPW = 0
+.     RESETEXPIRES = today(0)  | THEY ONLY GET ONE SHOT AT THIS
+.   end rec
+. end retrieval
+. CIF END
+
+. CIF EQ <GOON__4>, 1
+.   GLOBAL GREDIRECT = 'http://piweb.nyspi.org/index.html'
+.   CALL WPF.INC_BODY_FORMS.REDIRECT
+. CIF FALSE
+.   CALL WPF.INC_BODY_FORMS.PW_RESET
+. CIF END
+CIF END
+
+CALL WPF.CONNECTIONS.FULL_EXIT
+END PROCEDURE

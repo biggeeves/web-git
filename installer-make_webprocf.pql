@@ -1,0 +1,29 @@
+PROCEDURE      INSTALLER.MAKE_WEBPROCF:T  (157512,43348)  |Last amended Jan 14, 2014,12:02:28
+c export members to a web proc file.
+c create a new procfile, if needed
+c import members into new web procfile as needed
+
+PROGRAM
+STRING * 600 COMSTR
+. COMSTR = 'PWRITE "' + DSN('WEBPROC_FOLDER') + 'wpf.pwr"  /NOINFORM'
+. execute dbms COMSTR
+. IFTHEN (FILEIS( DSN( 'WPF')) eq 1 )
+.   DISPLAY YESNOBOX 'DO YOU WANT TO OVERWRITE YOUR CURRENT WEB PROCFILE?' RESPONSE RESVAR
+.   IF (RESVAR EQ 1) EXECUTE SUBPROCEDURE READ_PROCF
+. ELSE
+.   COMPUTE COMSTR = 'CREATE PROCFILE "' + DSN('WPF') + '"'
+.   EXECUTE DBMS COMSTR
+.   EXECUTE SUBPROCEDURE READ_PROCF
+. ENDIF
+
+. SUBPROCEDURE READ_PROCF
+.   COMPUTE comstr = 'SET PROCFILE "' + DSN('WPF') + '"'
+.   execute dbms COMSTR
+.   COMSTR = 'PREAD "' + DSN('WEBPROC_FOLDER') + 'wpf.pwr"  /NOINFORM REPLACE'
+.   execute dbms COMSTR
+. END SUBPROCEDURE
+
+end program
+
+
+END PROCEDURE

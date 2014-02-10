@@ -1,0 +1,23 @@
+PROCEDURE      MAIN_NAV.LINK_HOME:T  (157219,49663)  |Last amended Mar 27, 2013,13:47:43
+LINK__4 = 'href="<mycgi>?member=WPF.INC_BODY_FORMS.WELCOME"'  | default to Welcom page
+ifthen(nglobal('GVIEWIDS') eq 1)
+. ifthen (dbtype(0) eq 1)
+|   case structured home button goes to case nav
+.   LINK__4 = ' href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NAV'
+.   if('<CASEIS>' ne '') LINK__4 = LINK__4 + '&amp;caseis=<CASEISNQ>'
+.   LINK__4 = LINK__4 + '"'
+. else
+.   LINK__4 =' href="<mycgi>?member=WPF.INC_BODY_FORMS.REC_NAV"'
+. endif
+endif
+
+
+write(cgi) 10t '<li class="dropdown">'
+write(cgi) 10t '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Home<b class="caret"></b></a>'
+write(cgi) 10t '  <ul class="dropdown-menu">'
+write(cgi) 10t '    <li><a ' LINK__4 '>Home</a></li>'
+write(cgi) 10t '    <li><a href="javascript:window.print()">Print</a></li>'
+write(cgi) 10t '    <li><a href="/index.html">Sign Out</a></li>'
+write(cgi) 10t '  </ul>'
+write(cgi) 10t '</li>'
+END PROCEDURE

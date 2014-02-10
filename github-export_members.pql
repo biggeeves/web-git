@@ -1,0 +1,67 @@
+PROCEDURE      GITHUB.EXPORT_MEMBERS:T  (157539,56104)  |Last amended Feb 10, 2014,15:35:04
+program crwarn
+integer *     2   STAT#         | David's stuff for connecting to all DBs
+string  *   200   GIT_FOLDER_NAME
+STRING  *   200   FILE_PATH
+STRING  *   200   FILE_NAME
+STRING  *    32   FILE_EXT
+string  *   200   OUTPUT_FOLDER
+string  *   200   MEMBER_SIR_NAME MEMBER_FILE_NAME
+integer *     2   FAM#C         | Number of families in proc file
+string  *    45   FAMILY_NAME   | Family Name
+integer *     4   MEM#C         | number of members in proc file
+string  *    45   MEMBER_NAME   | Member names
+string  *  2000   EACH_LINE    | The current line read in the text file
+integer *     2   RESVAR        | RESPONSE VARIABLE
+
+
+c try the procfile folder as a default.
+execute subroutine SYSPROC.TOOLS.FILENAME (dsn('procfile')) RETURNING (FILE_PATH, FILE_NAME, FILE_EXT)
+GIT_FOLDER_NAME = FILE_NAME + '-git'
+
+OUTPUT_FOLDER = FILE_PATH + GIT_FOLDER_NAME + '\'
+c OUTPUT_FOLDER = '\\Sparticus\g\DCC\GUIPPROCF\guiprocf_push\'  | OVER RIDE FOR MY OTHER PROCFILE
+c OUTPUT_FOLDER = 'G:\DCC\SEARCHPROCF\search_push\'  | OVER RIDE FOR MY OTHER PROCFILE
+
+display textbox "Where would you like to output the files?" RESPONSE RESVAR, OUTPUT_FOLDER
+IF (RESVAR <0 ) DISPLAY INFOBOX "NO SUCH DIRECTORY" ; EXIT PROGRAM
+
+
+ifthen (fileis(OUTPUT_FOLDER) <> -1) DISPLAY YESNOBOX "No such directory exists. Make one?" RESPONSE RESVAR
+. IF (RESVAR <>1 ) DISPLAY INFOBOX "PROGRAM TERMINATED."; EXIT PROGRAM
+. RESVAR = MAKEDIR(OUTPUT_FOLDER)
+. if (RESVAR EQ -1 ) DISPLAY INFOBOX "CAN NOT CREATE DIRECTORY.  PROGRAM TERMINATED."; EXIT PROGRAM
+endif
+
+write 'Output folder: ' OUTPUT_FOLDER
+
+FAM#C = system(57) |FAMILY COUNT
+for EACH_FAMILY = 1, FAM#C
+. FAMILY_NAME = pack( famname( EACH_FAMILY))
+. MEM#C = memcount( FAMILY_NAME)  | MEMBER COUNT
+. for EACH_MEMBER = 1, MEM#C
+.   MEMBER_NAME = pack( memname( FAMILY_NAME, EACH_MEMBER ))
+.   if ( sbst( reverse( MEMBER_NAME), 1, 1) <> 'T')  NEXT FOR
+.   MEMBER_SIR_NAME = FAMILY_NAME + '.' + MEMBER_NAME
+.   MEMBER_FILE_NAME = OUTPUT_FOLDER + FAMILY_NAME + '-' + substr( MEMBER_NAME, 1, len(MEMBER_NAME) -2) + '.pql'
+.   MEMBER_FILE_NAME = lower(MEMBER_FILE_NAME)
+.   write 5t 'Output: ' MEMBER_FILE_NAME
+.   execute dbms "PWRITE '" + MEMBER_FILE_NAME + "' , " + MEMBER_SIR_NAME + " /NOINFORM"
+CIF EQ 1,2
+c code below reads each file and export member to a file.  One would have to manually tediously import each file using this method.
+.   open ( TMP_FILE ) dsnvar = MEMBER_FILE_NAME /write/ lrecl = 2000
+.   open ( TMP_SIR ) read member dsnvar = MEMBER_SIR_NAME iostat = STAT# lrecl = 2000
+.     while ( STAT# = 0 )
+.       read ( TMP_SIR , iostat = STAT# ) EACH_LINE ( a2000 )
+.       write ( TMP_FILE ) EACH_LINE
+.     end while
+.   close ( TMP_SIR )
+.   close ( TMP_FILE )
+CIF END
+. end for
+end for
+
+WRITE 'FINISHED'
+
+end program
+END PROCEDURE

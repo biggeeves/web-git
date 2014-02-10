@@ -1,0 +1,136 @@
+PROCEDURE      INC_BODY_FORMS.REC_TABLE:T  (157221,44336)  |Last amended Mar 29, 2013,12:18:56
+c you get to this by choosing Detailed Case Summary and then clicking on Table.
+c All variables for a case in a table format.
+
+retrieval CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+
+set COUNTS__4   (0)
+KEYVNAME__4 = trimlr(keyname(0, 1))
+ifthen(dbtype(0) eq 1)
+. ifNOTthen (sglobal('GUPICK') eq 'ALLCASES')
+.   write(cgi) '<h3>'KEYVNAME__4 ': <CASEISNQ></h3>'
+. endif
+endif
+
+RECCNT__4 = numrecs(nglobal('GDBREC'))
+
+CIF EQ 1, 0<GCASED>
+. CIF NE '<GUPICK>',  'ALLCASES'
+.   old case is <CASEIS>
+.     RECCNT__4 = count(nglobal('GDBREC'))
+.   end case is
+. CIF END
+CIF END
+STR$1 = '<h3 class="smallfont" title ="' + pack(recname(<GDBREC>)) +  '">Table view for ' +  REC_LABEL__4  + '. '
+        + format(RECCNT__4) +  ' records as of ' +  datec(today(0), 'Wwwwwwwww MM.DD.YYYY') + ' at '  + timec(now(0), 'hh:mm')
+write(cgi) STR$1 '</h3>'
+write(cgi) '<div style="overflow:auto; width:870px; "> '
+write(cgi) '  <table class="table table-striped table-hover" >'
+write(cgi) '    <tr><th>&nbsp;</th>'
+for EACH_VARIABLE = 1, nvarsc(<GDBREC>)
+. VNAME$ = trimlr(varnamec(<GDBREC>, EACH_VARIABLE))
+. VAR_LABEL = varlabsc(<GDBREC>, '{' + VNAME$ + '}')
+. execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. ifthen(RETCODE__4 eq 0); VAR_LABEL =  HTMLTEXT
+. else; VAR_LABEL  = "incorrect text"
+. endif
+. VAR_LABEL = 'title="' +   VAR_LABEL + '"'
+. write(cgi) '    <th ' VAR_LABEL' > ' VNAME$ '</th>'
+end for
+write(cgi) '    </tr>'
+
+CIF EQ 1, 0<GCASED>
+. CIF EQ '<GUPICK>', 'ALLCASES'
+.   PROCESS CASES
+. CIF FALSE
+.   old case is <CASEIS>
+. CIF END
+CIF END
+. process rec <GDBREC>
+.   COUNTS__4 = COUNTS__4 + 1
+.   ifthen (COUNTS__4 gt 500)
+.     exit rec | to much to display on the web even for DBAs.
+.   elseif (COUNTS__4 gt 50)
+| .     ifNOT(sglobal('GUPICK') eq 'ALLCASES') EXIT REC | normal folks only get to see 50.
+.   endif
+.   write(cgi) '    <tr>'
+
+c   Keys (used for the link)
+.   ifthen (dbtype(0) eq 1)
+.     ifthen (sglobal('GUPICK') eq 'ALLCASES')
+.       LINK__4 ='&amp;caseis=' +  varget(keyname(0, 1))
+.     else
+.       LINK__4 = '&amp;caseis=' +  sglobal('CASEISNQ')
+.     endif
+.   else
+      LINK__4 = ''
+.   endif
+.   LINK__4 = '<mycgi>?member=WPF.CONTROLER.REC_NAV' +  LINK__4 + '&amp;gdbrec=<GDBREC>&amp;upick=View'
+.   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.     STRING_VARGET = trimlr(varget(KEYVNAME__4))
+.     LINK__4 =  LINK__4 + '&amp;key' + format(EACH_KEY - dbtype(0)) + '='  + STRING_VARGET
+.   end for
+.   write(cgi) '    <td><a href="' LINK__4 '">View</a></td>'
+
+c   Variable values
+.   for EACH_VARIABLE = 1, nvarsc(<GDBREC>)
+.     VNAME$ = trimlr(varnamec(<GDBREC>, EACH_VARIABLE))
+.     VNAME$CB =  '{' +  VNAME$  + '}'
+.     SIR_VARTYPE = vtype(REC_TYPE_NUMBER, VNAME$CB)
+.     SIR_VARFORMAT = trimlr(upper(vformat(REC_TYPE_NUMBER, VNAME$CB)))
+.     ifthen (SIR_VARTYPE eq 3) |Date
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', '', 1, 1, 0)
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, "I", '/', 3, 1, 0)
+.     elseif (SIR_VARTYPE eq 4) | Time
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, 'T', '', 1, 1, 0)
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', ':', 3, 1, 0)
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
+.       SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+.     endif
+
+.     ifthen (exists(varget(VNAME$CB)) eq 0) |it MIGHT be a missing value.
+.       evaluate MISVAL = "misnum(" + trim(VNAME$CB) + ")"
+.       if then (exists(miss(<GDBREC>, VNAME$CB, MISVAL)) eq 1)
+.         write(cgi) ['    <td class="alt">' + miss(<GDBREC>, VNAME$CB, MISVAL) + '&nbsp;</td>']
+.       else
+.         write(cgi) '    <td class="alt">&nbsp;</td>'
+.       end if
+.     else |NOT A MISSING VALUE
+.       ifthen (SIR_VARTYPE eq 3) |Date
+.         STR$1 = dateC(nget(VNAME$CB), SIR_VARFORMAT)
+.       elseif (SIR_VARTYPE eq 4) |Time
+.         STR$1 = timeC(nget(VNAME$CB), SIR_VARFORMAT)
+.       else
+.         STR$1 = varget(VNAME$CB)
+.       endif
+.       STR$1 = '<td class="alt">' + STR$1 + '</td>'
+.       write(cgi) STR$1
+.     end if
+.   end for
+.   write(cgi) '    </tr>'
+. end rec
+CIF EQ 1, 0<GCASED>
+. CIF EQ '<GUPICK>', 'ALLCASES'
+.   END CASES
+. CIF FALSE
+.   end case is
+. CIF END
+CIF END
+write(cgi) '  </table></div>'
+ifthen (COUNTS__4 gt 50)
+. ifthen (sglobal('GUPICK') eq  'ALLCASES')
+.   if(COUNTS__4 gt 500) write(cgi) '<h2>Limited to 500) records.<br>There are more records that are not displayed.</h2>'
+. else
+.   write(cgi) '<h2>Limited to the 50 records.<br>There are more records that are not displayed.</h2>'
+. endif
+endif
+
+
+end retrieval
+END PROCEDURE

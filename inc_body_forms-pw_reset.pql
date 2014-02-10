@@ -1,0 +1,69 @@
+PROCEDURE      INC_BODY_FORMS.PW_RESET:T  (157219,85077)  |Last amended Mar 27, 2013,23:37:57
+PROGRAM
+CALL WPF.SYSTEM.DEFINE_VARS
+. compute STR$1 ='<' + CHAR(33) + 'DOCTYPE html>'
+. write(cgi) STR$1
+. write(cgi) '<head ><title >D.C.C. Password Reset</title>'
+. write(cgi) '  <link rel="icon" href="/favicon.PNG" title="DCC Data Management" type="image/png">'
+. write(cgi) '  <link type="text/css" href="/css/custom.css" rel="stylesheet">'
+. write(cgi) '  <meta http-equiv="expires" content="0">'
+. write(cgi) '  <meta http-equiv="window-target" content="_top">'  | Page not be seen on some else's webpage in a frame
+. write(cgi) '  <script type="text/javascript">'
+. write(cgi) '     function checkReqs(trypw) {'
+. write(cgi) '       var testpw = /\d+[A-Z]+[a-z]/;'
+. write(cgi) '       var totaltest = 0;'
+. write(cgi) '       if (trypw.value.length < 8) {document.getElementById("char8").innerHTML="";}'
+. write(cgi) '       else {document.getElementById("char8").innerHTML=" OK"; totaltest ++;}'
+
+. write(cgi) '       if (trypw.value.search(/[A-Z]/) ==-1)  {document.getElementById("upcase").innerHTML="";}'
+. write(cgi) '       else {document.getElementById("upcase").innerHTML=" OK"; totaltest ++;}'
+
+. write(cgi) '       if (trypw.value.search(/[a-z]/) ==-1)  {document.getElementById("lowcase").innerHTML="";}'
+. write(cgi) '       else {document.getElementById("lowcase").innerHTML=" OK"; totaltest ++;}'
+
+. write(cgi) '       if (trypw.value.search(/\d/) == -1) {document.getElementById("onenumber").innerHTML="";}'
+. write(cgi) '       else {document.getElementById("onenumber").innerHTML=" OK";totaltest ++;}'
+
+. write(cgi) '       if (trypw.value.search(/\s/) !=-1){document.getElementById("specialk").innerHTML="";}'
+. write(cgi) '       else {document.getElementById("specialk").innerHTML=" OK";totaltest ++;}'
+
+. write(cgi) '       if (totaltest ==5) {'
+. write(cgi) '          document.getElementById("pwok").innerHTML=" OK";'
+. write(cgi) '          document.getElementById("submit").disabled=false;}'
+. write(cgi) '       else {'
+. write(cgi) '          document.getElementById("pwok").innerHTML=" ";'
+. write(cgi) '          document.getElementById("submit").disabled=true;}'
+. write(cgi) '     }'
+. write(cgi) '  </script>'
+. write(cgi) '</head>'
+. write(cgi) '<body onload="checkReqs(document.getElementById(''password''));">'
+. write(cgi) '<div id="container">'  |this applies a css for the entire contents (centers it on the page)
+. write(cgi) '<h1 title="Data Coordinating Center, New York, NY">'
+. write(cgi) 'Please Reset Your Password.</h1>'
+. if ('<GMEMIN>' = 'WPF.CONTROLER.PW_RESET2') write (cgi) '<p>Sorry that password will not work</p>'
+
+. write(cgi) '<form method="post" action="<mycgi>">'
+. write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLER.PW_RESET2">'
+. write(cgi) '<input type="hidden" name="username" value="<username>">'
+. write(cgi) '<table class="center" width="100%"><tr><td width="40%">'
+. write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'
+. write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'
+. write(cgi) '    <tr><td class="right">Password:</td>'
+. write(cgi) '    <td class="left"><input type="password" class="widthmed"  name="password" id="password" maxlength="35" '
+. write(cgi) '     onKeyUp="checkReqs(this);"><span id="pwok"> not ok</span></td></tr>'
+. write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'
+. write(cgi) '  <tr><td colspan ="2"><input id="submit" name="submit" type="submit" value="Reset" ></td></tr>'
+. write(cgi) '</table>'
+. write(cgi) '</form>'
+. write(cgi) '<P>Your password must <UL><LI>be at least 8 characters<span id="char8"> .. </span></li>'
+. write(cgi) '<LI>have uppercase <span id="upcase"> .. </span></li>'
+. write(cgi) '<LI>have lower case<span id="lowcase"> .. </span></li>'
+. write(cgi) '<LI>Have at least one number<span id="onenumber">..</span></li>'
+. write(cgi) '<LI>No special characters<span id="specialk">..</span></li>'
+. write(cgi) '</ul></p>'
+. write(cgi) '<div id="loginmessage" class="right smallfont" ></div>'
+. write(cgi)'<h6>Designed by the Data Coordinating Center At Columbia University in New York.</h6>'
+. write(cgi) '</div>'
+. write(cgi) '</body></html>'
+end program
+END PROCEDURE

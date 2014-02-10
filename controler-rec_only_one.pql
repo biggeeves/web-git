@@ -1,0 +1,25 @@
+PROCEDURE      CONTROLER.REC_ONLY_ONE:T  (156709,62090)  |Last amended Nov 03, 2011,17:14:50
+c test if user can go to record directly or needs to pick keys first.
+c
+retrieval progress CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+
+CIF EQ 1, 0<GCASED>
+. old case is <CASEIS>
+CIF END
+. RECCNT__4 = count(nglobal('GDBREC'))
+CIF EQ 1, 0<GCASED>
+. end case
+CIF END
+. ifthen (RECCNT__4 eq 1) | only one record, it is an old one, just go to it.
+.   ifNOTthen (sglobal('GUPICK') eq 'Table')
+.     ANYNUM__4  = globals('GRECNAV', 'First')
+.     EXECUTE DBMS "CALL WPF.CONTROLER.REC_CHANGE_KEYS"
+.   endif
+. else
+.   ANYNUM__4 = globals('GMEMOUT', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+. endif
+end retrieval
+END PROCEDURE

@@ -1,0 +1,95 @@
+PROCEDURE      INC_REPORTS.FREQ_1:T  (157219,58157)  |Last amended Mar 27, 2013,16:09:17
+c must re-set the globals to first record type, first var, for the first loading of the FREQ1
+program
+ANYNUM__4 = 0<GDBREC>
+ifthen(ANYNUM__4 eq 9999 OR 0)
+. for EACH_RECORD_NUMBER  = 1, nrecs(0)
+.   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+.   ANYNUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   EXIT FOR
+. end for
+endif
+if (0<VNUM__4> eq 0)  ANYNUM__4 = globaln('VNUM__4', 1)
+end program
+
+PROGRAM crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+set ANYNUM__4 (0)
+write '<div class="row">'
+write(cgi) '<h3 class="span3">Frequencies</h3>'
+ifthen('<GSUBMIT>' eq 'Frequencies')
+. write(cgi) '<h3 class="span9">Generated on ' [datec(today(0), 'mm/dd/yyyy')]
+. write(cgi) ' at ' [timec(now(0), 'hh:mm pp')] ' by ' [sglobal('username')]
+. write(cgi) '</h3>'
+endif
+write(cgi) '</div>' |row
+
+write(cgi) '<form name="freq1" action="<mycgi>" method="post" >'
+write(cgi) '<input type="hidden" id="member" name="member" value="WPF.INC_REPORTS.FREQ_1">'
+CALL WPF.INC_ELEMENTS.GDB_REC | NECESSARY FOR PASSING THE RECORD TYPE NUMBER
+
+ifthen ("<VNUM__4>" eq "")
+. write(cgi) '<input type="hidden" name="webvnum" id="webvnum" value="1">'
+else
+. write(cgi) '<input type="hidden" name="webvnum" id="webvnum" value="<VNUM__4>">'
+endif
+
+write(cgi) '  <table>'
+write(cgi) '  <tr><td class="leftindent"><span class="textbold">Table</span>'
+write(cgi) '    <select style="display:inline;" class="widthwide" id ="recselect" onchange="whichrec(this.value,''varselect'');document.getElementById(''gdbrec'').value =this.value;">'
+
+for EACH_RECORD_NUMBER  = 1,  nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+. elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+. else
+.   REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+. endif
+. STR$1 =  'value="' + format(EACH_RECORD_NUMBER )  + '"'
+. STR$2 = 'title="'  + format(EACH_RECORD_NUMBER)  +  ': ' + trimlr(recname(EACH_RECORD_NUMBER))  + '"'
+. if (nglobal('GDBREC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + 'selected="selected"'
+. write(cgi) 4t '<option ' STR$1 ' ' STR$2    ' >'
+. write(cgi) 4t REC_LABEL__4 '</option>'
+end for
+write(cgi) '  </select><br>'
+write(cgi) '  </td>'
+write(cgi) '  <td class="leftindent"><span class="textbold">Variable </span><select style="display:inline;" name="varselect" id ="varselect" class="widthwide" onchange="setVarNum()">'
+
+C SELECT THE PROPER VARIABLE.
+ANYNUM__4 = 0<VNUM__4>
+if(ANYNUM__4 eq 0) ANYNUM__4 = 1
+
+for EACH_RECORD_NUMBER  = 1,  nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. for EACH_VARIABLE = 1,  nvarsc(EACH_RECORD_NUMBER)
+.   VNAME$ = trimlr(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE))
+.   VNAME$CB = stdname(VNAME$)
+.   STR$1 = 'title="'  + VNAME$ +  '"'
+.   STR$2 = trimlr(varlabsc(EACH_RECORD_NUMBER, VNAME$CB))
+.   if (EACH_VARIABLE eq ANYNUM__4) STR$1 = STR$1 + 'selected="selected"'
+.   write(cgi) 4t '<option ' STR$1 '>' STR$2  '</option>'
+. end for
+. exit for | this should only run the very first time
+end for
+write(cgi) '  </select></td>'
+write(cgi) '  <td class="padded" colspan="2"> <input type="submit" name="submit" class="btn btn-primary" value="Frequencies"></td></tr>'
+write(cgi) '</table>'
+write(cgi) '</form>'
+write(cgi) '<div id="freqtext" style="display:inline;"></div>'
+
+write(cgi) '<script type="text/javascript">'
+write(cgi) ' whichrec(''<gdbrec>'',''varselect'');'
+write(cgi) ' document.getElementById(''gdbrec'').value =<gdbrec>;'
+write(cgi) ' document.getElementById(''varselect'').value =<VNUM__4>;'
+write(cgi) '</script>'
+
+ifthen('Frequencies' eq '<GSUBMIT>')
+. EXECUTE DBMS 'CALL WPF.INC_REPORTS.FREQ_2'
+end if
+
+end program
+END PROCEDURE

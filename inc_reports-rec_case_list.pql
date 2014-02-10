@@ -1,0 +1,93 @@
+PROCEDURE      INC_REPORTS.REC_CASE_LIST:T  (157221,45959)  |Last amended Mar 29, 2013,12:45:59
+c list of all cases in a record type.
+c must re-set the globals to first record type, for the first load
+
+program
+ANYNUM__4 = 0<GDBREC>
+ifthen(ANYNUM__4 eq 9999 OR 0)
+. for EACH_RECORD_NUMBER  = 1, nrecs(0)
+.   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+.   ANYNUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   EXIT FOR
+. end for
+endif
+end program
+
+retrieval crwarn noautocase
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
+VNAME$CB  = stdname(KEYVNAME__4)
+
+set ANYNUM__4 (0)
+
+ifNOT (sglobal('GSUBMIT') eq 'Show Cases') REC_LABEL__4   = ''
+write(cgi) '<h3>' REC_LABEL__4  'Form Case List</h3>'
+write(cgi) '<form name="reccaselist" action="<mycgi>" method="post" >'
+write(cgi) '<input type="hidden" id="member" name="member" value="WPF.INC_REPORTS.REC_CASE_LIST">'
+
+CALL WPF.INC_ELEMENTS.GDB_REC | NECESSARY FOR PASSING THE RECORD TYPE NUMBER
+
+write(cgi) '  <p>Choose a table'
+write(cgi) '  <select class="widthwide" id ="recselect" onchange="document.getElementById(''gdbrec'').value =this.value;">'
+
+for EACH_RECORD_NUMBER =1, nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+. elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.   REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+. else
+.   REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+. endif
+. STR$1 =  'value="' + format(EACH_RECORD_NUMBER )  + '"'
+. STR$2 = 'title="'  + format(EACH_RECORD_NUMBER) + ': ' + trimlr(recname(EACH_RECORD_NUMBER))  + '"'
+. if (nglobal('GDBREC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + 'selected="selected"'
+. write(cgi) 4t '<option ' STR$1 ' ' STR$2    ' >'
+. write(cgi) 4t REC_LABEL__4 '</option>'
+end for
+write(cgi) '  </select>'
+
+write(cgi) '  <input type="submit" name="submit" class="btn btn-primary" value="Show Cases">'
+write(cgi) '</p>'
+write(cgi) '<script type="text/javascript">'
+write(cgi) ' document.getElementById(''gdbrec'').value =<gdbrec>;'
+write(cgi) '</script>'
+
+CIF EQ '<GSUBMIT>' ,  'Show Cases'
+write (cgi) '<table class="table table-striped table-hover">'
+write(cgi) '<tr><th>' CASE_LABEL '</th><th>Count</th></tr> '
+COUNTS__4 = 0
+process cases
+. STRING_VARGET = pack(varget(VNAME$CB))
+. ifthen (count(REC_TYPE_NUMBER) gt 0)
+.   COUNTS__4 = COUNTS__4 + 1
+.   write(cgi) '<tr>'
+.   STR$1 = '<td><a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;gdbrec=<GDBREC>&amp;upick=View&amp;caseis=' + STRING_VARGET  + '">' + STRING_VARGET  + '<a/></td>'
+.   write(cgi) 2t STR$1
+.   write(cgi) 2t '<td>' [count(REC_TYPE_NUMBER)] '</td>'
+.   write(cgi) '</tr>'
+c . IF(COUNTS__4 gt 50) EXIT CASES  | possibly add in if report takes too long.
+. endif
+end cases
+write(cgi) '</table>'
+CIF END
+
+write(cgi) '<script type="text/javascript"> '
+write(cgi) 4t 'function setrecselect(){'
+ANYNUM__4 = 0
+for EACH_RECORD_NUMBER  = 1, nrecs(0)
+. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
+. ANYNUM__4 = ANYNUM__4 + 1
+. IF (EACH_RECORD_NUMBER  = 0<gdbrec>) EXIT FOR
+end for
+ANYNUM__4 = ANYNUM__4 - 1
+write(cgi) 4t 'document.getElementById("recselect").selectedIndex=' ANYNUM__4 ';'
+write(cgi) '}'
+write(cgi) '</script>'
+
+end retrieval
+
+
+END PROCEDURE

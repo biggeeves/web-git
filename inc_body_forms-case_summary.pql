@@ -1,0 +1,53 @@
+PROCEDURE      INC_BODY_FORMS.CASE_SUMMARY:T  (157221,47112)  |Last amended Mar 29, 2013,13:05:12
+retrieval crwarn
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+set ANYNUM__4  (0)
+
+write(cgi)  '<h3>' CASE_LABEL ' <CASEISNQ> case snapshot</h3>'
+c DELETE PORTION!  MUST SEE A CASE SUMMARY BEFORE BEING ABLE TO DELETE AN ENTIRE CASE
+C note: that if you did not press delete in the previous screen, you will NOT have the ability to delete here.
+ifthen (0<GSECLEVEL> eq 30)
+. ifthen ('delete' eq '<GCASEOPTION>')
+.   write(cgi)  '<h4><form method="post" action="<mycgi>">'
+.   write(cgi)  '<input type="hidden" name="member" id="member" value="WPF.INC_BODY_FORMS.CASE_SUMMARY">'
+.   CALL WPF.INC_ELEMENTS.CASE_IS
+.   write(cgi) '<input type="submit" name="submit" value="Delete" onclick="return confirmDelCase()">'
+.   write(cgi) '<input type="submit" name="submit" value="Cancel" onclick="document.getElementById(''member'').value=''WPF.INC_BODY_FORMS.CASE_SUMMARY''">'
+.   write(cgi) '</form></h4>'
+. endif
+endif
+write(cgi)  '<table class="table table-striped table-hover">'
+write(cgi)  '<tr><th>Table</th><th>Count</th></tr>'
+CIF EQ <GCASED>, 1
+old case is <CASEIS>
+CIF END
+. for EACH_RECORD_NUMBER = 1, nrecs(0)
+.   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
+.   ANYNUM__4 = ANYNUM__4  + count(EACH_RECORD_NUMBER)
+. end for
+. write(cgi) '<tr class="info"><td>Total Records in Database:</td><td>' ANYNUM__4 '</td></tr>'
+
+. for EACH_RECORD_NUMBER = 1, nrecs(0)
+.   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
+.   ifthen (len(trimlr(recdoc(EACH_RECORD_NUMBER, 0))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 0))
+.   elseif (len(trimlr(recdoc(EACH_RECORD_NUMBER, 1))) gt 0)
+.     REC_LABEL__4 = trimlr(recdoc(EACH_RECORD_NUMBER, 1))
+.   else
+.     REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+.   endif
+.   STR$1 = '<tr>'
+.   write(cgi) STR$1
+.   ANYNUM__4 = ANYNUM__4  + count(EACH_RECORD_NUMBER)
+.   write(cgi)  '<td>'REC_LABEL__4 '</td><td>' [count(EACH_RECORD_NUMBER)]  '</td>'
+.   write(cgi) '</tr>'
+. end for
+. write(cgi) '</table>'
+CIF EQ <GCASED>, 1
+end case is
+CIF END
+
+end retrieval
+END PROCEDURE

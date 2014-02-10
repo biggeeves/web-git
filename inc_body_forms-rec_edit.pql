@@ -1,0 +1,518 @@
+PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157452,40400)  |Last amended Nov 15, 2013,11:13:20
+C display a generic data entry page for one record (ROW)
+
+retrieval progress CRWARN noautocase
+c print back on
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+set TAB_INDEX  (0)
+set RECACCESSED__4 (0)
+
+
+c note disableEnterKey needs to be in two places.  A) On the form to disable enter in Firefox.  B) In the body to allow IE to move from field to field with the enter key.
+
+write(cgi) '  <h3 title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
+if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <CASEISNQ> '
+write(cgi) REC_LABEL__4
+ifthen (0<GVIEWSCHEMA> eq 1)
+. write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDBREC>">'
+. write(cgi) '<small> (codebook)</small></a>'
+endif
+write(cgi) '</h3>'
+
+if(0<REC_STAT> eq 5) write '<h3>Deleted</h3>'
+if(0<REC_STAT> eq 6) write '<h3>Sample</h3>'
+
+CALL WPF.INC_ELEMENTS.CRUD_NAV_BAR
+
+c add DB specific form header
+GOON__4  = 0
+STR$1 = ''
+for ANYNUM__4 = 1, recdocn(REC_TYPE_NUMBER)
+. if(pack(upper(substr(recdoc(REC_TYPE_NUMBER, ANYNUM__4 ), 1, 8))) eq 'HEADER') GOON__4  = 1;write(cgi) '<h4>'
+. ifthen(GOON__4 eq 1)
+.   STR$1 = STR$1 + pack(recdoc(REC_TYPE_NUMBER, ANYNUM__4 ))
+. endif
+. if(srst(upper(recdoc(REC_TYPE_NUMBER, ANYNUM__4 )), 'ENDHEADER') gt 0); exit for
+end for
+ifthen (GOON__4 eq 1)
+. STR$1 = replace (STR$1,'ENDHEADER','', 1, 1, 0)
+. STR$1 = replace (STR$1, 'HEADER', '', 1, 1, 0)
+. write(cgi) STR$1 '<br>'
+. write(cgi) '</h4>'
+endif
+
+ifthen (nvarsc(REC_TYPE_NUMBER) gt 40) | break into multiple "pages"
+. ANYNUM__4 = aint (nvarsc(REC_TYPE_NUMBER) / 40) +1
+. STR$2 = ''
+. for EACH_NUMBER = 1, ANYNUM__4
+.   STR$2 = STR$2 + 'hideById(''page' + format(EACH_NUMBER) + ''');'
+. end for
+. write(cgi) '<div id="selectpage">Show '
+. for EACH_NUMBER = 1, ANYNUM__4
+.   STR$1 = '  <a href="#here" class="bluetext smallfont" '+
+            'onclick="' + STR$2 +
+            ' document.getElementById(''page' +format(EACH_NUMBER ) + ''').style.display=''block'';'+
+            '">' +
+            'Page ' + format (EACH_NUMBER) + '</a> | '
+.   write (cgi) STR$1
+. end for
+. write(cgi) '</div><br>'
+endif
+write(cgi) '<div class="row">'
+write(cgi) '<div class="span11 offset1">'
+write(cgi) '  <table class="table table-striped table-hover" id="page1"> '
+
+CIF EQ 0<GCASED>, 1
+CIF EQ 0<REC_STAT>, 6
+cif true
+. PROCESS CASES COUNT  = 1
+cif false
+. CASE IS <CASEIS>
+CIF END
+CIF END
+
+. process rec <GDBREC> <GVIA#> onetime
+.     RECACCESSED__4  = 1
+.     for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.       ifthen (nvarsc(REC_TYPE_NUMBER) gt 40)
+.         ifNOTthen (EACH_VARIABLE eq nvarsc(REC_TYPE_NUMBER)) | close last page table
+.           ifthen ( 0= amod(EACH_VARIABLE, 40) )
+.             write(cgi) '</table>' | close previous page div
+.             STR$1 = '<table class="table table-striped table-hover" id="page'+ format( (EACH_VARIABLE/40) + 1) +'" style="display:none;">'+
+                      '<tr><td colspan="2">Page ' + format( (EACH_VARIABLE/40) +1 ) + '</td></tr>'
+.             write(cgi) STR$1
+.           endif
+.         endif
+.       endif
+
+.       VNAME$ = trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.       if (VNAME$ eq 'DWHO' or 'DCCWHO' or 'DCCWHEN' OR 'DCCDATE' OR 'DCCTIME' OR 'DCCEDITS' OR 'DSTAMP' ) next for
+.       VNAME$CB = '{' +  trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  + '}'
+.       VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
+.       execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.       if(RETCODE__4 eq 0) VAR_LABEL =  HTMLTEXT
+.       if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
+c add Variable specific text above the variable
+GOON__4  = 0
+STR$1  = ''
+for ANYNUM__4 = 1, nvardoc(REC_TYPE_NUMBER, VNAME$CB)
+. ifthen (pack(upper(substr(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 ), 1, 7))) eq 'HEADER')
+.   GOON__4  = 1
+.   write(cgi) '<tr class="tan"><td colspan="2">'
+. endif
+. if (GOON__4  = 1) STR$1 = STR$1 + pack(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 ))
+. if(srst(upper(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 )), 'ENDHEADER') gt 0) exit for
+end for
+ifthen (GOON__4 eq 1)
+. STR$1 = replace (STR$1, 'ENDHEADER', '', 1, 1, 0)
+. STR$1 = replace (STR$1, 'HEADER', '', 1, 1, 0)
+. write(cgi) STR$1 '<br>'
+. write(cgi) '</td></tr>'
+endif
+.       HOVER_TITLE = 'title="' + VNAME$ | to start out the title
+.       VAR_MIN = nmin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.       VAR_MAX = nmax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.       VAR_MIN_STR = smin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.       VAR_MAX_STR = smax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.       SIR_VARTYPE = vtype(REC_TYPE_NUMBER,VNAME$CB)
+.       SIR_VARFORMAT = trimlr(upper(vformat(REC_TYPE_NUMBER, VNAME$CB)))
+.       ifthen (pattern(vardocsn (<gdbrec>, VNAME$CB, 1), '@radio@') eq 1)
+.         DISPLAY_AS = 1
+.       else
+.         DISPLAY_AS = 0
+.       endif
+.   if(VAR_MIN eq 1) VAR_MIN = NMISS__4
+. if(VAR_MAX eq 3660000) VAR_MAX = NMISS__4
+.       ifthen (SIR_VARTYPE eq 3) |Date
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', '', 1, 1, 0)
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, "I", '&#47;', 3, 1, 0)
+.       elseif (SIR_VARTYPE eq 4) | Time
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'T', '', 1, 1, 0)
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', ':', 3, 1, 0)
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
+.         SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+.       endif
+.       ISKEY__4 = 0
+.       for EACH_KEY = 1, nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.         KEYVNAME__4 = trimlr(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.         KEYVNAME__4 = REPLACE(KEYVNAME__4, '{', '', 1, 0, 0)
+.         KEYVNAME__4 = REPLACE(KEYVNAME__4, '}', '', 1, 0, 0)
+.         if (VNAME$ eq KEYVNAME__4) ISKEY__4 =  1;EXIT FOR
+.       end for
+
+.       set MISSNUM__4 (missing)
+.       set NUM__4   (missing)
+.       set VALID_RESULT (0)
+.       TAB_INDEX = TAB_INDEX  + 1
+c get the value of the variable, missing user defined missings after invalid data entry
+CIF NE 1,0<REC_STAT>
+.       ifthen (SIR_VARTYPE eq 1)
+.         STRING_VARGET = sget(VNAME$CB); MISSNUM__4  = misnum(STRING_VARGET)
+.       elseif (SIR_VARTYPE eq 2)
+.         STRING_VARGET = varget(VNAME$CB); MISSNUM__4  = misnum(STRING_VARGET)
+c .         NUM__4 = varget(VNAME$); MISSNUM__4 = misnum(NUM__4)
+c .         STRING_VARGET = varget(VNAME$)
+.       elseif (SIR_VARTYPE eq 3 or 4)
+.         NUM__4 = nget(VNAME$CB); MISSNUM__4  = misnum(NUM__4)
+.         STRING_VARGET = varget(VNAME$CB)
+.       elseif(SIR_VARTYPE ge 5)
+.         NUM__4 = nget(VNAME$CB); MISSNUM__4  = misnum(NUM__4)
+.         STRING_VARGET = format(NUM__4)
+.       else
+.         write(cgi) 'THERE HAS BEEN AN ERROR PLEASE RE-LOG ON: SIR_VARTYPEError' VNAME$ VAR_LABEL SIR_VARTYPE
+.       endif
+.       STRING_VARGET = fst(varget(VNAME$CB), STRING_VARGET)
+.       ifthen (MISSNUM__4 eq 0)
+.         STRING_VARGET = ''
+.       elseif (MISSNUM__4 eq 1 OR 2 OR 3)
+.         STRING_VARGET = MISS(REC_TYPE_NUMBER, VNAME$CB, MISSNUM__4)
+.       endif
+.       ifthen (0<REC_STAT> eq 1) | New
+.         STRING_VARGET = ''
+.       elseif (0<REC_STAT> eq 3) | Tried to save with errors.  Note!  use varget if it validates!
+.         CGI__4 = trimlr(cgivarpn(VNAME$))
+.           ifthen (SIR_VARTYPE eq 1) | STRINGS
+.             compute VALID_RESULT = validate(REC_TYPE_NUMBER, VNAME$CB, CGI__4)
+.           elseif (SIR_VARTYPE eq 3 or 4)  | DATES,  TIMES
+.             compute VALID_RESULT = validate(REC_TYPE_NUMBER, VNAME$CB, CGI__4)
+.             if(CGI__4 eq '')  VALID_RESULT = 0                                 |work around for sir bug.  if EDATE is used,  zero length values do not validate.
+.           elseif (SIR_VARTYPE eq 2) |cat vars
+.             compute VALID_RESULT = validate(REC_TYPE_NUMBER, VNAME$CB, CGI__4)
+.           elseif (SIR_VARTYPE eq 5 or 6 or 7 or 8) |NUMBERS
+.             compute VALID_RESULT = validate(REC_TYPE_NUMBER, VNAME$CB, CGI__4)
+.           else
+.             write(cgi) 'error in validating value'
+.           endif
+.         if (VALID_RESULT eq 1 OR 2 OR 7) STRING_VARGET = CGI__4  | SHOW THE NOVALIDATE ATTEMPED VALUE
+.       endif
+C       BY HERE STRING_VARGET IS THE GOLD STANDARD VALUE
+.       ifthen (SIR_VARTYPE eq 2)
+.         VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.       elseif (SIR_VARTYPE eq 3)
+.         ifthen (MISSNUM__4 eq 1 OR 2 OR 3)
+.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.         else
+.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, cdate(STRING_VARGET, SIR_VARFORMAT))
+.         endif
+.       elseif (SIR_VARTYPE eq 4)
+.         ifthen (MISSNUM__4 eq 1 OR 2 OR 3)
+.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.         else
+.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, ctime(STRING_VARGET, SIR_VARFORMAT))
+.         endif
+.       else
+.         VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.       endif
+CIF END
+
+.       ifthen (exists(STRING_VARGET) eq 1)
+.         execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RETCODE__4)
+.         if(RETCODE__4 eq 0) STRING_VARGET = HTMLTEXT
+.       endif
+
+
+.       ifthen (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 3) |date
+.         STRING_VARGET = replace (STRING_VARGET, ' ',  '/', 2, 0, 0)
+.       elseif (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 4) |time
+.         STRING_VARGET = replace (STRING_VARGET, ' ',  ':', 2, 0, 0)
+.       endif
+
+
+.       ifthen (SIR_VARTYPE eq 1)
+.         HOVER_TITLE = HOVER_TITLE + ' String: '
+.       elseif (SIR_VARTYPE eq 2)
+.         HOVER_TITLE = HOVER_TITLE + ' Cat: '
+.       elseif (SIR_VARTYPE eq 3)
+.         if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + datec(VAR_MIN, SIR_VARFORMAT)
+.         if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + datec(VAR_MAX, SIR_VARFORMAT)
+.       elseif (SIR_VARTYPE eq 4)
+.         if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + timec(VAR_MIN, SIR_VARFORMAT)
+.         if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + timec(VAR_MAX, SIR_VARFORMAT)
+.       else
+.         HOVER_TITLE = HOVER_TITLE + ' Number: '
+.         if(exists(VAR_MIN) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + format(VAR_MIN)
+.         if(exists(VAR_MAX) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + format(VAR_MAX)
+.         if(exists(VAR_MIN_STR) eq 1) HOVER_TITLE = HOVER_TITLE + ' Min: ' + VAR_MIN_STR
+.         if(exists(VAR_MAX_STR) eq 1) HOVER_TITLE = HOVER_TITLE + ' Max: ' + VAR_MAX_STR
+.       endif
+.       HOVER_TITLE = HOVER_TITLE +'"'
+
+
+c       variable name and label
+
+.       ifNOTTHEN (VALID_RESULT eq 0 OR 3 OR  4 OR  5 OR  6)   | VARPUT has an error with Common Vars.  1st one alphabetically
+.         RCLASS__4 = 'class= "error"'
+.       elseif (exists(VALID_RESULT) eq 0)
+.         RCLASS__4 = 'class= "error"'
+.       endif
+.       if (ISKEY__4 eq 1) RCLASS__4 = 'class= "key"'
+
+c       Variable Label Column  | since keys are not editable, they do not get a "label"
+.       write(cgi) '<tr ' RCLASS__4    HOVER_TITLE '>'
+.       write(cgi) '  <td class="varprompts">'
+.       STR$1 = VAR_LABEL
+.       ifNOT (1 eq ISKEY__4 or DISPLAY_AS) STR$1 = '  <label for= "'  + VNAME$ + '" id="L_' + VNAME$  + '">' + STR$1 + '</label>'
+.       write(cgi) 4t STR$1
+.       write(cgi) 2t '</td>'
+
+c       Variable input
+.       VAR_DISPLAY_CLASS = 'widthsmall'
+.       ifthen (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 1)
+.         ANYNUM__4 = numbr(substr(vformat(REC_TYPE_NUMBER, VNAME$CB), 2, len(vformat(REC_TYPE_NUMBER, VNAME$CB))))
+.         ifthen (ANYNUM__4 gt 10 and lt 25)
+.           VAR_DISPLAY_CLASS = 'widthmed'
+.         elseif (ANYNUM__4 ge 25)
+.           VAR_DISPLAY_CLASS = 'widthwidest'
+.         endif
+.       elseif (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 3)
+.         VAR_DISPLAY_CLASS = 'widthmed'  | had a class of datepicker but removed it until I know how it works.
+.       elseif (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 4)
+.         VAR_DISPLAY_CLASS = 'widthmed'
+.       endif
+
+.       write(cgi)  ' <td> '
+.       ifNOTthen (DISPLAY_AS = 1) | RIGHT NOW DROP DOWN IS THE DEFAULT
+.         execute subprocedure VAR_INPUT
+.       endif
+
+
+c       Value labels column
+.       ifthen (nvallab(REC_TYPE_NUMBER, VNAME$CB) gt 0)
+.         ifthen (ISKEY__4 eq 0)  | KEYS can NOT change!
+.           ifthen (DISPLAY_AS eq 1) | RIGHT NOW DROP DOWN IS THE DEFAULT
+.             execute subprocedure DISPLAY_RADIO
+.           else
+.             execute subprocedure DISPLAY_DROPDOWN
+.           endif
+.         else
+|           | key varialbe and these value labels should be static and not selects.
+.           VALLAB_VALUE = trimlr(vallabsc (REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET ))
+.           write(cgi)  VALLAB_VALUE
+.         endif
+.       endif
+
+|       add validation feedback
+.       ifthen (VALID_RESULT eq 1)
+.         write(cgi)  'Wrong data type or not valid value'
+.       elseif (VALID_RESULT eq 2)
+.         write(cgi)  'Error, please correct.'
+.       elseif (VALID_RESULT eq 7)
+.         write(cgi)  'Text was too long.'
+.       endif
+.       write(cgi)  '</td></tr>'
+.     end for
+.     write(cgi)  '  </table>'
+.     write(cgi)  '  </div> '  | class=span
+.     write(cgi)  '  </div> '  | class=row
+c     construct audit variables
+.     STR$1 = 'Created '
+.     STR$2 = 'Edited '
+.     if(exists(Nget('DSTAMP')) ne 0)  STR$1 = STR$1 +  pack(datec(nget('DSTAMP'),'Mmmmmmmmmm DD, YYYY'))
+.     if(Sget('DWHO') ne '')    STR$1 = STR$1 + ' by ' + sget('DWHO')
+
+.     if(Sget('DCCWHO') ne '')  STR$2 = STR$2 + ' by '  + sget('DCCWHO')
+.     if(exists(Nget('DCCDATE')) ne 0) STR$2 = STR$2 + ' on '  + datec(nget('DCCDATE'), 'Mmm DD,YYYY')
+.     if(exists(Nget('DCCTIME')) ne 0) STR$2 = STR$2 + ' at ' + timec(nget('DCCTIME'), 'HH:MM')
+.     if(exists(Nget('DCCEDITS')) ne 0) STR$2 = STR$2 + ' Total Edits: ' + format(nget('DCCEDITS'))
+.     write(cgi) '<div id="dccvars">'
+.     if (len(STR$1) gt 9) write(cgi) 2t STR$1 '<br>'  | If there is info show it
+.     if (len(STR$2) gt 8) write(cgi) 2t STR$2 '<br>'  | if there is info show it
+.     write(cgi) '</div>'
+
+cif ne 1, 0<REC_SAT>
+.  EXIT REC  | it should be passing keys, but it is not!
+.  end rec
+CIF END
+
+CIF EQ 1, 0<GCASED>
+END CASES
+CIF END
+
+write(cgi)  '</form>'
+
+ifthen(RECACCESSED__4  eq 0)
+. write(cgi) 'There has been some sort of error.  Please notify your DBA.  Code 3892.'
+endif
+
+c set the cursor at the first variable
+. for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.   VNAME$ = trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.   ISKEY__4 = 0
+.   for EACH_KEY =  1,  nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     ifthen (trimlr(keyname(REC_TYPE_NUMBER, EACH_KEY)) eq VNAME$)
+.       ISKEY__4 = 1
+.     endif
+.   end for
+.   if (ISKEY__4 eq 1) NEXT FOR
+.   STR$1 = ' document.getElementById('''  +  VNAME$ + ''').focus();'
+.   write(cgi) '<script type="text/javascript">' STR$1 '</script>'
+.   exit for
+. end for
+
+
+subprocedure CLEAN_VALLAB
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
+. if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+end subprocedure
+
+
+
+subprocedure MAKE_JS_VAR_CHECK  | This is informationt to pass onto JS functions
+. STR$1 = STR$1 + ' checkVar (''' + VNAME$  + "',"
+. for EACH_MISSING_VALUE =  1, 3
+.   ifthen(len(miss(REC_TYPE_NUMBER, VNAME$CB, EACH_MISSING_VALUE)) gt 0)
+.     STR$1 = STR$1 + "'" + miss(REC_TYPE_NUMBER, VNAME$CB, EACH_MISSING_VALUE)  + "',"
+.   else
+.     STR$1 = STR$1 + "'', "
+.   endif
+. end for
+. STR$1 = STR$1 + format(vtype(REC_TYPE_NUMBER, VNAME$CB)) + ", "
+. STR$1 = STR$1 + "'" + SIR_VARFORMAT + "',"
+. ifthen (exists(nmin(REC_TYPE_NUMBER, VNAME$CB)) eq 1)
+.   STR$1 = STR$1 + format(nmin(REC_TYPE_NUMBER, VNAME$CB)) +  ", "
+. else
+.   STR$1 = STR$1 + "'',"
+. endif
+. ifthen (exists(nmax(REC_TYPE_NUMBER, VNAME$CB)) eq 1)
+.   STR$1 = STR$1 + format(nmax(REC_TYPE_NUMBER, VNAME$CB)) +  ");"
+. else
+.   STR$1 = STR$1 + ");"
+. endif
+end subprocedure
+
+subprocedure VAR_INPUT
+c Variable value column
+. ifthen(ISKEY__4 eq 1)
+.   ifthen (0<REC_STAT> eq 6)
+.     write(cgi)  "&nbsp;"
+.   else
+.     write(cgi)  STRING_VARGET
+.   endif
+. else
+c continue from here creating the notes section.
+c    ifthen(recname(REC_TYPE_NUMBER) eq 'RECNOTES')
+.   STR$1 = '<input class ="' + VAR_DISPLAY_CLASS + '" type="text" '
+.   write(cgi)  2t STR$1
+.   STR$1 = 'name= "' + VNAME$  + '" id= "' + VNAME$ + '" tabindex= '  + format(EACH_VARIABLE) + ' title="' + SIR_VARFORMAT  +'"'
+.   write(cgi)  4t STR$1
+.   ifthen (exists(STRING_VARGET ) eq 1)
+.     ifthen (0<REC_STAT> eq 6)
+.       STR$1 = 'value=""'  | blank record
+.     else
+.       STR$1 = 'value= "'  + STRING_VARGET  + '"'
+.     endif
+.   else
+.     STR$1 = 'value=""'
+.   endif
+.   write(cgi)  4t STR$1
+c   add data-date tag for bootstrap
+.   if (SIR_VARTYPE eq 3) write(cgi)  4t ' data-date="12-02-2012" data-date-format="mm/dd/yyyy" data-date-startDate="01/01/2012"'
+
+c   If String, set max string length
+.   ifthen (SIR_VARTYPE eq 1)
+.     STR$1 = "maxlength = " + substr(SIR_VARFORMAT, 2, LEN(SIR_VARFORMAT))
+.     write(cgi)  4t STR$1
+.   endif
+c   create javascript CALL to UPDATE label
+.   STR$1 = 'onChange="'
+c   create javascript CALL to validate variable
+.   execute subprocedure MAKE_JS_VAR_CHECK
+.   ifthen (nvallab(REC_TYPE_NUMBER, VNAME$CB) gt 0)
+.     STR$1 = STR$1 + ' SelectListByValue(''' + VNAME$ + ''',''' + VNAME$ + '_list'');'
+.   endif
+.   STR$1 = STR$1 + 'afterBlur(this);"'  | Close out the onChange JS function
+.   write(cgi) 4t STR$1
+.   write(cgi) 4t '>' | close the edit/input area
+
+. endif
+end subprocedure
+
+
+subprocedure DISPLAY_RADIO
+c RADIO CHOICES
+. for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$CB)
+.   write(cgi)  '<input type="radio" '
+.   STR$1 = 'name= "' + VNAME$  + '" id="' + VNAME$ + format(EACH_LABEL) + '" tabindex=  '  + format(EACH_VARIABLE)  | This is an intentional error.  It wont be selected but it wont be skipped either.
+.   ifthen (VALLAB_POS eq EACH_LABEL)
+.     ifNOTthen (0<REC_STAT> eq 6)
+.       if(len(STRING_VARGET) gt 0) STR$1 = STR$1 +' checked'
+.     endif
+.   endif
+.   write(cgi)  4t STR$1
+
+.   VALLAB_VALUE = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
+.   execute subprocedure CLEAN_VALLAB
+.   ifthen (SIR_VARTYPE eq 3)
+.     VALLAB_VALUE = datec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.   elseif (SIR_VARTYPE eq 4)
+.     VALLAB_VALUE = timec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.   endif
+.   STR$1 = 'value="' + VALLAB_VALUE  + '">(' + VALLAB_VALUE  + ')' + trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
+.   write(cgi) 4t STR$1
+. end for
+
+end subprocedure
+
+
+subprocedure DISPLAY_DROPDOWN
+c Value labels column
+. VALLAB_DISPLAY_CLASS = '"smallwidth"'
+| figure out approximate size of value label select (long or short)
+. for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$CB)
+.   if (len(trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))) gt 10)  VALLAB_DISPLAY_CLASS ='"label_long"'; EXIT FOR
+.   if (EACH_LABEL gt 100) exit for
+. end for
+. STR$1 = '<select class =' + VALLAB_DISPLAY_CLASS + ' id="' + VNAME$  + '_list" '
+. write(cgi)  4t STR$1
+. STR$1 = 'onchange="SelectValueByList(this,''' + VNAME$ + ''');afterBlur(this);">'
+. write(cgi)  6t STR$1
+c First option is blank (system missing, zero length string, whatever)
+. write(cgi)  6t '<option value=""></option>'
+. for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$CB)
+.   STR$1 = trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
+.   VALLAB_VALUE = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
+.   execute subprocedure CLEAN_VALLAB
+.   ifthen (SIR_VARTYPE eq 3)
+.     VALLAB_VALUE = datec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.   elseif (SIR_VARTYPE eq 4)
+.     VALLAB_VALUE = timec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.   endif
+.   SELECTED__4  = ''
+.   ifthen (VALLAB_POS eq EACH_LABEL)
+.     ifNOTthen (0<REC_STAT> eq 6)
+.       if(len(STRING_VARGET) gt 0) SELECTED__4  = 'selected'
+.     endif
+.   endif
+.   STR$1 = '<option value="'  + VALLAB_VALUE  + '" '  + SELECTED__4  + '>' + STR$1 + '</option>'
+.   write(cgi)  6t STR$1
+. end for
+. write(cgi)  4T '</select>'
+end subprocedure
+
+
+
+end retrieval
+
+
+c notes
+ 1 = New
+ 2 = Old
+ 3 = Updated, but needs corrections
+ 4 = Saved
+ 5 = Deleted
+ 6 = Blank  ( for viewing sample page)  not sure how to implement this yet.
+c
+ 0 = Valid value
+ 1 = Wrong data type/Not valid value
+ 2 = Violation of specified valid values or ranges
+ 3 = Missing value 0 (Undefined or system missing value)
+ 4 = Missing value 1
+ 5 = Missing value 2
+ 6 = Missing value 3
+ 7 = String too long - would be truncated
+
+
+END PROCEDURE

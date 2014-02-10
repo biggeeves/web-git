@@ -1,0 +1,33 @@
+PROCEDURE      SYSTEM.DB_FOLDERS:T  (156505,56052)  |Last amended Apr 13, 2011,15:34:12
+c  The log in is called first and points to the DCC database to check user name and password
+c  Change program.logon to point to the correct location of the DCC database
+
+program crwarn
+. string  *   600   STR$1                      | General String use at any time
+. string  *   600   ANY_DIR__4                  | Database folder
+. string  *    32   DBNAME__4                   | Database Name
+. integer *     1   ANYNUM__4                    | does the directory exists
+
+. DBNAME__4 = trimlr(dbname(0))
+
+c database folder
+. ANY_DIR__4 = dsn('web_root') + DBNAME__4 + '\'
+. if (fileis(ANY_DIR__4) eq 0) ANYNUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANYNUM__4 eq -1) write 'Can not make DB folder' [fileis(ANY_DIR__4)] ANY_DIR__4
+
+c database javascript folder
+. ANY_DIR__4 = dsn('web_root') + DBNAME__4 + '\js\'
+. if (fileis(ANY_DIR__4) eq 0) ANYNUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANYNUM__4 eq -1) write 'Can not make Javascrip folder' [fileis(ANY_DIR__4)] ANY_DIR__4
+
+c database users folder
+. ANY_DIR__4 = dsn('web_root') + DBNAME__4 + '\users\'
+. if (fileis(ANY_DIR__4) eq 0) ANYNUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANYNUM__4 eq -1) write 'Can not make USERS folder' [fileis(ANY_DIR__4)] ANY_DIR__4
+
+c database specific user
+. ANY_DIR__4 = dsn('web_root') + DBNAME__4 + '\users\<username>\'
+. if (fileis(ANY_DIR__4) eq 0) ANYNUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANYNUM__4 eq -1) write 'Can not make USERS folder' [fileis(ANY_DIR__4)] ANY_DIR__4
+end program
+END PROCEDURE

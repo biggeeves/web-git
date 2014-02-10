@@ -1,0 +1,25 @@
+PROCEDURE      INSTALLER.MAKE_DEFAULT_PQL:T  (157515,44446)  |Last amended Jan 17, 2014,12:20:46
+program CRWARN
+. string * 600 STR$1
+. integer * 2 FILEIOSTAT
+
+. open  (DEFAULT_PQL) write iostat = FILEIOSTAT lrecl = 600
+write FILEIOSTAT ///
+.   ifthen (FILEIOSTAT eq 0)
+.     write (DEFAULT_PQL) 'C CREATED BY THE WEB INSTALLER ON ' [DATEC(TODAY(0),'Mmm. DD, YYYY')] /
+.     write (DEFAULT_PQL) 'C THIS IS THE FIRST FILE CALLED BY SIR WEB. '  /
+
+write (DEFAULT_PQL) 'program' / 'write "in default.pql debuggging"' / 'end program'// | debug
+
+.     STR$1 = 'ATTRIBUTE WPF = "' + DSN('WPF') +'" | VERSION: ' + DATEC(TODAY(0),'MMDD') + TIMEC(NOW(0),'HHMM')
+.     WRITE (DEFAULT_PQL) // STR$1 //
+.     WRITE (DEFAULT_PQL) 'CALL WPF.CONTROLLER.WEB_START'
+write (DEFAULT_PQL) 'program' / 'write "After WEB_START"' / 'end program'// | debug
+.   else
+.     write 'Error writing to default.pql'
+.   endif
+. close (DEFAULT_PQL)
+
+
+end program
+END PROCEDURE
