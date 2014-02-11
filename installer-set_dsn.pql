@@ -1,0 +1,8 @@
+PROCEDURE      INSTALLER.SET_DSN:T  (157540,35365)  |Last amended Feb 11, 2014,09:49:25
+program
+string  * 300 INSTALL_SRP STR$1
+INSTALL_SRP = dsn(procfile(0))
+STR$1 = 'attribute INSTALL_SRP = "' + dsn(procfile(0)) + '"'
+EXECUTE DBMS STR$1
+end program
+END PROCEDURE

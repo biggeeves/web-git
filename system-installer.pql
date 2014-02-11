@@ -1,16 +1,11 @@
-PROCEDURE      SYSTEM.INSTALLER:T  (157511,44075)  |Last amended Jan 13, 2014,12:14:35
+PROCEDURE      SYSTEM.INSTALLER:T  (157540,35439)  |Last amended Feb 11, 2014,09:50:39
 c installer does the following:
 c asks user for database location folder.
 c creates two databases, "PW" and "Manager", both of which need to include one table with date and time created and version of DB.
 c alerts user to gitHUB files
 C NOTE THAT THE INSTALLER SHOULD CALL A BUNCH OF PROGRAMS/SUBROUTINES IN A FAMILY CALLED INSTALLER
 
-program
-string  * 300 INSTALL_SRP STR$1
-INSTALL_SRP = dsn(procfile(0))
-STR$1 = 'attribute INSTALL_SRP = "' + dsn(procfile(0)) + '"'
-EXECUTE DBMS STR$1
-end program
+CALL INSTALLER.SET_DSN
 
 call INSTALL_SRP.INSTALLER.START
 END PROCEDURE
