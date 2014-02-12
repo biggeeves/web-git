@@ -13,7 +13,7 @@ PROGRAM
 . ifnotthen (RC GE 0)
 .   compute DUMMY = globals("GMEMIN","WPF.INC_BODY_FORMS.UNK_ERR")
 .   compute DUMMY = globals("GSOMEMESS",'<GDB> Database Connection Failed: ' + format(RC) )
-.   EXECUTE DBMS "CALL WPF.CONTROLER.SHOW_PAGE"
+.   EXECUTE DBMS "CALL WPF.CONTROLLER.SHOW_PAGE"
 . endif
 END PROGRAM
 

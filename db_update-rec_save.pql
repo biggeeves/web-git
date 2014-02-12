@@ -103,18 +103,18 @@ ifthen (0<ERR__4> eq 0)
 . ANYNUM__4 = globals('GSOMEMESS', REC_LABEL__4 + ' was saved')
 . ifthen ('<USERNAME>' = 'Greg Neils' or 'Ming')
 .   ANYNUM__4 = globals('GUPICK', 'Edit')
-.   EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+.   EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 . else
 .   ANYNUM__4 = globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_NAV')
 . endif
 elseif (0<ERR__4> eq 999)
 . ANYNUM__4 = globals('GUPICK', 'Edit')
 . ANYNUM__4 = globals( 'GSOMEMESS',  'There was an issue trying to save the record' + REC_LABEL__4 )
-. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+. EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 else
 . ANYNUM__4 = globals('GUPICK', 'Edit')
 . ANYNUM__4 = globals( 'GSOMEMESS', 'Data Validation Errors' + '<GSOMEMESS>')
-. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+. EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 endif
 END PROGRAM
 

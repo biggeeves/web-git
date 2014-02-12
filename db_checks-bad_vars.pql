@@ -49,7 +49,7 @@ CIF END
 . ifthen (GOON__4 eq 0) | no database connected, stupid, but happens
 .   ANYNUM__4 = globals( 'GSOMEMESS', 'Some variables names need to change before using the web interface.  You have been warned.')
 .   ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-c .   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'   | this stops the toolbar from loading.  The user can NOT continue!  Which can be great
+c .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'   | this stops the toolbar from loading.  The user can NOT continue!  Which can be great
 . endif
 
 END PROGRAM

@@ -8,7 +8,7 @@ ifthen (nglobal("GVIEWDBA") eq 1)
 
 
 | Changed databases
-. STR$1  = '<li><a href="<mycgi>?member=WPF.CONTROLER.A_LOGON&amp;upick=CHANGEDBS&amp;nextmember=WPF.INC_BODY_FORMS.CHOOSE_DBG&amp;redirect=N">Change Databases</a></li>'
+. STR$1  = '<li><a href="<mycgi>?member=WPF.CONTROLLER.A_LOGON&amp;upick=CHANGEDBS&amp;nextmember=WPF.INC_BODY_FORMS.CHOOSE_DBG&amp;redirect=N">Change Databases</a></li>'
 . write(cgi) 4T STR$1
 
 

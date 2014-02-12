@@ -1,22 +1,15 @@
-PROCEDURE      JS.ALLCALL:T  (156664,49770)  |Last amended Sep 19, 2011,13:49:30
-CALL WPF.STATIC_PAGES.JAVASCRIPT_REQUIRED | Creat the web page for javascript required.
+PROCEDURE      JS.ALLCALL:T  (157540,57514)  |Last amended Feb 11, 2014,15:58:34
+CALL WPF.JS.GLOBAL_JS  | make the global JS file again.
 
 program crwarn
+
 CALL WPF.SYSTEM.DEFINE_VARS
 
 | this is called from wpf.system.initialize as well.  If you run it in a SIR session, it reports back less than what it actually does.
-if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br> JS.GLOBAL: ' 20t [DSN('globaljs')]
-if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br>' 10t ' includes JS.TOP_MENU, JS.COOKIE, JS.DROPDOWNS, JS.KEYS'
-. open globaljs /write lrecl = 600 IOSTAT =  IOSTAT__4
-. ifNOTthen (IOSTAT__4 eq 0)
-.   write (cgi)'Error creating js files: ' IOSTAT__4
-. else
-.   CALL WPF.JS.GLOBAL_JS
-.   CALL WPF.JS.TOP_MENU
-. endif
-. close globaljs
+. if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br> JS.GLOBAL: ' 20t [DSN('globaljs')]
+. if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br>' 10t ' includes JS.TOP_MENU, JS.COOKIE, JS.DROPDOWNS, JS.KEYS'
 
-. ifnot (system(39) gt 0) exit program
+. ifnot (system(39) gt 0) exit program  | Exit if no database is attached at this point
 
 . EXECUTE DBMS "call WPF.JS.SHOW_VARS"
 . if (sglobal('GMEMIN') eq 'WPF.INC_DBA.UPDATE_DB_FILES') write(cgi) '<br> JS.SHOW_VARS: ' [dsn('showvars')]

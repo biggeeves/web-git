@@ -42,7 +42,7 @@ CIF END
 .   RECACCESSED__4  = 1
 .   ifthen (0<GWS> ne 0)
 .     ifthen (0<REC_STAT> ne 6)
-.       LINK__4 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Edit'
+.       LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Edit'
 .       if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis='+ sglobal('CASEISNQ')
 .       for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .         KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))

@@ -39,7 +39,7 @@ c   display each record and corresponding key values
 .     compute SHOWKEYS__4 = ''
 .     execute subprocedure START_ROW
 .   end rec
-.   STR$1 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;caseis=' + sglobal('CASEISNQ')+ '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Table"'
+.   STR$1 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' + sglobal('CASEISNQ')+ '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Table"'
 .   if(count(REC_TYPE_NUMBER) gt 0) write(cgi) '<li><a href=' STR$1 '> Table</a></li>'
 .   write(cgi) 2t '</ul>'
 .   write(cgi) '</p>'
@@ -68,7 +68,7 @@ subprocedure START_ROW
 .   end for
 
 c   Keys (used for the link)
-.   STR$2 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))

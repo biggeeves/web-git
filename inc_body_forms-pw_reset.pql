@@ -40,10 +40,10 @@ CALL WPF.SYSTEM.DEFINE_VARS
 . write(cgi) '<div id="container">'  |this applies a css for the entire contents (centers it on the page)
 . write(cgi) '<h1 title="Data Coordinating Center, New York, NY">'
 . write(cgi) 'Please Reset Your Password.</h1>'
-. if ('<GMEMIN>' = 'WPF.CONTROLER.PW_RESET2') write (cgi) '<p>Sorry that password will not work</p>'
+. if ('<GMEMIN>' = 'WPF.CONTROLLER.PW_RESET2') write (cgi) '<p>Sorry that password will not work</p>'
 
 . write(cgi) '<form method="post" action="<mycgi>">'
-. write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLER.PW_RESET2">'
+. write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLLER.PW_RESET2">'
 . write(cgi) '<input type="hidden" name="username" value="<username>">'
 . write(cgi) '<table class="center" width="100%"><tr><td width="40%">'
 . write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'

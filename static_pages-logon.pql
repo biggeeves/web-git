@@ -1,4 +1,4 @@
-PROCEDURE      STATIC_PAGES.LOGON:T  (157512,45366)  |Last amended Jan 14, 2014,12:36:06
+PROCEDURE      STATIC_PAGES.LOGON:T  (157541,51792)  |Last amended Feb 12, 2014,14:23:12
 program crwarn
 string  * 600   STR$1            | General String use at any time
 integer *   1   IOSTAT__4                  | Return code of IOSTAT
@@ -7,9 +7,8 @@ STRING  *  12   TESTCOOKVALUE
 TESTCOOKVALUE = format(now(0))
 
 c note: JavaScript is required for form validation, drop downs, querries.
-c Perhaps I can figure out a way to know if Javascript is enabled by the browser, virus software, firewalls, etc.  Pass info to server and re-direct as neccessary.
-
 c note!  This does not write out to CGI
+
 write '<br> Index or Log On: ' 20t [dsn('index')]
 
 open (index) write lrecl=600 iostat = IOSTAT__4
@@ -18,10 +17,10 @@ if(iostat__4 ne 0) write // 'problem opening file' IOSTAT__4 //
 . compute STR$1  = '<' + CHAR(33) + 'DOCTYPE html>'
 . write(index) STR$1
 . write(index) '<head ><title >D.C.C. Log in</title>'/
-               '  <script type="text/javascript" src="js/global.js"></script>'/
-               '  <link href="bootstrap/css/bootstrap.css" rel="stylesheet">'/
-               '  <link rel="icon" type="image/ico" href="images/DCC.ico"  title="DCC Data Management" >'/
-               '  <link type="text/css" href="css/custom.css" rel="stylesheet">'/
+               '  <link href="<fullurl>css/custom.css" rel="stylesheet">'/
+               '  <link href="<fullurl>css/bootstrap.css" rel="stylesheet">'/
+               '  <script type="text/javascript" src="<fullurl>js/global.js"></script>'/
+               '  <link rel="icon" type="image/ico" href="<fullurl>images/DCC.ico"  title="DCC Data Management" >'/
                '  <meta charset="UTF-8">'/
                '  <meta content="noindex,nofollow,noarchive" name="robots">'/
                '  <meta http-equiv="Pragma" content="no-cache">'/
@@ -29,7 +28,7 @@ if(iostat__4 ne 0) write // 'problem opening file' IOSTAT__4 //
                '  <meta http-equiv="window-target" content="_top">'/
                '  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->'/
                '  <!--[if lt IE 9]>'/
-               '    <script src="bootstrap/js/html5shiv.js"></script>'/
+               '    <script src="js/html5shiv.js"></script>'/
                '  <![endif]-->'/
                '  <style type="text/css">'/
                '  body {'/
@@ -44,9 +43,9 @@ if(iostat__4 ne 0) write // 'problem opening file' IOSTAT__4 //
                '    </div>'/
                '    <div class="row">'/
                '      <div class="col-xs-6 col-xs-push-3">'/
-               '        <form method="post" action="x/<mycgi>" role="form" class="form-horizontal">'/
+               '        <form method="post" action="<mycgi>" role="form" class="form-horizontal">'/
                '          <input type="hidden" id="redirect" name="redirect" value="">'/
-               '          <input type="hidden" name="member" value="WPF.CONTROLER.A_LOGON">'/
+               '          <input type="hidden" name="member" value="WPF.CONTROLLER.A_LOGON">'/
                '          <input type="hidden" name="jsenabled" id="jsenabled" value="NO">'/
                '          <legend>Sign In</legend>'/
                '          <div class="form-group">'/
@@ -86,7 +85,7 @@ if(iostat__4 ne 0) write // 'problem opening file' IOSTAT__4 //
                '    <!-- Le javascript'/
                '================================================== -->'/
                '    <!-- Placed at the end of the document so the pages load faster -->'/
-               '  <script src="/bootstrap/js/bootstrap.min.js"></script>'/
+               '  <script src="<fullurl>js/bootstrap.js"></script>'/
                '</body></html>'
 close index
 end program

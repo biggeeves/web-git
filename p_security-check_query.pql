@@ -7,7 +7,7 @@ elseif (pattern(cgivarsv('QUERY_STRING'), "@#@") eq 1)
 | at this time, SIR truncates the value if the character # is in the link.  This is not good.
 . ANYNUM__4 =  globals('GSOMEMESS', 'That link needs to be fixed.')
 . ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 end program
 END PROCEDURE

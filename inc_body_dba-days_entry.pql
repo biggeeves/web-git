@@ -95,7 +95,7 @@ subprocedure START_ROW
 .     SHOWKEYS__4 = SHOWKEYS__4 + '<span class="xsmallfont"> at ' + fst(varget('DCCTIME'), '') +'</span>'
 
 c   Keys (used for the link)
-.   STR$2 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))

@@ -168,7 +168,7 @@ subprocedure START_ROW
 . SHOWKEYS__4 = ''
 . STR$1 = '<tr>'
 . write(cgi) STR$1
-. STR$1 = '<a class="bluetext" href = "<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=View&amp;gdbrec=' + sglobal('GDBREC')
+. STR$1 = '<a class="bluetext" href = "<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;gdbrec=' + sglobal('GDBREC')
 . ifthen (dbtype(0) eq 1)
 .   KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
 .   KEYVALUE__4 = trimlr(varget(KEYVNAME__4))

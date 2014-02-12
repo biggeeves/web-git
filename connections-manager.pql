@@ -20,7 +20,7 @@ ifthen (MST ne '')
 . execute subprocedure SHOWERRORS
 .   ANYNUM__4 = globals( 'GSOMEMESS', 'Sorry, ' +  MST + ' is being worked on.  Access temporarily unavailable.')
 .   ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . endif
 endif
 
@@ -35,7 +35,7 @@ ifnotthen (IOSTAT__4 GE 0)
 . endif
 . ANYNUM__4 = globals('GSOMEMESS',STR$1)
 . ANYNUM__4 = globals('GMEMSTOP','WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
-. EXECUTE DBMS 'CALL WPF.CONTROLER.STOP_PAGE'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.STOP_PAGE'
 endif
 
 subprocedure SHOWERRORS

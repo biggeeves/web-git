@@ -1,4 +1,4 @@
-PROCEDURE      GITHUB.EXPORT_MEMBERS:T  (157539,56104)  |Last amended Feb 10, 2014,15:35:04
+PROCEDURE      GITHUB.EXPORT_MEMBERS:T  (157541,37173)  |Last amended Feb 12, 2014,10:19:33
 program crwarn
 integer *     2   STAT#         | David's stuff for connecting to all DBs
 string  *   200   GIT_FOLDER_NAME
@@ -47,21 +47,10 @@ for EACH_FAMILY = 1, FAM#C
 .   MEMBER_FILE_NAME = lower(MEMBER_FILE_NAME)
 .   write 5t 'Output: ' MEMBER_FILE_NAME
 .   execute dbms "PWRITE '" + MEMBER_FILE_NAME + "' , " + MEMBER_SIR_NAME + " /NOINFORM"
-CIF EQ 1,2
-c code below reads each file and export member to a file.  One would have to manually tediously import each file using this method.
-.   open ( TMP_FILE ) dsnvar = MEMBER_FILE_NAME /write/ lrecl = 2000
-.   open ( TMP_SIR ) read member dsnvar = MEMBER_SIR_NAME iostat = STAT# lrecl = 2000
-.     while ( STAT# = 0 )
-.       read ( TMP_SIR , iostat = STAT# ) EACH_LINE ( a2000 )
-.       write ( TMP_FILE ) EACH_LINE
-.     end while
-.   close ( TMP_SIR )
-.   close ( TMP_FILE )
-CIF END
 . end for
 end for
 
-WRITE 'FINISHED'
+WRITE 'FINISHED: export members'
 
 end program
 END PROCEDURE

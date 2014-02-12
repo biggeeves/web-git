@@ -4,7 +4,7 @@ remark 'p_security.check_js'
 ifNOTthen (sglobal('GJSENABLED') eq 'YES')
 . ANYNUM__4 =  globals('GSOMEMESS', 'Please enable JavaScript and log on again.')
 . ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 end program
 END PROCEDURE

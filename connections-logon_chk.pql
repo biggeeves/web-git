@@ -12,21 +12,21 @@ DBPATH  = dsn('LOGON_FOLDER')
 ifthen(fileis(DBPATH  + 'logon.sr1') ne 1)
 . ANYNUM__4 = globals( 'GSOMEMESS', 'Oh oh, We are currently updating or system.')
 . ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 PQL CONNECT DATABASE 'LOGON' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
 IFNOTTHEN (IOSTAT__4 GE 0)
 . ANYNUM__4 = globals( 'GSOMEMESS', 'We are currently updating our system.  Please try back later.')
 . execute subprocedure SHOWERRORS
 . ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
-. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 
 elseif (MST ne '')
 . ifthen (system(38) eq 0)
 .   execute subprocedure SHOWERRORS
 .   ANYNUM__4 = globals( 'GSOMEMESS', 'Sorry, ' +  MST + 'is being worked on.  Access temporarily denied.  Contact your DBA for time frame')
 .   ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . endif
 endif
 

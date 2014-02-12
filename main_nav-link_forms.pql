@@ -5,7 +5,7 @@ write(cgi) 10t '  <ul class="dropdown-menu">'
 ifthen(nglobal('GVIEWRECS') eq 1)  | Can see Records Menu
 . ifthen ('<CASEIS>' ne '')
 C   DO NOT ADD EXTRA SPACES OR LINE BREAKS
-.   LINK__4 = ' href="<mycgi>?member=WPF.CONTROLER.CASE_CONTROL&amp;caseis=<CASEISNQ>"'
+.   LINK__4 = ' href="<mycgi>?member=WPF.CONTROLLER.CASE_CONTROL&amp;caseis=<CASEISNQ>"'
 . else
 .   ifthen (dbtype(0) eq 0)
 .     LINK__4 =  ' href="<mycgi>?member=WPF.INC_BODY_FORMS.REC_NAV"'

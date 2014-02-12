@@ -40,7 +40,7 @@ c to make specific IDs selected insert the code here
 . KEYVNAME__4 = varname(0, 1)
 . VNAME$CB = stdname(KEYVNAME__4)
 . CASE_STR = trim(varget(VNAME$CB))
-. LINK__4 = '<a class="btn btn-primary" href ="<mycgi>?member=WPF.CONTROLER.CASE_CONTROL&caseis=' + CASE_STR + '"> ' + CASE_STR +'</a>'
+. LINK__4 = '<a class="btn btn-primary" href ="<mycgi>?member=WPF.CONTROLLER.CASE_CONTROL&caseis=' + CASE_STR + '"> ' + CASE_STR +'</a>'
 . STR$1 = '  <td>' + LINK__4  + '</td>'
 . write(cgi) STR$1
 

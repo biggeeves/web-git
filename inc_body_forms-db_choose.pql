@@ -16,7 +16,7 @@ write(cgi) '<div class="row">'
 write(cgi) '<div class="span6 offset3 text-center">'
 write(cgi) '<form class="center" name="dbchoose" action="<mycgi>" method="post">'
 write(cgi) '<input type="hidden" name="redirect" value="<REDIRECT>">'
-write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLER.FIRST_PAGE">'
+write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLLER.FIRST_PAGE">'
 write(cgi) '<p class="text-center"><strong>Choose a Database<strong></p>'
 write(cgi) '<select name="dbpick" size="10" id="dblist">'
 GOON__4 = 0

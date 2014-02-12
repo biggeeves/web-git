@@ -1,4 +1,6 @@
-PROCEDURE      JS.CASE_NAV:T  (156811,50091)  |Last amended Feb 13, 2012,13:54:51
+PROCEDURE      JS.CASE_NAV:T  (157540,57734)  |Last amended Feb 11, 2014,16:02:14
+c Browse case ids
+
 CIF EQ <GCASED>, 1
 retrieval crwarn noautocase
 string  *   600   STR$1                      | General String use at any time
@@ -11,6 +13,11 @@ string  *    32   CASE_STR                   | Value of CASE
 
 c options can not have onclicks.  Must define function and then CALL it depending on what is passed
 open casenav /write lrecl = 400 IOSTAT =  IOSTAT__4
+
+. ifthen (system(39) eq 0)
+.   write 'oppss no database is attached can not created case navigation javascript file'
+.   exit program  | Exit if no database is attached at this point
+. endif
 
 ifNOTthen (IOSTAT__4  = 0)
 . write 'Error creating casenav files: ' IOSTAT__4

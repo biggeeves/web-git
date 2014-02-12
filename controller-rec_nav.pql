@@ -1,11 +1,11 @@
-PROCEDURE      CONTROLER.REC_NAV:T  (157452,52665)  |Last amended Nov 15, 2013,14:37:45
+PROCEDURE      CONTROLLER.REC_NAV:T  (157452,52665)  |Last amended Nov 15, 2013,14:37:45
 c hub for record navigation.  All trafic to and from a record should go here.
 
 CALL WPF.DB_CHECKS.VALID_REC
 
 CALL WPF.DB_CHECKS.VALID_CASE
 
-CALL WPF.CONTROLER.REC_ONLY_ONE       | see if there is only one record.  no need to choose keys then.  CAREFUL.  USER CAN PICK TABLE VIEW!
+CALL WPF.CONTROLLER.REC_ONLY_ONE       | see if there is only one record.  no need to choose keys then.  CAREFUL.  USER CAN PICK TABLE VIEW!
 
 program
 CALL WPF.SYSTEM.DEFINE_VARS
@@ -36,7 +36,7 @@ elseif (UPICK__4 = 'Edit')
 . ANYNUM__4 =  globaln('REC_STAT', 2)
 . ifthen (meminfo('SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)) + ':T', 1) = 1)
 .   ANYNUM__4 =  globals('GMEMOUT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . else
 .   ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_EDIT')
 . endif
@@ -46,13 +46,13 @@ elseif (UPICK__4 = 'Select') | Multiple Records to choose.
 .   ANYNUM__4 =  globaln('REC_STAT', 2)
 .   ifthen (meminfo('SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)) + ':T', 1) = 1)
 .     ANYNUM__4 =  globals('GMEMOUT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
-.     EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.     EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 .   else
-.     EXECUTE DBMS 'CALL WPF.CONTROLER.DATA_ENTRY'
+.     EXECUTE DBMS 'CALL WPF.CONTROLLER.DATA_ENTRY'
 .   endif
 . else | No keys
 .   ANYNUM__4= globaln('REC_STAT', 2)
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.REC_ONLY_ONE'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.REC_ONLY_ONE'
 . endif
 
 elseif(UPICK__4 eq 'Save')
@@ -67,8 +67,8 @@ elseif (UPICK__4 = 'Table')
 . ANYNUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_TABLE')
 elseif (UPICK__4 eq 'First' or 'Previous' or 'Next' or 'Last' )
 . ANYNUM__4 =  globaln('REC_STAT', 2)
-. EXECUTE DBMS 'CALL WPF.CONTROLER.REC_CHANGE_KEYS'
-. EXECUTE DBMS 'CALL WPF.CONTROLER.DATA_ENTRY'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.REC_CHANGE_KEYS'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.DATA_ENTRY'
 
 elseif (UPICK__4 eq 'Delete')
 . EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_KEYS'

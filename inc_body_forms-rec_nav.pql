@@ -14,7 +14,7 @@ else
 endif
 
 write(cgi) '<form method="post" action="<mycgi>" name="pickrecord">'
-write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLER.REC_NAV">'
+write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLLER.REC_NAV">'
 c write(cgi) '<input type="submit" name="upick" value="Delete This Case">'
 CALL WPF.INC_ELEMENTS.CASE_IS
 CALL WPF.INC_ELEMENTS.GDB_REC
@@ -42,7 +42,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . write(cgi) 4T '</label></td>'
 . ifthen (count(EACH_RECORD_NUMBER) eq 0)
 .   ifthen (0<GWS> ne 0)
-.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=New&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=New&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'New</a></td>'
 .   else
 .     write(cgi) '  <td>&nbsp;</td>'
@@ -50,30 +50,30 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 .   write(cgi) '  <td>&nbsp;</td>'
 . elseif (count(EACH_RECORD_NUMBER) eq maxrecs(EACH_RECORD_NUMBER) )
 .     write(cgi) '  <td>&nbsp;</td>' | empty new rec cell
-.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=View&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'View</a> &#124;'
-.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=Edit&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Edit&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi)  STR$1 'Edit</a> &#124;'
-.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=Table&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Table&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi)  STR$1 'Table</a></td>'
 . else
 .   ifthen (0<GWS> ne 0)
-.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=New&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=New&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'New</a></td>'
 .   else
 .     write(cgi) '  <td>&nbsp;</td>'
 .   endif
 .     ifthen (count(EACH_RECORD_NUMBER) gt 1)
-.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=Select&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Select&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .       write(cgi) '<td>' STR$1 'Select</a>  &#124;'
-.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=Table&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Table&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .       write(cgi)  STR$1 'Table</a></td>'
 .     else
-.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=View&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .       write(cgi) '<td>' STR$1 'View</a> &#124;'
-.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=Edit&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Edit&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .       write(cgi)  STR$1 'Edit</a> &#124;'
-.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=Table&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
+.       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Table&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .       write(cgi)  STR$1 'Table</a></td>'
 .     endif
 . endif

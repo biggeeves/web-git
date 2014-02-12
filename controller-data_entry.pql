@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLER.DATA_ENTRY:T  (156624,37842)  |Last amended Aug 10, 2011,10:30:42
+PROCEDURE      CONTROLLER.DATA_ENTRY:T  (156624,37842)  |Last amended Aug 10, 2011,10:30:42
 c Choose customized data entry screens or default data entry screens.
 C NOTE THAT ALL RECORD CREATION MUST HAPPEN BEFORE COMING TO THIS SCREEN.
 

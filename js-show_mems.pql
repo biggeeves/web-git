@@ -1,12 +1,20 @@
-PROCEDURE      JS.SHOW_MEMS:T  (156617,57557)  |Last amended Aug 03, 2011,15:59:17
+PROCEDURE      JS.SHOW_MEMS:T  (157540,57660)  |Last amended Feb 11, 2014,16:01:00
+c create the show members javascript
+c Changes the members select based on the selected family.
+
 program crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
+. ifthen (system(39) eq 0)
+.   write 'oppss no database is attached'
+.   exit program  | Exit if no database is attached at this point
+. endif
+
 open showmems /write lrecl=400 IOSTAT= IOSTAT__4
 
 ifNOTthen (IOSTAT__4 =0)
-. write 'Error creating js files: ' IOSTAT__4
+. write 'Error creating js show member file: ' IOSTAT__4
 . exit program
 endif
 

@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLER.PW_RESET:T  (157452,47302)  |Last amended Nov 15, 2013,13:08:22
+PROCEDURE      CONTROLLER.PW_RESET:T  (157452,47302)  |Last amended Nov 15, 2013,13:08:22
 c What to do when user comes from the Sign in page
 
 c comments are inserted because blank lines do NOT let the global values get set intime for the CIFs
@@ -22,7 +22,7 @@ end program
 
 
 
-CIF EQ '<GMEMIN>', 'WPF.CONTROLER.PW_RESET'
+CIF EQ '<GMEMIN>', 'WPF.CONTROLLER.PW_RESET'
 C FIRST CHECK TO SEE IF PASSWORD RESET IS OK.  SHOULD STOP LINKS FROM BEING FOREVER ACTIVE.
 . retrieval
 .   STR$1 = sglobal('USERNAME')
@@ -38,11 +38,11 @@ C FIRST CHECK TO SEE IF PASSWORD RESET IS OK.  SHOULD STOP LINKS FROM BEING FORE
 . CIF EQ <GOON__4>, 1
 .   CALL WPF.INC_BODY_FORMS.PW_RESET
 . CIF FALSE
-.   CALL WPF.CONTROLER.STOP_PAGE
+.   CALL WPF.CONTROLLER.STOP_PAGE
 . CIF END
 CIF END
 
-CIF EQ '<GMEMIN>', 'WPF.CONTROLER.PW_RESET2'
+CIF EQ '<GMEMIN>', 'WPF.CONTROLLER.PW_RESET2'
 . GLOBAL GOON__4 = 0
 | test the new password
 . program

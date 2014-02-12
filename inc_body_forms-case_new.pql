@@ -7,7 +7,7 @@ CALL WPF.SYSTEM.INI_VARS
 write(cgi) '<h4>Create a new ' CASE_LABEL '</h4>'
 ifthen (0<GSECLEVEL> ne 0)
 . write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
-. write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLER.CASE_CONTROL">'
+. write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'
 . write(cgi) '  <input type="hidden" name="caseoption" id="caseoption" value="new">'
 . write(cgi) '    <br><p><div id="caseidlabel" class ="indent">' CASE_LABEL '</div>'
 . write(cgi) '      <input type="text" id="caseis" class="input_medium" name="caseis">'

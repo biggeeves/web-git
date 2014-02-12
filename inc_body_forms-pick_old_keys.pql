@@ -25,7 +25,7 @@ write(cgi) '</table><br>'
 
 write(cgi) '<h4>Option B: Choose your own keys</h4>'
 write(cgi) '<form method="post" action="<mycgi>">'
-write(cgi) '<input type="hidden" id="member" name="member" value="WPF.CONTROLER.REC_NAV">'
+write(cgi) '<input type="hidden" id="member" name="member" value="WPF.CONTROLLER.REC_NAV">'
 write(cgi) '<input type="hidden" id="upick" name="upick" value="Edit">'
 CALL WPF.INC_ELEMENTS.CASE_IS
 CALL WPF.INC_ELEMENTS.GDB_REC
@@ -126,7 +126,7 @@ write(cgi) '</form>'
 
 subprocedure START_ROW
 .   SHOWKEYS__4 = ''
-.   LINK__4 = '"<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER)
+.   LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER)
 .   if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis=' +  sglobal('CASEISNQ')
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))

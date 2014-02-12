@@ -2,7 +2,7 @@ PROCEDURE      SYSTEM.MAKE_DB_FILES:T  (157452,52580)  |Last amended Nov 15, 201
 c create the necessary JS files, hopefully just at the beginning of the session and hopefully only by DBAs
 . program
 .   ifthen (system(39) gt 0)
-.     ifthen(sglobal('GMEMIN') eq 'WPF.CONTROLER.FIRST_PAGE' OR 'WPF.INC_DBA.UPDATE_DB_FILES')
+.     ifthen(sglobal('GMEMIN') eq 'WPF.CONTROLLER.FIRST_PAGE' OR 'WPF.INC_DBA.UPDATE_DB_FILES')
 .       EXECUTE DBMS "call WPF.SYSTEM.DB_FOLDERS"
 .       EXECUTE DBMS "call WPF.JS.ALLCALL"
 .       EXECUTE DBMS "call WPF.DB_CHECKS.BAD_VARS"  | show variables that can not be saved due to HTML or other reasons.

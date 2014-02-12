@@ -17,7 +17,7 @@ open (index) read lrecl = 600 iostat = IOSTAT__4
 . ifthen (iostat__4 ne 0)
 .   ANYNUM__4 = globals('GSOMEMESS', 'The sign in page was unavailable.')
 .   ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 .   exit program
 . endif
 . open (index) read iostat = IOSTAT__4 lrecl = 300

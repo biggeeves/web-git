@@ -34,11 +34,11 @@ program
 . ifNOTthen (nglobal('GOON__4') eq 1)
 .   ANYNUM__4 = globals( 'GSOMEMESS', 'New record was NOT created.  Please try again later.')
 .   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.STOP_PAGE'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.STOP_PAGE'
 . else
 .   ANYNUM__4 = globals( 'GSOMEMESS', '')
 .   ANYNUM__4 = globaln('REC_STAT', 2)  | It will be an old rec by the time this comes into play
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.DATA_ENTRY'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.DATA_ENTRY'
 . endif
 end program
 

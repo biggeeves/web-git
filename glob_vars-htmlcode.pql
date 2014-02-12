@@ -1,14 +1,15 @@
-PROCEDURE      GLOB_VARS.HTMLCODE:T  (157452,51622)  |Last amended Nov 15, 2013,14:20:22
-c additional needed globals that are not in the sysproc
+PROCEDURE      GLOB_VARS.HTMLCODE:T  (157540,53967)  |Last amended Feb 11, 2014,14:59:27
+c additional HTML globals that are not in the sysproc
 
 CALL SYSPROC.TOOLS.HTMLCODE
 
 program
-string*8 array htmlcode (78)
+string  * 8 array htmlcode (11)
+integer * 1 dummy
 set htmlcode * (
     'A' 'ARTICLE' 'ASIDE'  'BUTTON' 'FIELDSET' 'FOOTER' 'HEADER' 'LABEL' 'LEGEND' 'NOSCRIPT' 'SCRIPT' )
-for i = 1, 78
-compute dummy = globals(htmlcode(i), '<'+trim(htmlcode(i))+'>')
-end for
+. for i = 1, 11
+.   compute dummy = globals(htmlcode(i), '<'+trim(htmlcode(i))+'>')
+. end for
 end program
 END PROCEDURE

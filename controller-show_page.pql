@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLER.SHOW_PAGE:T  (157459,50765)  |Last amended Nov 22, 2013,14:06:05
+PROCEDURE      CONTROLLER.SHOW_PAGE:T  (157459,50765)  |Last amended Nov 22, 2013,14:06:05
 c this is the very last thing to call.   It will figure out if it is a generic or customized screen that needs to be returned.
 
 program

@@ -151,7 +151,7 @@ subprocedure START_ROW
 end subprocedure
 
 subprocedure END_ROW
-.   STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;upick=View&amp;gdbrec=' + format(REC_TYPE_NUMBER) + ''
+.   STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;gdbrec=' + format(REC_TYPE_NUMBER) + ''
 .   ifthen (dbtype(0) eq 1)
 .     compute KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))

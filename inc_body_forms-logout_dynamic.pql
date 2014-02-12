@@ -1,21 +1,17 @@
-PROCEDURE      INC_BODY_FORMS.LOGOUT_DYNAMIC:T  (157452,52675)  |Last amended Nov 15, 2013,14:37:55
+PROCEDURE      INC_BODY_FORMS.LOGOUT_DYNAMIC:T  (157541,37042)  |Last amended Feb 12, 2014,10:17:22
 program crwarn
 string  * 600   STR$1            | General String use at any time
 integer *   1   IOSTAT__4        | Return code of IOSTAT
 INTEGER *   1   GOON__4          | CONTROL FLOW
 integer *   1   ANYNUM__4
 
-
-c note: JavaScript is required for form validation, drop downs, querries.
-c Perhaps I can figure out a way to know if Javascript is enabled by the browser, virus software, firewalls, etc.  Pass info to server and re-direct as neccessary.
-
-c note!  This does not write out to CGI
+c This outputs to cgi.  It outputs the logout HTML source from the WPF
 
 open (logout) read lrecl = 600 iostat = IOSTAT__4
 . ifthen (iostat__4 ne 0)
 .   ANYNUM__4 = globals('GSOMEMESS', 'The usual sign out page was unavailable.')
 .   ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 .   exit program
 . endif
 . open (logout) read iostat = IOSTAT__4 lrecl = 300
@@ -32,32 +28,4 @@ end program
 program
 EXECUTE DBMS "call WPF.CONNECTIONS.FULL_EXIT"
 end program
-
-
-
-
-cif eq 1,2
-program
-string * 600 STR$1            | General String use at any time
-
-. compute STR$1 ='<' + CHAR(33) + 'DOCTYPE html>'
-. write(cgi) STR$1
-. write(cgi) '<head ><title >Logged out</title>'
-. write(cgi) '<link type="text/css" href="/css/custom.css" rel="stylesheet">'
-. write(cgi)  '<meta http-equiv="Content-type" content="text/html;charset=UTF-8">'
-. write(cgi) '  <script type="text/javascript" src="/js/global.js"></script>'
-. write(cgi) '</head>'
-. write(cgi) '<body onload="setCookie(''USERID'',''loggedOut'',1);setCookie(''SESSIONID'',''loggedOut'',1)">'
-. write(cgi) '  <div id="container">'  |this applies a css for the entire contents (centers it on the page)
-. write(cgi) '      <h1>Thank you.</h1>'
-
-. write(cgi) '      <h2><br><br><p>You have successfully logged out<br><br><br>'
-. write(cgi) '        <a href = "/index.html">Click here to return to Log In</a></p>'
-. write(cgi) '     </h2>'
-. write(cgi) '    <h6>Designed by the Data Coordinating Center At Columbia University in New York.</h6>'
-. write(cgi) '  </div>'
-. write(cgi) '</body></html>'
-
-end program
-cif end
 END PROCEDURE

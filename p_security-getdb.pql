@@ -16,7 +16,7 @@ SET GOON__4 (0)
 .   ANYNUM__4 = GLOBALN('GOON__4', 0)
 .   ANYNUM__4 = globals('GSOMEMESS', 'Contact your DBA about the database name. <db>')
 .   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   ANYNUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLER.STOP_PAGE')
+.   ANYNUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLLER.STOP_PAGE')
 . endif
 . ifthen (GOON__4 eq 1)
 .   old rec is DBADMIN VIA (DBNAME__4)
@@ -32,7 +32,7 @@ c
 .   ANYNUM__4 = GLOBALN('GOON__4', 0)
 .   ANYNUM__4 = globals('GSOMEMESS', 'Contact your DBA about access to the database <db>')
 .   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   ANYNUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLER.STOP_PAGE')
+.   ANYNUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLLER.STOP_PAGE')
 . endif
 end retrieval
 

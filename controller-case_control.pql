@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLER.CASE_CONTROL:T  (156652,36066)  |Last amended Sep 07, 2011,10:01:06
+PROCEDURE      CONTROLLER.CASE_CONTROL:T  (156652,36066)  |Last amended Sep 07, 2011,10:01:06
 CALL WPF.DB_CHECKS.VALID_CASE
 
 c create a new case if that was selected
@@ -34,6 +34,6 @@ integer *     1   ANYNUM__4                    | Use any time you want
 end retrieval
 
 CIF EQ '<GMEMSTOP>', 'WPF.INC_BODY_FORMS.CASE_NAV'
-CALL WPF.CONTROLER.STOP_PAGE
+CALL WPF.CONTROLLER.STOP_PAGE
 CIF END
 END PROCEDURE

@@ -64,7 +64,7 @@ process cases
 . ifthen (count(REC_TYPE_NUMBER) gt 0)
 .   COUNTS__4 = COUNTS__4 + 1
 .   write(cgi) '<tr>'
-.   STR$1 = '<td><a class="bluetext" href="<mycgi>?member=WPF.CONTROLER.REC_NAV&amp;gdbrec=<GDBREC>&amp;upick=View&amp;caseis=' + STRING_VARGET  + '">' + STRING_VARGET  + '<a/></td>'
+.   STR$1 = '<td><a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=<GDBREC>&amp;upick=View&amp;caseis=' + STRING_VARGET  + '">' + STRING_VARGET  + '<a/></td>'
 .   write(cgi) 2t STR$1
 .   write(cgi) 2t '<td>' [count(REC_TYPE_NUMBER)] '</td>'
 .   write(cgi) '</tr>'

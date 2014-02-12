@@ -27,7 +27,7 @@ ifthen (nglobal('GOON__4')  eq 1)
 . ifthen ('<USERNAME>' = 'Greg Neils')
 .   ANYNUM__4 = globaln('REC_STAT', 5)
 .   ANYNUM__4 = globals('GUPICK', 'Edit')
-.   EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+.   EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 . else
 .   ANYNUM__4 = globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_NAV')
 . endif
@@ -35,11 +35,11 @@ elseif (nglobal('GOON__4')  eq -1)
 . ANYNUM__4 = globaln('REC_STAT', 6)
 . ANYNUM__4 = globals( 'GSOMEMESS',  'Could not access record.  NOT DELETED.  PLEASE TRY AGAIN LATER.')
 . ANYNUM__4 = globals('GUPICK', 'Edit')
-. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+. EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 elseif (nglobal('GOON__4') eq 0)
 . ANYNUM__4 = globals( 'GSOMEMESS', 'RECORD STILL EXISTS.  NOT DELETED.  PLEASE TRY AGAIN LATER.')
 . ANYNUM__4 = globals('GUPICK', 'Edit')
-. EXECUTE DBMS 'call WPF.CONTROLER.DATA_ENTRY'
+. EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 endif
 END PROGRAM
 END PROCEDURE

@@ -1,4 +1,4 @@
-PROCEDURE      JS.SHOW_VARS:T  (156664,48771)  |Last amended Sep 19, 2011,13:32:51
+PROCEDURE      JS.SHOW_VARS:T  (157540,57600)  |Last amended Feb 11, 2014,16:00:00
 program crwarn
 string  *   600   STR$1                      | General String use at any time
 string  *    32   VNAME$                     | Variable name
@@ -8,8 +8,14 @@ string  *   100   VAR_LABEL                    | Variable Label
 integer *     1   IOSTAT__4                  | Return code of IOSTAT
 
 
+. ifthen (system(39) eq 0)
+.   write 'oppss no database is attached'
+.   exit program  | Exit if no database is attached at this point
+. endif
+
+
 c options can not have onclicks.  Must define function and then CALL it depending on what is passed
-open showvars /write lrecl = 400 IOSTAT =  IOSTAT__4
+open showvars write lrecl = 400 IOSTAT =  IOSTAT__4
 
 ifNOTthen (IOSTAT__4  = 0)
 . write 'Error creating showvars files: ' IOSTAT__4

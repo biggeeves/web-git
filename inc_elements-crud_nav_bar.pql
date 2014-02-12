@@ -2,7 +2,7 @@ PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157459,46616)  |Last amended Nov 22
 REC_TYPE_NUMBER  = 0<GDBREC>
 
 write(cgi) '  <form name="dataentry" action="<mycgi>"  method="post" onKeyPress="return disableEnterKey(event)">'
-write(cgi) '    <input type="hidden" name="member" value="WPF.CONTROLER.REC_NAV">'
+write(cgi) '    <input type="hidden" name="member" value="WPF.CONTROLLER.REC_NAV">'
 CALL WPF.INC_ELEMENTS.CASE_IS
 CALL WPF.INC_ELEMENTS.GDB_REC
 CALL WPF.INC_ELEMENTS.KEYS

@@ -9,7 +9,7 @@ elseif (pattern(cgivarsv('HTTP_REFERER'), "@localhost@") eq 1)
 elseifNOT (pattern(cgivarsv('HTTP_REFERER'), "@piweb.nyspi.org@") eq 1)
 . ANYNUM__4 =  globals('GSOMEMESS', 'That form of entry is not allowed.')
 . ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLER.SHOW_PAGE'
+. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 end program
 END PROCEDURE

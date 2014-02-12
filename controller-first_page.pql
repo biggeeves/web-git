@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLER.FIRST_PAGE:T  (157452,52549)  |Last amended Nov 15, 2013,14:35:49
+PROCEDURE      CONTROLLER.FIRST_PAGE:T  (157452,52549)  |Last amended Nov 15, 2013,14:35:49
 program
 integer *     4   ANYNUM__4                    | Use any time you want
 . ifthen (dbtype(0) eq 0)

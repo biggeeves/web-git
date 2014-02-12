@@ -66,7 +66,7 @@ for EACH_VARIABLE = 1 + dbtype(0),nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .   else
 .     ANYNUM__4 = globals('GMEMSTOP', 'CALL WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
 .   endif
-.   EXECUTE DBMS 'call WPF.CONTROLER.STOP_PAGE'
+.   EXECUTE DBMS 'call WPF.CONTROLLER.STOP_PAGE'
 . endif
 end for
 
