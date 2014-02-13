@@ -1,0 +1,29 @@
+PROCEDURE      INSTALLER.MAKE_BOOTSTRAP_JS:T  (157541,40673)  |Last amended Feb 12, 2014,11:17:53
+c CREATE THE BOOTSTRAP JS FILE.
+REMARK "MAKING BOOTSTRAP JS"
+
+program crwarn
+string  * 600   STR$1            | General String use at any time
+integer *   1   IOSTAT__4        | Return code of IOSTAT
+INTEGER *   1   GOON__4          | CONTROL FLOW
+integer *   1   ANYNUM__4
+
+write '<br> JS.BOOTSTRAP:' 20T [dsn('bootstrapjs')]
+
+OPEN tmp DSN = "WPF.JS.BOOTSTRAP" MEMBER  READ IOSTAT = IOSTAT__4
+IFNOT (IOSTAT__4 EQ 0) WRITE 'FAILED TO OPEN WPF.JS.BOOTSTRAP'; EXIT PROGRAM
+
+open (bootstrapjs) write lrecl = 600 iostat = IOSTAT__4
+. ifthen (IOSTAT__4 EQ 0)
+.   LOOP
+.     read(tmp, END = DONE) STR$1 (A200)
+.     STR$1 = trimr(STR$1)
+.     write(bootstrapjs) STR$1
+.   END LOOP
+.   DONE:
+. endif
+close (bootstrapjs)
+close (tmp)
+
+end program
+END PROCEDURE

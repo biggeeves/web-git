@@ -1,0 +1,29 @@
+PROCEDURE      INSTALLER.MAKE_JQUERY:T  (157541,40762)  |Last amended Feb 12, 2014,11:19:22
+c Jquery, should be incuded in every page
+REMARK "MAKING jquery file"
+
+program crwarn
+string  * 600   STR$1            | General String use at any time
+integer *   1   IOSTAT__4        | Return code of IOSTAT
+INTEGER *   1   GOON__4          | CONTROL FLOW
+integer *   1   ANYNUM__4
+
+write '<br> JS.JQUERY:' 20T [dsn('jqueryjs')]
+
+OPEN tmp DSN = "WPF.JS.JQUERY" MEMBER  READ IOSTAT = IOSTAT__4
+IFNOT (IOSTAT__4 EQ 0) WRITE 'FAILED TO OPEN WPF.JS.JQUERY'; EXIT PROGRAM
+
+open (jqueryjs) write lrecl = 600 iostat = IOSTAT__4
+. ifthen (IOSTAT__4 EQ 0)
+.   LOOP
+.     read(tmp, END = DONE) STR$1 (A200)
+.     STR$1 = trimr(STR$1)
+.     write(jqueryjs) STR$1
+.   END LOOP
+.   DONE:
+. endif
+close (jqueryjs)
+close (tmp)
+
+end program
+END PROCEDURE

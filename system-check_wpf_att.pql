@@ -1,0 +1,10 @@
+PROCEDURE      SYSTEM.CHECK_WPF_ATT:T  (157540,55295)  |Last amended Feb 11, 2014,15:21:35
+C LOOK FOR WEB PROCFILE AND STOP IF NOT DEFINED.
+program crwarn
+. string * 256 WPF
+. for EACH_ATTRIBUTE = 1,  SYSTEM(52)
+. if (pack( upper( attrname( EACH_ATTRIBUTE) ) ) eq 'WPF') EXIT PROGRAM
+. end for
+. display infobox "The WPF is not a defined attribute.  IT MUST BE TO CONTINUE"; PQL EXIT DBMS
+end program
+END PROCEDURE

@@ -1,0 +1,29 @@
+PROCEDURE      INSTALLER.MAKE_BOOTSTRAP_CSS:T  (157541,40745)  |Last amended Feb 12, 2014,11:19:05
+c Style sheets, should be incuded in every page
+REMARK "MAKING BOOTSTRAP CSS"
+
+program crwarn
+string  * 600   STR$1            | General String use at any time
+integer *   1   IOSTAT__4        | Return code of IOSTAT
+INTEGER *   1   GOON__4          | CONTROL FLOW
+integer *   1   ANYNUM__4
+
+write '<br> CSS.CUSTOM:' 20T [dsn('customcss')]
+
+OPEN tmp DSN = "WPF.CSS.BOOTSTRAP" MEMBER  READ IOSTAT = IOSTAT__4
+IFNOT (IOSTAT__4 EQ 0) WRITE 'FAILED TO OPEN WPF.CSS.BOOTSTRAP'; EXIT PROGRAM
+
+open (bootstrapcss) write lrecl = 600 iostat = IOSTAT__4
+. ifthen (IOSTAT__4 EQ 0)
+.   LOOP
+.     read(tmp, END = DONE) STR$1 (A200)
+.     STR$1 = trimr(STR$1)
+.     write(bootstrapcss) STR$1
+.   END LOOP
+.   DONE:
+. endif
+close (bootstrapcss)
+close (tmp)
+
+end program
+END PROCEDURE
