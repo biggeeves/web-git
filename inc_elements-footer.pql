@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.FOOTER:T  (157542,80642)  |Last amended Feb 13, 2014,22:24:02
+PROCEDURE      INC_ELEMENTS.FOOTER:T  (157543,26374)  |Last amended Feb 14, 2014,07:19:34
 C EXECUTE DBMS "call WPF.INC_ELEMENTS.GLOBALVALUES"  | FOR DEBUG PURPOSES.
 
 write(cgi) '<div class="row">'
@@ -14,6 +14,7 @@ write(cgi) '<script type="text/javascript">'
 write(cgi) '$(''.datepicker'').datepicker()'
 write(cgi) '</script>'
 
+write(cgi)'</div>'  | page container
 write(cgi)'</body>'
 write(cgi)'</html>'
 END PROCEDURE

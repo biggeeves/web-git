@@ -1,8 +1,10 @@
-PROCEDURE      INC_ELEMENTS.BODY_END:T  (157542,77341)  |Last amended Feb 13, 2014,21:29:01
+PROCEDURE      INC_ELEMENTS.BODY_END:T  (157543,26347)  |Last amended Feb 14, 2014,07:19:07
 write(cgi) '  onload="setLogOutTimer();setLoadingOff();stopCount();afterBlur(this);doSomething(this);checkCookies();"' |;varOut(''WILLBE1'');"' working on skip patterns
 write(cgi) '  onkeydown="disableEnterKey(event);doSomething(this);"' | for internet explorer
 write(cgi) '  onmousemove="resetLogOutTimer()" onclick="resetLogOutTimer();doSomething(this);" onkeypress="resetLogOutTimer()"'
 write(cgi) '  >'
+
+write(cgi) '<div class="container">'
 
 c note that in this style of HTML "noscript" can not go in the header without reporting an HTML error.
 c note also that "meta" can not go in the body without reporting an error.  Thus, expect HTML validation errors from these lines of code. No way to win!
