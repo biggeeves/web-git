@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.A_GENERIC:T  (157515,36393)  |Last amended Jan 17, 2014,10:06:33
+PROCEDURE      CONTROLLER.A_GENERIC:T  (157542,59560)  |Last amended Feb 13, 2014,16:32:40
 c What to do if the user is already using a database.
 
 CALL WPF.GLOB_VARS.USERID
@@ -6,8 +6,8 @@ CALL WPF.GLOB_VARS.USERID
 CALL WPF.SYSTEM.USER_ATTS
 
 CALL WPF.CONNECTIONS.MANAGER
-CALL WPF.P_SECURITY.GET_USER_NAME      | get username by checking cookie values
-CALL WPF.P_SECURITY.CHECK_USERNAME   | make sure username is valid and not blank
+CALL WPF.P_SECURITY.GET_USER_NAME      | get USER_NAME by checking cookie values
+CALL WPF.P_SECURITY.CHECK_USER_NAME   | make sure USER_NAME is valid and not blank
 CALL WPF.P_SECURITY.CHECK_REFERER    | Check the referring page to make sure that the Cookies were not falsified
 CALL WPF.P_SECURITY.CHECK_QUERY      | Check links as they are coming in.  Characters like # make SIR break
 
@@ -20,7 +20,7 @@ CIF END
 CIF EQ '<GMEMIN>', 'WPF.CONTROLLER.FIRST_PAGE'
 . CALL WPF.P_SECURITY.PUT_DB  | UPDATE manager DB to include dbname for this session
 CIF FALSE
-. CALL WPF.P_SECURITY.GETDB
+. CALL WPF.P_SECURITY.GET_DB
 CIF END
 
 CALL WPF.P_SECURITY.CHECK_MANAGER

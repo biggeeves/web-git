@@ -1,5 +1,5 @@
 PROCEDURE      SYSTEM.INI_VARS:T  (156618,57170)  |Last amended Aug 04, 2011,15:52:50
-. DBNAME__4 = trim(dbname(0))
+. DB_NAME__4 = trim(dbname(0))
 
 . CASENAME$ = trimlr(keyname(0, 1))
 . CASE_LABEL = trimlr(varlabsc(0, CASENAME$))
@@ -17,6 +17,6 @@ PROCEDURE      SYSTEM.INI_VARS:T  (156618,57170)  |Last amended Aug 04, 2011,15:
 .   REC_LABEL__4 = pack(recname(REC_TYPE_NUMBER))
 . endif
 
-. TODAYIS__4 = today(0)
+. TODAY_IS__4 = today(0)
 
 END PROCEDURE

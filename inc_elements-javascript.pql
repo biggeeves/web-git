@@ -1,11 +1,11 @@
 PROCEDURE      INC_ELEMENTS.JAVASCRIPT:T  (157452,36967)  |Last amended Nov 15, 2013,10:16:07
 . write(cgi) '<script type="text/javascript" src="../js/global.js"></script>'
 ifthen (system(40) eq 1)
-. STR$1 =  '"/' + DBNAME__4 + '../js/casenav.js"'
+. STR$1 =  '"/' + DB_NAME__4 + '../js/casenav.js"'
 . write(cgi) '<script type="text/javascript" src=' STR$1 '></script>'
-. STR$1 =  '"/' +  DBNAME__4  + '../js/showmems.js"'
+. STR$1 =  '"/' +  DB_NAME__4  + '../js/showmems.js"'
 . write(cgi) '<script type="text/javascript" src=' STR$1 '></script>'
-. STR$1 =  '"/' + DBNAME__4 + '../js/showvars.js"'
+. STR$1 =  '"/' + DB_NAME__4 + '../js/showvars.js"'
 . write(cgi) '<script type="text/javascript" src=' STR$1 '></script>'
 
 c record specific JS

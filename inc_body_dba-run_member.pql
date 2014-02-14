@@ -1,10 +1,10 @@
-PROCEDURE      INC_BODY_DBA.RUN_MEMBER:T  (156661,47991)  |Last amended Sep 16, 2011,13:19:51
+PROCEDURE      INC_BODY_DBA.RUN_MEMBER:T  (157542,59818)  |Last amended Feb 13, 2014,16:36:58
 program  crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 write(cgi) '<h3>Run Member'
-if('<GSUBMIT>' eq 'Run Member') write(cgi) [datec(today(0), 'mm/dd/yyyy')] ' by ' [sglobal('username')]
+if('<GSUBMIT>' eq 'Run Member') write(cgi) [datec(today(0), 'mm/dd/yyyy')] ' by ' [sglobal('USER_NAME')]
 write(cgi) '</h3>'
 
 write(cgi) '<form name="pickmem" action="<mycgi>" method="post" >'
@@ -44,16 +44,16 @@ CIF END
 
 CIF EQ '<GSUBMIT>', 'View Member'
 . IOSTAT__4 = 0
-. ANYNUM__4 = 0
+. ANY_NUM__4 = 0
 . write '<h4><GRUNFAMNAME>.<GRUNMEMNAME></h4>'
 . write(cgi) '<textarea cols="90" rows="500" name="membertext" READONLY>'
 . while (IOSTAT__4  = 0)
 .   read(<GRUNFAMNAME>.<GRUNMEMNAME>, iostat = IOSTAT__4 member) STR$1 (A600)
 .   write(cgi) STR$1
-.   ANYNUM__4 = ANYNUM__4 + 1
-.   if(ANYNUM__4 ge 499) IOSTAT__4 = 9
+.   ANY_NUM__4 = ANY_NUM__4 + 1
+.   if(ANY_NUM__4 ge 499) IOSTAT__4 = 9
 . end while
-. if(ANYNUM__4 GE 499) write(cgi) 'ONLY THE FIRST 500 LINES OF THE MEMBER ARE DISPLAYED'
+. if(ANY_NUM__4 GE 499) write(cgi) 'ONLY THE FIRST 500 LINES OF THE MEMBER ARE DISPLAYED'
 . write(cgi) '</textarea>'
 CIF END
 

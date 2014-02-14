@@ -3,15 +3,15 @@ retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set RECCNT__4   (0)
-set ANYNUM__4   (0)
+set REC_CNT__4   (0)
+set ANY_NUM__4   (0)
 set RECSTATS__4 *  (0)
 
 process cases
 . for EACH_RECORD_NUMBER = 1, nrecs(0)
 .   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
 .   RECSTATS__4(EACH_RECORD_NUMBER, count(EACH_RECORD_NUMBER)) = RECSTATS__4(EACH_RECORD_NUMBER, count(EACH_RECORD_NUMBER)) + 1
-.   if(ANYNUM__4 lt count(EACH_RECORD_NUMBER)) ANYNUM__4 = count(EACH_RECORD_NUMBER)
+.   if(ANY_NUM__4 lt count(EACH_RECORD_NUMBER)) ANY_NUM__4 = count(EACH_RECORD_NUMBER)
 . end for
 end cases
 
@@ -29,7 +29,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . STR$1 = '<li title="' + format(EACH_RECORD_NUMBER)  + ' ' + trimlr(recname(EACH_RECORD_NUMBER)) +  '">' + REC_LABEL__4 + '</li>'
 . write(cgi) STR$1
 . write(cgi) '<ul>'
-. for EACH_NUMBER  = 0 ,ANYNUM__4
+. for EACH_NUMBER  = 0 ,ANY_NUM__4
 .   if ( (EACH_NUMBER gt 0) AND (RECSTATS__4(EACH_RECORD_NUMBER, EACH_NUMBER) eq 0) ) next for
 .   STR$1 = '<li>' +format(RECSTATS__4(EACH_RECORD_NUMBER, EACH_NUMBER) )
 .   write(cgi) 4T

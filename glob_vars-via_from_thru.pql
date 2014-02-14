@@ -3,14 +3,14 @@ c Construct the VIA for going to specific records
 program
 . string  *   600   STR$1                      | General String use at any time
 . string  *   600   STR$2                      | General String use at any time
-. integer *     4   ANYNUM__4                    | Use any time you want
+. integer *     4   ANY_NUM__4                    | Use any time you want
 . STR$1 = '<GKEY1#> <GKEY2#> <GKEY3#> <GKEY4#> <GKEY5#>'
 . STR$1 = trimlr(STR$1)
 
 . ifNOTthen(STR$1 eq '')
-.   STR$2 = 'via  (' +  STR$1 +  ')'; ANYNUM__4 =  globals('GVIA#', fst(STR$2, ''))
-.   STR$2 = 'from (' +  STR$1 +  ')'; ANYNUM__4 =  globals('GFROM#', fst(STR$2, ''))
-.   STR$2 = 'thru (' +  STR$1 +  ')'; ANYNUM__4 =  globals('GTHRU#', fst(STR$2, ''))
+.   STR$2 = 'via  (' +  STR$1 +  ')'; ANY_NUM__4 =  globals('GVIA#', fst(STR$2, ''))
+.   STR$2 = 'from (' +  STR$1 +  ')'; ANY_NUM__4 =  globals('GFROM#', fst(STR$2, ''))
+.   STR$2 = 'thru (' +  STR$1 +  ')'; ANY_NUM__4 =  globals('GTHRU#', fst(STR$2, ''))
 . endif
 end program
 
@@ -18,15 +18,15 @@ program
 c GPROCESS
 . STR__4  = sglobal('GUPICK')
 . ifthen (STR__4 eq 'First')
-.   ANYNUM__4 =  globals('GPROCESS', '')
+.   ANY_NUM__4 =  globals('GPROCESS', '')
 . elseif (STR__4 eq 'Next')
-.   ANYNUM__4 =  globals('GPROCESS', '<GFROM#>')
+.   ANY_NUM__4 =  globals('GPROCESS', '<GFROM#>')
 . elseif (STR__4 eq 'Previous')
-.   ANYNUM__4 =  globals('GPROCESS', '<GTHRU#> REVERSE')
+.   ANY_NUM__4 =  globals('GPROCESS', '<GTHRU#> REVERSE')
 . elseif (STR__4 eq 'Last')
-.   ANYNUM__4 =  globals('GPROCESS', ' REVERSE')
+.   ANY_NUM__4 =  globals('GPROCESS', ' REVERSE')
 . else
-.   ANYNUM__4 =  globals('GPROCESS', '')
+.   ANY_NUM__4 =  globals('GPROCESS', '')
 . endif
 end program
 END PROCEDURE

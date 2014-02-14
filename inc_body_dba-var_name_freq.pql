@@ -14,7 +14,7 @@ CALL WPF.SYSTEM.INI_VARS
 TIME1__4 = now(0)
 SOMENUM =0
 
-c . write(cgi) '<h3>Variable Name Frequencies in ' DBNAME__4 ' Database </h3>'
+c . write(cgi) '<h3>Variable Name Frequencies in ' DB_NAME__4 ' Database </h3>'
 |Index of Record Types
 . for EACH_RECORD_NUMBER = 1 - dbtype(0), nrecs(0)
 .   IF (NOW(0) GT TIME1__4 +60 ) EXIT PROGRAM | 60 SECONDS IS TOO LONG TO WAIT ON THE WEB.
@@ -23,8 +23,8 @@ c . write(cgi) '<h3>Variable Name Frequencies in ' DBNAME__4 ' Database </h3>'
 .     VAR_LABEL = trimr(varlabsc(EACH_RECORD_NUMBER, VNAME$))
 .     SOMENUM = SOMENUM + 1
 .     ALLVARS(SOMENUM) = VNAME$
-.     ANYNUM__4 = arrdimsz('ALLVARS', 1) + 50
-.     if (SOMENUM gt arrdimsz('ALLVARS', 1) -20) redefine array 'ALLVARS' (ANYNUM__4)
+.     ANY_NUM__4 = arrdimsz('ALLVARS', 1) + 50
+.     if (SOMENUM gt arrdimsz('ALLVARS', 1) -20) redefine array 'ALLVARS' (ANY_NUM__4)
 .   end for
 . end for
 . redefine array 'AVARNAME' (arrdimsz('ALLVARS', 1))
@@ -71,14 +71,14 @@ CIF END
 . subprocedure WRITE_ROW
 
 .   STR$1 = '<tr><td>'
-.   execute subroutine WPF.TOOLS.HTMLTEXT (AVARNAME(EACH_NUMBER), 1) RETURNING (HTMLTEXT, RETCODE__4)
-.   if(RETCODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT; RETCODE__4 = -1
+.   execute subroutine WPF.TOOLS.HTMLTEXT (AVARNAME(EACH_NUMBER), 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT; RET_CODE__4 = -1
 .   STR$1 = STR$1 + '</td><td>'
-c .   execute subroutine WPF.TOOLS.HTMLTEXT (AVARNAME#(EACH_NUMBER), 1) RETURNING (HTMLTEXT, RETCODE__4)
-c .   if(RETCODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT
+c .   execute subroutine WPF.TOOLS.HTMLTEXT (AVARNAME#(EACH_NUMBER), 1) RETURNING (HTMLTEXT, RET_CODE__4)
+c .   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT
 c .   STR$1 = STR$1 + '</td><td>'
-.   execute subroutine WPF.TOOLS.HTMLTEXT (format(AVARNAME#(EACH_NUMBER)) , 1) RETURNING (HTMLTEXT, RETCODE__4)
-.   if(RETCODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT; RETCODE__4 = -1
+.   execute subroutine WPF.TOOLS.HTMLTEXT (format(AVARNAME#(EACH_NUMBER)) , 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT; RET_CODE__4 = -1
 .   write (cgi) STR$1 '</td></tr>'
 . end subprocedure
 

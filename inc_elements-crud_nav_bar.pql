@@ -54,11 +54,11 @@ CIF END
 
 
 | Show First, Previous, Next, Last buttons
-ANYNUM__4 = 0
+ANY_NUM__4 = 0
 STR$1 = '&nbsp;'
 process rec <GDBREC> reverse <GTHRU#>
-. ANYNUM__4 = ANYNUM__4 + 1
-. ifthen (ANYNUM__4 eq 2)
+. ANY_NUM__4 = ANY_NUM__4 + 1
+. ifthen (ANY_NUM__4 eq 2)
 .   STR$1 = '<input type="submit" id="b_firstrec" name="upick" value="First" class="btn btn-primary" title="First Record">&nbsp;'
           + '<input type="submit" id="b_previousrec" name="upick" value="Previous" class="btn btn-primary" title="Previous Record">'
 .   exit rec
@@ -66,11 +66,11 @@ process rec <GDBREC> reverse <GTHRU#>
 end rec
 write(cgi) STR$1
 
-ANYNUM__4 = 0
+ANY_NUM__4 = 0
 STR$1 = '&nbsp;'
 process rec <GDBREC> <GFROM#>
-. ANYNUM__4 = ANYNUM__4 + 1;
-. ifthen (ANYNUM__4 eq 2)
+. ANY_NUM__4 = ANY_NUM__4 + 1;
+. ifthen (ANY_NUM__4 eq 2)
 .   STR$1 = '<input type="submit" id="b_nextrec" name="upick" value="Next" class="btn btn-primary" title="Next Record">&nbsp;'
           + '<input type="submit" id="b_lastrec" name="upick" value="Last" class="btn btn-primary" title="Last Record">'
 .   exit rec

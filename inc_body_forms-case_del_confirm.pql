@@ -3,18 +3,18 @@ retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-RECCNT__4     = 0
+REC_CNT__4     = 0
 FOUNDCASE__4  = 0
 
 write(cgi) '<h2 class="center">YOU ARE ABOUT TO DELETE AN ENTIRE CASE IN THE DATABASE!</h2>'
 old case is <CASEIS>
 . FOUNDCASE__4 = 1
 . for EACH_RECORD_NUMBER = 1, nrecs(0)
-.   if(exists(count(EACH_RECORD_NUMBER)) eq 1)  RECCNT__4 = RECCNT__4 + count(EACH_RECORD_NUMBER)
+.   if(exists(count(EACH_RECORD_NUMBER)) eq 1)  REC_CNT__4 = REC_CNT__4 + count(EACH_RECORD_NUMBER)
 . end for
 . STR$1 =  CASE_LABEL + ': <CASEISNQ>'
 . write(cgi) '<br><span class="redfont textbold " style="padding: 30px;"> ' STR$1 '</span><br><br>'
-. write(cgi) '<span class="redfont textbold " style="padding: 30px;"> There are ' RECCNT__4 ' records in the database under this ID.</span><br>'
+. write(cgi) '<span class="redfont textbold " style="padding: 30px;"> There are ' REC_CNT__4 ' records in the database under this ID.</span><br>'
 . write(cgi) '<form action="<mycgi>" name="deleteacase" method="post">'
 . write(cgi) '<br>'
 . write(cgi)  '<input type="hidden" name="member" id="member" value="WPF.INC_BODY_FORMS.CASE_SUMMARY">'

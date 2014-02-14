@@ -25,9 +25,9 @@ c LOCAL DATA ENTRY PAGES
 . end for
 . ifthen (GOON__4 = 1)
 .   ifthen (sglobal('GUPICK') = 'Edit' OR 'New' OR 'First' or 'Last' or 'Next' or 'Previous')
-.     ANYNUM__4= globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_EDIT')
+.     ANY_NUM__4= globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_EDIT')
 .   elseif (sglobal('GUPICK') = 'View')
-.     ANYNUM__4= globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_READONLY')
+.     ANY_NUM__4= globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_READONLY')
 .   endif
 . else
 .   write 'Should go to a cutsomized page'

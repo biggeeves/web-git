@@ -5,7 +5,7 @@ program crwarn
 string  * 600   STR$1            | General String use at any time
 integer *   1   IOSTAT__4        | Return code of IOSTAT
 INTEGER *   1   GOON__4          | CONTROL FLOW
-integer *   1   ANYNUM__4
+integer *   1   ANY_NUM__4
 
 
 c note: JavaScript is required for form validation, drop downs, querries.
@@ -15,8 +15,8 @@ c note!  This does not write out to CGI
 
 open (index) read lrecl = 600 iostat = IOSTAT__4
 . ifthen (iostat__4 ne 0)
-.   ANYNUM__4 = globals('GSOMEMESS', 'The sign in page was unavailable.')
-.   ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('GSOMEMESS', 'The sign in page was unavailable.')
+.   ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 .   exit program
 . endif

@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.CGIVARS:T  (157219,51455)  |Last amended Mar 27, 2013,14:17:35
+PROCEDURE      INC_BODY_DBA.CGIVARS:T  (157542,59793)  |Last amended Feb 13, 2014,16:36:33
 program  crwarn
 
 write(cgi) '<h3>CGI vars</h3>'
@@ -91,7 +91,7 @@ write(cgi) '  <td>HTTP_URL</td><td>'        [cgivarsv('HTTP_URL')] '</td></tr>'
 write(cgi) '  <tr><td>The port the visitor is connected to on the web server</td>'
 write(cgi) '  <td>REMOTE_PORT</td><td>'         [cgivarsv('REMOTE_PORT')] '</td></tr>'
 
-write(cgi) '  <tr><td>The visitors username (for .htaccess-protected pages)</td>'
+write(cgi) '  <tr><td>The visitors USER_NAME (for .htaccess-protected pages)</td>'
 write(cgi) '  <td>REMOTE_USER</td><td>'         [cgivarsv('REMOTE_USER')] '</td></tr>'
 
 write(cgi) '  <tr><td>The data type of the content. Used with queries that have attached informatio</td>'
@@ -108,7 +108,7 @@ write(cgi) '  <tr><td>The email address for your servers webmaster</td>'
 write(cgi) '  <td>SERVER_ADMIN</td><td>'        [cgivarsv('SERVER_ADMIN')] '</td></tr>'
 
 write(cgi) '  <tr><td>Windows account that the user is impersonating</td>'
-write(cgi) '  <td>LOGON_USER</td><td>'     [cgivarsv('LOGON_USER')] '</td></tr>'
+write(cgi) '  <td>LOGIN_USER</td><td>'     [cgivarsv('LOGIN_USER')] '</td></tr>'
 
 write(cgi) '  <tr><td>The name of the user as it is derived from the authorization header sent by the client, before mapping to a user account</td>'
 write(cgi) '  <td>UNMAPPED_REMOTE_USER</td><td>'       [cgivarsv('UNMAPPED_REMOTE_USER')] '</td></tr>'

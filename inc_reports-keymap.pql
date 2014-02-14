@@ -7,7 +7,7 @@ CALL WPF.SYSTEM.INI_VARS
 
 . set REC_LABEL__4 ('')
 
-. write(cgi) '<h3>Record Key Map for the ' DBNAME__4 ' Database </h3>'
+. write(cgi) '<h3>Record Key Map for the ' DB_NAME__4 ' Database </h3>'
 |Index of Record Types
 . for EACH_RECORD_NUMBER = 1 - dbtype(0),  nrecs(0)
 .   EACH_VARIABLE = nvarsc(EACH_RECORD_NUMBER)
@@ -76,8 +76,8 @@ c .   write(cgi) '<a class="bluetext textbold" ' STR$1  '><span>' REC_LABEL__4 '
 .   ifthen (nvallab(EACH_RECORD_NUMBER, VNAME$) > 0)
 .     write(cgi)'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Value Labels:<br><span style="float:left; padding-left: 30px; padding-right: 40px;">'
 .     for EACH_LABEL = 1, nvallab(EACH_RECORD_NUMBER, VNAME$)
-.       VALLAB_VALUE = trim(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_LABEL))
-.       write(cgi) ['(' + vallabsv(EACH_RECORD_NUMBER, VNAME$, EACH_LABEL) + ') ' + VALLAB_VALUE]
+.       VAL_LAB_VALUE = trim(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_LABEL))
+.       write(cgi) ['(' + vallabsv(EACH_RECORD_NUMBER, VNAME$, EACH_LABEL) + ') ' + VAL_LAB_VALUE]
 .     end for
 .     write(cgi) '</span><br>'
 

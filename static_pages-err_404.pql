@@ -1,4 +1,4 @@
-PROCEDURE      STATIC_PAGES.ERR_404:T  (157541,51421)  |Last amended Feb 12, 2014,14:17:01
+PROCEDURE      STATIC_PAGES.ERR_404:T  (157542,43135)  |Last amended Feb 13, 2014,11:58:55
 program
 string * 600 STR$1            | General String use at any time
 
@@ -7,11 +7,11 @@ write '<br> Err 404:' 20T [dsn('err404')]
 compute STR$1 = '<' + CHAR(33) + 'DOCTYPE HTML>'
 open (err404) write lrecl = 600
 . write(err404) STR$1
-. write(err404) '<head ><title >Logged out</title>'
+. write(err404) '<head ><title ><WEBSITE_TITLE>| Logged out</title>'
 . write(err404) '<link type="text/css" href="<fullurl>css/custom.css" rel="stylesheet">'
 . write(err404) '<link type="text/css" href="<fullurl>css/boostrap.css" rel="stylesheet">'
 . write(err404)  '<meta http-equiv="Content-type" content="text/html;charset=UTF-8">'
-. write(err404) '  <link rel="icon" type="image/ico" href="<fullurl>images/DCC.ico"  title="DCC Data Management" >'
+. write(err404) '  <link rel="icon" type="image/ico" href="<fullurl>images/DCC.ico"  title="<WEBSITE_TITLE>" >'
 . write(err404) '  <script type="text/javascript" src="<fullurl>js/global.js"></script>'
 . write(err404) '</head>'
 . write(err404) '<body onload="setCookie(''USERID'',''loggedOut'',1);setCookie(''SESSIONID'',''loggedOut'',1)">'
@@ -20,7 +20,7 @@ open (err404) write lrecl = 600
 . write(err404) '      Error 404</h1>'
 . write(err404) '      <h3><a href = "<fullurl>index.html">Click here to return to Log In</a></h3>'
 . write(err404) '      <br>'
-. write(err404) '    <h6>Designed by the Data Coordinating Center At Columbia University in New York.</h6>'
+. write(err404) '    <h6><WEBSITE_TITLE></h6>'
 . write(err404) '  </div>'
 . write(err404) '</body></html>'
 close err404

@@ -1,4 +1,4 @@
-PROCEDURE      INSTALLER.MAKE_APACHE_CONFIG:T  (157540,35704)  |Last amended Feb 11, 2014,09:55:04
+PROCEDURE      INSTALLER.MAKE_APACHE_CONFIG:T  (157542,42040)  |Last amended Feb 13, 2014,11:40:40
 program
 . string * 4000 STR$1
 . string *  200 MODIFY_TEXT
@@ -17,20 +17,23 @@ program
 . ENDIF
 
 . IFTHEN (FILEIS (DSN('APACHE_CONFIG')) = 1)
-.   DISPLAY YESNOBOX 'OVERWRITE APACHE CONFIG FILE?  (there is no way to get it back if you do.)' RESPONSE RESVAR
+.   DISPLAY YESNOBOX 'The Apache Config was found.' + char(13) + char(13)+' Append Apache config file with SIR web info?' RESPONSE RESVAR
 .   IF (RESVAR EQ 0 ) display infobox 'OK. Exiting make apache config'; EXIT PROGRAM
+. else
+.   DISPLAY infobox 'The Apache Config was NOT found.  Either you know what your are doing or SIR web will not work. :)'
+.   EXIT PROGRAM
 . ENDIF
 
-. open APCON DSNVAR = APACHE_CONFIG_PATH WRITE iostat = my_iostat lrecl= 600
+. open APCON DSNVAR = APACHE_CONFIG_PATH APPEND iostat = my_iostat lrecl= 600
 . ifNOTthen (MY_IOSTAT EQ 0)
 .   display infobox 'Failed to Open Apache Config File'
 .   exit program
 . ENDIF
-. write (APCON) '# CREATED BY THE WEB INSTALLER ON ' [DATEC(TODAY(0),'Mmm. DD, YYYY')] /
-. WRITE (APCON) '# CUSTOMIZE THIS FILE ANY WAY YOU.  Make sure you back it up!'
+. write (APCON) '# ADDED BY THE WEB INSTALLER ON ' [DATEC(TODAY(0),'Mmm. DD, YYYY')] /
 
 . loop
 .   read (TMP_MEM, iostat = MY_IOSTAT) STR$1 (A200)
+CIF EQ 1,2
 .   IFNOT (MY_IOSTAT EQ 0) EXIT LOOP
 .   IFTHEN (PATTERN ( STR$1, '@WP_SERVERROOT@') EQ 1)
 .     MODIFY_TEXT = DSN('APACHE')
@@ -45,6 +48,7 @@ program
 .     EXECUTE SUBPROCEDURE MODIFIER
 .     STR$1 =  replace(STR$1, 'WP_SCRIPTALIAS', REPLACE(MODIFY_TEXT, '\', '/', 9,0,0) ,2 , 1, 0 )
 .   ENDIF
+CIF END
 .   WRITE (APCON) STR$1
 . END LOOP
 

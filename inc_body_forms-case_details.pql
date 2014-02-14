@@ -1,14 +1,14 @@
-PROCEDURE      INC_BODY_FORMS.CASE_DETAILS:T  (157221,47100)  |Last amended Mar 29, 2013,13:05:00
+PROCEDURE      INC_BODY_FORMS.CASE_DETAILS:T  (157542,59833)  |Last amended Feb 13, 2014,16:37:13
 c Show all of the record types, records and pertaining keys that belong to a case.
 
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set ANYNUM__4  (0)
+set ANY_NUM__4  (0)
 
 write(cgi)  '<h3>' CASE_LABEL  ' <CASEISNQ> Detailed Case Summary </h3>'
-write(cgi)  '<h6 class="smallfont" >Report created on ' [datec(today(0), 'mm/dd/yy')] ' by ' [sglobal('username')]  '</h6>'
+write(cgi)  '<h6 class="smallfont" >Report created on ' [datec(today(0), 'mm/dd/yy')] ' by ' [sglobal('USER_NAME')]  '</h6>'
 CIF EQ <GCASED>, 1
 old case is <CASEIS>
 CIF END
@@ -25,7 +25,7 @@ CIF END
 .   else
 .     REC_LABEL__4 = trimlr(recname(REC_TYPE_NUMBER))
 .   endif
-.   ANYNUM__4 = ANYNUM__4  + count(REC_TYPE_NUMBER)
+.   ANY_NUM__4 = ANY_NUM__4  + count(REC_TYPE_NUMBER)
 .   STR$1 = '' ; STR$2 = ''
 .   ifthen (count(REC_TYPE_NUMBER) gt 0)
 .     STR$2 = 'onclick="showhide(''record' + format(REC_TYPE_NUMBER) + ''');changesign(''plusminus' + format(REC_TYPE_NUMBER) + ''');"'
@@ -36,7 +36,7 @@ CIF END
 c   display each record and corresponding key values
 .   write(cgi) 2t '<ul id=' STR$1 ' style="display:none;">'
 .   process rec RECN
-.     compute SHOWKEYS__4 = ''
+.     compute SHOW_KEYS__4 = ''
 .     execute subprocedure START_ROW
 .   end rec
 .   STR$1 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' + sglobal('CASEISNQ')+ '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Table"'
@@ -45,7 +45,7 @@ c   display each record and corresponding key values
 .   write(cgi) '</p>'
 
 . end repeat
-. write(cgi) 'Total Number of Records in Database:' ANYNUM__4
+. write(cgi) 'Total Number of Records in Database:' ANY_NUM__4
 CIF EQ <GCASED>, 1
 end case is
 CIF END
@@ -54,17 +54,17 @@ CIF END
 subprocedure START_ROW
 .   COUNTS__4 = COUNTS__4 + 1
 .   STR$2 = ''
-.   SHOWKEYS__4 = ''
+.   SHOW_KEYS__4 = ''
 .   ifthen (dbtype(0) eq 1)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
 .     CASE_STR = trimlr(varget(KEYVNAME__4))
-.     SHOWKEYS__4 = '<li> ' + SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + CASE_STR  + '</b><br> '
+.     SHOW_KEYS__4 = '<li> ' + SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + CASE_STR  + '</b><br> '
 .   endif
 
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))
-.     SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET  + '</b><br> '
+.     SHOW_KEYS__4 = SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET  + '</b><br> '
 .   end for
 
 c   Keys (used for the link)
@@ -76,7 +76,7 @@ c   Keys (used for the link)
 .   end for
 .   STR$2 = STR$2 + '"'
 .   write(cgi) 4t '<a href=' STR$2 '>'
-.   write(cgi) 4t SHOWKEYS__4 '</a></li>'
+.   write(cgi) 4t SHOW_KEYS__4 '</a></li>'
 end subprocedure
 
 

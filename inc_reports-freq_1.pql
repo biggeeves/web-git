@@ -1,27 +1,27 @@
-PROCEDURE      INC_REPORTS.FREQ_1:T  (157219,58157)  |Last amended Mar 27, 2013,16:09:17
+PROCEDURE      INC_REPORTS.FREQ_1:T  (157542,59882)  |Last amended Feb 13, 2014,16:38:02
 c must re-set the globals to first record type, first var, for the first loading of the FREQ1
 program
-ANYNUM__4 = 0<GDBREC>
-ifthen(ANYNUM__4 eq 9999 OR 0)
+ANY_NUM__4 = 0<GDBREC>
+ifthen(ANY_NUM__4 eq 9999 OR 0)
 . for EACH_RECORD_NUMBER  = 1, nrecs(0)
 .   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-.   ANYNUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
 .   EXIT FOR
 . end for
 endif
-if (0<VNUM__4> eq 0)  ANYNUM__4 = globaln('VNUM__4', 1)
+if (0<VNUM__4> eq 0)  ANY_NUM__4 = globaln('VNUM__4', 1)
 end program
 
 PROGRAM crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set ANYNUM__4 (0)
+set ANY_NUM__4 (0)
 write '<div class="row">'
 write(cgi) '<h3 class="span3">Frequencies</h3>'
 ifthen('<GSUBMIT>' eq 'Frequencies')
 . write(cgi) '<h3 class="span9">Generated on ' [datec(today(0), 'mm/dd/yyyy')]
-. write(cgi) ' at ' [timec(now(0), 'hh:mm pp')] ' by ' [sglobal('username')]
+. write(cgi) ' at ' [timec(now(0), 'hh:mm pp')] ' by ' [sglobal('user_name')]
 . write(cgi) '</h3>'
 endif
 write(cgi) '</div>' |row
@@ -60,8 +60,8 @@ write(cgi) '  </td>'
 write(cgi) '  <td class="leftindent"><span class="textbold">Variable </span><select style="display:inline;" name="varselect" id ="varselect" class="widthwide" onchange="setVarNum()">'
 
 C SELECT THE PROPER VARIABLE.
-ANYNUM__4 = 0<VNUM__4>
-if(ANYNUM__4 eq 0) ANYNUM__4 = 1
+ANY_NUM__4 = 0<VNUM__4>
+if(ANY_NUM__4 eq 0) ANY_NUM__4 = 1
 
 for EACH_RECORD_NUMBER  = 1,  nrecs(0)
 . IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
@@ -70,7 +70,7 @@ for EACH_RECORD_NUMBER  = 1,  nrecs(0)
 .   VNAME$CB = stdname(VNAME$)
 .   STR$1 = 'title="'  + VNAME$ +  '"'
 .   STR$2 = trimlr(varlabsc(EACH_RECORD_NUMBER, VNAME$CB))
-.   if (EACH_VARIABLE eq ANYNUM__4) STR$1 = STR$1 + 'selected="selected"'
+.   if (EACH_VARIABLE eq ANY_NUM__4) STR$1 = STR$1 + 'selected="selected"'
 .   write(cgi) 4t '<option ' STR$1 '>' STR$2  '</option>'
 . end for
 . exit for | this should only run the very first time

@@ -1,25 +1,20 @@
-PROCEDURE      CONNECTIONS.UPW:T  (157452,52617)  |Last amended Nov 15, 2013,14:36:57
-c Connects to UPW database
-
-
-
+PROCEDURE      CONNECTIONS.LOGIN_CHK:T  (157542,53592)  |Last amended Feb 13, 2014,14:53:12
+c CHECKS TO SEE IF LOGIN IS CONNECTED.  ONLY FOR WEB CONNECTIONS!
+c this will have to be reworked to do a proper test.
 PROGRAM crwarn
 STRING  *   254   DBPATH                     | vars for connecting to db
 STRING  *     4   MST                        | vars for connecting to db
 integer *     4   ANY_NUM__4                  | Use any time you want
 integer *     1   IOSTAT__4                  | Return code of IOSTAT
 
-DBPATH  = dsn('upw')
-MST = ''
-c MST = '3010'  | uncomment this line to use master on port 3010 for the upw database
+DBPATH  = dsn('LOGIN_FOLDER')
 
-ifthen(fileis(DBPATH  + 'upw.sr1') ne 1)
+ifthen(fileis(DBPATH  + 'login.sr1') ne 1)
 . ANY_NUM__4 = globals( 'GSOMEMESS', 'Oh oh, We are currently updating or system.')
 . ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
-IF (MST ne '') EXECUTE DBMS "SET MASTER <GMASTER_IP>:" + MST
-PQL CONNECT DATABASE 'UPW' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
+PQL CONNECT DATABASE 'LOGIN' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
 IFNOTTHEN (IOSTAT__4 GE 0)
 . ANY_NUM__4 = globals( 'GSOMEMESS', 'We are currently updating our system.  Please try back later.')
 . execute subprocedure SHOWERRORS
@@ -37,7 +32,7 @@ endif
 
 C REPORT BACK database file errors  must be uncommented to see the errors.
 subprocedure SHOWERRORS
-c . write(cgi) '<hr>DB: UPW <br>Prefix: ' DBPATH  '<br>'
+c . write(cgi) '<hr>DB: LOGIN <br>Prefix: ' DBPATH  '<br>'
 end subprocedure
 
 END PROGRAM

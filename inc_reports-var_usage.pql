@@ -15,8 +15,8 @@ integer *     4   array VARMISSING3 (0:20000)
 write(cgi)'<h3>Variable Usage ' [datec(today(0),'MM.DD.YYYY')] '</h3>'
 
 c record count
-. RECCNT__4 = numrecs(REC_TYPE_NUMBER)
-. write(cgi) '<p>' REC_LABEL__4 '<br> Count: <span class="textbold">' RECCNT__4 '</span>'
+. REC_CNT__4 = numrecs(REC_TYPE_NUMBER)
+. write(cgi) '<p>' REC_LABEL__4 '<br> Count: <span class="textbold">' REC_CNT__4 '</span>'
 c show keys for each record type
 . STR$2 ='No Keys'
 . ifthen (nkeys(REC_TYPE_NUMBER) eq 1)

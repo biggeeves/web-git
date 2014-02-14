@@ -1,9 +1,9 @@
 PROCEDURE      P_SECURITY.CHECK_DB_CON:T  (157452,52679)  |Last amended Nov 15, 2013,14:37:59
 program
-integer *     4   ANYNUM__4                    | Use any time you want
+integer *     4   ANY_NUM__4                    | Use any time you want
 . ifthen (system(39) eq 0) | no database connected
-.   compute ANYNUM__4 = globals('GSOMEMESS', '<DB> Database failed to connect')
-.   ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   compute ANY_NUM__4 = globals('GSOMEMESS', '<DB> Database failed to connect')
+.   ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . endif
 end program

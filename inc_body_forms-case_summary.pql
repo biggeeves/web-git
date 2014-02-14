@@ -3,7 +3,7 @@ retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set ANYNUM__4  (0)
+set ANY_NUM__4  (0)
 
 write(cgi)  '<h3>' CASE_LABEL ' <CASEISNQ> case snapshot</h3>'
 c DELETE PORTION!  MUST SEE A CASE SUMMARY BEFORE BEING ABLE TO DELETE AN ENTIRE CASE
@@ -25,9 +25,9 @@ old case is <CASEIS>
 CIF END
 . for EACH_RECORD_NUMBER = 1, nrecs(0)
 .   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
-.   ANYNUM__4 = ANYNUM__4  + count(EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = ANY_NUM__4  + count(EACH_RECORD_NUMBER)
 . end for
-. write(cgi) '<tr class="info"><td>Total Records in Database:</td><td>' ANYNUM__4 '</td></tr>'
+. write(cgi) '<tr class="info"><td>Total Records in Database:</td><td>' ANY_NUM__4 '</td></tr>'
 
 . for EACH_RECORD_NUMBER = 1, nrecs(0)
 .   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
@@ -40,7 +40,7 @@ CIF END
 .   endif
 .   STR$1 = '<tr>'
 .   write(cgi) STR$1
-.   ANYNUM__4 = ANYNUM__4  + count(EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = ANY_NUM__4  + count(EACH_RECORD_NUMBER)
 .   write(cgi)  '<td>'REC_LABEL__4 '</td><td>' [count(EACH_RECORD_NUMBER)]  '</td>'
 .   write(cgi) '</tr>'
 . end for

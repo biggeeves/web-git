@@ -1,14 +1,14 @@
 PROCEDURE      CONTROLLER.FIRST_PAGE:T  (157452,52549)  |Last amended Nov 15, 2013,14:35:49
 program
-integer *     4   ANYNUM__4                    | Use any time you want
+integer *     4   ANY_NUM__4                    | Use any time you want
 . ifthen (dbtype(0) eq 0)
 |   master and db connected OK
-.   compute ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.REC_NAV')
+.   compute ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.REC_NAV')
 . else
 |   master and db connected OK
-.   compute ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
+.   compute ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
 . endif
 | For people that can not see IDs set the initial page to a general welcome screen.
-. ifnot(nglobal('GVIEWIDS') eq 1) ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.WELCOME')
+. ifnot(nglobal('GVIEWIDS') eq 1) ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.WELCOME')
 end program
 END PROCEDURE

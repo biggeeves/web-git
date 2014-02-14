@@ -16,12 +16,12 @@ for EACH_FAMILY =  1, system(57)
 .   IOSTAT__4 = 0
 .   open member dsnvar = STR$1 read member iostat = IOSTAT__4 lrecL = 600
 .     ifthen (IOSTAT__4 eq 0)
-.       set ANYNUM__4 (0)
+.       set ANY_NUM__4 (0)
 .       loop
 .         read (member, iostat = IOSTAT__4) STR$2 (A200)
 .           IFNOT (IOSTAT__4 eq 0) EXIT LOOP
-.           if (ANYNUM__4 GE 2) EXIT LOOP
-.           ANYNUM__4 = ANYNUM__4  + 1
+.           if (ANY_NUM__4 GE 2) EXIT LOOP
+.           ANY_NUM__4 = ANY_NUM__4  + 1
 .           ifthen (upper(substr(STR$2, 1, 2)) eq 'C ')  | MAKE SURE TO INCLUDE THE SPACE
 .             STR$2 =  substr(STR$2, 2, len(STR$2)); write(cgi) '<br> &nbsp;&nbsp;&nbsp; ' STR$2 ''
 .           endif

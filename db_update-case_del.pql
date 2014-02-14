@@ -3,7 +3,7 @@ CALL WPF.DB_CHECKS.VALID_CASE
 
 retrieval UPDATE
 integer *     1   FOUNDCASE__4                  | Case already exists
-integer *     4   ANYNUM__4
+integer *     4   ANY_NUM__4
 set FOUNDCASE__4 (0)
 OLD case is <CASEIS>
 . compute FOUNDCASE__4 = 1
@@ -15,16 +15,16 @@ OLD case is <CASEIS>
 end case is
 
 ifthen (FOUNDCASE__4 = 0)
-. ANYNUM__4 = globals( 'GSOMEMESS', 'Case Deletion failed because ID: <CASEISNQ> did not exist.')
-. ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'Case Deletion failed because ID: <CASEISNQ> did not exist.')
+. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
 elseif (FOUNDCASE__4 = 2)
-. ANYNUM__4 = globals( 'GSOMEMESS', 'WARNING! Case Deletion failed.  <CASEISNQ> still exits!')
-. ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASEDEL')
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'WARNING! Case Deletion failed.  <CASEISNQ> still exits!')
+. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASEDEL')
 else
-. ANYNUM__4 = dglobal('CASEIS')
-. ANYNUM__4 = dglobal('CASEISNQ')
-. ANYNUM__4 = globals( 'GSOMEMESS', '<CASEISNQ> was succesfully deleted.')
-. ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
+. ANY_NUM__4 = dglobal('CASEIS')
+. ANY_NUM__4 = dglobal('CASEISNQ')
+. ANY_NUM__4 = globals( 'GSOMEMESS', '<CASEISNQ> was succesfully deleted.')
+. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
 endif
 end retrieval
 

@@ -1,0 +1,87 @@
+PROCEDURE      SYSTEM.STATIC_ATTS:T  (157542,53556)  |Last amended Feb 13, 2014,14:52:36
+c create attributes and folders need for SIRWeb to run
+
+global mycgi = "sirweb.cgi"
+
+C LOOK FOR WEB PROCFILE AND DEFINE IF NOT ALREADY DEFINED.
+program crwarn
+. string * 256 WPF
+. for EACH_ATTRIBUTE = 1,  SYSTEM(52)
+. if (pack( upper( attrname( EACH_ATTRIBUTE) ) ) eq 'WPF') EXIT PROGRAM
+. end for
+. display infobox "The WPF is not a defined attribute.  IT MUST BE TO CONTINUE"; PQL EXIT DBMS
+C . WPF = 'G:\DCC\WEBPROCF\web.srp'
+C . EXECUTE DBMS ['attribute WPF = "' + WPF +'"']
+end program
+
+CALL WPF.SYSTEM.CUSTOM_ATTS
+c note that bootsrap's file references should be added.
+
+
+program CRWARN
+. string  *   600   ANY_DIR__4          | javascript folder location
+. integer *     1   ANY_NUM__4           | does the directory exists
+
+. if (fileis(dsn('web_root')) ne  -1) write 'Please change the web_root attribute to the proper folder'
+
+. ANY_DIR__4 = dsn('web_root') + 'js\'
+. if (fileis(ANY_DIR__4) eq 0) ANY_NUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANY_NUM__4 eq -1) write 'Can not make General Javascrip folder:' [fileis(ANY_DIR__4)] ANY_DIR__4
+
+. ANY_DIR__4 = dsn('web_root') + 'css\'
+. if (fileis(ANY_DIR__4) eq 0) ANY_NUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANY_NUM__4 eq -1) write 'Can not make General Javascrip folder:' [fileis(ANY_DIR__4)] ANY_DIR__4
+
+. ANY_DIR__4 = dsn('web_root') + 'login\'
+. if (fileis(ANY_DIR__4) eq 0) ANY_NUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANY_NUM__4 eq -1) write 'Can not make log in folder: ' [fileis(ANY_DIR__4)] ANY_DIR__4
+
+. ANY_DIR__4 = dsn('web_root') + 'err\'
+. if (fileis(ANY_DIR__4) eq 0) ANY_NUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANY_NUM__4 eq -1) write 'Can not make err log folder: ' [fileis(ANY_DIR__4)] ANY_DIR__4
+
+. ANY_DIR__4 = dsn('web_root') + 'dblock\'
+. if (fileis(ANY_DIR__4) eq 0) ANY_NUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
+. if (ANY_NUM__4 eq -1) write 'Can not lockedDBs folder: ' [fileis(ANY_DIR__4)] ANY_DIR__4
+end program
+
+c  The log in is called first and points to the DCC database to check user name and password
+c  Change program.LOGIN to point to the correct location of the DCC database
+
+program crwarn
+string  *   600   STR$1                      | General String use at any time
+
+STR$1 = 'attribute customcss= "'   + dsn('web_root') + 'css\custom.css"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute globaljs= "' + dsn('web_root') + 'js\global.js"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute index = "'   + dsn('web_root') + 'index.html"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute logout= "'   + dsn('web_root') + 'logout.html"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute js_req= "'   + dsn('web_root') + 'javascript_required.html"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute casenav= "'  + dsn('web_root') + 'js\casenav.js"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute dblock= "'   + dsn('web_root') + 'dblock\dblocks.txt"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute err403= "'   + dsn('web_root') + 'err403.html"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute err404 = "'  + dsn('web_root') + 'err404.html"'
+EXECUTE DBMS STR$1
+
+STR$1 = 'attribute badlogins = "' + dsn('web_root') + 'login\badLogins.txt"'
+EXECUTE DBMS STR$1
+
+end program
+
+
+END PROCEDURE

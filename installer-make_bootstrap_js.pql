@@ -6,7 +6,7 @@ program crwarn
 string  * 600   STR$1            | General String use at any time
 integer *   1   IOSTAT__4        | Return code of IOSTAT
 INTEGER *   1   GOON__4          | CONTROL FLOW
-integer *   1   ANYNUM__4
+integer *   1   ANY_NUM__4
 
 write '<br> JS.BOOTSTRAP:' 20T [dsn('bootstrapjs')]
 

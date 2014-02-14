@@ -1,0 +1,44 @@
+PROCEDURE      P_SECURITY.GET_DB:T  (157515,44069)  |Last amended Jan 17, 2014,12:14:29
+GLOBAL GOON__4 = 1
+
+retrieval crwarn
+string  *    32   DB_NAME__4               | Database Name
+real    *     8   ANY_NUM__4               | Use any time you want
+integer *     1   GOON__4                 | Control flow variable
+
+SET GOON__4 (0)
+
+. process rec SESSIONS VIA ('<USERID>' '<SESSIONID>')
+.   DB_NAME__4 = SESSIONDB
+.   GOON__4 =1
+. end rec
+. ifthen (exists(DB_NAME__4) eq 0)
+.   ANY_NUM__4 = GLOBALN('GOON__4', 0)
+.   ANY_NUM__4 = globals('GSOMEMESS', 'Contact your DBA about the database name. <db>')
+.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLLER.STOP_PAGE')
+. endif
+. ifthen (GOON__4 eq 1)
+.   old rec is DBADMIN VIA (DB_NAME__4)
+.     GOON__4 = 2
+.     ANY_NUM__4 = globals('GDB' , trimlr(SESSIONDB))
+.     ANY_NUM__4 = globals('GDBPATH', trimlr(FOLDER))
+.     ANY_NUM__4 = globals('GMSTIP', MASTER_IP)
+.     ANY_NUM__4 = globals('GMSTPORT', MASTER_PORT)
+.   end rec is
+. endif
+c
+. ifnotthen (GOON__4 eq 2)
+.   ANY_NUM__4 = GLOBALN('GOON__4', 0)
+.   ANY_NUM__4 = globals('GSOMEMESS', 'Contact your DBA about access to the database <db>')
+.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLLER.STOP_PAGE')
+. endif
+end retrieval
+
+
+CIF EQ 0<GOON__4>, 0
+. CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
+. CALL <NEXTMEMBER>
+CIF END
+END PROCEDURE

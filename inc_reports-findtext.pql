@@ -3,11 +3,11 @@ c Search for text in a record type.  Searches all variables.
 c
 c must re-set the globals to first record type, first var
 program
-ANYNUM__4 = 0<GDBREC>
-ifthen(ANYNUM__4 eq 9999 OR 0)
+ANY_NUM__4 = 0<GDBREC>
+ifthen(ANY_NUM__4 eq 9999 OR 0)
 . for EACH_RECORD_NUMBER  = 1,  nrecs(0)
 .   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-.   ANYNUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
 .   EXIT FOR
 . end for
 endif
@@ -17,7 +17,7 @@ retrieval crwarn noautocase
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set ANYNUM__4 (0)
+set ANY_NUM__4 (0)
 set COUNTS__4  (0)
 
 write(cgi) '<h3>Find Text'
@@ -165,27 +165,27 @@ write(cgi) '<p><em>Search missing values comming soon</em></p>'
 
 subprocedure START_ROW
 . COUNTS__4 = COUNTS__4  + 1
-. SHOWKEYS__4 = ''
+. SHOW_KEYS__4 = ''
 . STR$1 = '<tr>'
 . write(cgi) STR$1
 . STR$1 = '<a class="bluetext" href = "<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;gdbrec=' + sglobal('GDBREC')
 . ifthen (dbtype(0) eq 1)
 .   KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
-.   KEYVALUE__4 = trimlr(varget(KEYVNAME__4))
-.   STR$1 = STR$1 + '&amp;caseis=' + KEYVALUE__4
-.   SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + KEYVALUE__4 + '</b><br> '
+.   KEY_VALUE__4 = trimlr(varget(KEYVNAME__4))
+.   STR$1 = STR$1 + '&amp;caseis=' + KEY_VALUE__4
+.   SHOW_KEYS__4 = SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + KEY_VALUE__4 + '</b><br> '
 . endif
 . for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .   KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
-.   KEYVALUE__4 = trimlr(varget(KEYVNAME__4))
-.   STR$1 = STR$1 +  '&amp;key' + format(EACH_KEY) + '=' + KEYVALUE__4
-.   SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + KEYVALUE__4  + '</b><br> '
+.   KEY_VALUE__4 = trimlr(varget(KEYVNAME__4))
+.   STR$1 = STR$1 +  '&amp;key' + format(EACH_KEY) + '=' + KEY_VALUE__4
+.   SHOW_KEYS__4 = SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + KEY_VALUE__4  + '</b><br> '
 . end for
 . STR$1 = STR$1  + '">'
-. if (len(SHOWKEYS__4) eq 0) SHOWKEYS__4 = '&nbsp;'
+. if (len(SHOW_KEYS__4) eq 0) SHOW_KEYS__4 = '&nbsp;'
 . write(cgi) '  <td title="' [pack(recname(REC_TYPE_NUMBER))]'">'
 . write(cgi) '    ' REC_LABEL__4 '</td>'
-. write(cgi) '  <td>' STR$1  SHOWKEYS__4 '</a></td>'
+. write(cgi) '  <td>' STR$1  SHOW_KEYS__4 '</a></td>'
 end subprocedure
 
 end retrieval

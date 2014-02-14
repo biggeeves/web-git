@@ -3,45 +3,45 @@ c Create global values from CGI Vars
 C Only values that can be obtained once through security
 PROGRAM
 string  *   600   STR$1                      | General String use at any time
-integer *     4   ANYNUM__4                  | Use any time you want
+integer *     4   ANY_NUM__4                  | Use any time you want
 
-. ANYNUM__4 =  globaln ('GCASED', dbtype(0))
-. ANYNUM__4 =  globals ("GDBREC", fst(cgivarpn('gdbrec'), '9999'))
-. ANYNUM__4 =  globals ('GSEARCHTEXT', cgivarpn('gsearchtext'))
-. ANYNUM__4 =  globals ('GVARLABELS', cgivarpn('gvarlabels'))
-. ANYNUM__4 =  globals ('GVARNAMES', cgivarpn('gvarnames'))
-. ANYNUM__4 =  globals ('GVALUELABELS', cgivarpn('gvaluelabels'))
-. ANYNUM__4 =  globals ('GVALUES', cgivarpn('gvalues'))
-. ANYNUM__4 =  globals ('VNUM__4', cgivarpn('webvnum'))
-. ANYNUM__4 =  globals ('GVARNAME', trimlr(varnamec(numbr(cgivarpn('gdbrec')), numbr(cgivarpn('webvnum')))))
-. ANYNUM__4 =  globals ('GOPERATOR', cgivarpn('operator'))
-. ANYNUM__4 =  globals ('GVALUE1', cgivarpn('webvalue1'))
-. ANYNUM__4 =  globals ('GCASEMATCH', cgivarpn('casematch'))
-. ANYNUM__4 =  globals ('GEXACTMATCH', cgivarpn('exactmatch'))
-. ANYNUM__4 =  globals ('GPROG1', fst(cgivarpn('webprog1'), ''))
-. ANYNUM__4 =  globals ('GPROGTITLE', fst(cgivarpn('progtitle'), ''))
-. ANYNUM__4 =  globals ('GSAVECODE', fst(cgivarpn('savecode'), ''))
-. ANYNUM__4 =  globals ('GDAY', fst(cgivarpn('gday'), '-1'))
+. ANY_NUM__4 =  globaln ('GCASED', dbtype(0))
+. ANY_NUM__4 =  globals ("GDBREC", fst(cgivarpn('gdbrec'), '9999'))
+. ANY_NUM__4 =  globals ('GSEARCHTEXT', cgivarpn('gsearchtext'))
+. ANY_NUM__4 =  globals ('GVARLABELS', cgivarpn('gvarlabels'))
+. ANY_NUM__4 =  globals ('GVARNAMES', cgivarpn('gvarnames'))
+. ANY_NUM__4 =  globals ('GVALUELABELS', cgivarpn('gvaluelabels'))
+. ANY_NUM__4 =  globals ('GVALUES', cgivarpn('gvalues'))
+. ANY_NUM__4 =  globals ('VNUM__4', cgivarpn('webvnum'))
+. ANY_NUM__4 =  globals ('GVARNAME', trimlr(varnamec(numbr(cgivarpn('gdbrec')), numbr(cgivarpn('webvnum')))))
+. ANY_NUM__4 =  globals ('GOPERATOR', cgivarpn('operator'))
+. ANY_NUM__4 =  globals ('GVALUE1', cgivarpn('webvalue1'))
+. ANY_NUM__4 =  globals ('GCASEMATCH', cgivarpn('casematch'))
+. ANY_NUM__4 =  globals ('GEXACTMATCH', cgivarpn('exactmatch'))
+. ANY_NUM__4 =  globals ('GPROG1', fst(cgivarpn('webprog1'), ''))
+. ANY_NUM__4 =  globals ('GPROGTITLE', fst(cgivarpn('progtitle'), ''))
+. ANY_NUM__4 =  globals ('GSAVECODE', fst(cgivarpn('savecode'), ''))
+. ANY_NUM__4 =  globals ('GDAY', fst(cgivarpn('gday'), '-1'))
 
 C CASEIS
 . ifthen (dbtype(0) eq 1) |case structured
-.   ANYNUM__4 = globals ('CASEISNQ', fst(cgivarpn('caseis'), ''))
-.   ANYNUM__4 = globals ('GCASEOPTION', fst(cgivarpn('caseoption'), ''))
-.   ANYNUM__4 = globals ('GCASENAV', fst(cgivarpn('casenav'), ''))
-.   ANYNUM__4 = globals ('GSTARTID', fst(cgivarpn('startid'), ''))
+.   ANY_NUM__4 = globals ('CASEISNQ', fst(cgivarpn('caseis'), ''))
+.   ANY_NUM__4 = globals ('GCASEOPTION', fst(cgivarpn('caseoption'), ''))
+.   ANY_NUM__4 = globals ('GCASENAV', fst(cgivarpn('casenav'), ''))
+.   ANY_NUM__4 = globals ('GSTARTID', fst(cgivarpn('startid'), ''))
 .   ifthen (vtype (0,  keyname(0, 1)) eq 1)
 .     STR$1  = '"' +  cgivarpn('caseis')  + '"'
 .   else
 .     STR$1  = cgivarpn('caseis')
 .   endif
 .   if (exists(STR$1) eq 0) set STR$1 ('')
-.   ANYNUM__4 =  globals('CASEIS', STR$1)
+.   ANY_NUM__4 =  globals('CASEIS', STR$1)
 . endif
 
 . STR$1  = famname(numbr(cgivarpn('runfamnum')))
-. ANYNUM__4 = globals ('GRUNFAMNAME', fst(STR$1, ''))
-. ANYNUM__4 = globals ('GRUNMEMNAME', fst(cgivarpn('runmemname'), ''))
-. ANYNUM__4 =  globals  ('GRECNAV', trimlr( fst(cgivarpn('grecnav'), cgivarpn('GRECNAV'), '')))
+. ANY_NUM__4 = globals ('GRUNFAMNAME', fst(STR$1, ''))
+. ANY_NUM__4 = globals ('GRUNMEMNAME', fst(cgivarpn('runmemname'), ''))
+. ANY_NUM__4 =  globals  ('GRECNAV', trimlr( fst(cgivarpn('grecnav'), cgivarpn('GRECNAV'), '')))
 
 end program
 

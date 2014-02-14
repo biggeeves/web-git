@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157452,40400)  |Last amended Nov 15, 2013,11:13:20
+PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157542,58451)  |Last amended Feb 13, 2014,16:14:11
 C display a generic data entry page for one record (ROW)
 
 retrieval progress CRWARN noautocase
@@ -6,7 +6,7 @@ c print back on
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 set TAB_INDEX  (0)
-set RECACCESSED__4 (0)
+set REC_ACCESSED__4 (0)
 
 
 c note disableEnterKey needs to be in two places.  A) On the form to disable enter in Firefox.  B) In the body to allow IE to move from field to field with the enter key.
@@ -14,7 +14,7 @@ c note disableEnterKey needs to be in two places.  A) On the form to disable ent
 write(cgi) '  <h3 title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
 if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <CASEISNQ> '
 write(cgi) REC_LABEL__4
-ifthen (0<GVIEWSCHEMA> eq 1)
+ifthen (0<GVIEW_SCHEMA> eq 1)
 . write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDBREC>">'
 . write(cgi) '<small> (codebook)</small></a>'
 endif
@@ -28,12 +28,12 @@ CALL WPF.INC_ELEMENTS.CRUD_NAV_BAR
 c add DB specific form header
 GOON__4  = 0
 STR$1 = ''
-for ANYNUM__4 = 1, recdocn(REC_TYPE_NUMBER)
-. if(pack(upper(substr(recdoc(REC_TYPE_NUMBER, ANYNUM__4 ), 1, 8))) eq 'HEADER') GOON__4  = 1;write(cgi) '<h4>'
+for ANY_NUM__4 = 1, recdocn(REC_TYPE_NUMBER)
+. if(pack(upper(substr(recdoc(REC_TYPE_NUMBER, ANY_NUM__4 ), 1, 8))) eq 'HEADER') GOON__4  = 1;write(cgi) '<h4>'
 . ifthen(GOON__4 eq 1)
-.   STR$1 = STR$1 + pack(recdoc(REC_TYPE_NUMBER, ANYNUM__4 ))
+.   STR$1 = STR$1 + pack(recdoc(REC_TYPE_NUMBER, ANY_NUM__4 ))
 . endif
-. if(srst(upper(recdoc(REC_TYPE_NUMBER, ANYNUM__4 )), 'ENDHEADER') gt 0); exit for
+. if(srst(upper(recdoc(REC_TYPE_NUMBER, ANY_NUM__4 )), 'ENDHEADER') gt 0); exit for
 end for
 ifthen (GOON__4 eq 1)
 . STR$1 = replace (STR$1,'ENDHEADER','', 1, 1, 0)
@@ -43,13 +43,13 @@ ifthen (GOON__4 eq 1)
 endif
 
 ifthen (nvarsc(REC_TYPE_NUMBER) gt 40) | break into multiple "pages"
-. ANYNUM__4 = aint (nvarsc(REC_TYPE_NUMBER) / 40) +1
+. ANY_NUM__4 = aint (nvarsc(REC_TYPE_NUMBER) / 40) +1
 . STR$2 = ''
-. for EACH_NUMBER = 1, ANYNUM__4
+. for EACH_NUMBER = 1, ANY_NUM__4
 .   STR$2 = STR$2 + 'hideById(''page' + format(EACH_NUMBER) + ''');'
 . end for
 . write(cgi) '<div id="selectpage">Show '
-. for EACH_NUMBER = 1, ANYNUM__4
+. for EACH_NUMBER = 1, ANY_NUM__4
 .   STR$1 = '  <a href="#here" class="bluetext smallfont" '+
             'onclick="' + STR$2 +
             ' document.getElementById(''page' +format(EACH_NUMBER ) + ''').style.display=''block'';'+
@@ -73,7 +73,7 @@ CIF END
 CIF END
 
 . process rec <GDBREC> <GVIA#> onetime
-.     RECACCESSED__4  = 1
+.     REC_ACCESSED__4  = 1
 .     for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
 .       ifthen (nvarsc(REC_TYPE_NUMBER) gt 40)
 .         ifNOTthen (EACH_VARIABLE eq nvarsc(REC_TYPE_NUMBER)) | close last page table
@@ -90,19 +90,19 @@ CIF END
 .       if (VNAME$ eq 'DWHO' or 'DCCWHO' or 'DCCWHEN' OR 'DCCDATE' OR 'DCCTIME' OR 'DCCEDITS' OR 'DSTAMP' ) next for
 .       VNAME$CB = '{' +  trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  + '}'
 .       VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
-.       execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.       if(RETCODE__4 eq 0) VAR_LABEL =  HTMLTEXT
+.       execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.       if(RET_CODE__4 eq 0) VAR_LABEL =  HTMLTEXT
 .       if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
 c add Variable specific text above the variable
 GOON__4  = 0
 STR$1  = ''
-for ANYNUM__4 = 1, nvardoc(REC_TYPE_NUMBER, VNAME$CB)
-. ifthen (pack(upper(substr(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 ), 1, 7))) eq 'HEADER')
+for ANY_NUM__4 = 1, nvardoc(REC_TYPE_NUMBER, VNAME$CB)
+. ifthen (pack(upper(substr(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4 ), 1, 7))) eq 'HEADER')
 .   GOON__4  = 1
 .   write(cgi) '<tr class="tan"><td colspan="2">'
 . endif
-. if (GOON__4  = 1) STR$1 = STR$1 + pack(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 ))
-. if(srst(upper(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 )), 'ENDHEADER') gt 0) exit for
+. if (GOON__4  = 1) STR$1 = STR$1 + pack(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4 ))
+. if(srst(upper(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4 )), 'ENDHEADER') gt 0) exit for
 end for
 ifthen (GOON__4 eq 1)
 . STR$1 = replace (STR$1, 'ENDHEADER', '', 1, 1, 0)
@@ -190,27 +190,27 @@ c .         STRING_VARGET = varget(VNAME$)
 .       endif
 C       BY HERE STRING_VARGET IS THE GOLD STANDARD VALUE
 .       ifthen (SIR_VARTYPE eq 2)
-.         VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.         VAL_LAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
 .       elseif (SIR_VARTYPE eq 3)
 .         ifthen (MISSNUM__4 eq 1 OR 2 OR 3)
-.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.           VAL_LAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
 .         else
-.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, cdate(STRING_VARGET, SIR_VARFORMAT))
+.           VAL_LAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, cdate(STRING_VARGET, SIR_VARFORMAT))
 .         endif
 .       elseif (SIR_VARTYPE eq 4)
 .         ifthen (MISSNUM__4 eq 1 OR 2 OR 3)
-.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.           VAL_LAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
 .         else
-.           VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, ctime(STRING_VARGET, SIR_VARFORMAT))
+.           VAL_LAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, ctime(STRING_VARGET, SIR_VARFORMAT))
 .         endif
 .       else
-.         VALLAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
+.         VAL_LAB_POS = vallabsp(REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET)
 .       endif
 CIF END
 
 .       ifthen (exists(STRING_VARGET) eq 1)
-.         execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.         if(RETCODE__4 eq 0) STRING_VARGET = HTMLTEXT
+.         execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.         if(RET_CODE__4 eq 0) STRING_VARGET = HTMLTEXT
 .       endif
 
 
@@ -261,10 +261,10 @@ c       Variable Label Column  | since keys are not editable, they do not get a 
 c       Variable input
 .       VAR_DISPLAY_CLASS = 'widthsmall'
 .       ifthen (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 1)
-.         ANYNUM__4 = numbr(substr(vformat(REC_TYPE_NUMBER, VNAME$CB), 2, len(vformat(REC_TYPE_NUMBER, VNAME$CB))))
-.         ifthen (ANYNUM__4 gt 10 and lt 25)
+.         ANY_NUM__4 = numbr(substr(vformat(REC_TYPE_NUMBER, VNAME$CB), 2, len(vformat(REC_TYPE_NUMBER, VNAME$CB))))
+.         ifthen (ANY_NUM__4 gt 10 and lt 25)
 .           VAR_DISPLAY_CLASS = 'widthmed'
-.         elseif (ANYNUM__4 ge 25)
+.         elseif (ANY_NUM__4 ge 25)
 .           VAR_DISPLAY_CLASS = 'widthwidest'
 .         endif
 .       elseif (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 3)
@@ -289,8 +289,8 @@ c       Value labels column
 .           endif
 .         else
 |           | key varialbe and these value labels should be static and not selects.
-.           VALLAB_VALUE = trimlr(vallabsc (REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET ))
-.           write(cgi)  VALLAB_VALUE
+.           VAL_LAB_VALUE = trimlr(vallabsc (REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET ))
+.           write(cgi)  VAL_LAB_VALUE
 .         endif
 .       endif
 
@@ -333,7 +333,7 @@ CIF END
 
 write(cgi)  '</form>'
 
-ifthen(RECACCESSED__4  eq 0)
+ifthen(REC_ACCESSED__4  eq 0)
 . write(cgi) 'There has been some sort of error.  Please notify your DBA.  Code 3892.'
 endif
 
@@ -354,8 +354,8 @@ c set the cursor at the first variable
 
 
 subprocedure CLEAN_VALLAB
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
-. if(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
 end subprocedure
 
 
@@ -436,21 +436,21 @@ c RADIO CHOICES
 . for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$CB)
 .   write(cgi)  '<input type="radio" '
 .   STR$1 = 'name= "' + VNAME$  + '" id="' + VNAME$ + format(EACH_LABEL) + '" tabindex=  '  + format(EACH_VARIABLE)  | This is an intentional error.  It wont be selected but it wont be skipped either.
-.   ifthen (VALLAB_POS eq EACH_LABEL)
+.   ifthen (VAL_LAB_POS eq EACH_LABEL)
 .     ifNOTthen (0<REC_STAT> eq 6)
 .       if(len(STRING_VARGET) gt 0) STR$1 = STR$1 +' checked'
 .     endif
 .   endif
 .   write(cgi)  4t STR$1
 
-.   VALLAB_VALUE = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
+.   VAL_LAB_VALUE = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
 .   execute subprocedure CLEAN_VALLAB
 .   ifthen (SIR_VARTYPE eq 3)
-.     VALLAB_VALUE = datec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.     VAL_LAB_VALUE = datec(numbr(VAL_LAB_VALUE), SIR_VARFORMAT)
 .   elseif (SIR_VARTYPE eq 4)
-.     VALLAB_VALUE = timec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.     VAL_LAB_VALUE = timec(numbr(VAL_LAB_VALUE), SIR_VARFORMAT)
 .   endif
-.   STR$1 = 'value="' + VALLAB_VALUE  + '">(' + VALLAB_VALUE  + ')' + trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
+.   STR$1 = 'value="' + VAL_LAB_VALUE  + '">(' + VAL_LAB_VALUE  + ')' + trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
 .   write(cgi) 4t STR$1
 . end for
 
@@ -459,13 +459,13 @@ end subprocedure
 
 subprocedure DISPLAY_DROPDOWN
 c Value labels column
-. VALLAB_DISPLAY_CLASS = '"smallwidth"'
+. VAL_LAB_DISPLAY_CLASS = '"smallwidth"'
 | figure out approximate size of value label select (long or short)
 . for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$CB)
-.   if (len(trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))) gt 10)  VALLAB_DISPLAY_CLASS ='"label_long"'; EXIT FOR
+.   if (len(trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))) gt 10)  VAL_LAB_DISPLAY_CLASS ='"label_long"'; EXIT FOR
 .   if (EACH_LABEL gt 100) exit for
 . end for
-. STR$1 = '<select class =' + VALLAB_DISPLAY_CLASS + ' id="' + VNAME$  + '_list" '
+. STR$1 = '<select class =' + VAL_LAB_DISPLAY_CLASS + ' id="' + VNAME$  + '_list" '
 . write(cgi)  4t STR$1
 . STR$1 = 'onchange="SelectValueByList(this,''' + VNAME$ + ''');afterBlur(this);">'
 . write(cgi)  6t STR$1
@@ -473,20 +473,20 @@ c First option is blank (system missing, zero length string, whatever)
 . write(cgi)  6t '<option value=""></option>'
 . for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$CB)
 .   STR$1 = trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
-.   VALLAB_VALUE = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
+.   VAL_LAB_VALUE = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$CB, EACH_LABEL))
 .   execute subprocedure CLEAN_VALLAB
 .   ifthen (SIR_VARTYPE eq 3)
-.     VALLAB_VALUE = datec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.     VAL_LAB_VALUE = datec(numbr(VAL_LAB_VALUE), SIR_VARFORMAT)
 .   elseif (SIR_VARTYPE eq 4)
-.     VALLAB_VALUE = timec(numbr(VALLAB_VALUE), SIR_VARFORMAT)
+.     VAL_LAB_VALUE = timec(numbr(VAL_LAB_VALUE), SIR_VARFORMAT)
 .   endif
 .   SELECTED__4  = ''
-.   ifthen (VALLAB_POS eq EACH_LABEL)
+.   ifthen (VAL_LAB_POS eq EACH_LABEL)
 .     ifNOTthen (0<REC_STAT> eq 6)
 .       if(len(STRING_VARGET) gt 0) SELECTED__4  = 'selected'
 .     endif
 .   endif
-.   STR$1 = '<option value="'  + VALLAB_VALUE  + '" '  + SELECTED__4  + '>' + STR$1 + '</option>'
+.   STR$1 = '<option value="'  + VAL_LAB_VALUE  + '" '  + SELECTED__4  + '>' + STR$1 + '</option>'
 .   write(cgi)  6t STR$1
 . end for
 . write(cgi)  4T '</select>'

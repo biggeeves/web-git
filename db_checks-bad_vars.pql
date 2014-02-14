@@ -10,7 +10,7 @@ CALL WPF.SYSTEM.INI_VARS
 . GOON__4 = 1
 . for EACH_RECORD_NUMBER = 1, nrecs(0)
 .   for EACH_VARIABLE = 1, nvarsc(EACH_RECORD_NUMBER)
-.     ANYNUM__4 = 1
+.     ANY_NUM__4 = 1
 .     VNAME$ = trimlr(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE))
 .     for EACH_LETTER = 1, len(VNAME$)
 .       CHAR__4 = ichar(sbst(VNAME$, EACH_LETTER, 1))
@@ -18,9 +18,9 @@ CALL WPF.SYSTEM.INI_VARS
 .       if (CHAR__4 ge 65 and le 90) next for  | A-Z
 .       if (CHAR__4 ge 97 and le 122) next for | a-z
 .       if (CHAR__4 eq 95) next for | Underscore
-.       ANYNUM__4 = 0
+.       ANY_NUM__4 = 0
 .     end for
-.     ifthen(ANYNUM__4 eq 0)
+.     ifthen(ANY_NUM__4 eq 0)
 .       GOON__4 = 0
 .       write(cgi) 'Non-conventional VARIABLE name REC#:' EACH_RECORD_NUMBER '  Variable: ' VNAME$ '<br>'
 .     endif
@@ -28,7 +28,7 @@ CALL WPF.SYSTEM.INI_VARS
 CIF EQ 1,2
 | Used to check all characters.  Now jsut replacing double qoute with \"  (slash double qoute) in JavaScript when dealing with value lables.
 .     for EACH_LABEL = 1,nlabels(EACH_RECORD_NUMBER,VNAME$)
-.       ANYNUM__4 = 1
+.       ANY_NUM__4 = 1
 .       STR$1 = vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_LABEL)
 .       for EACH_LETTER = 1, len(STR$1)
 .         CHAR__4 = ichar(sbst(STR$1,EACH_LETTER,1))
@@ -36,9 +36,9 @@ CIF EQ 1,2
 .         if (CHAR__4 ge 65 and le 90) next for  | A-Z
 .         if (CHAR__4 ge 97 and le 122) next for | a-z
 .         if (CHAR__4 eq 32 or 43 or 44 or 45 or 46 or 47 or 59 or 60 or 61 or 62 or 95 ) next for | space, plus, comma, dash, period,  slash /, semi colon,<, =, >, Underscore
-.         ANYNUM__4 = 0
+.         ANY_NUM__4 = 0
 .       end for
-.       ifthen(ANYNUM__4 eq 0)
+.       ifthen(ANY_NUM__4 eq 0)
 .         GOON__4 = 0
 .         write(cgi) 'Non-conventional LABEL name REC#:' EACH_RECORD_NUMBER '  Variable: ' VNAME$ '  Label:' STR$1 '<br>'
 .       endif
@@ -47,8 +47,8 @@ CIF END
 .   end for
 . end for
 . ifthen (GOON__4 eq 0) | no database connected, stupid, but happens
-.   ANYNUM__4 = globals( 'GSOMEMESS', 'Some variables names need to change before using the web interface.  You have been warned.')
-.   ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Some variables names need to change before using the web interface.  You have been warned.')
+.   ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 c .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'   | this stops the toolbar from loading.  The user can NOT continue!  Which can be great
 . endif
 

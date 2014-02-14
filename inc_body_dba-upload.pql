@@ -6,7 +6,7 @@ string  *   600   STR$1                      | General String use at any time
 string  *    32   VNAME$                     | Variable name
 string  *   600   ASCIITEXT                  | HTML to be cleaned
 string  *   600   HTMLTEXT                   | HTML after it has been cleaned
-integer *     4   RETCODE__4                 | Return code for other things
+integer *     4   RET_CODE__4                 | Return code for other things
 
 write '<hr>' [cgivarpn('myfile')] '<hr>Uploads Under Construction<br>'
 write(cgi) '<form method="post" action="<mycgi>">'

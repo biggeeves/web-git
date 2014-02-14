@@ -75,7 +75,7 @@ CIF END
 .   set MISSNUM__4 (missing)
 .   set NUM__4   (missing)
 .   set STR__4   (missing)
-.   compute SHOWKEYS__4 = ''
+.   compute SHOW_KEYS__4 = ''
 .   ifthen (SIR_VARTYPE le 2)
 .     STR__4 = sget(VNAME$); MISSNUM__4  = misnum(STR__4)
 .   else
@@ -86,8 +86,8 @@ CIF END
 .     ifthen (ISMISS__4 eq 0)
 .       write(cgi) 2t '<td>blank</td><td>&nbsp;</td>'
 .     else
-.       VALLAB_VALUE = fst(trimlr(vallabsc(REC_TYPE_NUMBER, VNAME$, QSTR__4)), "&nbsp;")
-.       write(cgi) 2t '<td>' [trimlr(miss(REC_TYPE_NUMBER, VNAME$, MISSNUM__4))] '</td><td>' VALLAB_VALUE   '</td>'
+.       VAL_LAB_VALUE = fst(trimlr(vallabsc(REC_TYPE_NUMBER, VNAME$, QSTR__4)), "&nbsp;")
+.       write(cgi) 2t '<td>' [trimlr(miss(REC_TYPE_NUMBER, VNAME$, MISSNUM__4))] '</td><td>' VAL_LAB_VALUE   '</td>'
 .     endif
 .     execute subprocedure END_ROW
 .   else
@@ -95,8 +95,8 @@ c     not a missing value
 .     ifthen (SIR_VARTYPE eq 1 or 2)
 .       ifthen (upper(STR__4) <GOPERATOR> QSTR__4)
 .         execute subprocedure START_ROW
-.         VALLAB_VALUE = fst(vallabsc(REC_TYPE_NUMBER, VNAME$, STR__4), "&nbsp;")
-.         write(cgi) 2t '<td>' STR__4 '</td><td>' VALLAB_VALUE  '</td>'
+.         VAL_LAB_VALUE = fst(vallabsc(REC_TYPE_NUMBER, VNAME$, STR__4), "&nbsp;")
+.         write(cgi) 2t '<td>' STR__4 '</td><td>' VAL_LAB_VALUE  '</td>'
 .         execute subprocedure END_ROW
 .       endif
 .     elseif (SIR_VARTYPE ge 3)
@@ -109,8 +109,8 @@ c     not a missing value
 .         else
 .           write(cgi) 2t '<td>' NUM__4 '</td><td>'
 .         endif
-.         VALLAB_VALUE = fst( pack(vallabsc(REC_TYPE_NUMBER, VNAME$, NUM__4)), "&nbsp;")
-.         write(cgi)  VALLAB_VALUE '</td>'
+.         VAL_LAB_VALUE = fst( pack(vallabsc(REC_TYPE_NUMBER, VNAME$, NUM__4)), "&nbsp;")
+.         write(cgi)  VAL_LAB_VALUE '</td>'
 .         execute subprocedure END_ROW
 .       endif
 .     endif
@@ -155,18 +155,18 @@ subprocedure END_ROW
 .   ifthen (dbtype(0) eq 1)
 .     compute KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))
-.     compute SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET + '</b><br> '
+.     compute SHOW_KEYS__4 = SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET + '</b><br> '
 .     STR$1 = STR$1 + '&amp;caseis=' + STRING_VARGET
 .   endif
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     compute KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))
 .     STR$1 = STR$1  + '&amp;key' + format(EACH_KEY - dbtype(0)) + '=' + STRING_VARGET
-.     compute SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET  + '</b><br> '
+.     compute SHOW_KEYS__4 = SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET  + '</b><br> '
 .   end for
 .   STR$1 = STR$1 + '">'
-.   if (len(SHOWKEYS__4) eq 0) SHOWKEYS__4 = '&nbsp;'
-.   write(cgi) '  <td>' STR$1 SHOWKEYS__4 '</a></td></tr>'
+.   if (len(SHOW_KEYS__4) eq 0) SHOW_KEYS__4 = '&nbsp;'
+.   write(cgi) '  <td>' STR$1 SHOW_KEYS__4 '</a></td></tr>'
 end subprocedure
 end retrieval
 END PROCEDURE

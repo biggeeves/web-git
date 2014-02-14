@@ -65,7 +65,7 @@ set DCC_TIME_MAX * (-1)
 set DCC_EDITS_MIN * (300000)
 set DCC_EDITS_MAX * (-1)
 
-. RECCNT__4 = numrecs(RECN)
+. REC_CNT__4 = numrecs(RECN)
 . ifthen (len(recdoc(RECN, 0)) gt 0)
 .   REC_LABEL__4 = pack(recdoc(RECN, 0))
 . elseif (len(recdoc(RECN, 1)) gt 0)
@@ -74,7 +74,7 @@ set DCC_EDITS_MAX * (-1)
 .   REC_LABEL__4 = pack(recname(RECN))
 . endif
 . write(cgi) '    <tr>'
-. write(cgi) '    <td class="right" title ="RECN: count:' RECCNT__4 '">'
+. write(cgi) '    <td class="right" title ="RECN: count:' REC_CNT__4 '">'
 . write(cgi) 4t  REC_LABEL__4 '</td>'
 
 CIF EQ 1, 0<GCASED>
@@ -96,24 +96,24 @@ CIF END
 .     elseif ((VNAME$ eq 'DCCDATE') )
 .       NUM__4 = nget(VNAME$)
 .       if (NUM__4 gt DCC_DATE_MAX(REC_TYPE_NUMBER)) DCC_DATE_MAX(REC_TYPE_NUMBER) = NUM__4
-.       set DAYIS__4 (missing)
+.       set DAY_IS__4 (missing)
 .       ifthen(datec(NUM__4, 'WWW') eq 'MON')
-.         DAYIS__4   = 1
+.         DAY_IS__4   = 1
 .       elseif(datec(NUM__4, 'WWW') eq 'TUE')
-.         DAYIS__4   = 2
+.         DAY_IS__4   = 2
 .       elseif(datec(NUM__4, 'WWW') eq 'WED')
-.         DAYIS__4   = 3
+.         DAY_IS__4   = 3
 .       elseif(datec(NUM__4, 'WWW') eq 'THU')
-.         DAYIS__4   = 4
+.         DAY_IS__4   = 4
 .       elseif(datec(NUM__4, 'WWW') eq 'FRI')
-.         DAYIS__4   = 5
+.         DAY_IS__4   = 5
 .       elseif(datec(NUM__4, 'WWW') eq 'SAT')
-.         DAYIS__4   = 6
+.         DAY_IS__4   = 6
 .       elseif(datec(NUM__4, 'WWW') eq 'SUN')
-.         DAYIS__4   = 7
+.         DAY_IS__4   = 7
 .       endif
-.       ifthen (exists(DAYIS__4 ) eq 1)
-.         DB_DAY(DAYIS__4) = DB_DAY(DAYIS__4)  + 1
+.       ifthen (exists(DAY_IS__4 ) eq 1)
+.         DB_DAY(DAY_IS__4) = DB_DAY(DAY_IS__4)  + 1
 .       endif
 .       ifthen (exists(numbr(datec(NUM__4, 'MM'))) eq 1)
 .         DB_MONTH(numbr(datec(NUM__4, 'MM'))) = DB_MONTH(numbr(datec(NUM__4, 'MM')))  + 1
@@ -221,7 +221,7 @@ C HOUR
 write(cgi) '<table class="table table-striped table-hover">'
 write(cgi) '  <tr><th class="right">Hour</th><th class="right">Number of entries</th></tr>'
 for EACH_NUMBER = 0, 24
-. STR$1 =  trimlr(vallabsc(-1, 'HOURIS__4', EACH_NUMBER))
+. STR$1 =  trimlr(vallabsc(-1, 'HOUR_IS__4', EACH_NUMBER))
 . ifthen (DB_HOUR(EACH_NUMBER) NE 0)
 .   write(cgi) '<tr><td class="right">' STR$1 '</td><td class="right">' DB_HOUR(EACH_NUMBER) '</td></tr>'
 . endif
@@ -232,7 +232,7 @@ C DAY
 write(cgi) '<table class="table table-striped table-hover">'
 write(cgi) '  <tr><th class="right">Day</th><th class="right">Number of entries<br>Based on edit date</th></tr>'
 for EACH_NUMBER = 1, 7
-. STR$1 =  trimlr(vallabsc(-1, 'DAYIS__4', EACH_NUMBER))
+. STR$1 =  trimlr(vallabsc(-1, 'DAY_IS__4', EACH_NUMBER))
 . ifthen (DB_DAY(EACH_NUMBER) NE 0)
 .   write(cgi) '<tr><td class="right">' STR$1 '</td><td class="right">' DB_DAY(EACH_NUMBER) '</td></tr>'
 . endif
@@ -243,7 +243,7 @@ C MONTH
 write(cgi) '<table class="table table-striped table-hover">'
 write(cgi) '  <tr><th class="right">Month</th><th class="right">Number of entries<br>Based on edit date</th></tr>'
 for EACH_NUMBER = 1, 12
-. STR$1 = trimlr(vallabsc(-1, 'MONTHIS__4', EACH_NUMBER))
+. STR$1 = trimlr(vallabsc(-1, 'MONTH_IS__4', EACH_NUMBER))
 . ifthen (DB_MONTH(EACH_NUMBER) NE 0)
 .   write(cgi) '<tr><td class="right">' STR$1 '</td><td class="right">' DB_MONTH(EACH_NUMBER) '</td></tr>'
 . endif

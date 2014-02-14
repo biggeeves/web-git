@@ -1,11 +1,11 @@
-PROCEDURE      P_SECURITY.CHECK_USERNAME:T  (157218,53501)  |Last amended Mar 26, 2013,14:51:41
+PROCEDURE      P_SECURITY.CHECK_USERNAME:T  (157542,59999)  |Last amended Feb 13, 2014,16:39:59
 program
-integer *     4   ANYNUM__4                    | Use any time you want
-. ifthen (sglobal('username') eq '') | missing username
-.   compute ANYNUM__4 = globals('GSOMEMESS', 'Please sign in')
+integer *     4   ANY_NUM__4                    | Use any time you want
+. ifthen (sglobal('USER_NAME') eq '') | missing USER_NAME
+.   compute ANY_NUM__4 = globals('GSOMEMESS', 'Please sign in')
 .   EXECUTE DBMS 'CALL WPF.INC_BODY_FORMS.LOGIN_DYNAMIC'
-. elseif (exists(sglobal('username')) eq 0) | no user name
-.   compute ANYNUM__4 = globals('GSOMEMESS', 'Please sign in')
+. elseif (exists(sglobal('USER_NAME')) eq 0) | no user name
+.   compute ANY_NUM__4 = globals('GSOMEMESS', 'Please sign in')
 .   EXECUTE DBMS 'CALL WPF.INC_BODY_FORMS.LOGIN_DYNAMIC'
 . endif
 end program

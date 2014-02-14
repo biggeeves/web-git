@@ -1,12 +1,12 @@
-PROCEDURE      SYSTEM.INITIALIZE:T  (157540,58032)  |Last amended Feb 11, 2014,16:07:12
+PROCEDURE      SYSTEM.INITIALIZE:T  (157542,53539)  |Last amended Feb 13, 2014,14:52:19
 PRINT BACK OFF
 
 CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
 
 CIF EQ 1,2  | THIS WOULD BE A GOOD COMMENT SYSTEM TO ROLE OUT.  TIMES ARE ADDED SO THAT THE PROGRAM IS NOT A NULL PROGRAM
 PROGRAM
-integer *     1   ANYNUM__4                    | Use any time you want
-. ANYNUM__4= globals("RUNCOMMENT", ".")
+integer *     1   ANY_NUM__4                    | Use any time you want
+. ANY_NUM__4= globals("RUNCOMMENT", ".")
 END PROGRAM
 
 program
@@ -20,7 +20,7 @@ CALL WPF.GLOB_VARS.HTMLCODE       | HTML CODE LIKE <JAVASCRIPT>
 
 CALL WPF.SYSTEM.CUSTOM_ATTS       | File locations for all files
 
-CALL WPF.STATIC_PAGES.LOGON       | Static Page: Initial log on
+CALL WPF.STATIC_PAGES.LOGIN       | Static Page: Initial log on
 
 CALL WPF.STATIC_PAGES.LOGOUT      | Static Page: log out
 

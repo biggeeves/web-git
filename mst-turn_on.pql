@@ -10,9 +10,9 @@ c  take extra precaution not to attach a different master
 PROGRAM
 . IFTHEN(SYSTEM(38) eq 1)  | MASTER ALREADY ATTACHED
 .   IFTHEN( DSN("MASTER") EQ '<GMSTIP>:<GMSTPORT>')  |MASTERS MUST BE THE SAME
-.     ANYNUM__4 = globals('GSAMEMST','1')
+.     ANY_NUM__4 = globals('GSAMEMST','1')
 .   ELSE
-.     ANYNUM__4 = globals('GSAMEMST','0')
+.     ANY_NUM__4 = globals('GSAMEMST','0')
 .   ENDIF
 . ENDIF
 END PROGRAM

@@ -12,13 +12,13 @@ program
 .   VALID_RESULT = validate(0, VNAME$, <CASEISNQ>)
 . endif
 . ifthen (VALID_RESULT ne 0)
-.   ANYNUM__4 = globals('GSOMEMESS', '<CASEISNQ> is not a valid ID.')
-.   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+.   ANY_NUM__4 = globals('GSOMEMESS', '<CASEISNQ> is not a valid ID.')
+.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
 .   EXECUTE DBMS 'call WPF.CONTROLLER.STOP_PAGE'
 . endif
 . ifthen ('<CASEISNQ>' eq '')
-.   ANYNUM__4 = globals('GSOMEMESS', 'Please Specify an ID.')
-.   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+.   ANY_NUM__4 = globals('GSOMEMESS', 'Please Specify an ID.')
+.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
 .   EXECUTE DBMS 'call WPF.CONTROLLER.STOP_PAGE'
 . endif
 end program

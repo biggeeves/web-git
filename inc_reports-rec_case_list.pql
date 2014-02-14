@@ -3,11 +3,11 @@ c list of all cases in a record type.
 c must re-set the globals to first record type, for the first load
 
 program
-ANYNUM__4 = 0<GDBREC>
-ifthen(ANYNUM__4 eq 9999 OR 0)
+ANY_NUM__4 = 0<GDBREC>
+ifthen(ANY_NUM__4 eq 9999 OR 0)
 . for EACH_RECORD_NUMBER  = 1, nrecs(0)
 .   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-.   ANYNUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
 .   EXIT FOR
 . end for
 endif
@@ -20,7 +20,7 @@ CALL WPF.SYSTEM.INI_VARS
 KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
 VNAME$CB  = stdname(KEYVNAME__4)
 
-set ANYNUM__4 (0)
+set ANY_NUM__4 (0)
 
 ifNOT (sglobal('GSUBMIT') eq 'Show Cases') REC_LABEL__4   = ''
 write(cgi) '<h3>' REC_LABEL__4  'Form Case List</h3>'
@@ -76,14 +76,14 @@ CIF END
 
 write(cgi) '<script type="text/javascript"> '
 write(cgi) 4t 'function setrecselect(){'
-ANYNUM__4 = 0
+ANY_NUM__4 = 0
 for EACH_RECORD_NUMBER  = 1, nrecs(0)
 . IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-. ANYNUM__4 = ANYNUM__4 + 1
+. ANY_NUM__4 = ANY_NUM__4 + 1
 . IF (EACH_RECORD_NUMBER  = 0<gdbrec>) EXIT FOR
 end for
-ANYNUM__4 = ANYNUM__4 - 1
-write(cgi) 4t 'document.getElementById("recselect").selectedIndex=' ANYNUM__4 ';'
+ANY_NUM__4 = ANY_NUM__4 - 1
+write(cgi) 4t 'document.getElementById("recselect").selectedIndex=' ANY_NUM__4 ';'
 write(cgi) '}'
 write(cgi) '</script>'
 

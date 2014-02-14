@@ -1,4 +1,4 @@
-PROCEDURE      STATIC_PAGES.JAVASCRIPT_REQUIRED:T  (157541,51543)  |Last amended Feb 12, 2014,14:19:03
+PROCEDURE      STATIC_PAGES.JAVASCRIPT_REQUIRED:T  (157542,43152)  |Last amended Feb 13, 2014,11:59:12
 program
 string  *   600   STR$1                      | General String use at any time
 
@@ -6,8 +6,8 @@ if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write(cgi)  '<br> JS Requir
 STR$1 = '<' + CHAR(33) + 'DOCTYPE html>'
 open (js_req) write lrecl = 600
 write (js_req) STR$1 /
-               '<head ><title >JavaScript required to view these pages</title>'/
-               '  <link rel="icon" type="image/ico" href="<fullurl>images/DCC.ico"  title="DCC Data Management" >'/
+               '<head ><title ><WEBSITE_TITLE>| JavaScript required to view these pages</title>'/
+               '  <link rel="icon" type="image/ico" href="<fullurl>images/DCC.ico"  title="<WEBSITE_TITLE>" >'/
                '  <link href="css/bootstrap.css" rel="stylesheet">'/
                '  <link type="text/css" href="css/custom.css" rel="stylesheet">'/
                '</head>'/

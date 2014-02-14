@@ -58,13 +58,13 @@ for EACH_VARIABLE = 1 + dbtype(0),nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 
 . ifNOTthen (VALID_RESULT eq 0)
 .   STR$3 = 'The value ' + fst(STR__4,'') + ' for ' + KEYVNAME__4 + ' is not valid.'
-.   ANYNUM__4 = globals('GSOMEMESS', STR$3)
+.   ANY_NUM__4 = globals('GSOMEMESS', STR$3)
 .   ifthen(sglobal('GUPICK') eq 'New')
-.     ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
+.     ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
 .   elseif(sglobal('GUPICK') eq 'Edit' or 'View')
-.     ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.     ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
 .   else
-.     ANYNUM__4 = globals('GMEMSTOP', 'CALL WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.     ANY_NUM__4 = globals('GMEMSTOP', 'CALL WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
 .   endif
 .   EXECUTE DBMS 'call WPF.CONTROLLER.STOP_PAGE'
 . endif

@@ -35,8 +35,8 @@ write(cgi) '  <table class="table"> '   | OTHER COLOR I LIKE "#D5CCBB"
 for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 . VNAME$ = trimlr(keyname(REC_TYPE_NUMBER, EACH_KEY))
 . VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$))
-. execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
-. if(RETCODE__4 eq 0) VAR_LABEL =  HTMLTEXT
+. execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) VAR_LABEL =  HTMLTEXT
 . HOVER_TITLE = 'title="' + VNAME$ | to start out the title
 . VAR_MIN = nmin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_KEY))
 . VAR_MAX = nmax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_KEY))
@@ -105,8 +105,8 @@ c     MUST MATCH UP WITH DATA ENTRY VALUES BECAUSE JAVASCRIPT IS THE SAME FOR EA
 .       STR$1 = trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
 .       STR$2 = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
 
-.       execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.       ifthen(RETCODE__4 eq 0) STR$1 = HTMLTEXT
+.       execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.       ifthen(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
 .       else STR$1 = 'Oh oh'
 .       endif
 
@@ -125,21 +125,21 @@ write(cgi) '</form>'
 
 
 subprocedure START_ROW
-.   SHOWKEYS__4 = ''
+.   SHOW_KEYS__4 = ''
 .   LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER)
 .   if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis=' +  sglobal('CASEISNQ')
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))
-.     execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.     ifthen(RETCODE__4 eq 0) SHOWKEYS__4 = SHOWKEYS__4 + KEYVNAME__4 +  ':<b> ' + HTMLTEXT + '</b><br> '
+.     execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.     ifthen(RET_CODE__4 eq 0) SHOW_KEYS__4 = SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + HTMLTEXT + '</b><br> '
 .     else LINK__4 = 'Oh oh'
 .     endif
 .     LINK__4 =  LINK__4 +  '&amp;key' + format(EACH_KEY - dbtype(0)) + '='  + STRING_VARGET
 .   end for
 
 c   Keys (used for the link)
-.   write(cgi) 4t '<tr><td>' SHOWKEYS__4 '</td>'
+.   write(cgi) 4t '<tr><td>' SHOW_KEYS__4 '</td>'
 .   LINK__4 = LINK__4 + '&amp;upick=View"'
 .   write(cgi) 4t '<td><a href=' LINK__4 '>View</a></td>'
 .   LINK__4 = substr(LINK__4, 1, len(LINK__4) -  5)

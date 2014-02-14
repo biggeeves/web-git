@@ -1,0 +1,30 @@
+PROCEDURE      CONNECTIONS.LOGIN:T  (157542,53580)  |Last amended Feb 13, 2014,14:53:00
+c Connects to LOGIN database IF NOT ALREADY CONNECTED
+
+PROGRAM crwarn
+STRING  *   254   DBPATH                     | vars for connecting to db
+integer *     4   ANY_NUM__4                  | Use any time you want
+integer *     1   IOSTAT__4                  | Return code of IOSTAT
+
+DBPATH  = dsn('LOGIN_FOLDER')
+
+ifthen(fileis(DBPATH  + 'login.sr1') ne 1)
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'Oh oh, We are currently updating or system.')
+. ANY_NUM__4 = globals( 'G_DEBUG_INFO', 'Could not find the LOGIN database.')
+. exit program
+endif
+
+| CHECK TO SEE IF ALREADY CONNECTED
+for EACH_DB= 1, SYSTEM(40)
+. IF ( 'LOGIN' EQ DBNAME(EACH_DB) ) EXIT PROGRAM
+END FOR
+
+PQL CONNECT DATABASE 'LOGIN' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
+
+IFNOTTHEN (IOSTAT__4 GE 0)
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'We are currently updating our system.  Please try back later.')
+. ANY_NUM__4 = globals( 'G_DEBUG_INFO', 'Did not connect to LOGIN database')
+endif
+
+END PROGRAM
+END PROCEDURE

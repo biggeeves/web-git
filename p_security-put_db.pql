@@ -8,31 +8,31 @@ cif end
 
 
 retrieval UPDATE crwarn
-string  *    32   DBNAME__4                  | Database Name
-real    *     8   ANYNUM__4                  | Use any time you want
+string  *    32   DB_NAME__4                  | Database Name
+real    *     8   ANY_NUM__4                  | Use any time you want
 integer *     1   GOON__4                    | Control flow variable
 SET GOON__4 (0)
-DBNAME__4 = sglobal('GDBPICK')
+DB_NAME__4 = sglobal('GDBPICK')
 
-. old rec is DBADMIN via (DBNAME__4)
+. old rec is DBADMIN via (DB_NAME__4)
 .   GET VARS FOLDER SESSIONDB
-.   ANYNUM__4 = globals('GDB' , trimlr(SESSIONDB))
-.   ANYNUM__4 = globals('GDBPATH', trimlr(FOLDER))
-.   ANYNUM__4 = globals('GMSTIP', MASTER_IP)
-.   ANYNUM__4 = globals('GMSTPORT', MASTER_PORT)
+.   ANY_NUM__4 = globals('GDB' , trimlr(SESSIONDB))
+.   ANY_NUM__4 = globals('GDBPATH', trimlr(FOLDER))
+.   ANY_NUM__4 = globals('GMSTIP', MASTER_IP)
+.   ANY_NUM__4 = globals('GMSTPORT', MASTER_PORT)
 .   GOON__4 = 1
 . end rec
 
 c double checks, DB path is correct and user has access to database
 . ifthen (GOON__4 eq 0)
-.   ANYNUM__4 = globals('GSOMEMESS', 'Database name:' + DBNAME__4 + ' was not found')
-.   ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.DB_CHOOSE')
+.   ANY_NUM__4 = globals('GSOMEMESS', 'Database name:' + DB_NAME__4 + ' was not found')
+.   ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.DB_CHOOSE')
 .   EXIT RETRIEVAL
 . else
     GOON__4 = fileis((FOLDER + SESSIONDB + '.sr1'))
 .   ifnotthen(GOON__4 eq 1)
-.     ANYNUM__4 = globals('GSOMEMESS', 'Sorry,  ' + DBNAME__4 + ' is not available right now')
-.     ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.DB_CHOOSE')
+.     ANY_NUM__4 = globals('GSOMEMESS', 'Sorry,  ' + DB_NAME__4 + ' is not available right now')
+.     ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.DB_CHOOSE')
 .     EXIT RETRIEVAL
 .   endif
 . endif
@@ -42,7 +42,7 @@ c double checks, DB path is correct and user has access to database
 .     record is SESSIONS via ('<USERID>' '<SESSIONID>')
 .       LASTREQUESTDATE = today(0)
 .       LASTREQUESTTIME = now(0)
-.       SESSIONDB = DBNAME__4
+.       SESSIONDB = DB_NAME__4
 .     end rec is
 .   ELSE
 .     write 'BLANK SESSION ID'

@@ -1,12 +1,12 @@
-PROCEDURE      SYSTEM.DB_ATTS:T  (156612,52550)  |Last amended Jul 29, 2011,14:35:50
+PROCEDURE      SYSTEM.DB_ATTS:T  (157542,60065)  |Last amended Feb 13, 2014,16:41:05
 program crwarn
 
 string  *   600   STR$1                      | General String use at any time
 string  *   600   ANY_DIR__4                    | Database folder
-string  *    32   DBNAME__4                   | Database Name
+string  *    32   DB_NAME__4                   | Database Name
 
-DBNAME__4 = trimlr(dbname(0))
-ANY_DIR__4  = dsn('web_root') + DBNAME__4 + '\'
+DB_NAME__4 = trimlr(dbname(0))
+ANY_DIR__4  = dsn('web_root') + DB_NAME__4 + '\'
 
 c database specific javascript files
 STR$1 = 'attribute casenav= "'+ ANY_DIR__4 +'\js\casenav.js"'
@@ -18,10 +18,10 @@ EXECUTE DBMS STR$1
 STR$1 = 'attribute showmems= "'+ ANY_DIR__4 +'\js\showmems.js"'
 EXECUTE DBMS STR$1
 
-STR$1 = 'attribute user_rep = "' + ANY_DIR__4 +'\users\<username>\<username>_rep.txt"'
+STR$1 = 'attribute user_rep = "' + ANY_DIR__4 +'\users\<user_name>\<user_name>_rep.txt"'
 EXECUTE DBMS STR$1
 
-STR$1 = 'attribute user_folder = "' + ANY_DIR__4 +'\users\<username>\"'
+STR$1 = 'attribute user_folder = "' + ANY_DIR__4 +'\users\<user_name>\"'
 EXECUTE DBMS STR$1
 
 

@@ -1,99 +1,99 @@
-PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157221,58816)  |Last amended Mar 29, 2013,16:20:16
+PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157542,58899)  |Last amended Feb 13, 2014,16:21:39
 | set security globals to lowest level by default
-global GSECLEVEL   = 0
-global GWS         = 0
-global GRS         = 0
-global GREPGEN     = 0
-global GREPSPEC    = 0
-global GVIEWDBA    = 0
-global GVIEWSCHEMA = 0
-global GVIEWIDS    = 0
-global GVIEWRECS   = 0
-global GDELREC     = 0
-global GDELCASE    = 0
-global GLOCKCASES  = 0
-global GLOCKRECORDS= 0
+global GSECURITL_LEVEL   = 0
+global GWRITE_SECURITY   = 0
+global GREAD_SECURITY    = 0
+global GREPORTS_GENERAL  = 0
+global GREPORTS_SPECIAL  = 0
+global GVIEW_DBA         = 0
+global GVIEW_SCHEMA      = 0
+global GVIEW_IDS         = 0
+global GVIEW_RECS        = 0
+global GDELETE_RECS      = 0
+global GDELETE_CASES     = 0
+global GLOCK_CASES       = 0
+global GLOCK_RECORDS     = 0
 
 
 retrieval UPDATE CRWARN
-string  *    32   DBNAME__4                  | Database Name
-string  *    32   USERNAME__4                | username
-integer *     4   ANYNUM__4                  | Use any time you want
+string  *    32   DB_NAME__4                  | Database Name
+string  *    32   USER_NAME__4                | USER_NAME
+integer *     4   ANY_NUM__4                  | Use any time you want
 integer *     1   GOON__4                    | Control flow variable
-string  *    32   USERID                     | unique ID for the user for this particular session.  Will also get a session ID.  | also cookie
-string  *    32   SESSIONID                  | After log in and selection of database will get a session ID.                     | also cookie
-real    *     8   NOWINSECONDS
-REAL    *     8   STARTINSECONDS
-REAL    *     8   LASTINSECONDS
+string  *    32   USER_ID                     | unique ID for the user for this particular session.  Will also get a session ID.  | also cookie
+string  *    32   SESSION_ID                  | After log in and selection of database will get a session ID.                     | also cookie
+real    *     8   NOW_IN_SECONDS
+REAL    *     8   START_IN_SECONDS
+REAL    *     8   LAST_IN_SECONDS
 
 set GOON__4 (0)
-NOWINSECONDS = today(0) *60*60*24 + NOW(0)    |now returns seconds, convert days to seconds and you have the seconds from start of gregorian calendar
-USERID = sglobal('USERID')
-SESSIONID = sglobal('SESSIONID')
+NOW_IN_SECONDS = today(0) *60*60*24 + NOW(0)    |now returns seconds, convert days to seconds and you have the seconds from start of gregorian calendar
+USER_ID = sglobal('USER_ID')
+SESSION_ID = sglobal('SESSION_ID')
 
-. ifthen ('<USERID>' eq 'loggedOut')
-.   ANYNUM__4 = globaln('STOP__4', 1)
-.   ANYNUM__4 = globals('GSOMEMESS', 'You must re-enable your cookies before continuing')
+. ifthen ('<USER_ID>' eq 'loggedOut')
+.   ANY_NUM__4 = globaln('STOP__4', 1)
+.   ANY_NUM__4 = globals('GSOMEMESS', 'You must re-enable your cookies before continuing')
 .   EXIT RETRIEVAL
 . endif
 
-c set the db and username to something so the VIA does not complain if these are not found.
-. old rec is SESSIONS VIA (USERID SESSIONID )
-.   DBNAME__4   = fst(SESSIONDB , 'OPPS1')
-.   USERNAME__4 = fst(USERNAMEIS, 'OPPS2')
+c set the db and USER_NAME to something so the VIA does not complain if these are not found.
+. old rec is SESSIONS VIA (USER_ID SESSION_ID )
+.   DB_NAME__4   = fst(SESSIONDB , 'OPPS1')
+.   USER_NAME__4 = fst(USER_NAMEIS, 'OPPS2')
 C   CHECK cookie value, start time and
-.   STARTINSECONDS =  CDATE(STARTDATE, 'MMIDDIYYYY')*24*60*60 + CTIME(STARTTIME, 'HHiMMiSS') + 18*60*60
-.   LASTINSECONDS  =  CDATE(LASTREQUESTDATE, 'MMIDDIYYYY')*24*60*60 + CTIME(LASTREQUESTTIME, 'HHiMMiSS') + 35*60
+.   START_IN_SECONDS =  CDATE(START_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(START_TIME, 'HHiMMiSS') + 18*60*60
+.   LAST_IN_SECONDS  =  CDATE(LAST_REQUEST_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(LAST_REQUEST_TIME, 'HHiMMiSS') + 35*60
 .   ifthen(LOGGEDOUT eq 1)
-.     ANYNUM__4 = globaln('STOP__4', 1)
-.     ANYNUM__4 = globals('GSOMEMESS', 'You were logged out. Please log in again.')
+.     ANY_NUM__4 = globaln('STOP__4', 1)
+.     ANY_NUM__4 = globals('GSOMEMESS', 'You were logged out. Please log in again.')
 .     EXIT RETRIEVAL
-.   elseif (NOWINSECONDS GE LASTINSECONDS)
-.     ANYNUM__4 = globaln('STOP__4', 3)
-.     ANYNUM__4 = globals('GSOMEMESS', 'Your session was idle.  You were automatically timed out.')
+.   elseif (NOW_IN_SECONDS GE LAST_IN_SECONDS)
+.     ANY_NUM__4 = globaln('STOP__4', 3)
+.     ANY_NUM__4 = globals('GSOMEMESS', 'Your session was idle.  You were automatically timed out.')
 .     EXIT RETRIEVAL
 .   else | all OK Update Last Request
-.     LASTREQUESTDATE = TODAY(0)
-.     LASTREQUESTTIME = NOW(0)
-.     ifthen(exists(PAGEVIEWS) EQ 0) PAGEVIEWS = 1
-.     else PAGEVIEWS = PAGEVIEWS + 1
+.     LAST_REQUEST_DATE = TODAY(0)
+.     LAST_REQUEST_TIME = NOW(0)
+.     ifthen(exists(PAGE_VIEWS) EQ 0) PAGE_VIEWS = 1
+.     else PAGE_VIEWS = PAGE_VIEWS + 1
 .     endif
 .   endif
 . end rec
-. process rec DBUSERS VIA (DBNAME__4 USERNAME__4)
+. process rec DBUSERS VIA (DB_NAME__4 USER_NAME__4)
 .   GOON__4  = 2
-.   if(exists(SECLEVEL) eq 1)    ANYNUM__4 = globaln('GSECLEVEL', SECLEVEL)     | Global security level
-.   if(exists(WS) eq 1)          ANYNUM__4 = globaln('GWS', WS)                 | Write Security
-.   if(exists(RS) eq 1)          ANYNUM__4 = globaln('GRS', RS)                 | Read Security
-.   if(exists(REPGEN) eq 1)      ANYNUM__4 = globaln('GREPGEN',     REPGEN )    | Run General reports
-.   if(exists(REPSPEC) eq 1)     ANYNUM__4 = globaln('GREPSPEC',    REPSPEC)    | Run Reports Specific
-.   if(exists(VIEWDBA) eq 1)     ANYNUM__4 = globaln('GVIEWDBA',    VIEWDBA)    | View DBA Drop Down
-.   if(exists(VIEWSCHEMA) eq 1)  ANYNUM__4 = globaln('GVIEWSCHEMA', VIEWSCHEMA) | View Schema
-.   if(exists(VIEWIDS) eq 1)     ANYNUM__4 = globaln('GVIEWIDS',    VIEWIDS)    | See Cases and keys
-.   if(exists(VIEWRECS) eq 1)    ANYNUM__4 = globaln('GVIEWRECS',   VIEWRECS)   | See Forms
-.   if(exists(DELREC) eq 1)      ANYNUM__4 = globaln('GDELREC',     DELREC)     | Delete Record
-.   if(exists(DELCASE) eq 1)     ANYNUM__4 = globaln('GDELCASE',    DELCASE)    | Delete Case
-.   if(exists(LOCKCASES) eq 1)   ANYNUM__4 = globaln('GLOCKCASES',  LOCKCASES)   | Lock Specific Cases
-.   if(exists(LOCKRECORDS) eq 1) ANYNUM__4 = globaln('GLOCKRECORDS',LOCKRECORDS) | Lock Specific Records
+.   if(exists(SECURITY_LEVEL) eq 1)    ANY_NUM__4 = globaln('GSECURITY_LEVEL', SECURITY_LEVEL)     | Global security level
+.   if(exists(WRITE_SECURITY) eq 1)          ANY_NUM__4 = globaln('GWRITE_SECURITY', WRITE_SECURITY)                 | Write Security
+.   if(exists(READ_SECURITY) eq 1)          ANY_NUM__4 = globaln('GREAD_SECURITY', READ_SECURITY)                 | Read Security
+.   if(exists(REPORTS_GENERAL) eq 1)      ANY_NUM__4 = globaln('GREPORTS_GENERAL',     REPORTS_GENERAL )    | Run General reports
+.   if(exists(REPORTS_SPECIAL) eq 1)     ANY_NUM__4 = globaln('GREPORTS_SPECIAL',    REPORTS_SPECIAL)    | Run Reports Specific
+.   if(exists(VIEW_DBA) eq 1)     ANY_NUM__4 = globaln('GVIEW_DBA',    VIEW_DBA)    | View DBA Drop Down
+.   if(exists(VIEW_SCHEMA) eq 1)  ANY_NUM__4 = globaln('GVIEW_SCHEMA', VIEW_SCHEMA) | View Schema
+.   if(exists(VIEW_IDS) eq 1)     ANY_NUM__4 = globaln('GVIEW_IDS',    VIEW_IDS)    | See Cases and keys
+.   if(exists(VIEW_RECS) eq 1)    ANY_NUM__4 = globaln('GVIEW_RECS',   VIEW_RECS)   | See Forms
+.   if(exists(DELETE_RECS) eq 1)      ANY_NUM__4 = globaln('GDELETE_RECS',     DELETE_RECS)     | Delete Record
+.   if(exists(DELETE_CASES) eq 1)     ANY_NUM__4 = globaln('GDELETE_CASES',    DELETE_CASES)    | Delete Case
+.   if(exists(LOCK_CASES) eq 1)   ANY_NUM__4 = globaln('GLOCK_CASES',  LOCK_CASES)   | Lock Specific Cases
+.   if(exists(LOCK_RECORDS) eq 1) ANY_NUM__4 = globaln('GLOCK_RECORDS',LOCK_RECORDS) | Lock Specific Records
 . end rec
-. ifthen (USERNAME__4 eq 'Greg Neils')
+. ifthen (USER_NAME__4 eq 'Greg Neils')
 .   GOON__4  = 2
-.   ANYNUM__4 =  globaln('GSECLEVEL', 30)  | Global security level
-.   ANYNUM__4 =  globaln('GWS', 30)        | Write Security
-.   ANYNUM__4 =  globaln('GRS', 30)        | Read Security
-.   ANYNUM__4 =  globaln('GREPGEN', 1)     | Run General reports
-.   ANYNUM__4 =  globaln('GREPSPEC', 1)    | Run Reports Specific
-.   ANYNUM__4 =  globaln('GVIEWDBA', 1)    | View DBA Drop Down
-.   ANYNUM__4 =  globaln('GVIEWSCHEMA', 1) | View Schema
-.   ANYNUM__4 =  globaln('GVIEWIDS', 1)    | See Cases and keys
-.   ANYNUM__4 =  globaln('GVIEWRECS', 1)   | See Forms
-.   ANYNUM__4 =  globaln('GDELREC', 1)     | Delete Records
-.   ANYNUM__4 =  globaln('GDELCASE', 1)    | Delete Cases
-.   ANYNUM__4 =  globaln('GLOCKCASES', 1)  | Lock Cases
-.   ANYNUM__4 =  globaln('GLOCKRECORDS', 1)| Lock Records
+.   ANY_NUM__4 =  globaln('GSECURITY_LEVEL', 30)  | Global security level
+.   ANY_NUM__4 =  globaln('GWRITE_SECURITY', 30)        | Write Security
+.   ANY_NUM__4 =  globaln('GREAD_SECURITY', 30)        | Read Security
+.   ANY_NUM__4 =  globaln('GREPORTS_GENERAL', 1)     | Run General reports
+.   ANY_NUM__4 =  globaln('GREPORTS_SPECIAL', 1)    | Run Reports Specific
+.   ANY_NUM__4 =  globaln('GVIEW_DBA', 1)    | View DBA Drop Down
+.   ANY_NUM__4 =  globaln('GVIEW_SCHEMA', 1) | View Schema
+.   ANY_NUM__4 =  globaln('GVIEW_IDS', 1)    | See Cases and keys
+.   ANY_NUM__4 =  globaln('GVIEW_RECS', 1)   | See Forms
+.   ANY_NUM__4 =  globaln('GDELETE_RECS', 1)     | Delete Records
+.   ANY_NUM__4 =  globaln('GDELETE_CASES', 1)    | Delete Cases
+.   ANY_NUM__4 =  globaln('GLOCK_CASES', 1)  | Lock Cases
+.   ANY_NUM__4 =  globaln('GLOCK_RECORDS', 1)| Lock Records
 . endif
 . ifnotthen (GOON__4 eq 2)
-.   ANYNUM__4 = globals( 'GSOMEMESS', 'Contact your DBA about permissions to the database <GDB>, code:' + SGLOBAL('STOP__4'))
+.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Contact your DBA about permissions to the database <GDB>, code:' + SGLOBAL('STOP__4'))
 . endif
 end retrieval
 

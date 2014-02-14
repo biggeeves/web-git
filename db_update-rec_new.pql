@@ -20,7 +20,7 @@ CIF EQ 1, 0<GCASED>
 . case is <CASEIS>
 CIF END
 .   rec is <GDBREC> <GVIA#>   | GVIA# was constructed before this retrieval ran.
-.     ANYNUM__4 = globaln('GOON__4', 1)
+.     ANY_NUM__4 = globaln('GOON__4', 1)
 .   end rec is
 CIF EQ 1, 0<GCASED>
 . end case is
@@ -32,12 +32,12 @@ end retrieval
 c double check that it was created.  Sometimes Retrieval UPDATEs can not run, double check that the retrieval actually ran
 program
 . ifNOTthen (nglobal('GOON__4') eq 1)
-.   ANYNUM__4 = globals( 'GSOMEMESS', 'New record was NOT created.  Please try again later.')
-.   ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
+.   ANY_NUM__4 = globals( 'GSOMEMESS', 'New record was NOT created.  Please try again later.')
+.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.STOP_PAGE'
 . else
-.   ANYNUM__4 = globals( 'GSOMEMESS', '')
-.   ANYNUM__4 = globaln('REC_STAT', 2)  | It will be an old rec by the time this comes into play
+.   ANY_NUM__4 = globals( 'GSOMEMESS', '')
+.   ANY_NUM__4 = globaln('REC_STAT', 2)  | It will be an old rec by the time this comes into play
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.DATA_ENTRY'
 . endif
 end program

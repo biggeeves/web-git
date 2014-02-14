@@ -3,7 +3,7 @@ retrieval | CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set RECTOT__4 (0)
+set REC_TOT__4 (0)
 
 write(cgi) '<h3>Cases and Records Table ' [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '</h3>'
 write(cgi) '<form name = "gotocase" action="<mycgi>" method="post">'
@@ -25,8 +25,8 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . else
 .   REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
 . endif
-. RECCNT__4 = numrecs(EACH_RECORD_NUMBER)
-. STR$1 = ' title="' + REC_LABEL__4 + ' Total Recs: '  + format(RECCNT__4) +  '"'
+. REC_CNT__4 = numrecs(EACH_RECORD_NUMBER)
+. STR$1 = ' title="' + REC_LABEL__4 + ' Total Recs: '  + format(REC_CNT__4) +  '"'
 . write(cgi) '<th' STR$1 '>' REC_NAME__4 '</th>'
 end for
 write(cgi) '<th title="Total Records">Total</th>'
@@ -46,7 +46,7 @@ c to make specific IDs selected insert the code here
 
 CIF END
 
-RECTOT__4 = 0
+REC_TOT__4 = 0
 do repeat RECN = <GREC1>
                  <GREC2>
                  <GREC3>
@@ -57,12 +57,12 @@ do repeat RECN = <GREC1>
 . STR$1 = pack(recname(REC_TYPE_NUMBER))
 
 . write(cgi) '<td class= "alt" title="' CASE_STR ':' STR$1 '">'
-. ANYNUM__4 = 0
-. RECCNT__4 = 0
+. ANY_NUM__4 = 0
+. REC_CNT__4 = 0
 . process rec RECN
-.   ANYNUM__4 = 1
-.   RECTOT__4 = RECTOT__4  + 1
-.   RECCNT__4 = RECCNT__4  + 1
+.   ANY_NUM__4 = 1
+.   REC_TOT__4 = REC_TOT__4  + 1
+.   REC_CNT__4 = REC_CNT__4  + 1
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     VNAME$CB  = stdname(KEYVNAME__4)
@@ -77,21 +77,21 @@ do repeat RECN = <GREC1>
 .     endif
 .     write(cgi) STRING_VARGET
 .   end for
-.   ifnot (count(REC_TYPE_NUMBER) eq RECCNT__4 ) write(cgi) ','
+.   ifnot (count(REC_TYPE_NUMBER) eq REC_CNT__4 ) write(cgi) ','
 . end rec
 . ifthen (nkeys(REC_TYPE_NUMBER) eq 0)
-.   ifthen (ANYNUM__4 eq 1)
+.   ifthen (ANY_NUM__4 eq 1)
 .     write(cgi) 'Y'
 .   else
 .     write(cgi) '&nbsp;'
 .   endif
 . else
-.   if (ANYNUM__4 eq 0) write(cgi) '&nbsp;'
+.   if (ANY_NUM__4 eq 0) write(cgi) '&nbsp;'
 . endif
 . write(cgi) '</td>'
 end repeat
 
-write(cgi) '<td class="right">' RECTOT__4 '</td>'
+write(cgi) '<td class="right">' REC_TOT__4 '</td>'
 CIF EQ 1, 0<GCASED>
 . write(cgi) '</tr>'
 end cases

@@ -26,7 +26,7 @@ ifthen (SIR_VARTYPE ge 5)
 . VAR_MAX#  = nmax(REC_TYPE_NUMBER, VNAME$CB)
 endif
 VNAME$CB = stdname(VNAME$)
-TODAYIS__4 = today(0)
+TODAY_IS__4 = today(0)
 ifthen (SIR_VARTYPE eq 3)
 . SIR_VARFORMAT  = datemap(REC_TYPE_NUMBER, VNAME$CB)
 elseif (SIR_VARTYPE eq 4)
@@ -61,59 +61,59 @@ CIF END
 .   set MISSNUM__4 (missing)
 .   set NUM__4     (missing)
 .   set STR__4     (missing)
-.   set DAYIS__4   (missing)
-.   set MONTHIS__4 (missing)
-.   set YEARIS__4  (missing)
+.   set DAY_IS__4   (missing)
+.   set MONTH_IS__4 (missing)
+.   set YEAR_IS__4  (missing)
 
 .   ifthen (SIR_VARTYPE eq 1) | Strings
 .     STR__4 = sget(VNAME$CB); MISSNUM__4  = misnum(STR__4)
 .     ifNOTthen (MISSNUM__4 eq 0 or 1 or 2 or 3) |NOT a missing value
-.       ANYNUM__4 = ichar(upper(substr(STR__4 , 1, 1)))
-.       IF(ANYNUM__4 lt 100) FREQINT__4(ANYNUM__4) = FREQINT__4(ANYNUM__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
-.       for ANYNUM__4 = 100, 500
-.         ifthen(AFREQ__4(ANYNUM__4) eq substr(upper(STR__4), 1, 100))
+.       ANY_NUM__4 = ichar(upper(substr(STR__4 , 1, 1)))
+.       IF(ANY_NUM__4 lt 100) FREQINT__4(ANY_NUM__4) = FREQINT__4(ANY_NUM__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.       for ANY_NUM__4 = 100, 500
+.         ifthen(AFREQ__4(ANY_NUM__4) eq substr(upper(STR__4), 1, 100))
 .           EXIT FOR
-.         elseif (AFREQ__4(ANYNUM__4) eq '' ) | blank spot. take it.
-.           AFREQ__4(ANYNUM__4) = substr(upper(STR__4), 1, 100)
+.         elseif (AFREQ__4(ANY_NUM__4) eq '' ) | blank spot. take it.
+.           AFREQ__4(ANY_NUM__4) = substr(upper(STR__4), 1, 100)
 .           EXIT FOR
 .         endif
 .       end for
-C .       if(ANYNUM__4 eq 501)  FREQVAL_STR = 501  | Other value
-.       FREQINT__4(ANYNUM__4) = FREQINT__4(ANYNUM__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+C .       if(ANY_NUM__4 eq 501)  FREQVAL_STR = 501  | Other value
+.       FREQINT__4(ANY_NUM__4) = FREQINT__4(ANY_NUM__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
 .     endif
 .   elseif (SIR_VARTYPE eq 2) | Cat Vars
 .     NUM__4 = nget(VNAME$CB); MISSNUM__4 = misnum(NUM__4)
 C   DATES
 .   elseif (SIR_VARTYPE eq 3) | Dates
 .     NUM__4 = nget(VNAME$CB); MISSNUM__4 = misnum(NUM__4)
-.     YEARIS__4  = numbr(datec(NUM__4, 'YYYY'))
-.     MONTHIS__4 = numbr(datec(NUM__4, 'MM'))
+.     YEAR_IS__4  = numbr(datec(NUM__4, 'YYYY'))
+.     MONTH_IS__4 = numbr(datec(NUM__4, 'MM'))
 .     ifthen(datec(NUM__4, 'WWW') eq 'MON')
-.       DAYIS__4   = 1
+.       DAY_IS__4   = 1
 .     elseif(datec(NUM__4, 'WWW') eq 'TUE')
-.       DAYIS__4   = 2
+.       DAY_IS__4   = 2
 .     elseif(datec(NUM__4, 'WWW') eq 'WED')
-.       DAYIS__4   = 3
+.       DAY_IS__4   = 3
 .     elseif(datec(NUM__4, 'WWW') eq 'THU')
-.       DAYIS__4   = 4
+.       DAY_IS__4   = 4
 .     elseif(datec(NUM__4, 'WWW') eq 'FRI')
-.       DAYIS__4   = 5
+.       DAY_IS__4   = 5
 .     elseif(datec(NUM__4, 'WWW') eq 'SAT')
-.       DAYIS__4   = 6
+.       DAY_IS__4   = 6
 .     elseif(datec(NUM__4, 'WWW') eq 'SUN')
-.       DAYIS__4   = 7
+.       DAY_IS__4   = 7
 .     endif
-.     ifthen (exists(YEARIS__4) eq 1) | YEAR frequency
-.       FREQYEAR__4(YEARIS__4) = FREQYEAR__4(YEARIS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.     ifthen (exists(YEAR_IS__4) eq 1) | YEAR frequency
+.       FREQYEAR__4(YEAR_IS__4) = FREQYEAR__4(YEAR_IS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
 .     endif
-.     ifthen (exists(MONTHIS__4) eq 1) | MONTH frequency
-.       FREQMONTH__4(MONTHIS__4) = FREQMONTH__4(MONTHIS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.     ifthen (exists(MONTH_IS__4) eq 1) | MONTH frequency
+.       FREQMONTH__4(MONTH_IS__4) = FREQMONTH__4(MONTH_IS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
 .     endif
-.     ifthen (exists(DAYIS__4) eq 1) | DAY frequency
-.       FREQDAY__4(DAYIS__4) = FREQDAY__4(DAYIS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
+.     ifthen (exists(DAY_IS__4) eq 1) | DAY frequency
+.       FREQDAY__4(DAY_IS__4) = FREQDAY__4(DAY_IS__4) + 1   | THE  MOST IMPORT LINE IN THE ENTIRE PROGRAM
 .     endif
 c     change NUM__4 to something I can work with
-.     NUM__4 = NUM__4 - TODAYIS__4
+.     NUM__4 = NUM__4 - TODAY_IS__4
 .     IF (NUM__4 LE  - 365) NUM__4 =  -365  | over 1 year in the past
 .     IF (NUM__4 GE 365)  NUM__4 =  365   | over 1 year in the future
 .     ifthen (exists(VAR_MIN#) eq 0)
@@ -188,87 +188,87 @@ ifthen (SIR_VARTYPE eq 3) | Dates
 . end for
 . write(cgi) '<tr class = "success" ><td colspan="2">by months</td><td colspan="2">&nbsp;</td></tr>'
 . for EACH_NUMBER =  1, 12
-.   STR$1 =  trimlr(vallabsc(-1, 'MONTHIS__4', EACH_NUMBER))
+.   STR$1 =  trimlr(vallabsc(-1, 'MONTH_IS__4', EACH_NUMBER))
 .   write(cgi) '<tr><td colspan="2">' STR$1 '</td><td>'  FREQMONTH__4(EACH_NUMBER) '</td><td>&nbsp;</td></tr>'
 . end for
 . write(cgi) '<tr class = "alt"><td colspan="2">by weekday</td><td colspan="2">&nbsp;</td></tr>'
 . for EACH_NUMBER =  1, 7
-.   STR$1 = trimlr(vallabsc(-1, 'DAYIS__4', EACH_NUMBER))
+.   STR$1 = trimlr(vallabsc(-1, 'DAY_IS__4', EACH_NUMBER))
 .   write(cgi) '<tr><td colspan="2">' STR$1 '</td><td>'  FREQDAY__4(EACH_NUMBER) '</td><td>&nbsp;</td></tr>'
 . end for
 . write(cgi) '<tr><td>by day</td><td colspan="3">&nbsp;</td></tr>'
 elseif (SIR_VARTYPE eq 4) | Times
 . write(cgi) '<tr class = "success" ><td colspan="2">by Hour</td><td colspan="2">&nbsp;</td></tr>'
 . for EACH_NUMBER =  0, 23
-.   STR$1 =  trimlr(vallabsc(-1, 'HOURIS__4', EACH_NUMBER))
+.   STR$1 =  trimlr(vallabsc(-1, 'HOUR_IS__4', EACH_NUMBER))
 .   write(cgi) '<tr><td colspan="2">' STR$1 '</td><td>'  FREQHOUR__4(EACH_NUMBER) '</td><td>&nbsp;</td></tr>'
 . end for
 . write(cgi) '<tr class = "success" ><td colspan="2">by Exact Time</td><td colspan="2">&nbsp;</td></tr>'
 endif
 
 
-for ANYNUM__4 = -1000, 200000
+for ANY_NUM__4 = -1000, 200000
 . ifthen(SIR_VARTYPE ne 1)
-.   ifthen(FREQINT__4(ANYNUM__4) ne 0)
+.   ifthen(FREQINT__4(ANY_NUM__4) ne 0)
 .     write(cgi) '<tr><td>'
 .     ifthen (SIR_VARTYPE eq 2) | Dates
-.       STR$1 = svval(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4) + '</td><td>'
-.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, svval(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4))) NE '')
-.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, svval(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4)))
+.       STR$1 = svval(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4) + '</td><td>'
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, svval(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4))) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, svval(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4)))
 .       else
 .         STR$1 = STR$1 +' &nbsp;'
 .       endif
 .     elseif (SIR_VARTYPE eq 3) | Dates
-.       ifthen (ANYNUM__4 eq -365)
+.       ifthen (ANY_NUM__4 eq -365)
 .         STR$1 = 'Before 1 Year Ago </td><td>'
-.       elseif (ANYNUM__4 eq 365)
+.       elseif (ANY_NUM__4 eq 365)
 .         STR$1 = 'After 1 Year</td><td>'
 .       else
-.         STR$1 = datec(ANYNUM__4 + TODAYIS__4, SIR_VARFORMAT)  + '</td><td>'
+.         STR$1 = datec(ANY_NUM__4 + TODAY_IS__4, SIR_VARFORMAT)  + '</td><td>'
 .       endif
-.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4)) NE '')
-.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4))
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4)) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4))
 .       else
 .         STR$1 = STR$1 +' &nbsp;'
 .       endif
 .     elseif (SIR_VARTYPE eq 4) | Times
-.       STR$1 = timec(ANYNUM__4, SIR_VARFORMAT)  + '</td><td>'
-.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, timec(ANYNUM__4, SIR_VARFORMAT) )) NE '')
-.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, timec(ANYNUM__4, SIR_VARFORMAT) ))
+.       STR$1 = timec(ANY_NUM__4, SIR_VARFORMAT)  + '</td><td>'
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, timec(ANY_NUM__4, SIR_VARFORMAT) )) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, timec(ANY_NUM__4, SIR_VARFORMAT) ))
 .       else
 .         STR$1 = STR$1 +' &nbsp;'
 .       endif
 .     else
-.       STR$1 = format(ANYNUM__4)
-.       ifthen (ANYNUM__4 eq -1000)
+.       STR$1 = format(ANY_NUM__4)
+.       ifthen (ANY_NUM__4 eq -1000)
 .         STR$1 = STR$1 + ' and less'
-.       elseif (ANYNUM__4 eq 200000)
+.       elseif (ANY_NUM__4 eq 200000)
 .         STR$1 = STR$1 + ' and more'
 .       endif
 .       STR$1 = STR$1  + '</td><td>'
-.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4)) NE '')
-.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4))
+.       ifthen (pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4)) NE '')
+.         STR$1 = STR$1 + ' ' + pack(vallabsc(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4))
 .       else
 .         STR$1 = STR$1 +' &nbsp;'
 .       endif
 .     endif
-.     STR$2 = format(rnd(100*FREQINT__4(ANYNUM__4)/SUM_EXISTS,  -1)) + '&#37;'
-.     write(cgi) STR$1 "</td><td> " FREQINT__4(ANYNUM__4) '</td><td>' STR$2
+.     STR$2 = format(rnd(100*FREQINT__4(ANY_NUM__4)/SUM_EXISTS,  -1)) + '&#37;'
+.     write(cgi) STR$1 "</td><td> " FREQINT__4(ANY_NUM__4) '</td><td>' STR$2
 .     write(cgi) '</td></tr>'
 .   endif
-. elseif (ANYNUM__4 GE 48 AND LE 501)  | this should catch strings
-.   ifthen (FREQINT__4(ANYNUM__4) ne 0)
-.     ifthen ((ANYNUM__4 le 57) or (ANYNUM__4 gt 65 and le 90))  | STARTING LETTER AND NUMBER
+. elseif (ANY_NUM__4 GE 48 AND LE 501)  | this should catch strings
+.   ifthen (FREQINT__4(ANY_NUM__4) ne 0)
+.     ifthen ((ANY_NUM__4 le 57) or (ANY_NUM__4 gt 65 and le 90))  | STARTING LETTER AND NUMBER
 .       write(cgi) '<tr><td>'
-.       write(cgi) 'Starts with: ' [char(ANYNUM__4)] "</td><td> " AFREQ__4(ANYNUM__4) '</td><td>' FREQINT__4(ANYNUM__4)
+.       write(cgi) 'Starts with: ' [char(ANY_NUM__4)] "</td><td> " AFREQ__4(ANY_NUM__4) '</td><td>' FREQINT__4(ANY_NUM__4)
 .       write(cgi) '</td><td>&nbsp;</td></tr>'
-.     elseif (ANYNUM__4 ge 100 and le 500)  | Free text
+.     elseif (ANY_NUM__4 ge 100 and le 500)  | Free text
 .       write(cgi) '<tr><td>'
-.       write(cgi) "&nbsp;</td><td> " AFREQ__4(ANYNUM__4) '</td><td>' FREQINT__4(ANYNUM__4)
+.       write(cgi) "&nbsp;</td><td> " AFREQ__4(ANY_NUM__4) '</td><td>' FREQINT__4(ANY_NUM__4)
 .       write(cgi) '</td><td>&nbsp;</td></tr>'
-.     elseif (ANYNUM__4 eq 501)  | Free text - other
+.     elseif (ANY_NUM__4 eq 501)  | Free text - other
 .       write(cgi) '<tr><td>'
-.       write(cgi) "Other than first 400 free text found</td><td> " AFREQ__4(ANYNUM__4) '</td><td>' FREQINT__4(ANYNUM__4)
+.       write(cgi) "Other than first 400 free text found</td><td> " AFREQ__4(ANY_NUM__4) '</td><td>' FREQINT__4(ANY_NUM__4)
 .       write(cgi) '</td><td>&nbsp;</td></tr>'
 .     endif
 .   endif

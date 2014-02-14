@@ -1,4 +1,4 @@
-PROCEDURE      STATIC_PAGES.LOGOUT:T  (157541,51662)  |Last amended Feb 12, 2014,14:21:02
+PROCEDURE      STATIC_PAGES.LOGOUT:T  (157542,43215)  |Last amended Feb 13, 2014,12:00:15
 program
 string * 600 STR$1            | General String use at any time
 
@@ -7,8 +7,8 @@ write '<br> STATIC_PAGES.Log out' 20t [dsn('logout')]
 compute STR$1  = '<' + CHAR(33) + 'DOCTYPE html>'
 open (logout) write lrecl = 600
 . write(logout) STR$1
-. write(logout) '<head ><title >Logged out</title>'
-                '  <link rel="icon" type="image/ico" href="/images/DCC.ico"  title="DCC Data Management" >'/
+. write(logout) '<head ><title ><WEBSITE_TITLE>| Logged out</title>'
+                '  <link rel="icon" type="image/ico" href="/images/DCC.ico"  title="<WEBSITE_TITLE>" >'/
                 '  <link href="<fullurl>css/bootstrap.css" rel="stylesheet">'/
                 '  <link href="<fullurl>css/custom.css" rel="stylesheet">'/
                 '  <script type="text/javascript" src="<fullurl>js/global.js"></script>'/

@@ -16,7 +16,7 @@ write(SomeOtherFile) '        if (xmlhttp.readyState === 4 && xmlhttp.status ===
 write(SomeOtherFile) '            alert(xmlhttp.status + " File Not Found") ;'
 write(SomeOtherFile) '        }'
 write(SomeOtherFile) '    }'
-STR$1 = '"/xs/' + DBNAME__4  + '/users/"'
+STR$1 = '"/xs/' + DB_NAME__4  + '/users/"'
 write(SomeOtherFile) '    fileNameIs = ' STR$1
 write(SomeOtherFile) '    fileNameIs = fileNameIs + document.getElementById("user").value;'
 write(SomeOtherFile) '    fileNameIs = fileNameIs + document.getElementById("pickprog").value;'

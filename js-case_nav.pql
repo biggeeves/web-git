@@ -4,7 +4,7 @@ c Browse case ids
 CIF EQ <GCASED>, 1
 retrieval crwarn noautocase
 string  *   600   STR$1                      | General String use at any time
-real    *     8   ANYNUM__4                  | Use any time you want
+real    *     8   ANY_NUM__4                  | Use any time you want
 string  *    32   VNAME$                     | Variable name
 integer *     1   IOSTAT__4                  | Return code of IOSTAT
 string  *    32   FIRSTCASE__4               | 1st case
@@ -33,18 +33,18 @@ process cases reverse count = 1 lock = 2
 end cases
 write(casenav) 'var caseArray = new Array(), '
 write(casenav) '    caseNum = 0;'
-ANYNUM__4  = 1
+ANY_NUM__4  = 1
 process cases count = 49 lock = 2
 . CASE_STR = trimr(varget(VNAME$))
-. STR$1  = 'caseArray[' +  format(ANYNUM__4)  + ']="'  + CASE_STR  + '";'
-. ANYNUM__4 = ANYNUM__4 + 1
+. STR$1  = 'caseArray[' +  format(ANY_NUM__4)  + ']="'  + CASE_STR  + '";'
+. ANY_NUM__4 = ANY_NUM__4 + 1
 . write(casenav) STR$1
 end cases
-ANYNUM__4 = 100
+ANY_NUM__4 = 100
 process cases reverse count = 49 lock = 2
 . CASE_STR = trimr(varget(VNAME$))
-. STR$1 ='caseArray[' +  format(ANYNUM__4)  + ']="'  + CASE_STR  + '";'
-. ANYNUM__4 = ANYNUM__4 - 1
+. STR$1 ='caseArray[' +  format(ANY_NUM__4)  + ']="'  + CASE_STR  + '";'
+. ANY_NUM__4 = ANY_NUM__4 - 1
 . write(casenav) STR$1
 end cases
 write(casenav) 'function forwardCase (someNum) {'

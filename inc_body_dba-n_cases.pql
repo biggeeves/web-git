@@ -4,7 +4,7 @@ CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 set FREQINT__4 * (0)
-set RECTOT__4  (0)    | in this case, keeps track of maximum number of records
+set REC_TOT__4  (0)    | in this case, keeps track of maximum number of records
 VNAME$ = trimlr(keyname(0, 1))
 VAR_LABEL = trimlr(varlabsc(0, VNAME$))
 if(VAR_LABEL = '') VAR_LABEL = VNAME$
@@ -32,15 +32,15 @@ CIF EQ 1, 0<GCASED>
 process cases
 CIF END
 
-RECCNT__4 = 0
+REC_CNT__4 = 0
 for EACH_RECORD_NUMBER = 1, nrecs(0)
-. if(exists(count(EACH_RECORD_NUMBER)) eq 1)  RECCNT__4 = RECCNT__4 + count(EACH_RECORD_NUMBER)
+. if(exists(count(EACH_RECORD_NUMBER)) eq 1)  REC_CNT__4 = REC_CNT__4 + count(EACH_RECORD_NUMBER)
 end for
 ifthen('<GUPICK>' ne '') | must test because nglobal fo missing was returning 0
-. if (nglobal('GUPICK') eq RECCNT__4) execute subprocedure SHOW_CASE |wanted id list
+. if (nglobal('GUPICK') eq REC_CNT__4) execute subprocedure SHOW_CASE |wanted id list
 else
-. FREQINT__4(RECCNT__4) = FREQINT__4(RECCNT__4) + 1
-. if(RECCNT__4 gt RECTOT__4) RECTOT__4 = RECCNT__4
+. FREQINT__4(REC_CNT__4) = FREQINT__4(REC_CNT__4) + 1
+. if(REC_CNT__4 gt REC_TOT__4) REC_TOT__4 = REC_CNT__4
 endif
 
 
@@ -50,7 +50,7 @@ CIF END
 
 c display list of record counts by case counts
 ifthen (sglobal('GUPICK') eq '')
-. for EACH_NUMBER = 0, RECTOT__4
+. for EACH_NUMBER = 0, REC_TOT__4
 .   IF(FREQINT__4(EACH_NUMBER) = 0) NEXT FOR | do not display empty rows
 .   LINK__4 = '"<mycgi>?member=WPF.INC_DBA.N_CASES&caseis=<CASEISNQ>&upick=' + format(EACH_NUMBER)  + '"'
 .   write(cgi) 4t '<tr><td><a href=' LINK__4 '>'  FREQINT__4(EACH_NUMBER) '</a></td>'
@@ -71,7 +71,7 @@ c show the case id
 
 . LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.CASE_CONTROL&caseis=' + CASE_STR + '"'
 . write(cgi) 6T '<td><a href=' LINK__4 '>' CASE_STR '</a></td>'
-. write(cgi) 6T '<td>' RECCNT__4 '</td></tr>'
+. write(cgi) 6T '<td>' REC_CNT__4 '</td></tr>'
 end subprocedure
 
 

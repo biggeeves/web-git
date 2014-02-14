@@ -3,7 +3,7 @@ c check the via and see if it access a record
 
 ERROR LIMIT NONE
 PROGRAM
-. ANYNUM__4 = globalN( 'GERROR_CHECK', nglobal('GERROR') )
+. ANY_NUM__4 = globalN( 'GERROR_CHECK', nglobal('GERROR') )
 END PROGRAM
 
 retrieval
@@ -22,7 +22,7 @@ end retrieval
 
 program
 . ifthen ( nglobal('GERROR_CHECK') LT nglobal('GERROR'))
-.   ANYNUM__4 = globals( 'GSOMEMESS', 'Via did not work')
+.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Via did not work')
 .   EXECUTE DBMS 'CALL WPF.INC_BODY_FORMS.UNK_ERR'
 . endif
 end program

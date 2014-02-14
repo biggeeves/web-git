@@ -1,8 +1,8 @@
-PROCEDURE      P_SECURITY.GET_USER_NAME:T  (156624,39694)  |Last amended Aug 10, 2011,11:01:34
+PROCEDURE      P_SECURITY.GET_USER_NAME:T  (157542,60023)  |Last amended Feb 13, 2014,16:40:23
 retrieval
-. old rec is SESSIONS via ('<USERID>' '<SESSIONID>')
-.   ANYNUM__4 = globals('USERNAME' , USERNAMEIS)
-.   STR$1 = SIRUSER(USERNAMEIS)
+. old rec is SESSIONS via ('<USER_ID>' '<SESSION_ID>')
+.   ANY_NUM__4 = globals('USER_NAME' , USER_NAME_IS)
+.   STR$1 = SIRUSER(USER_NAME_IS)
 . end rec
 end retrieval
 END PROCEDURE

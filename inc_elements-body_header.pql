@@ -1,15 +1,15 @@
 PROCEDURE      INC_ELEMENTS.BODY_HEADER:T  (157459,49662)  |Last amended Nov 22, 2013,13:47:42
 write(cgi) '<!--Header Section.  Database Name and Title-->'
 HOVER_TITLE  = ' title="'
-ifthen ((exists(DBNAME__4) eq 1) and (DBNAME__4 ne ''))
-. HOVER_TITLE  = HOVER_TITLE  + DBNAME__4
+ifthen ((exists(DB_NAME__4) eq 1) and (DB_NAME__4 ne ''))
+. HOVER_TITLE  = HOVER_TITLE  + DB_NAME__4
 endif
 HOVER_TITLE  = HOVER_TITLE + ':<GMSTPORT>"'
 STR$1 = '<h1 id="top"' + HOVER_TITLE  + '>' |CLOSE THE OPEN H1
 . ifthen (len(recdoc(0, 0)) gt 0)
 .   STR$1 = STR$1 + trimlr(recdoc(0, 0))
 . else
-.   STR$1 = STR$1 + DBNAME__4
+.   STR$1 = STR$1 + DB_NAME__4
 . endif
 
 STR$1 = STR$1 + '&nbsp;' | ensure the header shows up

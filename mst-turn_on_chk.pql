@@ -5,9 +5,9 @@ C FOR WEB ENVIRONMENT
 PROGRAM
 . IFTHEN ('<GMSTIP>' NE '')
 .   IFNOTTHEN(SYSTEM(38) eq 1)
-.     ANYNUM__4 = globals( 'GSOMEMESS', 'Error <GMSTPORT>: Record locking. Please contact your DBA.')
-.     ANYNUM__4 = globals('GMASTERCRASH', '1')
-.     ANYNUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.     ANY_NUM__4 = globals( 'GSOMEMESS', 'Error <GMSTPORT>: Record locking. Please contact your DBA.')
+.     ANY_NUM__4 = globals('GMASTERCRASH', '1')
+.     ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
 .     IFTHEN ( SGLOBAL('GRUNCGI') EQ  "1" )  | IF CALLED FROM INTERNET
 .       EXECUTE DBMS 'CALL WPF.CONTROLLER.STOP_PAGE'
 .     ENDIF

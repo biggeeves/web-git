@@ -7,7 +7,7 @@ CALL WPF.SYSTEM.INI_VARS
 
 . set COUNTS__4   (0)
 
-. FINDTEXT__4 = fst(trimlr(sglobal('GSEARCHTEXT')), '')
+. FIND_TEXT__4 = fst(trimlr(sglobal('GSEARCHTEXT')), '')
 C write 'text: <GSEARCHTEXT><br> VL: <GVARLABELS><BR> VN: <GVARNAMES><BR>VL: <GVALUELABELS><BR>V:<GVALUES>'
 
 . write(cgi)'<h3>Search Code Book </h3>'
@@ -15,7 +15,7 @@ C write 'text: <GSEARCHTEXT><br> VL: <GVARLABELS><BR> VN: <GVARNAMES><BR>VL: <GV
 . write(cgi) '<form action="<mycgi>" method="post">'
 . write(cgi) '  <input type="hidden" name="member" value="WPF.INC_BODY_CODEBOOK.SEARCH">'
 . write(cgi) '  <input type="submit" value="Search" class="btn btn-primary">'
-. write(cgi) '  <input type="text" name="gsearchtext" value ="' FINDTEXT__4 '"><br>'
+. write(cgi) '  <input type="text" name="gsearchtext" value ="' FIND_TEXT__4 '"><br>'
 . write(cgi) '  <table>'
 
 . STR$1 = ''; if ('<GVARLABELS>' eq 'on') STR$1 = ' checked'
@@ -38,33 +38,33 @@ C write 'text: <GSEARCHTEXT><br> VL: <GVARLABELS><BR> VN: <GVARNAMES><BR>VL: <GV
 
 . write(cgi)'</form>'
 
-. ifthen (len(FINDTEXT__4) gt 0)
-.   write(cgi) ' <p>Results for: ' FINDTEXT__4 '</p>'
+. ifthen (len(FIND_TEXT__4) gt 0)
+.   write(cgi) ' <p>Results for: ' FIND_TEXT__4 '</p>'
 .   write(cgi) '  <table class="table table-striped table-hover">'
 .   write(cgi) '    <tr><th>Table and Variable</th><th>Variable Label</th><th>Found <br>(may not show everything)</th>'
 .   write(cgi) '    <th>Var Label</th><th>Var Name</th><th>Value Label</th><th>Defined Values</th></tr>'
-.   compute FINDTEXT__4  = '@' + upper(pack(FINDTEXT__4)) + '@'
+.   compute FIND_TEXT__4  = '@' + upper(pack(FIND_TEXT__4)) + '@'
 .   for EACH_RECORD_NUMBER  = 1, nrecs(0)   |rec numbers
 .     compute REC_NAME__4 = trimlr(recname(EACH_RECORD_NUMBER))
 .     ifnot (len(REC_NAME__4) gt 0) NEXT FOR
-.     execute subroutine WPF.TOOLS.HTMLTEXT (REC_NAME__4, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.     if(RETCODE__4 eq 0) REC_NAME__4 = HTMLTEXT
+.     execute subroutine WPF.TOOLS.HTMLTEXT (REC_NAME__4, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.     if(RET_CODE__4 eq 0) REC_NAME__4 = HTMLTEXT
 c     Var names
 .     for EACH_VARIABLE = 1, nvarsc(EACH_RECORD_NUMBER)
 .       set SCH_VARNAME SCH_VARLABEL SCH_VALVALUE SCH_RANGE (0)
-.       ANYNUM__4 = 0
+.       ANY_NUM__4 = 0
 .       VNAME$ = trimlr(upper(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE)))
 .       if(VNAME$ = 'DCCWHO' or 'DCCTIME' or 'DCCDATE' or 'DCCEDITS' or 'DWHO' or 'DSTAMP') NEXT FOR
 .       VAR_LABEL = trimlr(varlabsc(EACH_RECORD_NUMBER, VNAME$))
 .       ifthen ('<GVARNAMES>' eq 'on')
-.         ifthen (pattern(VNAME$, FINDTEXT__4) eq 1)
+.         ifthen (pattern(VNAME$, FIND_TEXT__4) eq 1)
 .           STR$2 = VNAME$
 .           SCH_VARNAME  = 1
 .         endif
 .       endif
 c       Var labels
 .       ifthen ('<GVARLABELS>' eq 'on')
-.         ifthen (pattern(upper(varlabsc(EACH_RECORD_NUMBER, VNAME$)), FINDTEXT__4) eq 1)
+.         ifthen (pattern(upper(varlabsc(EACH_RECORD_NUMBER, VNAME$)), FIND_TEXT__4) eq 1)
 .           STR$2 = VAR_LABEL
 .           SCH_VARLABEL = 1
 .         endif
@@ -72,7 +72,7 @@ c       Var labels
 c       Value labels
 .       ifthen ('<GVALUELABELS>'EQ 'on')
 .         for EACH_VALUE_LABEL = 1, nvallab(EACH_RECORD_NUMBER, VNAME$)
-.           ifthen (pattern(upper(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_VALUE_LABEL)), FINDTEXT__4) eq 1)
+.           ifthen (pattern(upper(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_VALUE_LABEL)), FIND_TEXT__4) eq 1)
 .             SCH_VALVALUE = 1
 .             STR$2 = 'value: ' + vallabsv(EACH_RECORD_NUMBER, VNAME$, EACH_VALUE_LABEL) +  ' ' + pack(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_VALUE_LABEL))
 .           endif
@@ -87,18 +87,18 @@ c   .       end for
 c   Ranges and Valid Values
 .       ifthen ('<GVALUES>' eq 'on')
 .         for EACH_VALID_VALUE = 1, nvalid(EACH_RECORD_NUMBER, VNAME$)
-.           ifthen (pattern(upper(svval(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE)), FINDTEXT__4) eq 1)
+.           ifthen (pattern(upper(svval(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE)), FIND_TEXT__4) eq 1)
 .             SCH_RANGE = 1
 .             STR$2 = svval(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE) +  ' ' + pack(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE))
 .           endif
-.           ifthen (pattern(upper(format(nvval(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE))), FINDTEXT__4) eq 1)
+.           ifthen (pattern(upper(format(nvval(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE))), FIND_TEXT__4) eq 1)
 .             SCH_RANGE = 1
 .             STR$2 = format(nvval(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE)) + ' ' +  pack(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_VALID_VALUE))
 .           endif
 .         end for
 c         missing values
 .         for EACH_MISSING_VALUE = 0, 3
-.           ifthen (pattern(upper(miss(EACH_RECORD_NUMBER, VNAME$, EACH_MISSING_VALUE)), FINDTEXT__4) eq 1)
+.           ifthen (pattern(upper(miss(EACH_RECORD_NUMBER, VNAME$, EACH_MISSING_VALUE)), FIND_TEXT__4) eq 1)
 .             SCH_RANGE = 1
 .             STR$2 = miss(EACH_RECORD_NUMBER, VNAME$, EACH_MISSING_VALUE) + ' ' + pack(vallabsc(EACH_RECORD_NUMBER, VNAME$, miss(EACH_RECORD_NUMBER, VNAME$, EACH_MISSING_VALUE)))
 .           endif
@@ -111,10 +111,10 @@ c         ranges
 .       endif
 
 .       ifthen (1 eq SCH_VARNAME or SCH_VARLABEL or SCH_VALVALUE or SCH_RANGE)
-.         execute subroutine WPF.TOOLS.HTMLTEXT (VNAME$, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.         if(RETCODE__4 eq 0) VNAME$ = HTMLTEXT
-.         execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.         if(RETCODE__4 eq 0) VAR_LABEL = HTMLTEXT
+.         execute subroutine WPF.TOOLS.HTMLTEXT (VNAME$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.         if(RET_CODE__4 eq 0) VNAME$ = HTMLTEXT
+.         execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.         if(RET_CODE__4 eq 0) VAR_LABEL = HTMLTEXT
 .         execute subprocedure WRITE_ROW
 .       endif
 
@@ -129,11 +129,11 @@ c         ranges
 
 . subprocedure WRITE_ROW
 .   COUNTS__4 = COUNTS__4 + 1
-.   execute subroutine WPF.TOOLS.HTMLTEXT (STR$2, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.   if(RETCODE__4 eq 0) STR$2 = HTMLTEXT
+.   execute subroutine WPF.TOOLS.HTMLTEXT (STR$2, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) STR$2 = HTMLTEXT
 
-.   ifthen (ANYNUM__4 ne EACH_VARIABLE)
-.     ANYNUM__4 = EACH_VARIABLE
+.   ifthen (ANY_NUM__4 ne EACH_VARIABLE)
+.     ANY_NUM__4 = EACH_VARIABLE
 .     write(cgi) '  <tr><td>'
 .     STR$1 = '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=' +  format(EACH_RECORD_NUMBER)  + '">'
 .     write(cgi) 6T STR$1
@@ -146,7 +146,7 @@ c         ranges
 .   else
 .     write(cgi) 4t RCLASS__4 '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>'
 .   endif
-.   STR$2 = replace(STR$2, FINDTEXT__4, '<div class="textbold">' + FINDTEXT__4  + '</div>', 1, 6, 0)
+.   STR$2 = replace(STR$2, FIND_TEXT__4, '<div class="textbold">' + FIND_TEXT__4  + '</div>', 1, 6, 0)
 .   write(cgi) '    <td>' STR$2 '</td>'
 .   ifthen (SCH_VARLABEL eq 1) write(cgi) '    <td>&#10003;</td>'
 .   else write(cgi) '    <td>&nbsp;</td>'

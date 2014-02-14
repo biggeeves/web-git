@@ -32,20 +32,20 @@ write(cgi)  '<tr><th>' VAR_LABEL '</th><th>Record Count</th></tr>'
 
 COUNTS__4 = 0
 process cases <GNAV#>
-. RECCNT__4 = 0
+. REC_CNT__4 = 0
 . COUNTS__4 = COUNTS__4 + 1
 . IF(COUNTS__4 gt 50) EXIT CASES
 
 . STRING_VARGET = varget(VNAME$)
 . for EACH_RECORD_NUMBER = 1, nrecs(0)
 .   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for
-.   RECCNT__4 = RECCNT__4 + count(EACH_RECORD_NUMBER)
+.   REC_CNT__4 = REC_CNT__4 + count(EACH_RECORD_NUMBER)
 . end for
 .   STR$1 = '<tr>'
 .   write(cgi) STR$1
 .   STR$1 = '  <td><a class="bluetext" href="<mycgi>?member=WPF.INC_BODY_FORMS.REC_NAV&caseis=' + STRING_VARGET  + '">' + STRING_VARGET  + '<a/></td>'
 .   write(cgi) STR$1
-.   write(cgi)  '<td>' [format(RECCNT__4)] '</td>'
+.   write(cgi)  '<td>' [format(REC_CNT__4)] '</td>'
 .   write(cgi) '</tr>'
 end cases
 write(cgi) '</table>'

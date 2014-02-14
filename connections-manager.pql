@@ -4,7 +4,7 @@ c Establish database connection to MANGAER database
 PROGRAM CRWARN
 string  *   254   DBPATH                     | vars for connecting to db
 string  *     4   MST                        | vars for connecting to db
-integer *     4   ANYNUM__4                  | Use any time you want
+integer *     4   ANY_NUM__4                  | Use any time you want
 integer *     1   IOSTAT__4                  | Return code of IOSTAT
 string  *   600   STR$1
 
@@ -18,8 +18,8 @@ IF (MST ne '') EXECUTE DBMS "SET MASTER <GMASTER_IP>:" + MST
 ifthen (MST ne '')
 . ifthen (system(38) eq 0)
 . execute subprocedure SHOWERRORS
-.   ANYNUM__4 = globals( 'GSOMEMESS', 'Sorry, ' +  MST + ' is being worked on.  Access temporarily unavailable.')
-.   ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Sorry, ' +  MST + ' is being worked on.  Access temporarily unavailable.')
+.   ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . endif
 endif
@@ -33,8 +33,8 @@ ifnotthen (IOSTAT__4 GE 0)
 . ifthen(exists(IOSTAT__4 ) eq 1) STR$1 = STR$1 + format(IOSTAT__4)
 . else STR$1 = STR$1 + ' Canada'
 . endif
-. ANYNUM__4 = globals('GSOMEMESS',STR$1)
-. ANYNUM__4 = globals('GMEMSTOP','WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+. ANY_NUM__4 = globals('GSOMEMESS',STR$1)
+. ANY_NUM__4 = globals('GMEMSTOP','WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.STOP_PAGE'
 endif
 

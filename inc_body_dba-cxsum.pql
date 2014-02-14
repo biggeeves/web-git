@@ -3,7 +3,7 @@ retrieval CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set EACH_NUMBER SUPER_TOT SUM__4 RECTOT__4 (0)
+set EACH_NUMBER SUPER_TOT SUM__4 REC_TOT__4 (0)
 
 write(cgi)'<h3>Check Sum: '
 write(cgi) [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '<br>'
@@ -20,7 +20,7 @@ do repeat RECN = <GREC1>
 
 . write(cgi) '    <tr>'
 . write(cgi) '    <td><p class="text-center">'
-. RECCNT__4 = numrecs(RECN)
+. REC_CNT__4 = numrecs(RECN)
 . ifthen (len(recdoc(RECN, 0)) gt 0)
 .   REC_LABEL__4 = pack(recdoc(RECN, 0))
 . elseif (len(recdoc(RECN, 1)) gt 0)
@@ -28,8 +28,8 @@ do repeat RECN = <GREC1>
 . else
 .   REC_LABEL__4 = pack(recname(RECN))
 . endif
-. write(cgi) 'RECN:</p></td><td>' REC_LABEL__4 '</td><td><p class="text-right">' RECCNT__4 '</p></td>'
-. RECTOT__4 = 0
+. write(cgi) 'RECN:</p></td><td>' REC_LABEL__4 '</td><td><p class="text-right">' REC_CNT__4 '</p></td>'
+. REC_TOT__4 = 0
 
 CIF EQ 1, 0<GCASED>
 process cases
@@ -81,7 +81,7 @@ CIF END
 .     elseif (SIR_VARTYPE >= 5)|Integers, REAL*4, REAL*8, Scaled
 .       SUM__4 = numbr(STR__4)
 .     endif
-.     RECTOT__4 = RECTOT__4  + SUM__4
+.     REC_TOT__4 = REC_TOT__4  + SUM__4
 .     SUPER_TOT = SUPER_TOT  +  SUM__4
 .   end for
 . end rec
@@ -89,7 +89,7 @@ CIF EQ 1, 0<GCASED>
 end cases
 CIF END
 
-write(cgi) '<td><p class="text-right">' RECTOT__4 '</p></td></tr>'
+write(cgi) '<td><p class="text-right">' REC_TOT__4 '</p></td></tr>'
 
 end repeat
 

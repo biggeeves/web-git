@@ -5,12 +5,12 @@ c Note that Case structured database, KEY1 = CASEIS.  For caseless databases, KE
 program
 . string  *    32   STR$1                      | General String use at any time
 . string  *   600   STR$2                      | General String
-. integer *     4   ANYNUM__4                  | Use any time you want
+. integer *     4   ANY_NUM__4                  | Use any time you want
 . do repeat KEYNUM = 1 to 7
 .   STR$1  = 'key!KEYNUM'
 .   STR$2  = cgivarpn(STR$1)
 .   if (vtype(<GDBREC>, keyname(<GDBREC>, KEYNUM + dbtype(0))) eq 1 or 3 or 4 )  STR$2 = '"' + STR$2 + '"'
-.   ANYNUM__4 =  globals('GKEY!KEYNUM!#', fst(STR$2, ''))
+.   ANY_NUM__4 =  globals('GKEY!KEYNUM!#', fst(STR$2, ''))
 . end repeat
 end program
 

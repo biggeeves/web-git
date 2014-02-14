@@ -1,4 +1,5 @@
-PROCEDURE      INSTALLER.APACHE_CONFIG_ORIGINAL:T  (157539,54896)  |Last amended Feb 10, 2014,15:14:56
+PROCEDURE      INSTALLER.APACHE_CONFIG_ORIGINAL:T  (157542,41801)  |Last amended Feb 13, 2014,11:36:41
+# this file is for reference only.  IT WILL NOT WORK FOR YOU!  It was based on the developers computer
 # This file will be copied to your apache config folder
 # Globals are set by the installer GUI.
 # this file should be customized to your set up.

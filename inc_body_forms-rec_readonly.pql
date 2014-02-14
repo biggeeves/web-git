@@ -1,16 +1,16 @@
-PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157221,47117)  |Last amended Mar 29, 2013,13:05:17
+PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157542,58462)  |Last amended Feb 13, 2014,16:14:22
 C READONLY data entry page
 
 retrieval progress CRWARN noautocase
 c print back on
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
-set RECACCESSED__4 (0)
+set REC_ACCESSED__4 (0)
 
 write(cgi) '  <h3 title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
 if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <CASEISNQ> '
 write(cgi) REC_LABEL__4
-ifthen (0<GVIEWSCHEMA> eq 1)
+ifthen (0<GVIEW_SCHEMA> eq 1)
 . write(cgi) '<a class="smallfont" target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDBREC>">Codebook</a>'
 endif
 write(cgi) '</h3>'
@@ -20,15 +20,15 @@ write(cgi) '</h3>'
 
 c add Rec Type specific form header
 GOON__4  = 0
-for ANYNUM__4 = 1, recdocn(REC_TYPE_NUMBER)
-. if(pack(upper(substr(recdoc(REC_TYPE_NUMBER, ANYNUM__4 ), 1, 8))) eq 'HEADER') GOON__4  = 1;write(cgi) '<h4>'
+for ANY_NUM__4 = 1, recdocn(REC_TYPE_NUMBER)
+. if(pack(upper(substr(recdoc(REC_TYPE_NUMBER, ANY_NUM__4 ), 1, 8))) eq 'HEADER') GOON__4  = 1;write(cgi) '<h4>'
 . ifthen(GOON__4  eq 1)
-.   STR$1 = pack(recdoc(REC_TYPE_NUMBER, ANYNUM__4 ))
+.   STR$1 = pack(recdoc(REC_TYPE_NUMBER, ANY_NUM__4 ))
 .   if(srst(upper(STR$1), 'HEADER') gt 0) STR$1 = substr(STR$1, 7 + srst(upper(STR$1), 'HEADER'), len(STR$1))
 .   if(srst(upper(STR$1), 'ENDHEADER') gt 0)   STR$1 = substr(STR$1, 1, srst(upper(STR$1), 'ENDHEADER') - 1)
 .   write(cgi) STR$1 '<br>'
 . endif
-. if(srst(upper(recdoc(REC_TYPE_NUMBER, ANYNUM__4 )), 'ENDHEADER') gt 0); exit for
+. if(srst(upper(recdoc(REC_TYPE_NUMBER, ANY_NUM__4 )), 'ENDHEADER') gt 0); exit for
 end for
 if(GOON__4 eq 1) write(cgi) '</h4>'
 
@@ -39,7 +39,7 @@ CIF EQ <GCASED>, 1
 CIF END
 
 . process rec <GDBREC> <GVIA#> onetime
-.   RECACCESSED__4  = 1
+.   REC_ACCESSED__4  = 1
 .   ifthen (0<GWS> ne 0)
 .     ifthen (0<REC_STAT> ne 6)
 .       LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Edit'
@@ -64,24 +64,24 @@ CIF END
 .       if (VNAME$ eq 'DWHO' or 'DCCWHO' or 'DCCWHEN' OR 'DCCDATE' OR 'DCCTIME' OR 'DCCEDITS' OR 'DSTAMP' ) next for
 .       VNAME$CB = '{' +  trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  + '}'
 .       VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
-.       execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.       if(RETCODE__4 eq 0) VAR_LABEL =  HTMLTEXT
+.       execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.       if(RET_CODE__4 eq 0) VAR_LABEL =  HTMLTEXT
 .       if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
 
 c add Variable specific text above the variable
 GOON__4  = 0
-for ANYNUM__4 = 1, nvardoc(REC_TYPE_NUMBER, VNAME$CB)
-. ifthen (pack(upper(substr(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 ), 1, 7))) eq 'HEADER')
+for ANY_NUM__4 = 1, nvardoc(REC_TYPE_NUMBER, VNAME$CB)
+. ifthen (pack(upper(substr(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4 ), 1, 7))) eq 'HEADER')
 .   GOON__4  = 1
 .   write(cgi) '<tr class="tan"><td colspan="2">'
 . endif
 . ifthen(GOON__4  = 1)
-.   STR$1 = pack(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 ))
+.   STR$1 = pack(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4 ))
 .   if(srst(upper(STR$1), 'HEADER') gt 0) STR$1 = substr(STR$1, 7 + srst(upper(STR$1), 'HEADER'), len(STR$1))
 .   if(srst(upper(STR$1), 'ENDHEADER') gt 0)   STR$1 = substr(STR$1, 1, srst(upper(STR$1), 'ENDHEADER') - 1)
 .   write(cgi) STR$1
 . endif
-. if(srst(upper(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANYNUM__4 )), 'ENDHEADER') gt 0); exit for
+. if(srst(upper(vardocsn(REC_TYPE_NUMBER, VNAME$CB, ANY_NUM__4 )), 'ENDHEADER') gt 0); exit for
 end for
 if(GOON__4 eq 1) write(cgi) '</td></tr>'
 
@@ -120,8 +120,8 @@ c get the value of the variable,  missing user defined missings after invalid da
 .       endif
 .       ifthen (exists(STRING_VARGET) eq 1)
 .         ifNOTthen(STRING_VARGET eq '-')
-.            execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.            if(RETCODE__4 eq 0) STRING_VARGET = HTMLTEXT
+.            execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.            if(RET_CODE__4 eq 0) STRING_VARGET = HTMLTEXT
 .         endif
 .       endif
 .       ifthen (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 3) |date
@@ -144,10 +144,10 @@ c       Variable Label Column  | since keys are not editable, they do not get a 
 c       Value labels column
 .       ifthen (nvallab(REC_TYPE_NUMBER, VNAME$CB) gt 0)
 .         ifNOTthen(STRING_VARGET = '-')  | for some reason it was picking the first value label if the var value was system missing
-.           VALLAB_VALUE = trimlr(vallabsc (REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET ))
-.           execute subroutine WPF.TOOLS.HTMLTEXT (VALLAB_VALUE, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.           if(RETCODE__4 eq 0) VALLAB_VALUE = HTMLTEXT
-.           STR$1 = '<em> ' + VALLAB_VALUE  + '</em>'
+.           VAL_LAB_VALUE = trimlr(vallabsc (REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET ))
+.           execute subroutine WPF.TOOLS.HTMLTEXT (VAL_LAB_VALUE, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.           if(RET_CODE__4 eq 0) VAL_LAB_VALUE = HTMLTEXT
+.           STR$1 = '<em> ' + VAL_LAB_VALUE  + '</em>'
 .           write(cgi)  STR$1
 .         endif
 .       endif
@@ -180,7 +180,7 @@ CIF END
 
 write(cgi)  '</form>'
 
-ifthen(RECACCESSED__4 eq 0)
+ifthen(REC_ACCESSED__4 eq 0)
 . write(cgi) 'There has been some sort of error.  Please notify your DBA.  Code 3892.'
 endif
 

@@ -4,7 +4,7 @@ c these values are used to help construct process cases lines
 
 retrieval CRWARN
 string  *   600   STR$1                      | General String use at any time
-integer *     4   ANYNUM__4                    | Use any time you want
+integer *     4   ANY_NUM__4                    | Use any time you want
 string  *    32   FIRSTCASE__4               | 1st case
 string  *    32   LASTCASE__4                | last case
 string  *    32   STARTCASE__4               | Start case for going backwards
@@ -20,11 +20,11 @@ if(len(STR$1) = 0) STR$1 = "0"
 process cases count = 1 lock = 2
 . FIRSTCASE__4 =  varget(VNAME$)
 end cases
-ANYNUM__4  = 0
+ANY_NUM__4  = 0
 process cases reverse count = 50 lock = 2
-. ANYNUM__4 = ANYNUM__4  + 1
-. if(ANYNUM__4  = 1)  LASTCASE__4  =  varget(VNAME$)
-. if(ANYNUM__4  = 50) STARTCASE__4 =  varget(VNAME$)
+. ANY_NUM__4 = ANY_NUM__4  + 1
+. if(ANY_NUM__4  = 1)  LASTCASE__4  =  varget(VNAME$)
+. if(ANY_NUM__4  = 50) STARTCASE__4 =  varget(VNAME$)
 end cases
 
 ifthen (vtype(0, keyname(0, 1)) le 2)
@@ -34,15 +34,15 @@ ifthen (vtype(0, keyname(0, 1)) le 2)
 . STR$1     = '"' + STR$1      + '"'
 endif
 . ifthen (STR__4 eq 'First 50')
-.   ANYNUM__4 =  globals('GNAV#', '')
+.   ANY_NUM__4 =  globals('GNAV#', '')
 . elseif (STR__4 eq 'Next 50')
 .   STR$1 = 'list = '+ STR$1 + ' thru '  + LASTCASE__4
-.   ANYNUM__4 =  globals('GNAV#', STR$1)
+.   ANY_NUM__4 =  globals('GNAV#', STR$1)
 . elseif (STR__4 eq 'Prev 50')
-.   ANYNUM__4 =  globals('GNAV#', 'reverse list = ' +  FIRSTCASE__4 +  ' thru ' + STR$1 )
+.   ANY_NUM__4 =  globals('GNAV#', 'reverse list = ' +  FIRSTCASE__4 +  ' thru ' + STR$1 )
 . elseif (STR__4 eq 'Last 50')
 .   STR$1 = 'list = ' +  STARTCASE__4 + ' thru '  + LASTCASE__4
-.   ANYNUM__4 =  globals('GNAV#', STR$1 )
+.   ANY_NUM__4 =  globals('GNAV#', STR$1 )
 . endif
 end retrieval
 END PROCEDURE

@@ -1,5 +1,5 @@
-PROCEDURE      STATIC_PAGES.README:T  (157462,40177)  |Last amended Nov 25, 2013,11:09:37
+PROCEDURE      STATIC_PAGES.README:T  (157542,43235)  |Last amended Feb 13, 2014,12:00:35
 These files are created one time.
-Create these files by running initialize.
+Create these files by running the installer.
 If these files change run initialize again to push these files to the web root.
 END PROCEDURE

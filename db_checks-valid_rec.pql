@@ -6,12 +6,12 @@ CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 ifthen (REC_TYPE_NUMBER EQ 9999)
-. ANYNUM__4 = globals('GSOMEMESS', 'Record number not specified')
-. ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 = globals('GSOMEMESS', 'Record number not specified')
+. ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 elseif (exists(REC_TYPE_NUMBER) eq 0)
-. ANYNUM__4 = globals('GSOMEMESS', 'Record number is missing')
-. ANYNUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 = globals('GSOMEMESS', 'Record number is missing')
+. ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 end if
 
@@ -21,8 +21,8 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4 = 1
 end for
 ifthen (GOON__4 = 0)
-. ANYNUM__4 = globals( 'GSOMEMESS', 'The table number <GDBREC> was not found')
-. ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'The table number <GDBREC> was not found')
+. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 

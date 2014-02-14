@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157452,52573)  |Last amended Nov 15, 2013,14:36:13
+PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157542,59848)  |Last amended Feb 13, 2014,16:37:28
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -20,14 +20,14 @@ write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLLER.FIRST_PAGE"
 write(cgi) '<p class="text-center"><strong>Choose a Database<strong></p>'
 write(cgi) '<select name="dbpick" size="10" id="dblist">'
 GOON__4 = 0
-. ifthen(sglobal('USERNAME') eq 'Greg Neils')
+. ifthen(sglobal('USER_NAME') eq 'Greg Neils')
 .   process rec DBADMIN
 .     STR$1 = '<option value = "'  + trimlr(SESSIONDB) + '">' + trimlr(SESSIONDB) +  '</OPTION>'  | user trimlr since case ids are always padded
 .     write(cgi) STR$1
 .   end rec
 . else
 .   process rec DBUSERS
-.     ifNOT (sglobal('USERNAME') eq USERNAMEIS) NEXT REC
+.     ifNOT (sglobal('USER_NAME') eq USER_NAMEIS) NEXT REC
 .     COUNTS__4 = COUNTS__4 +1
 write counts__4
 .     STR$1 = '<option value = "'  + trimlr(SESSIONDB) + '"'

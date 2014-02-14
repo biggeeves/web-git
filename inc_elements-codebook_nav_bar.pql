@@ -6,7 +6,7 @@ CALL WPF.SYSTEM.INI_VARS
 . set REC_LABEL__4 ('')
 
 
-. write(cgi) '<h3>' DBNAME__4 ' Codebook</h3>'
+. write(cgi) '<h3>' DB_NAME__4 ' Codebook</h3>'
 . write(cgi) '<table class="table table-striped table-hover">'
 . write(cgi) '<tr><th>Table</th><th>Form</th><th>Variable Usage<br>takes a long time.</th><th>Sample Form</th></tr>'
 |Index of Record Types

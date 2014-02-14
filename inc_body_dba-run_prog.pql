@@ -1,9 +1,9 @@
 PROCEDURE      INC_BODY_DBA.RUN_PROG:T  (157219,54499)  |Last amended Mar 27, 2013,15:08:19
 program
 . string  *  4094   CGI__4                     | get the value of the CGI variable
-. real    *     8   ANYNUM__4                  | Use any time you want
+. real    *     8   ANY_NUM__4                  | Use any time you want
 . CGI__4 = sglobal('GPROG1')
-. if(len(CGI__4) gt 0) ANYNUM__4 = globaln('GOON__4', 1) | something other than a blank file.
+. if(len(CGI__4) gt 0) ANY_NUM__4 = globaln('GOON__4', 1) | something other than a blank file.
 end program
 
 CIF EQ 0<GOON__4>, 1
@@ -12,7 +12,7 @@ program crwarn
 . string  *  4094   CGI__4                     | get the value of the CGI variable
 . string  *  4094   STR$1                      | General String use at any time
 . integer *     1   IOSTAT__4                  | Return code of IOSTAT
-. real    *     8   ANYNUM__4                  | Use any time you want
+. real    *     8   ANY_NUM__4                  | Use any time you want
 . ifthen (nglobal('GSAVECODE')  eq 1)
 .   ifthen(sglobal('GPROGTITLE') ne '')
 .     FPATH__4 = sglobal('GPROGTITLE')
@@ -36,15 +36,15 @@ program crwarn
 . ifthen(len(CGI__4) gt 4000)
 .   STR$1 = substr(CGI__4, 4020, 34)
 .   write(cgi) '<h3 class="redbkg"> The program was cut off after:<Br>' STR$1 '<hr>THIS PROGRAM WAS NOT RUN.</h3>'
-.   ANYNUM__4 = globaln('GOON__4', 0)
+.   ANY_NUM__4 = globaln('GOON__4', 0)
 . endif
 end program
 CIF END
 
 c test if file is present to include in the next program
 program
-real    *     8   ANYNUM__4                  | Use any time you want
-. if (fileis(dsn('PROG1')) ne 1) ANYNUM__4 = globaln('GOON__4', 0)
+real    *     8   ANY_NUM__4                  | Use any time you want
+. if (fileis(dsn('PROG1')) ne 1) ANY_NUM__4 = globaln('GOON__4', 0)
 end program
 
 CIF EQ 0<GOON__4>, 1
@@ -60,7 +60,7 @@ CIF EQ 0<GOON__4>, 1
 . program
 .   write(cgi) '</div>'
 .   write(cgi) '<h3>End of the results</h3>'
-.   ifNOT (nglobal('GSAVECODE') eq 1) ANYNUM__4 =  DELFILE(dsn('PROG1'))
+.   ifNOT (nglobal('GSAVECODE') eq 1) ANY_NUM__4 =  DELFILE(dsn('PROG1'))
 . end program
 CIF END
 

@@ -1,10 +1,10 @@
-PROCEDURE      INC_BODY_DBA.BUG:T  (157219,52051)  |Last amended Mar 27, 2013,14:27:31
+PROCEDURE      INC_BODY_DBA.BUG:T  (157542,59726)  |Last amended Feb 13, 2014,16:35:26
 c Report a bug and list of bugs
 program
 ifthen(len(cgivarpn('buginfo')) gt 0)
 . OPEN MEM DSN = "BUGPROC.BUGS.REPORTED" /MEMBER/write APPEND/IOSTAT = IOSTAT__4
 .   IFTHEN( IOSTAT__4 eq 0)
-.     write (MEM) '<USERNAME>: ' [cgivarpn('buginfo')]
+.     write (MEM) '<USER_NAME>: ' [cgivarpn('buginfo')]
 .   ELSE
 .     write(CGI) 'Sorry the bug file was not UPDATEd:' IOSTAT__4
 .   endif
@@ -25,16 +25,16 @@ program crwarn
 . write(cgi) '<hr><br>Open Bugs or Requested Updates<br><ol>'
 . open (MEM) DSN = "BUGPROC.BUGS.REPORTED" /member /read /iostat = IOSTAT__4 /lrecl = 1000
 .   IFTHEN( IOSTAT__4 eq 0)
-.     ANYNUM__4 = 0
+.     ANY_NUM__4 = 0
 .     LOOP
 .       read(MEM, END = DONE) LINE__4 (A1000)
-.       ANYNUM__4 = ANYNUM__4 + 1
+.       ANY_NUM__4 = ANY_NUM__4 + 1
 .       LINE__4 = TRIMLR(LINE__4)
-.       ifthen (nglobal('GWEBVALUE1') = ANYNUM__4 )
+.       ifthen (nglobal('GWEBVALUE1') = ANY_NUM__4 )
 .         STR$3 = LINE__4
 .       endif
-.       execute subroutine WPF.TOOLS.HTMLTEXT (LINE__4, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.       ifthen(RETCODE__4 eq 0)
+.       execute subroutine WPF.TOOLS.HTMLTEXT (LINE__4, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.       ifthen(RET_CODE__4 eq 0)
 .         STR$1 =  HTMLTEXT
 .       else
 .         STR$1 = 'Unable to read line'
@@ -52,19 +52,19 @@ program crwarn
 . write(cgi) '<hr><br>The following bugs are closed<br><ol>'
 . open (MEM) DSN = "BUGPROC.BUGS.CLOSED" /member /read /iostat = IOSTAT__4 /lrecl = 1000
 .   IFTHEN( IOSTAT__4 = 0)
-.     ANYNUM__4 = 0
+.     ANY_NUM__4 = 0
 .     LOOP
 .       read(MEM, END = DONE) LINE__4 (A1000)
-.       ANYNUM__4 = ANYNUM__4 + 1
+.       ANY_NUM__4 = ANY_NUM__4 + 1
 .       LINE__4 = TRIMLR(LINE__4)
-.       execute subroutine WPF.TOOLS.HTMLTEXT (LINE__4, 1) RETURNING (HTMLTEXT, RETCODE__4)
-.       ifthen(RETCODE__4 eq 0)
+.       execute subroutine WPF.TOOLS.HTMLTEXT (LINE__4, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.       ifthen(RET_CODE__4 eq 0)
 .         STR$1 =  HTMLTEXT
 .       else
 .         STR$1 = 'Unable to read line'
 .       endif
 .       LINK__4 = ''
-.       if('<username>' eq 'Greg Neils') LINK__4 = '<a href="<mycgi>?member=WPF.INC_DBA.BUG&amp;webvalue1=' + format(ANYNUM__4) +'">'
+.       if('<USER_NAME>' eq 'Greg Neils') LINK__4 = '<a href="<mycgi>?member=WPF.INC_DBA.BUG&amp;webvalue1=' + format(ANY_NUM__4) +'">'
 .       write(cgi) '<li>' LINK__4 STR$1 '</a></li>'
 .     END LOOP
 .     DONE:

@@ -21,7 +21,7 @@ ifthen (sglobal('GMEMIN') eq 'WPF.INC_REPORTS.SIMPLEQ_RESULTS')
 . endif
 endif
 ifthen (VALID_RESULT eq 1 OR 2 OR 7) | NOT VALID
-. ANYNUM__4 = globals( 'GSOMEMESS',  '<GVALUE1> is not a valid for ' + VNAME$ + ': ' + VAR_LABEL )
+. ANY_NUM__4 = globals( 'GSOMEMESS',  '<GVALUE1> is not a valid for ' + VNAME$ + ': ' + VAR_LABEL )
 . ifthen(sglobal('NEXTMEMBER') ne '')
 .   EXECUTE DBMS "call WPF.INC_REPORTS.SIMPLEQ_GUI"
 . else

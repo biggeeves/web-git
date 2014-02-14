@@ -1,4 +1,4 @@
-PROCEDURE      SCHEMAS.MANAGER:T  (157508,42802)  |Last amended Jan 10, 2014,11:53:22
+PROCEDURE      SCHEMAS.MANAGER:T  (157542,58412)  |Last amended Feb 13, 2014,16:13:32
 c created for version 2.0
 PROGRAM
 EXECUTE DBMS ['CREATE DATABASE MANAGER PREFIX= "' + DSN('MANAGER_FOLDER') + '"']
@@ -13,25 +13,25 @@ RECTYPE COLS    1  2
 MAX REC TYPES   30
 MAX REC COUNT   3000000
 MAX KEY SIZE    67
-TASK NAME       Record Definition for DBADMIN Record Number     1
+TASK NAME       Record Definition for DB_INFO Record Number     1
 
-RECORD SCHEMA   1  DBADMIN
+RECORD SCHEMA   1  DB_INFO
 DOCUMENT        Administrative Information
-KEY FIELDS      SESSIONDB(A)
+KEY FIELDS      DATABASE_NAME(A)
 MAX REC COUNT   3000000
 DATA LIST   (3)
-                SESSIONDB                        *             (A32)
-                NAME                             *             (A80)
-                DESCRIP                          *             (A200)
+
+                DATABASE_NAME                        *             (A32)
+                PROJECT_NAME                     *             (A80)
+                DESCRIPTION                          *             (A200)
                 STAGE                            *             (I1)
                 FOLDER                           *             (A75)
-                COORD                            *             (A30)
                 MASTER_IP                        *             (A32)
                 MASTER_PORT                      *             (A32)
-                DBPROG                           *             (A30)
+                DB_PROGRAMMER                    *             (A30)
                 PI                               *             (A25)
-                COORDST                          *             (A25)
-                STATISIC                         *             (A25)
+                COORDINATOR                          *             (A25)
+                STATISTICIAN                         *             (A25)
                 DCCDATE                          *             (DATE'EMM/DD/YYYY')
                 DCCTIME                          *             (TIME'HHIMM')
                 DCCWHO                           *             (A15)
@@ -45,145 +45,149 @@ VALUE LABELS    STAGE                            (0)'Talks'
                                                  (3)'Special: MNYR, DCC'
                                                  (4)'Live'
                                                  (5)'Archived'
-VAR LABEL       NAME                             'Expanded Project Name'
-                DESCRIP                          'Brief Description'
+VAR LABEL       PROJECT_NAME                             'Expanded Project Name'
+                DESCRIPTION                          'Brief Description'
                 STAGE                            'Project Stage'
                 FOLDER                           'Folder Location'
-                COORD                            'DB Coordinator'
+                COORDINATOR                      'Project Coordinator'
                 MASTER_IP                        'Master IP address'
                 MASTER_PORT                      'Master Port'
-                DBPROG                           'DB Programmer'
+                DB_PROGRAMMER                    'DB Programmer'
                 PI                               'Principle Investigator'
-                COORDST                          'Outside Project Coordinator'
-                STATISIC                         'Statistician'
+                STATISTICIAN                         'Statistician'
 END SCHEMA
-TASK NAME       Record Definition for DBUSERS Record Number     2
+TASK NAME       Record Definition for DB_USERS Record Number     2
 
-RECORD SCHEMA   2  DBUSERS
+RECORD SCHEMA   2  DB_USERS
 DOCUMENT Manage Users
-KEY FIELDS      SESSIONDB(A) USERNAMEIS(A)
+KEY FIELDS      DATABASE_NAME(A) USER_NAME(A)
 MAX REC COUNT   10000
 DATA LIST
-                SESSIONDB                            3 -    34 (A32)
-                USERNAMEIS                          35 -    84 (A32)
-                FULLNAME                            85 -   124 (A40)
-                SECLEVEL                           125 -   126 (I1)
-                RS                                 127 -   128 (I1)
-                WS                                 129 -   130 (I1)
-                REPGEN                             131         (I1)
-                REPSPEC                            132         (I1)
-                LOCKRECORDS                        133         (I1)
-                LOCKCASES                          134         (I1)
-                VIEWSCHEMA                         135         (I1)
-                VIEWIDS                            136         (I1)
-                VIEWRECS                           137         (I1)
-                VIEWNOTES                          138         (I1)
-                VIEWDBA                            139         (I1)
-                DELREC                             140         (I1)
-                DELCASE                            141         (I1)
-                PHONE                              142 -   156 (A15)
-                EMAIL                              157 -   206 (A50)
-                CELL                               207 -   221 (A15)
-                STARTDT                            222 -   231 (DATE'EMM/DD/YYYY')
-                ENDDT                              232 -   241 (DATE'EMM/DD/YYYY')
-                EDITDATE                           242 -   251 (DATE'EMM/DD/YYYY')
-                EDITTIME                           252 -   256 (TIME'HHIMM')
-                EDITWHO                            257 -   271 (A15)
-                EDITS_NUM                          272 -   277 (I2)
-                CREATEDATE                         278 -   287 (DATE'EMM/DD/YYYY')
-VAR RANGES      SECLEVEL                         (0 30)
-                RS                               (0 30)
-                WS                               (0 30)
-                REPGEN                           (0 1)
-                REPSPEC                          (0 1)
-                LOCKRECORDS                      (0 1)
-                LOCKCASES                        (0 1)
-                VIEWSCHEMA                       (0 1)
-                VIEWIDS                          (0 1)
-                VIEWRECS                         (0 1)
-                VIEWNOTES                        (0 1)
-                VIEWDBA                          (0 1)
-                DELREC                           (0 1)
-                DELCASE                          (0 1)
-VALUE LABELS    SECLEVEL                         (0)'Read Only'
+                DATABASE_NAME                            3 -    34 (A32)
+                USER_NAME                          35 -    84 (A32)
+                FULL_NAME                            85 -   124 (A40)
+                SECURITY_LEVEL                           125 -   126 (I1)
+                READ_SECURITY                                 127 -   128 (I1)
+                WRITE_SECURITY                                 129 -   130 (I1)
+                REPORTS_GENERAL                             131         (I1)
+                REPORTS_SPECIAL                            132         (I1)
+                LOCK_RECORDS                        133         (I1)
+                LOCK_CASES                          134         (I1)
+                VIEW_SCHEMA                         135         (I1)
+                VIEW_IDS                            136         (I1)
+                VIEW_RECS                           137         (I1)
+                VIEW_NOTES                          138         (I1)
+                VIEW_DBA                            139         (I1)
+                DELETE_RECS                             140         (I1)
+                DELETE_CASES                            141         (I1)
+                USER_PHONE                              142 -   156 (A15)
+                USER_EMAIL                              157 -   206 (A50)
+                USER_CELL                               207 -   221 (A15)
+                START_DATE                            222 -   231 (DATE'EMM/DD/YYYY')
+                END_DATE                              232 -   241 (DATE'EMM/DD/YYYY')
+                EDIT_DATE                           242 -   251 (DATE'EMM/DD/YYYY')
+                EDIT_TIME                           252 -   256 (TIME'HHIMM')
+                EDIT_WHO                            257 -   271 (A15)
+                EDIT_NUMBER                          272 -   277 (I2)
+                CREATE_DATE                         * (DATE'EMM/DD/YYYY')
+                CREATE_TIME                         * (TIME'HHIMM')
+                CREATE_BY                           * (A100)
+VAR RANGES      SECURITY_LEVEL                         (0 30)
+                READ_SECURITY                               (0 30)
+                WRITE_SECURITY                               (0 30)
+                REPORTS_GENERAL                           (0 1)
+                REPORTS_SPECIAL                          (0 1)
+                LOCK_RECORDS                      (0 1)
+                LOCK_CASES                        (0 1)
+                VIEW_SCHEMA                       (0 1)
+                VIEW_IDS                          (0 1)
+                VIEW_RECS                         (0 1)
+                VIEW_NOTES                        (0 1)
+                VIEW_DBA                          (0 1)
+                DELETE_RECS                           (0 1)
+                DELETE_CASES                          (0 1)
+VALUE LABELS    SECURITY_LEVEL                         (0)'Read Only'
                                                  (30)'Full DBA rights'
-                RS                               (0)'None'
+                READ_SECURITY                               (0)'None'
                                                  (30)'DBA'
-                WS                               (0)'No Write'
+                WRITE_SECURITY                               (0)'No Write'
                                                  (30)'DBA'
-                REPGEN                           (0)'No'
+                REPORTS_GENERAL                           (0)'No'
                                                  (1)'Yes'
-                REPSPEC                          (0)'No'
+                REPORTS_SPECIAL                          (0)'No'
                                                  (1)'Yes'
-                LOCKRECORDS                      (0)'No'
+                LOCK_RECORDS                      (0)'No'
                                                  (1)'Yes'
-                LOCKCASES                        (0)'No'
+                LOCK_CASES                        (0)'No'
                                                  (1)'Yes'
-                VIEWSCHEMA                       (0)'No'
+                VIEW_SCHEMA                       (0)'No'
                                                  (1)'Yes'
-                VIEWIDS                          (0)'No'
+                VIEW_IDS                          (0)'No'
                                                  (1)'Yes'
-                VIEWRECS                         (0)'No'
+                VIEW_RECS                         (0)'No'
                                                  (1)'Yes'
-                VIEWNOTES                        (0)'No'
+                VIEW_NOTES                        (0)'No'
                                                  (1)'Yes'
-                VIEWDBA                          (0)'No'
+                VIEW_DBA                          (0)'No'
                                                  (1)'Yes'
-                DELREC                           (0)'No'
+                DELETE_RECS                           (0)'No'
                                                  (1)'Yes'
-                DELCASE                          (0)'No'
+                DELETE_CASES                          (0)'No'
                                                  (1)'Yes'
-VAR LABEL       FULLNAME                         'Full name of the user'
-                RS                               'Read Security'
-                WS                               'Write Security'
-                REPGEN                           'Can run all general reports'
-                REPSPEC                          'Can run customized reports'
-                LOCKRECORDS                      'User has ability to Lock records'
-                LOCKCASES                        'User has ability to lock specific cases'
-                VIEWSCHEMA                       'Can user view Schema?'
-                VIEWIDS                          'Can this users see IDs'
-                VIEWRECS                         'User can view record types (forms)?'
-                VIEWNOTES                        'User can view notes?'
-                VIEWDBA                          'User can view DBA drop down?'
-                DELREC                           'User has permission to delete records?'
-                DELCASE                          'User has permission to delete cases'
+VAR LABEL       FULL_NAME                         'Full name of the user'
+                READ_SECURITY                               'Read Security'
+                WRITE_SECURITY                               'Write Security'
+                REPORTS_GENERAL                           'Can run all general reports'
+                REPORTS_SPECIAL                          'Can run customized reports'
+                LOCK_RECORDS                      'User has ability to Lock records'
+                LOCK_CASES                        'User has ability to lock specific cases'
+                VIEW_SCHEMA                       'Can user view Schema?'
+                VIEW_IDS                          'Can this users see IDs'
+                VIEW_RECS                         'User can view record types (forms)?'
+                VIEW_NOTES                        'User can view notes?'
+                VIEW_DBA                          'User can view DBA drop down?'
+                DELETE_RECS                           'User has permission to delete records?'
+                DELETE_CASES                          'User has permission to delete cases'
+                CREATE_DATE                          'Created on'
+                CREATE_TIME                          'Created at'
+                CREATE_BY                          'Created by'
 END SCHEMA
 TASK NAME       Record Definition for SESSIONS Record Number     3
 
 RECORD SCHEMA   3  SESSIONS
-KEY FIELDS      USERID(A) SESSIONID(A)
+KEY FIELDS      USER_ID(A) SESSION_ID(A)
 MAX REC COUNT   3000000
 DATA LIST
-                USERID                               3 -    34 (A32)
-                USERNAMEIS                          35 -    66 (A32)
-                SESSIONID                           67 -    98 (A32)
-                SESSIONDB                           99 -   130 (A32)
-                REMOTE_ADDR                        131 -   150 (A20)
-                STARTDATE                          151 -   160 (DATE'EMM/DD/YYYY')
-                STARTTIME                          161 -   168 (TIME'EHH:MM:SS')
-                PAGEVIEWS                        *             (I4)
-                LASTREQUESTDATE                    169 -   178 (DATE'EMM/DD/YYYY')
-                LASTREQUESTTIME                    179 -   186 (TIME'EHH:MM:SS')
-                LOGGEDOUT                          187         (I1)
-                LOGGEDOUTDATE                      188 -   197 (DATE'mm/dd/yyyy')
-                LOGGEDOUTTIME                      198 -   205 (TIME'HH:MM:SS')
-VAR RANGES      STARTDATE                        ('01/01/2011' '01/01/2060')
-                LOGGEDOUT                        (0 1)
-                LOGGEDOUTDATE                    ('01/01/2011' '01/01/2031')
-VALUE LABELS    LOGGEDOUT                        (0)'No'
+                USER_ID                               3 -    34 (A32)
+                USER_NAME                          35 -    66 (A32)
+                SESSION_ID                           67 -    98 (A32)
+                DATABASE_NAME                           99 -   130 (A32)
+                REMOTE_ADDRESS                        131 -   150 (A20)
+                START_DATE                          151 -   160 (DATE'EMM/DD/YYYY')
+                START_TIME                          161 -   168 (TIME'EHH:MM:SS')
+                PAGE_VIEWS                        *             (I4)
+                LAST_REQUEST_DATE                    169 -   178 (DATE'EMM/DD/YYYY')
+                LAST_REQUEST_TIME                    179 -   186 (TIME'EHH:MM:SS')
+                LOGGED_OUT                          187         (I1)
+                LOGGED_OUT_DATE                      188 -   197 (DATE'mm/dd/yyyy')
+                LOGGED_OUT_TIME                      198 -   205 (TIME'HH:MM:SS')
+VAR RANGES      START_DATE                        ('01/01/2011' '01/01/2060')
+                LOGGED_OUT                        (0 1)
+                LOGGED_OUT_DATE                    ('01/01/2011' '01/01/2031')
+VALUE LABELS    LOGGED_OUT                        (0)'No'
                                                  (1)'Yes'
-VAR LABEL       USERID                           'User ID'
-                USERNAMEIS                       'User name'
-                SESSIONID                        'Session ID'
-                SESSIONDB                        'Selected Database for this session'
-                REMOTE_ADDR                      'Remote Address'
-                STARTDATE                        'Session Start Date'
-                STARTTIME                        'Session Start Time'
-                PAGEVIEWS                        'Page Views for current Sessions'
-                LASTREQUESTDATE                  'Last Request Date'
-                LASTREQUESTTIME                  'Last Request Time'
-                LOGGEDOUT                        'User initiated log out'
-                LOGGEDOUTDATE                    'Logged out on'
-                LOGGEDOUTTIME                    'Logged out at'
+VAR LABEL       USER_ID                           'User ID'
+                USER_NAME                       'User name'
+                SESSION_ID                        'Session ID'
+                DATABASE_NAME                        'Selected Database for this session'
+                REMOTE_ADDRESS                      'Remote Address'
+                START_DATE                        'Session Start Date'
+                START_TIME                        'Session Start Time'
+                PAGE_VIEWS                        'Page Views for current Sessions'
+                LAST_REQUEST_DATE                  'Last Request Date'
+                LAST_REQUEST_TIME                  'Last Request Time'
+                LOGGED_OUT                        'User initiated log out'
+                LOGGED_OUT_DATE                    'Logged out on'
+                LOGGED_OUT_TIME                    'Logged out at'
 END SCHEMA
 END PROCEDURE

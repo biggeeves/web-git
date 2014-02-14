@@ -3,14 +3,14 @@ program crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-set RECCNT__4   (0)
+set REC_CNT__4   (0)
 
 write(cgi) '<h3>Form List</h3>'
 write(cgi) '<table class="table table-striped table-hover" ><tr><th>Form</th><th>Total in Database</th></tr>'
 
 for EACH_RECORD_NUMBER = 1, nrecs(0)
 . IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-. RECCNT__4  = RECCNT__4  + numrecs(EACH_RECORD_NUMBER)
+. REC_CNT__4  = REC_CNT__4  + numrecs(EACH_RECORD_NUMBER)
 
 . write(cgi) '<tr>'
 . STR$1 = '<td title="' + format(EACH_RECORD_NUMBER)  + ' ' + trimlr(recname(EACH_RECORD_NUMBER)) +  '">'
@@ -28,7 +28,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . write(cgi) '</tr>'
 end for
 
-write(cgi) '<tr><td>&nbsp;</td><td>Total Form Count: ' RECCNT__4 '</td></tr>'
+write(cgi) '<tr><td>&nbsp;</td><td>Total Form Count: ' REC_CNT__4 '</td></tr>'
 write(cgi) '</table>'
 
 

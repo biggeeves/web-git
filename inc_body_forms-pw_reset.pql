@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.PW_RESET:T  (157219,85077)  |Last amended Mar 27, 2013,23:37:57
+PROCEDURE      INC_BODY_FORMS.PW_RESET:T  (157542,59870)  |Last amended Feb 13, 2014,16:37:50
 PROGRAM
 CALL WPF.SYSTEM.DEFINE_VARS
 . compute STR$1 ='<' + CHAR(33) + 'DOCTYPE html>'
@@ -44,7 +44,7 @@ CALL WPF.SYSTEM.DEFINE_VARS
 
 . write(cgi) '<form method="post" action="<mycgi>">'
 . write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLLER.PW_RESET2">'
-. write(cgi) '<input type="hidden" name="username" value="<username>">'
+. write(cgi) '<input type="hidden" name="user_name" value="<user_name>">'
 . write(cgi) '<table class="center" width="100%"><tr><td width="40%">'
 . write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'
 . write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'

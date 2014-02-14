@@ -12,14 +12,14 @@ write(cgi) '<tr><td>Output File</td><td>' [outfname(0)] '</td></tr>'
 for EACH_ATTRIBUTE = 1,  SYSTEM(52)
 c attribute
 . STR$1 = attrname(EACH_ATTRIBUTE)
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
-. if(RETCODE__4 eq 0) STR$1 =  HTMLTEXT
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 =  HTMLTEXT
 . write(cgi) '<tr><td>' STR$1    '</td>'
 
 C path
 . STR$1 = dsn(STR$1)
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RETCODE__4)
-. if(RETCODE__4 eq 0) STR$1 =  HTMLTEXT
+. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 =  HTMLTEXT
 . write(cgi) '<td>' STR$1    '</td></tr>'
 end for
 write(cgi) '</table>'

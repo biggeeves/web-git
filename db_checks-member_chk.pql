@@ -1,13 +1,13 @@
 PROCEDURE      DB_CHECKS.MEMBER_CHK:T  (157452,52632)  |Last amended Nov 15, 2013,14:37:12
 program
 ifthen ('<GMEMIN>' eq '')
-. ANYNUM__4 = globals( 'GSOMEMESS', 'Sorry, I do not know what to do.')
-. ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'Sorry, I do not know what to do.')
+. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 
 elseif (exists(meminfo('<GMEMIN>:T',1)) eq 0)
-. ANYNUM__4 = globals( 'GSOMEMESS', 'Sorry, I could not find what you wanted.')
-. ANYNUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'Sorry, I could not find what you wanted.')
+. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 end program

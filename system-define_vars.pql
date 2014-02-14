@@ -1,16 +1,16 @@
-PROCEDURE      SYSTEM.DEFINE_VARS:T  (157221,47133)  |Last amended Mar 29, 2013,13:05:33
+PROCEDURE      SYSTEM.DEFINE_VARS:T  (157542,60296)  |Last amended Feb 13, 2014,16:44:56
 string  *   256   WPF                    | File location of web proc file, used in system.initialize
-string  *    32   USERNAME__4                | username
-string  *    32   USERID                     | unique ID for the user for this particular session.  Will also get a session ID.  | also cookie
-string  *    32   SESSIONID                  | After log in and selection of database will get a session ID.                     | also cookie
+string  *    32   USER_NAME__4                | username
+string  *    32   USER_ID                     | unique ID for the user for this particular session.  Will also get a session ID.  | also cookie
+string  *    32   SESSION_ID                  | After log in and selection of database will get a session ID.                     | also cookie
 string  *    32   PASSWORD__4                | password
 string  *    50   UPICK__4                | Input from user to pick New, Old, Table.  May expand defintion.
 
 
-string  *   600   ASCIITEXT                  | HTML to be cleaned
-string  *   600   HTMLTEXT                   | HTML after it has been cleaned
+string  *   600   ASCII_TEXT                  | HTML to be cleaned
+string  *   600   HTML_TEXT                   | HTML after it has been cleaned
 
-string  *    32   DBNAME__4                  | Database Name
+string  *    32   DB_NAME__4                  | Database Name
 string  *    72   FAMILY_NAME                     | Family Name
 string  *    72   MEMBER_NAME                     | Member Name
 
@@ -23,9 +23,9 @@ integer *     1   FOUNDCASE__4               | Case already exists
 integer *     2   REC_TYPE_NUMBER                 | Easy to remember record type number
 string  *    32   REC_NAME__4                | Record Name
 string  *    72   REC_LABEL__4               | Record Label
-integer *     4   RECCNT__4                  | Record count
-integer *     1   RECACCESSED__4             | Does a specifi record exist already
-string  *   255   RECDOC__4                  | Record Document.  Usualy line 0 or line 1
+integer *     4   REC_CNT__4                  | Record count
+integer *     1   REC_ACCESSED__4             | Does a specifi record exist already
+string  *   255   REC_DOC__4                  | Record Document.  Usualy line 0 or line 1
 string  *   210   REC1 REC2 REC3 REC4 REC5   | a string of rec#s for each global
 
 integer *     2   EACH_RECORD_NUMBER              | cycle through record types
@@ -52,17 +52,17 @@ string  *    32   VAR_MAX_STR                 | Variable Max
 string  *    32   VAR_MIN_STR                 | Variable Min
 string  *    32   KEYVNAME__4                | Variable name
 integer *     1   ISKEY__4                   | it is a key field
-string  *    32   KEYVALUE__4                | Key field value
-integer *     4   VALLAB_POS                 | Value label nth position of the for a given value
-string  *   100   VALLAB_VALUE               | Value Label value
+string  *    32   KEY_VALUE__4                | Key field value
+integer *     4   VAL_LAB_POS                 | Value label nth position of the for a given value
+string  *   100   VAL_LAB_VALUE               | Value Label value
 integer *     1   SIR_VARTYPE                 | What is the variable type that vtype returns
 string  *    32   SIR_VARFORMAT               | What is the variable FORMAT that vformat returns
-integer *     1   ISCOMVAR__4                | it is a common variable
+integer *     1   IS_COM_VAR__4                | it is a common variable
 
 c Look and Feel
 string  *    32   RCLASS__4                  | Web CSS, formating for alt row color and key field color
 string  *    32   VAR_DISPLAY_CLASS              | Web CSS, interacts with Colspand to get right width for edit box
-string  *   100   VALLAB_DISPLAY_CLASS           | Web CSS, right width for value label choices
+string  *   100   VAL_LAB_DISPLAY_CLASS           | Web CSS, right width for value label choices
 string  *   300   LINK__4                    | LINK
 string  *   300   CLASS__4                   | CLASS
 string  *   300   HOVER_TITLE                   | TITLE
@@ -81,13 +81,13 @@ string  *  1000   STR$1                      | General String use at any time
 string  *  1000   STR$2                      | General String use at any time
 string  *  1000   STR$3                      | General String use at any time
 
-real    *     8   ANYNUM__4                  | Use any time you want
+real    *     8   ANY_NUM__4                  | Use any time you want
 integer *     1   GOON__4                    | Control flow variable
 
 string  *   600   ANY_DIR__4                 | log in folder location
 string  *   300   FPATH__4                   | File Path
 integer *     1   IOSTAT__4                  | Return code of IOSTAT
-integer *     4   RETCODE__4                 | Return code for other things
+integer *     4   RET_CODE__4                 | Return code for other things
 string  *  1000   LINE__4                    | Line read from a file or member
 
 
@@ -104,7 +104,7 @@ integer *     1   SIGNNUM__4                 | String Query value
 date              VARDATE__4 ('MMIDDIYYYY')  | Validating Date values
 time              VARTIME__4 ('HHIMMISS')    | Validating Time valuess
 
-real    *     8   TODAYIS__4                        | numeric today
+real    *     8   TODAY_IS__4                        | numeric today
 integer *     4   array FREQINT__4   (-1000:200000) | Hold the most important value
 real    *     8   array FREQYEAR__4  (1500:2500)  | sum/year
 real    *     8   array FREQMONTH__4 (1:12)       | sum/month
@@ -117,18 +117,18 @@ integer *     4   SUM_NOEXISTS                    | sum for missing values
 real    *     8   AVE_NUMERATOR                   | average numerator
 real    *     8   AVE_DENOMINATOR                 | average demoninator
 real    *     4   VAR_MIN# VAR_MAX#               | either defined max and min or actual data value max and mins
-integer *     2   YEARIS__4                       | 4 digit year
-integer *     1   MONTHIS__4                      | 2 digit month
-integer *     1   DAYIS__4                        | 1=MON,2=TUE, ETC
-integer *     1   HOURIS__4                       | am pm hOURS
+integer *     2   YEAR_IS__4                       | 4 digit year
+integer *     1   MONTH_IS__4                      | 2 digit month
+integer *     1   DAY_IS__4                        | 1=MON,2=TUE, ETC
+integer *     1   HOUR_IS__4                       | am pm hOURS
 
 
-string  *   300   FINDTEXT__4                     | What is the text we are searching for
-string  *   300   SHOWKEYS__4                     | What are the keys so you can navigate to that record
+string  *   300   FIND_TEXT__4                     | What is the text we are searching for
+string  *   300   SHOW_KEYS__4                     | What are the keys so you can navigate to that record
 
 real    *     8   SUPER_TOT                        | Running total
 real    *     8   SUM__4                          | particular value to add to the sum
-real    *     8   RECTOT__4                       | Record or record type total
+real    *     8   REC_TOT__4                       | Record or record type total
 integer *     2   CHAR__4                         | What numeric value is that charicter?
 integer *     1   SCH_VARNAME                     | Is it in a Variable Name
 integer *     1   SCH_VARLABEL                    | Is it in a Variable Label
@@ -148,13 +148,13 @@ value labels VALID_RESULT (0)'Valid' (1)'Wrong data type/Not valid value'
                          (2)'Violation of valid values or ranges'
                          (3)'Sys Miss' (4)'M1' (5)'M2' (6)'M3' (7)'String Truncated'
 
-value labels MONTHIS__4   (1) 'Jan.'   (2) 'Feb.'      (3) 'March'     (4) 'April'
+value labels MONTH_IS__4   (1) 'Jan.'   (2) 'Feb.'      (3) 'March'     (4) 'April'
                           (5) 'May' (6) 'June'  (7) 'July'  (8) 'August'
                           (9) 'Sept.' (10) 'Oct.' (11) 'Nov.' (12) 'Dec.'/
-value labels DAYIS__4     (1) 'Monday'  (2) 'Tuesday'   (3) 'Wednesday' (4) 'Thursday'
+value labels DAY_IS__4     (1) 'Monday'  (2) 'Tuesday'   (3) 'Wednesday' (4) 'Thursday'
                           (5) 'Friday'  (6) 'Saturday'  (7) 'Sunday'/
 
-value labels HOURIS__4 (0) 'Midnight to 1 am'
+value labels HOUR_IS__4 (0) 'Midnight to 1 am'
                           (1)  '1am - 2am'   (2)  '2am - 3am'
         (3)  '3am - 4am'   (4)  '4am - 5am'
                           (5)  '5am - 6am'   (6)  '6am - 7am'

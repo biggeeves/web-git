@@ -1,4 +1,4 @@
-PROCEDURE      STATIC_PAGES.ERR_403:T  (157541,51375)  |Last amended Feb 12, 2014,14:16:15
+PROCEDURE      STATIC_PAGES.ERR_403:T  (157542,43118)  |Last amended Feb 13, 2014,11:58:38
 program
 string * 600 STR$1            | General String use at any time
 
@@ -7,7 +7,7 @@ write '<br> err 403:' 20T [dsn('err403')]
 compute STR$1 = '<' + CHAR(33) + 'DOCTYPE HTML>'
 open (err403) write lrecl = 600
 . write(err403) STR$1
-. write(err403) '<head ><title >Logged out</title>'
+. write(err403) '<head ><title ><WEBSITE_TITLE>| Error 403</title>'
 . write(err403) '<link type="text/css" href="<fullurl>/css/custom.css" rel="stylesheet">'
 . write(err403) '<link type="text/css" href="<fullurl>/css/bootstrap.css" rel="stylesheet">'
 . write(err403)  '<meta http-equiv="Content-type" content="text/html;charset=UTF-8">'
@@ -20,7 +20,7 @@ open (err403) write lrecl = 600
 . write(err403) '      Error 403</h1>'
 . write(err403) '      <h3><a href = "<fullurl>index.html">Click here to return to Log In</a></h3>'
 . write(err403) '      <br>'
-. write(err403) '    <h6>Designed by the Data Coordinating Center At Columbia University in New York.</h6>'
+. write(err403) '    <h6><WEBSITE_TITLE></h6>'
 . write(err403) '  </div>'
 . write(err403) '</body></html>'
 close err403
