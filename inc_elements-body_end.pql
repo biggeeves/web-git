@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.BODY_END:T  (157452,51880)  |Last amended Nov 15, 2013,14:24:40
+PROCEDURE      INC_ELEMENTS.BODY_END:T  (157542,77341)  |Last amended Feb 13, 2014,21:29:01
 write(cgi) '  onload="setLogOutTimer();setLoadingOff();stopCount();afterBlur(this);doSomething(this);checkCookies();"' |;varOut(''WILLBE1'');"' working on skip patterns
 write(cgi) '  onkeydown="disableEnterKey(event);doSomething(this);"' | for internet explorer
 write(cgi) '  onmousemove="resetLogOutTimer()" onclick="resetLogOutTimer();doSomething(this);" onkeypress="resetLogOutTimer()"'
@@ -8,7 +8,7 @@ c note that in this style of HTML "noscript" can not go in the header without re
 c note also that "meta" can not go in the body without reporting an error.  Thus, expect HTML validation errors from these lines of code. No way to win!
 write(cgi) '<noscript>'
 write(cgi) '  You must have JavaScript enabled to use this page.'
-write(cgi) '  <meta http-equiv="refresh" content="0; url=''/javascript_required.html''">'
+C write(cgi) '  <meta http-equiv="refresh" content="0; url=''<FULL_URL>javascript_required.html''">'
 write(cgi) '</noscript>'
 
 END PROCEDURE

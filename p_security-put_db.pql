@@ -1,5 +1,5 @@
-PROCEDURE      P_SECURITY.PUT_DB:T  (157452,47338)  |Last amended Nov 15, 2013,13:08:58
-cif eq '<GDBPICK>', '-1'
+PROCEDURE      P_SECURITY.PUT_DB:T  (157542,79895)  |Last amended Feb 13, 2014,22:11:35
+cif eq '<GDB_PICK>', '-1'
 . global GSOMEMESS = 'You must pick a database'
 call WPF.INC_BODY_FORMS.DB_CHOOSE
 CALL WPF.CONNECTIONS.FULL_EXIT
@@ -12,14 +12,13 @@ string  *    32   DB_NAME__4                  | Database Name
 real    *     8   ANY_NUM__4                  | Use any time you want
 integer *     1   GOON__4                    | Control flow variable
 SET GOON__4 (0)
-DB_NAME__4 = sglobal('GDBPICK')
-
-. old rec is DBADMIN via (DB_NAME__4)
-.   GET VARS FOLDER SESSIONDB
-.   ANY_NUM__4 = globals('GDB' , trimlr(SESSIONDB))
-.   ANY_NUM__4 = globals('GDBPATH', trimlr(FOLDER))
-.   ANY_NUM__4 = globals('GMSTIP', MASTER_IP)
-.   ANY_NUM__4 = globals('GMSTPORT', MASTER_PORT)
+DB_NAME__4 = sglobal('GDB_PICK')
+. old rec is DB_INFO via (DB_NAME__4)
+.   GET VARS FOLDER WEB_DB_NAME
+.   ANY_NUM__4 = globals('GDB' , trimlr(WEB_DB_NAME))
+.   ANY_NUM__4 = globals('GDB_PATH', trimlr(FOLDER))
+.   ANY_NUM__4 = globals('GMST_IP', MASTER_IP)
+.   ANY_NUM__4 = globals('GMST_PORT', MASTER_PORT)
 .   GOON__4 = 1
 . end rec
 
@@ -29,7 +28,7 @@ c double checks, DB path is correct and user has access to database
 .   ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.DB_CHOOSE')
 .   EXIT RETRIEVAL
 . else
-    GOON__4 = fileis((FOLDER + SESSIONDB + '.sr1'))
+    GOON__4 = fileis((FOLDER + WEB_DB_NAME + '.sr1'))
 .   ifnotthen(GOON__4 eq 1)
 .     ANY_NUM__4 = globals('GSOMEMESS', 'Sorry,  ' + DB_NAME__4 + ' is not available right now')
 .     ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.DB_CHOOSE')
@@ -37,18 +36,18 @@ c double checks, DB path is correct and user has access to database
 .   endif
 . endif
 
-. ifthen ('<USERID>' NE '')
-.   ifthen ('<SESSIONID>' NE '')
-.     record is SESSIONS via ('<USERID>' '<SESSIONID>')
-.       LASTREQUESTDATE = today(0)
-.       LASTREQUESTTIME = now(0)
-.       SESSIONDB = DB_NAME__4
+. ifthen ('<USER_ID>' NE '')
+.   ifthen ('<SESSION_ID>' NE '')
+.     record is SESSIONS via ('<USER_ID>' '<SESSION_ID>')
+.       LAST_REQUEST_DATE = today(0)
+.       LAST_REQUEST_TIME = now(0)
+.       WEB_DB_NAME = DB_NAME__4
 .     end rec is
 .   ELSE
 .     write 'BLANK SESSION ID'
 .   endif
 . ELSE
-.   write 'BLANK USERID'
+.   write 'BLANK USER_ID'
 . endif
 
 end retrieval

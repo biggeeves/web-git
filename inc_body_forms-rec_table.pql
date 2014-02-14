@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_TABLE:T  (157221,44336)  |Last amended Mar 29, 2013,12:18:56
+PROCEDURE      INC_BODY_FORMS.REC_TABLE:T  (157542,79381)  |Last amended Feb 13, 2014,22:03:01
 c you get to this by choosing Detailed Case Summary and then clicking on Table.
 c All variables for a case in a table format.
 
@@ -33,8 +33,8 @@ write(cgi) '    <tr><th>&nbsp;</th>'
 for EACH_VARIABLE = 1, nvarsc(<GDBREC>)
 . VNAME$ = trimlr(varnamec(<GDBREC>, EACH_VARIABLE))
 . VAR_LABEL = varlabsc(<GDBREC>, '{' + VNAME$ + '}')
-. execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. ifthen(RET_CODE__4 eq 0); VAR_LABEL =  HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (VAR_LABEL, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. ifthen(RET_CODE__4 eq 0); VAR_LABEL =  HTML_TEXT
 . else; VAR_LABEL  = "incorrect text"
 . endif
 . VAR_LABEL = 'title="' +   VAR_LABEL + '"'

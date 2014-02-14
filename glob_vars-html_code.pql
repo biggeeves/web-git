@@ -1,4 +1,4 @@
-PROCEDURE      GLOB_VARS.HTMLCODE:T  (157540,53967)  |Last amended Feb 11, 2014,14:59:27
+PROCEDURE      GLOB_VARS.HTML_CODE:T  (157542,64998)  |Last amended Feb 13, 2014,18:03:18
 c additional HTML globals that are not in the sysproc
 
 CALL SYSPROC.TOOLS.HTMLCODE

@@ -1,4 +1,4 @@
-PROCEDURE      STATIC_PAGES.LOGOUT:T  (157542,43215)  |Last amended Feb 13, 2014,12:00:15
+PROCEDURE      STATIC_PAGES.LOGOUT:T  (157542,77463)  |Last amended Feb 13, 2014,21:31:03
 program
 string * 600 STR$1            | General String use at any time
 
@@ -9,9 +9,9 @@ open (logout) write lrecl = 600
 . write(logout) STR$1
 . write(logout) '<head ><title ><WEBSITE_TITLE>| Logged out</title>'
                 '  <link rel="icon" type="image/ico" href="/images/DCC.ico"  title="<WEBSITE_TITLE>" >'/
-                '  <link href="<fullurl>css/bootstrap.css" rel="stylesheet">'/
-                '  <link href="<fullurl>css/custom.css" rel="stylesheet">'/
-                '  <script type="text/javascript" src="<fullurl>js/global.js"></script>'/
+                '  <link href="<full_url>css/bootstrap.css" rel="stylesheet">'/
+                '  <link href="<full_url>css/custom.css" rel="stylesheet">'/
+                '  <script type="text/javascript" src="<full_url>js/global.js"></script>'/
                 '  <meta charset="UTF-8">'/
                 '  <meta content="noindex,nofollow,noarchive" name="robots">'/
                 '  <meta http-equiv="Pragma" content="no-cache">'/
@@ -32,10 +32,10 @@ open (logout) write lrecl = 600
 
 
 
-. write(logout) '<body onload="setCookie(''USERID'',''loggedOut'',1);setCookie(''SESSIONID'',''loggedOut'',1)">'
+. write(logout) '<body onload="setCookie(''USER_ID'',''loggedOut'',1);setCookie(''SESSION_ID'',''loggedOut'',1)">'
                 '  <div class="smallcontainer">'
 . write(logout) '      <h3 title="Autolog out happens after 10 minutes.">You have been logged out.</h3>'
-. write(logout) '      <a href = "<fullurl>index.html" class="btn btn-info">Click here to return to the Log In page</a>'
+. write(logout) '      <a href = "<full_url>index.html" class="btn btn-info">Click here to return to the Log In page</a>'
 . write(logout) '  </div>'
 . write(logout) '</body></html>'
 close logout

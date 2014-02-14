@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.WEB_START:T  (157542,59670)  |Last amended Feb 13, 2014,16:34:30
+PROCEDURE      CONTROLLER.WEB_START:T  (157542,74792)  |Last amended Feb 13, 2014,20:46:32
 C CAN ALSO COUNT ON THESE THINGS REMAINING STATIC.
 | turn on "task" to see elapsed time in msec
 | turn on "commands" to see all PQL code
@@ -6,16 +6,16 @@ C CAN ALSO COUNT ON THESE THINGS REMAINING STATIC.
 | "call" does not print out
 
 global MY_DEBUG = 1
-program
-write (cgi) 'in wpf and running'
-end program
 
-PRINT BACK  off  | nocommands notask remark call user
+PRINT BACK  OFF  | nocommands notask remark call user
 CALL WPF.SYSTEM.CUSTOM_ATTS
 CALL WPF.SYSTEM.MASTER_IP
 CALL WPF.GLOB_VARS.HTML_CODE
 CALL WPF.GLOB_VARS.CGI_INI
 
+program
+write '<hr><gmemin><hr>'
+end program
 
 | NO DB CONNECTED, CHECK USER_NAME AND PASSWORD, CREATE USER FILE
 CIF EQ '<GMEMIN>', 'WPF.CONTROLLER.PW_RESET'

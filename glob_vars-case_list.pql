@@ -1,47 +1,47 @@
-PROCEDURE      GLOB_VARS.CASE_LIST:T  (156563,38006)  |Last amended Jun 10, 2011,10:33:26
+PROCEDURE      GLOB_VARS.CASE_LIST:T  (157542,65184)  |Last amended Feb 13, 2014,18:06:24
 c globals to create GCASENAV GSTARTID GNAV#
 c these values are used to help construct process cases lines
 
 retrieval CRWARN
 string  *   600   STR$1                      | General String use at any time
 integer *     4   ANY_NUM__4                    | Use any time you want
-string  *    32   FIRSTCASE__4               | 1st case
-string  *    32   LASTCASE__4                | last case
-string  *    32   STARTCASE__4               | Start case for going backwards
+string  *    32   FIRST_CASE__4               | 1st case
+string  *    32   LAST_CASE__4                | last case
+string  *    32   START_CASE__4               | Start case for going backwards
 string  *    32   VNAME$                     | Variable name
 string  *   300   STR__4                     | string for validating data and sgets
 
 
 VNAME$ = trimlr(keyname(0, 1))
-STR__4  = sglobal('GCASENAV')
-STR$1   = fst(sglobal('GSTARTID'), "0")
+STR__4  = sglobal('GCASE_NAV')
+STR$1   = fst(sglobal('GSTART_ID'), "0")
 if(len(STR$1) = 0) STR$1 = "0"
 
 process cases count = 1 lock = 2
-. FIRSTCASE__4 =  varget(VNAME$)
+. FIRST_CASE__4 =  varget(VNAME$)
 end cases
 ANY_NUM__4  = 0
 process cases reverse count = 50 lock = 2
 . ANY_NUM__4 = ANY_NUM__4  + 1
-. if(ANY_NUM__4  = 1)  LASTCASE__4  =  varget(VNAME$)
-. if(ANY_NUM__4  = 50) STARTCASE__4 =  varget(VNAME$)
+. if(ANY_NUM__4  = 1)  LAST_CASE__4  =  varget(VNAME$)
+. if(ANY_NUM__4  = 50) START_CASE__4 =  varget(VNAME$)
 end cases
 
 ifthen (vtype(0, keyname(0, 1)) le 2)
-. FIRSTCASE__4 =  '"' + FIRSTCASE__4 + '"'
-. STARTCASE__4 =  '"' + STARTCASE__4 + '"'
-. LASTCASE__4 = '"' + LASTCASE__4 + '"'
+. FIRST_CASE__4 =  '"' + FIRST_CASE__4 + '"'
+. START_CASE__4 =  '"' + START_CASE__4 + '"'
+. LAST_CASE__4 = '"' + LAST_CASE__4 + '"'
 . STR$1     = '"' + STR$1      + '"'
 endif
 . ifthen (STR__4 eq 'First 50')
 .   ANY_NUM__4 =  globals('GNAV#', '')
 . elseif (STR__4 eq 'Next 50')
-.   STR$1 = 'list = '+ STR$1 + ' thru '  + LASTCASE__4
+.   STR$1 = 'list = '+ STR$1 + ' thru '  + LAST_CASE__4
 .   ANY_NUM__4 =  globals('GNAV#', STR$1)
 . elseif (STR__4 eq 'Prev 50')
-.   ANY_NUM__4 =  globals('GNAV#', 'reverse list = ' +  FIRSTCASE__4 +  ' thru ' + STR$1 )
+.   ANY_NUM__4 =  globals('GNAV#', 'reverse list = ' +  FIRST_CASE__4 +  ' thru ' + STR$1 )
 . elseif (STR__4 eq 'Last 50')
-.   STR$1 = 'list = ' +  STARTCASE__4 + ' thru '  + LASTCASE__4
+.   STR$1 = 'list = ' +  START_CASE__4 + ' thru '  + LAST_CASE__4
 .   ANY_NUM__4 =  globals('GNAV#', STR$1 )
 . endif
 end retrieval

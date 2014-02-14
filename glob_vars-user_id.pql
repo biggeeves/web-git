@@ -1,5 +1,5 @@
-PROCEDURE      GLOB_VARS.USERID:T  (156563,38382)  |Last amended Jun 10, 2011,10:39:42
-c get cookie values for USERID and SESSIONID
+PROCEDURE      GLOB_VARS.USER_ID:T  (157542,65025)  |Last amended Feb 13, 2014,18:03:45
+c get cookie values for USER_ID and SESSION_ID
 
 
 program
@@ -8,21 +8,21 @@ program
 
 | must look for ";" and "= " to get cookie name and value
 . STR$1 = fst(cgivarsv('HTTP_COOKIE'), cgivarpn('http_cookie'))
-. ANY_NUM__4 = abs(srst(STR$1, "USERID=")) + len("USERID=")
+. ANY_NUM__4 = abs(srst(STR$1, "USER_ID=")) + len("USER_ID=")
 . STR$1 = substr(STR$1, ANY_NUM__4, len(STR$1))
 . ANY_NUM__4 = abs(srst(STR$1, '; '))  - 1
 . if(ANY_NUM__4 eq -1) ANY_NUM__4 = LEN(STR$1)
 . STR$1 =  substr(STR$1, 1, ANY_NUM__4)
 . if (exists(STR$1) eq 0) set STR$1 ('')
-. ANY_NUM__4 =  globals ('USERID', STR$1)
+. ANY_NUM__4 =  globals ('USER_ID', STR$1)
 c
 . STR$1 = fst(cgivarsv('HTTP_COOKIE'), cgivarpn('http_cookie'))
-. ANY_NUM__4 = abs(srst(STR$1, "SESSIONID=")) + len("SESSIONID=")
+. ANY_NUM__4 = abs(srst(STR$1, "SESSION_ID=")) + len("SESSION_ID=")
 . STR$1 = substr(STR$1, ANY_NUM__4, len(STR$1))
 . ANY_NUM__4 = abs(srst(STR$1, '; '))  - 1
 . if(ANY_NUM__4 eq -1) ANY_NUM__4 = len(STR$1)
 . STR$1 =  substr(STR$1, 1, ANY_NUM__4)
 . if (exists(STR$1) eq 0) set STR$1 ('')
-. ANY_NUM__4 =  globals ('SESSIONID', STR$1)
+. ANY_NUM__4 =  globals ('SESSION_ID', STR$1)
 end program
 END PROCEDURE

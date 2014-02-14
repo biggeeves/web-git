@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_NEW:T  (157220,68890)  |Last amended Mar 28, 2013,19:08:10
+PROCEDURE      INC_BODY_FORMS.CASE_NEW:T  (157542,65389)  |Last amended Feb 13, 2014,18:09:49
 C Create a new case
 
 PROGRAM
@@ -8,7 +8,7 @@ write(cgi) '<h4>Create a new ' CASE_LABEL '</h4>'
 ifthen (0<GSECLEVEL> ne 0)
 . write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
 . write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'
-. write(cgi) '  <input type="hidden" name="caseoption" id="caseoption" value="new">'
+. write(cgi) '  <input type="hidden" name="case_option" id="case_option" value="new">'
 . write(cgi) '    <br><p><div id="caseidlabel" class ="indent">' CASE_LABEL '</div>'
 . write(cgi) '      <input type="text" id="caseis" class="input_medium" name="caseis">'
 . write(cgi) '      <input type="submit" value="Create" accesskey="z" class="btn btn-success"><br>'

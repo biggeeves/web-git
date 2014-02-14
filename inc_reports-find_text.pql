@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.FINDTEXT:T  (157221,45287)  |Last amended Mar 29, 2013,12:34:47
+PROCEDURE      INC_REPORTS.FIND_TEXT:T  (157542,64265)  |Last amended Feb 13, 2014,17:51:05
 c Search for text in a record type.  Searches all variables.
 c
 c must re-set the globals to first record type, first var

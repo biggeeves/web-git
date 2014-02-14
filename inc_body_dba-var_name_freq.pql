@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.VAR_NAME_FREQ:T  (157221,44073)  |Last amended Mar 29, 2013,12:14:33
+PROCEDURE      INC_BODY_DBA.VAR_NAME_FREQ:T  (157542,79322)  |Last amended Feb 13, 2014,22:02:02
 | Varname Frequencies.  How many times is a var name used.
 | Dump all of the var names to an array, sort the array.  Second arry holds varname, table, and sum from first array.
 
@@ -71,14 +71,14 @@ CIF END
 . subprocedure WRITE_ROW
 
 .   STR$1 = '<tr><td>'
-.   execute subroutine WPF.TOOLS.HTMLTEXT (AVARNAME(EACH_NUMBER), 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT; RET_CODE__4 = -1
+.   execute subroutine WPF.TOOLS.HTML_TEXT (AVARNAME(EACH_NUMBER), 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTML_TEXT; RET_CODE__4 = -1
 .   STR$1 = STR$1 + '</td><td>'
-c .   execute subroutine WPF.TOOLS.HTMLTEXT (AVARNAME#(EACH_NUMBER), 1) RETURNING (HTMLTEXT, RET_CODE__4)
-c .   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT
+c .   execute subroutine WPF.TOOLS.HTML_TEXT (AVARNAME#(EACH_NUMBER), 1) RETURNING (HTML_TEXT, RET_CODE__4)
+c .   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTML_TEXT
 c .   STR$1 = STR$1 + '</td><td>'
-.   execute subroutine WPF.TOOLS.HTMLTEXT (format(AVARNAME#(EACH_NUMBER)) , 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTMLTEXT; RET_CODE__4 = -1
+.   execute subroutine WPF.TOOLS.HTML_TEXT (format(AVARNAME#(EACH_NUMBER)) , 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) STR$1 =  STR$1 + HTML_TEXT; RET_CODE__4 = -1
 .   write (cgi) STR$1 '</td></tr>'
 . end subprocedure
 

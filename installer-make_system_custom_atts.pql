@@ -1,4 +1,4 @@
-PROCEDURE      INSTALLER.MAKE_SYSTEM_CUSTOM_ATTS:T  (157542,42769)  |Last amended Feb 13, 2014,11:52:49
+PROCEDURE      INSTALLER.MAKE_SYSTEM_CUSTOM_ATTS:T  (157542,77640)  |Last amended Feb 13, 2014,21:34:00
 program
 . string * 4000 STR$1
 . STRING * 100 PATH$
@@ -12,6 +12,9 @@ program
 .   WRITE (CATTS) STR$1
 
 .   STR$1 = 'global WEBSITE_TITLE = <WEBSITE_TITLE>'
+.   WRITE (CATTS) STR$1
+
+.   STR$1 = 'global full_url = <full_url>'
 .   WRITE (CATTS) STR$1
 
 .   STR$1 = 'ATTRIBUTE WEBPROC_FOLDER = "' + DSN('WEBPROC_FOLDER') + '"'
@@ -63,7 +66,7 @@ program
 .   STR$1 = 'attribute badlogins = "' + dsn('web_root') + 'login\badLogins.txt"'
 .   WRITE (CATTS) STR$1
 
-.   STR$1 = 'ATTRIBUTE LOGON_FOLDER = "' + DSN('LOGON_FOLDER') +  '"'
+.   STR$1 = 'ATTRIBUTE LOGIN_FOLDER = "' + DSN('LOGIN_FOLDER') +  '"'
 .   WRITE (CATTS) STR$1
 
 .   STR$1 = 'ATTRIBUTE MANAGER_FOLDER = "' + DSN('MANAGER_FOLDER') + '"'

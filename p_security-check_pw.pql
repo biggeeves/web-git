@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_PW:T  (157542,59982)  |Last amended Feb 13, 2014,16:39:42
+PROCEDURE      P_SECURITY.CHECK_PW:T  (157542,67712)  |Last amended Feb 13, 2014,18:48:32
 | checks user name and password.
 | if matched assigns a unique user ID.
 | session ID is created after user is directed to a database (has 1DB) or selects a DB (Many DBS)
@@ -18,7 +18,7 @@ retrieval crwarn
 . PASSWORD__4 = trimlr(cgivarpn('password'))
 . STR$1 = ''
 
-. process rec USERPW VIA (USER_NAME__4 )
+. process rec LOGIN_INFO VIA (USER_NAME__4 )
 .   ifthen (PASSWORD__4 eq PW)
       ANY_NUM__4 =  globaln('GOON__4', 1)
 .     ANY_NUM__4 =  globals("USER_NAME", USER_NAME)

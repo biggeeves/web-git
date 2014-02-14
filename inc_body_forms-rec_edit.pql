@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157542,58451)  |Last amended Feb 13, 2014,16:14:11
+PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157542,79363)  |Last amended Feb 13, 2014,22:02:43
 C display a generic data entry page for one record (ROW)
 
 retrieval progress CRWARN noautocase
@@ -90,8 +90,8 @@ CIF END
 .       if (VNAME$ eq 'DWHO' or 'DCCWHO' or 'DCCWHEN' OR 'DCCDATE' OR 'DCCTIME' OR 'DCCEDITS' OR 'DSTAMP' ) next for
 .       VNAME$CB = '{' +  trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  + '}'
 .       VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
-.       execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.       if(RET_CODE__4 eq 0) VAR_LABEL =  HTMLTEXT
+.       execute subroutine WPF.TOOLS.HTML_TEXT (VAR_LABEL, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.       if(RET_CODE__4 eq 0) VAR_LABEL =  HTML_TEXT
 .       if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
 c add Variable specific text above the variable
 GOON__4  = 0
@@ -209,8 +209,8 @@ C       BY HERE STRING_VARGET IS THE GOLD STANDARD VALUE
 CIF END
 
 .       ifthen (exists(STRING_VARGET) eq 1)
-.         execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.         if(RET_CODE__4 eq 0) STRING_VARGET = HTMLTEXT
+.         execute subroutine WPF.TOOLS.HTML_TEXT (STRING_VARGET, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.         if(RET_CODE__4 eq 0) STRING_VARGET = HTML_TEXT
 .       endif
 
 
@@ -354,8 +354,8 @@ c set the cursor at the first variable
 
 
 subprocedure CLEAN_VALLAB
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 end subprocedure
 
 

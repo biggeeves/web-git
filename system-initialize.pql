@@ -1,4 +1,4 @@
-PROCEDURE      SYSTEM.INITIALIZE:T  (157542,53539)  |Last amended Feb 13, 2014,14:52:19
+PROCEDURE      SYSTEM.INITIALIZE:T  (157542,79424)  |Last amended Feb 13, 2014,22:03:44
 PRINT BACK OFF
 
 CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
@@ -28,5 +28,5 @@ CALL WPF.JS.ALLCALL               | Creates the javascript globals, file and "Ja
 
 CALL WPF.CSS.CUSTOM               | CSS file contains look and feel
 
-CALL WPF.TOOLS.HTMLTEXT           | Cleans up text for HTML output.  Example: "<"
+CALL WPF.TOOLS.HTML_TEXT           | Cleans up text for HTML output.  Example: "<"
 END PROCEDURE

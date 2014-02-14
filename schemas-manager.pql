@@ -1,4 +1,4 @@
-PROCEDURE      SCHEMAS.MANAGER:T  (157542,58412)  |Last amended Feb 13, 2014,16:13:32
+PROCEDURE      SCHEMAS.MANAGER:T  (157542,78545)  |Last amended Feb 13, 2014,21:49:05
 c created for version 2.0
 PROGRAM
 EXECUTE DBMS ['CREATE DATABASE MANAGER PREFIX= "' + DSN('MANAGER_FOLDER') + '"']
@@ -17,13 +17,13 @@ TASK NAME       Record Definition for DB_INFO Record Number     1
 
 RECORD SCHEMA   1  DB_INFO
 DOCUMENT        Administrative Information
-KEY FIELDS      DATABASE_NAME(A)
+KEY FIELDS      WEB_DB_NAME(A)
 MAX REC COUNT   3000000
 DATA LIST   (3)
 
-                DATABASE_NAME                        *             (A32)
+                WEB_DB_NAME                        *             (A32)
                 PROJECT_NAME                     *             (A80)
-                DESCRIPTION                          *             (A200)
+                PROJECT_DESCRIPTION                          *             (A200)
                 STAGE                            *             (I1)
                 FOLDER                           *             (A75)
                 MASTER_IP                        *             (A32)
@@ -46,7 +46,7 @@ VALUE LABELS    STAGE                            (0)'Talks'
                                                  (4)'Live'
                                                  (5)'Archived'
 VAR LABEL       PROJECT_NAME                             'Expanded Project Name'
-                DESCRIPTION                          'Brief Description'
+                PROJECT_DESCRIPTION                          'Brief Description'
                 STAGE                            'Project Stage'
                 FOLDER                           'Folder Location'
                 COORDINATOR                      'Project Coordinator'
@@ -60,10 +60,10 @@ TASK NAME       Record Definition for DB_USERS Record Number     2
 
 RECORD SCHEMA   2  DB_USERS
 DOCUMENT Manage Users
-KEY FIELDS      DATABASE_NAME(A) USER_NAME(A)
+KEY FIELDS      WEB_DB_NAME(A) USER_NAME(A)
 MAX REC COUNT   10000
 DATA LIST
-                DATABASE_NAME                            3 -    34 (A32)
+                WEB_DB_NAME                            3 -    34 (A32)
                 USER_NAME                          35 -    84 (A32)
                 FULL_NAME                            85 -   124 (A40)
                 SECURITY_LEVEL                           125 -   126 (I1)
@@ -161,7 +161,7 @@ DATA LIST
                 USER_ID                               3 -    34 (A32)
                 USER_NAME                          35 -    66 (A32)
                 SESSION_ID                           67 -    98 (A32)
-                DATABASE_NAME                           99 -   130 (A32)
+                WEB_DB_NAME                           99 -   130 (A32)
                 REMOTE_ADDRESS                        131 -   150 (A20)
                 START_DATE                          151 -   160 (DATE'EMM/DD/YYYY')
                 START_TIME                          161 -   168 (TIME'EHH:MM:SS')
@@ -179,7 +179,7 @@ VALUE LABELS    LOGGED_OUT                        (0)'No'
 VAR LABEL       USER_ID                           'User ID'
                 USER_NAME                       'User name'
                 SESSION_ID                        'Session ID'
-                DATABASE_NAME                        'Selected Database for this session'
+                WEB_DB_NAME                        'Selected Database for this session'
                 REMOTE_ADDRESS                      'Remote Address'
                 START_DATE                        'Session Start Date'
                 START_TIME                        'Session Start Time'

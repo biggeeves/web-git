@@ -1,4 +1,4 @@
-PROCEDURE      SYSTEM.DEFINE_VARS:T  (157542,60296)  |Last amended Feb 13, 2014,16:44:56
+PROCEDURE      SYSTEM.DEFINE_VARS:T  (157542,65109)  |Last amended Feb 13, 2014,18:05:09
 string  *   256   WPF                    | File location of web proc file, used in system.initialize
 string  *    32   USER_NAME__4                | username
 string  *    32   USER_ID                     | unique ID for the user for this particular session.  Will also get a session ID.  | also cookie
@@ -15,10 +15,10 @@ string  *    72   FAMILY_NAME                     | Family Name
 string  *    72   MEMBER_NAME                     | Member Name
 
 string  *    32   CASE_STR                   | Value of CASE
-string  *    32   FIRSTCASE__4               | 1st case
-string  *    32   LASTCASE__4                | last case
-string  *    32   STARTCASE__4               | Start case for going backwards
-integer *     1   FOUNDCASE__4               | Case already exists
+string  *    32   FIRST_CASE__4               | 1st case
+string  *    32   LAST_CASE__4                | last case
+string  *    32   START_CASE__4               | Start case for going backwards
+integer *     1   FOUND_CASE__4               | Case already exists
 
 integer *     2   REC_TYPE_NUMBER                 | Easy to remember record type number
 string  *    32   REC_NAME__4                | Record Name

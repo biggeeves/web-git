@@ -1,4 +1,4 @@
-PROCEDURE      STATIC_PAGES.ERR_404:T  (157542,43135)  |Last amended Feb 13, 2014,11:58:55
+PROCEDURE      STATIC_PAGES.ERR_404:T  (157542,77420)  |Last amended Feb 13, 2014,21:30:20
 program
 string * 600 STR$1            | General String use at any time
 
@@ -8,17 +8,17 @@ compute STR$1 = '<' + CHAR(33) + 'DOCTYPE HTML>'
 open (err404) write lrecl = 600
 . write(err404) STR$1
 . write(err404) '<head ><title ><WEBSITE_TITLE>| Logged out</title>'
-. write(err404) '<link type="text/css" href="<fullurl>css/custom.css" rel="stylesheet">'
-. write(err404) '<link type="text/css" href="<fullurl>css/boostrap.css" rel="stylesheet">'
+. write(err404) '<link type="text/css" href="<full_url>css/custom.css" rel="stylesheet">'
+. write(err404) '<link type="text/css" href="<full_url>css/boostrap.css" rel="stylesheet">'
 . write(err404)  '<meta http-equiv="Content-type" content="text/html;charset=UTF-8">'
-. write(err404) '  <link rel="icon" type="image/ico" href="<fullurl>images/DCC.ico"  title="<WEBSITE_TITLE>" >'
-. write(err404) '  <script type="text/javascript" src="<fullurl>js/global.js"></script>'
+. write(err404) '  <link rel="icon" type="image/ico" href="<full_url>images/DCC.ico"  title="<WEBSITE_TITLE>" >'
+. write(err404) '  <script type="text/javascript" src="<full_url>js/global.js"></script>'
 . write(err404) '</head>'
-. write(err404) '<body onload="setCookie(''USERID'',''loggedOut'',1);setCookie(''SESSIONID'',''loggedOut'',1)">'
+. write(err404) '<body onload="setCookie(''USER_ID'',''loggedOut'',1);setCookie(''SESSION_ID'',''loggedOut'',1)">'
 . write(err404) '  <div id="container">'  |this applies a css for the entire contents (centers it on the page)
 . write(err404) '      <h1>The requested file could not be located<br>'
 . write(err404) '      Error 404</h1>'
-. write(err404) '      <h3><a href = "<fullurl>index.html">Click here to return to Log In</a></h3>'
+. write(err404) '      <h3><a href = "<full_url>index.html">Click here to return to Log In</a></h3>'
 . write(err404) '      <br>'
 . write(err404) '    <h6><WEBSITE_TITLE></h6>'
 . write(err404) '  </div>'

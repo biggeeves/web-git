@@ -1,4 +1,4 @@
-PROCEDURE      JS.CASE_NAV:T  (157540,57734)  |Last amended Feb 11, 2014,16:02:14
+PROCEDURE      JS.CASE_NAV:T  (157542,65223)  |Last amended Feb 13, 2014,18:07:03
 c Browse case ids
 
 CIF EQ <GCASED>, 1
@@ -7,8 +7,8 @@ string  *   600   STR$1                      | General String use at any time
 real    *     8   ANY_NUM__4                  | Use any time you want
 string  *    32   VNAME$                     | Variable name
 integer *     1   IOSTAT__4                  | Return code of IOSTAT
-string  *    32   FIRSTCASE__4               | 1st case
-string  *    32   LASTCASE__4                | last case
+string  *    32   FIRST_CASE__4               | 1st case
+string  *    32   LAST_CASE__4                | last case
 string  *    32   CASE_STR                   | Value of CASE
 
 c options can not have onclicks.  Must define function and then CALL it depending on what is passed
@@ -26,10 +26,10 @@ endif
 
 VNAME$ = trimlr(keyname(0, 1))
 process cases count = 1 lock = 2
-. FIRSTCASE__4 =  trimr(varget(VNAME$))
+. FIRST_CASE__4 =  trimr(varget(VNAME$))
 end cases
 process cases reverse count = 1 lock = 2
-. LASTCASE__4  =  trimr(varget(VNAME$))
+. LAST_CASE__4  =  trimr(varget(VNAME$))
 end cases
 write(casenav) 'var caseArray = new Array(), '
 write(casenav) '    caseNum = 0;'

@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASEDEL:T  (156629,30815)  |Last amended Aug 15, 2011,08:33:35
+PROCEDURE      INC_BODY_FORMS.CASEDEL:T  (157542,65381)  |Last amended Feb 13, 2014,18:09:41
 C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
 
 PROGRAM
@@ -10,7 +10,7 @@ ifthen (0<GSECLEVEL> ne 0)
 . write(cgi) '<br>'
 . write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
 . write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'
-. write(cgi) '  <input type="hidden" name="caseoption" id="caseoption" value="delete">'
+. write(cgi) '  <input type="hidden" name="case_option" id="case_option" value="delete">'
 . write(cgi) '    <div id="caseidlabel" class ="indent">' CASE_LABEL '</div>'
 . write(cgi) '      <input type="text" id="caseis" class="input_medium" name="caseis" value="<CASEISNQ>">'
 . write(cgi) '      <input type="submit" value="Delete" accesskey="z" class="mediumbtn"><br>'

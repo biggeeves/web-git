@@ -1,17 +1,17 @@
-PROCEDURE      P_SECURITY.PUT_LOGOUT:T  (157221,48629)  |Last amended Mar 29, 2013,13:30:29
+PROCEDURE      P_SECURITY.PUT_LOGOUT:T  (157542,63963)  |Last amended Feb 13, 2014,17:46:03
 retrieval UPDATE crwarn
-ifthen ('<USERID>' NE '')
-. ifthen ('<SESSIONID>' NE '')
-.   record is SESSIONS via ('<USERID>' '<SESSIONID>')
-.     LOGGEDOUTDATE = today(0)
-.     LOGGEDOUTTIME = NOW(0)
-.     LOGGEDOUT = 1
+ifthen ('<USER_ID>' NE '')
+. ifthen ('<SESSION_ID>' NE '')
+.   record is SESSIONS via ('<USER_ID>' '<SESSION_ID>')
+.     LOGGED_OUT_DATE = today(0)
+.     LOGGED_OUT_TIME = NOW(0)
+.     LOGGED_OUT = 1
 .   end rec is
 . ELSE
 .   write 'BLANK SESSION ID'
 . endif
 ELSE
-. write 'BLANK USERID'
+. write 'BLANK USER_ID'
 endif
 
 end retrieval

@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157542,59503)  |Last amended Feb 13, 2014,16:31:43
+PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157542,67793)  |Last amended Feb 13, 2014,18:49:53
 C UPDATE MANAGER WITH USER_NAME, REMOTE ADDRESS START DATE AND TIME
 
 retrieval UPDATE CRWARN
@@ -10,7 +10,7 @@ ifthen ('<USER_ID>' NE '')
 .   record is SESSIONS via ('<USER_ID>' '<SESSION_ID>')
 .     if(exists(START_DATE) eq 0)  START_DATE = today(0)
 .     if(exists(START_TIME) eq 0)  START_TIME = NOW(0)
-.     USER_NAME_IS = sglobal('USER_NAME')
+.     USER_NAME = sglobal('USER_NAME')
 .     REMOTE_ADDRESS =  cgivarsv('REMOTE_ADDRESS')
 .   end rec
 . ELSE

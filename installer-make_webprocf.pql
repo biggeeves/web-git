@@ -1,4 +1,4 @@
-PROCEDURE      INSTALLER.MAKE_WEBPROCF:T  (157512,43348)  |Last amended Jan 14, 2014,12:02:28
+PROCEDURE      INSTALLER.MAKE_WEBPROCF:T  (157542,75792)  |Last amended Feb 13, 2014,21:03:12
 c export members to a web proc file.
 c create a new procfile, if needed
 c import members into new web procfile as needed
@@ -8,7 +8,8 @@ STRING * 600 COMSTR
 . COMSTR = 'PWRITE "' + DSN('WEBPROC_FOLDER') + 'wpf.pwr"  /NOINFORM'
 . execute dbms COMSTR
 . IFTHEN (FILEIS( DSN( 'WPF')) eq 1 )
-.   DISPLAY YESNOBOX 'DO YOU WANT TO OVERWRITE YOUR CURRENT WEB PROCFILE?' RESPONSE RESVAR
+.   DISPLAY YESNOBOX 'You already have a procfile called "web.srp"' + char(13) + char(13) +
+                     'DO YOU WANT TO OVERWRITE WEB.srp?' RESPONSE RESVAR
 .   IF (RESVAR EQ 1) EXECUTE SUBPROCEDURE READ_PROCF
 . ELSE
 .   COMPUTE COMSTR = 'CREATE PROCFILE "' + DSN('WPF') + '"'

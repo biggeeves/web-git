@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.BUG:T  (157542,59726)  |Last amended Feb 13, 2014,16:35:26
+PROCEDURE      INC_BODY_DBA.BUG:T  (157542,79281)  |Last amended Feb 13, 2014,22:01:21
 c Report a bug and list of bugs
 program
 ifthen(len(cgivarpn('buginfo')) gt 0)
@@ -33,9 +33,9 @@ program crwarn
 .       ifthen (nglobal('GWEBVALUE1') = ANY_NUM__4 )
 .         STR$3 = LINE__4
 .       endif
-.       execute subroutine WPF.TOOLS.HTMLTEXT (LINE__4, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.       execute subroutine WPF.TOOLS.HTML_TEXT (LINE__4, 1) RETURNING (HTML_TEXT, RET_CODE__4)
 .       ifthen(RET_CODE__4 eq 0)
-.         STR$1 =  HTMLTEXT
+.         STR$1 =  HTML_TEXT
 .       else
 .         STR$1 = 'Unable to read line'
 .       endif
@@ -57,9 +57,9 @@ program crwarn
 .       read(MEM, END = DONE) LINE__4 (A1000)
 .       ANY_NUM__4 = ANY_NUM__4 + 1
 .       LINE__4 = TRIMLR(LINE__4)
-.       execute subroutine WPF.TOOLS.HTMLTEXT (LINE__4, 1) RETURNING (HTMLTEXT, RET_CODE__4)
+.       execute subroutine WPF.TOOLS.HTML_TEXT (LINE__4, 1) RETURNING (HTML_TEXT, RET_CODE__4)
 .       ifthen(RET_CODE__4 eq 0)
-.         STR$1 =  HTMLTEXT
+.         STR$1 =  HTML_TEXT
 .       else
 .         STR$1 = 'Unable to read line'
 .       endif

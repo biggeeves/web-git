@@ -1,4 +1,4 @@
-PROCEDURE      TOOLS.HTMLTEXT:T  (156819,52485)  |Last amended Feb 21, 2012,14:34:45
+PROCEDURE      TOOLS.HTML_TEXT:T  (157542,79447)  |Last amended Feb 13, 2014,22:04:07
 c
 c This subroutine translates HTML codes (not tags) to ascii text and vv.
 c input is string to be coded;
@@ -7,7 +7,7 @@ c output is coded string
 c           rc = 0 normal end
 c           rc not 0 = bad things happened - like there was an unrecognized &code; or invalid &#number;
 c
-SUBROUTINE WPF.TOOLS.HTMLTEXT (STRING, DIR) RETURNING (NEWSTR, RC) NODATABASE REPLACE
+SUBROUTINE WPF.TOOLS.HTML_TEXT (STRING, DIR) RETURNING (NEWSTR, RC) NODATABASE REPLACE
 STRING*4094 STRING NEWSTR
 STRING*103 SPECIAL
 STRING*8 ARRAY SPECODE (103)

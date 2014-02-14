@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_CODEBOOK.SEARCH:T  (157459,46198)  |Last amended Nov 22, 2013,12:49:58
+PROCEDURE      INC_BODY_CODEBOOK.SEARCH:T  (157542,79267)  |Last amended Feb 13, 2014,22:01:07
 c Searches Codebook.
 
 program crwarn
@@ -47,8 +47,8 @@ C write 'text: <GSEARCHTEXT><br> VL: <GVARLABELS><BR> VN: <GVARNAMES><BR>VL: <GV
 .   for EACH_RECORD_NUMBER  = 1, nrecs(0)   |rec numbers
 .     compute REC_NAME__4 = trimlr(recname(EACH_RECORD_NUMBER))
 .     ifnot (len(REC_NAME__4) gt 0) NEXT FOR
-.     execute subroutine WPF.TOOLS.HTMLTEXT (REC_NAME__4, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.     if(RET_CODE__4 eq 0) REC_NAME__4 = HTMLTEXT
+.     execute subroutine WPF.TOOLS.HTML_TEXT (REC_NAME__4, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.     if(RET_CODE__4 eq 0) REC_NAME__4 = HTML_TEXT
 c     Var names
 .     for EACH_VARIABLE = 1, nvarsc(EACH_RECORD_NUMBER)
 .       set SCH_VARNAME SCH_VARLABEL SCH_VALVALUE SCH_RANGE (0)
@@ -111,10 +111,10 @@ c         ranges
 .       endif
 
 .       ifthen (1 eq SCH_VARNAME or SCH_VARLABEL or SCH_VALVALUE or SCH_RANGE)
-.         execute subroutine WPF.TOOLS.HTMLTEXT (VNAME$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.         if(RET_CODE__4 eq 0) VNAME$ = HTMLTEXT
-.         execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.         if(RET_CODE__4 eq 0) VAR_LABEL = HTMLTEXT
+.         execute subroutine WPF.TOOLS.HTML_TEXT (VNAME$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.         if(RET_CODE__4 eq 0) VNAME$ = HTML_TEXT
+.         execute subroutine WPF.TOOLS.HTML_TEXT (VAR_LABEL, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.         if(RET_CODE__4 eq 0) VAR_LABEL = HTML_TEXT
 .         execute subprocedure WRITE_ROW
 .       endif
 
@@ -129,8 +129,8 @@ c         ranges
 
 . subprocedure WRITE_ROW
 .   COUNTS__4 = COUNTS__4 + 1
-.   execute subroutine WPF.TOOLS.HTMLTEXT (STR$2, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.   if(RET_CODE__4 eq 0) STR$2 = HTMLTEXT
+.   execute subroutine WPF.TOOLS.HTML_TEXT (STR$2, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) STR$2 = HTML_TEXT
 
 .   ifthen (ANY_NUM__4 ne EACH_VARIABLE)
 .     ANY_NUM__4 = EACH_VARIABLE

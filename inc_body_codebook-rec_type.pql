@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_CODEBOOK.REC_TYPE:T  (157459,46168)  |Last amended Nov 22, 2013,12:49:28
+PROCEDURE      INC_BODY_CODEBOOK.REC_TYPE:T  (157542,79246)  |Last amended Feb 13, 2014,22:00:46
 program crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -20,8 +20,8 @@ CALL WPF.SYSTEM.INI_VARS
 .   elseif (len(RECDOC$) < 1)
 .     RECDOC$ = trimlr(recdoc(REC_TYPE_NUMBER, 1))
 .   endif
-.   execute subroutine WPF.TOOLS.HTMLTEXT (RECDOC$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.   if(RET_CODE__4 eq 0) RECDOC$ =  HTMLTEXT
+.   execute subroutine WPF.TOOLS.HTML_TEXT (RECDOC$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) RECDOC$ =  HTML_TEXT
 
 .   write(cgi) '<h3 ' HOVER_TITLE '>'
 .   STR$1 = 'Table ' + format(REC_TYPE_NUMBER) + ': ' + REC$
@@ -48,8 +48,8 @@ CALL WPF.SYSTEM.INI_VARS
 .       ifthen (EACH_REC_LINE = 1)
 .         RECDOC$ = 'Record Type Documentation: ' + RECDOC$
 .       endif
-.       execute subroutine WPF.TOOLS.HTMLTEXT (RECDOC$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.       if(RET_CODE__4 eq 0) RECDOC$ = HTMLTEXT
+.       execute subroutine WPF.TOOLS.HTML_TEXT (RECDOC$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.       if(RET_CODE__4 eq 0) RECDOC$ = HTML_TEXT
 .       ifthen (len(RECDOC$) > 0)
 .         write(cgi) '<h4>' RECDOC$ '</h4>'
 .       endif
@@ -90,12 +90,12 @@ CALL WPF.SYSTEM.INI_VARS
 .     VARDOC$ = trimlr(vardocsn(REC_TYPE_NUMBER, VNAME$, 1))
 .     VARDOC$ = replace (VARDOC$,' ENDHEADER','', 1, 1, 0)
 .     VARDOC$ = replace (VARDOC$, 'HEADER ', '', 1, 1, 0)
-.     execute subroutine WPF.TOOLS.HTMLTEXT (VARDOC$,  1) RETURNING (HTMLTEXT, RET_CODE__4)
-.     if(RET_CODE__4 eq 0) VARDOC$ = HTMLTEXT
+.     execute subroutine WPF.TOOLS.HTML_TEXT (VARDOC$,  1) RETURNING (HTML_TEXT, RET_CODE__4)
+.     if(RET_CODE__4 eq 0) VARDOC$ = HTML_TEXT
 |Var Label
 .     VARLAB$ = varlabsc(REC_TYPE_NUMBER, VNAME$)
-.     execute subroutine WPF.TOOLS.HTMLTEXT (VARLAB$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.     if(RET_CODE__4 eq 0) VARLAB$ = HTMLTEXT
+.     execute subroutine WPF.TOOLS.HTML_TEXT (VARLAB$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.     if(RET_CODE__4 eq 0) VARLAB$ = HTML_TEXT
 |Case
 .     STR$1 = ' - '
 .     ifthen (VNAME$ eq CASE$)
@@ -139,8 +139,8 @@ CALL WPF.SYSTEM.INI_VARS
 .   elseif (vtype(REC_TYPE_NUMBER, VNAME$) eq 8) |  scaled variable
 .     STR$1 = vformat(REC_TYPE_NUMBER, VNAME$)
 .   endif
-.   execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.   if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
+.   execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.   if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 .   write(cgi) 2t '<dd>' STR$1
 | Range
 .   ifthen (exists(nmin(REC_TYPE_NUMBER, VNAME$)))
@@ -158,8 +158,8 @@ CALL WPF.SYSTEM.INI_VARS
 .       if(exists(VAR_MIN eq 1)) STR$1 = STR$1 + format(VAR_MIN)
 .       if(exists(VAR_MAX eq 1)) STR$1 = STR$1 + ' - ' + format(VAR_MAX)
 .     endif
-.     execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.     if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
+.     execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.     if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 .     write(cgi) STR$1
 .   elseif (exists(smin(REC_TYPE_NUMBER, VNAME$)))
 .     STR$1 = 'Range: ' + smin(REC_TYPE_NUMBER, VNAME$) +  ' - ' + SMAX(REC_TYPE_NUMBER, VNAME$)
@@ -176,8 +176,8 @@ CALL WPF.SYSTEM.INI_VARS
 .       ifthen (srst(VALLAB$, '>') <> 0)
 .         VALLAB$ = replace(VALLAB$, '>', '&gt;', 5, 1, 0)
 .       endif
-.       execute subroutine WPF.TOOLS.HTMLTEXT (VALLAB$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.       if(RET_CODE__4 eq 0) VALLAB$ = HTMLTEXT
+.       execute subroutine WPF.TOOLS.HTML_TEXT (VALLAB$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.       if(RET_CODE__4 eq 0) VALLAB$ = HTML_TEXT
 .       STR$1 = '<li class="spacecompress">(' + vallabsv(REC_TYPE_NUMBER, VNAME$, I) + ') ' + VALLAB$ + '</li>'
 .       write(cgi) 2t STR$1
 .     end for
@@ -188,8 +188,8 @@ CALL WPF.SYSTEM.INI_VARS
 .       STR$1 = STR$1 + format(nvval(REC_TYPE_NUMBER, VNAME$, EACH_VALID_VALUE)) + ', '
 .     end for
 .     STR$1 = sbst(STR$1, 1, len(trim(STR$1)) - 1)
-.     execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.     if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
+.     execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.     if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 
 
 .     write(cgi) STR$1 '</dd>'
@@ -202,8 +202,8 @@ CALL WPF.SYSTEM.INI_VARS
 .   end for
 .   ifthen (len(trim(STR$1)) gt 0)
 .     MISS$ = '(' + trim(miss(REC_TYPE_NUMBER, VNAME$, 1)) + ')'
-.     execute subroutine WPF.TOOLS.HTMLTEXT (MISS$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.     if(RET_CODE__4 eq 0) MISS$ = HTMLTEXT
+.     execute subroutine WPF.TOOLS.HTML_TEXT (MISS$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.     if(RET_CODE__4 eq 0) MISS$ = HTML_TEXT
 .     write(cgi)'Missing Values:'
 .     write(cgi)'<ul class="nobullets">'
 .     write(cgi)'<li>1st ' MISS$

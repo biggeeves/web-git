@@ -1,4 +1,4 @@
-PROCEDURE      JS.GLOBAL_JS:T  (157540,57406)  |Last amended Feb 11, 2014,15:56:46
+PROCEDURE      JS.GLOBAL_JS:T  (157542,63790)  |Last amended Feb 13, 2014,17:43:10
 program
 . open globaljs /write lrecl = 600 IOSTAT =  IOSTAT__4
 . ifNOTthen (IOSTAT__4 eq 0)
@@ -311,8 +311,8 @@ CIF END
 
 c if the session ID cookie doesn't match up, send user to logged out page.
 write(globaljs) 'function checkCookies() {'
-write(globaljs) '    var useridVar  = getCookie(''USERID''),'
-write(globaljs) '        sessionVar = getCookie(''SESSIONID'');'
+write(globaljs) '    var useridVar  = getCookie(''USER_ID''),'
+write(globaljs) '        sessionVar = getCookie(''SESSION_ID'');'
 write(globaljs) '    if (useridVar === null || useridVar === "") { autoLogOut();return; }'
 write(globaljs) '    if (useridVar === "loggedOut") { autoLogOut();return; }'
 write(globaljs) '    if (sessionVar === null || sessionVar === "") { autoLogOut();return; }'

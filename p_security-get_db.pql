@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.GET_DB:T  (157515,44069)  |Last amended Jan 17, 2014,12:14:29
+PROCEDURE      P_SECURITY.GET_DB:T  (157542,78925)  |Last amended Feb 13, 2014,21:55:25
 GLOBAL GOON__4 = 1
 
 retrieval crwarn
@@ -8,8 +8,8 @@ integer *     1   GOON__4                 | Control flow variable
 
 SET GOON__4 (0)
 
-. process rec SESSIONS VIA ('<USERID>' '<SESSIONID>')
-.   DB_NAME__4 = SESSIONDB
+. process rec SESSIONS VIA ('<USER_ID>' '<SESSION_ID>')
+.   DB_NAME__4 = WEB_DB_NAME
 .   GOON__4 =1
 . end rec
 . ifthen (exists(DB_NAME__4) eq 0)
@@ -19,12 +19,12 @@ SET GOON__4 (0)
 .   ANY_NUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLLER.STOP_PAGE')
 . endif
 . ifthen (GOON__4 eq 1)
-.   old rec is DBADMIN VIA (DB_NAME__4)
+.   old rec is DB_INFO VIA (DB_NAME__4)
 .     GOON__4 = 2
-.     ANY_NUM__4 = globals('GDB' , trimlr(SESSIONDB))
-.     ANY_NUM__4 = globals('GDBPATH', trimlr(FOLDER))
-.     ANY_NUM__4 = globals('GMSTIP', MASTER_IP)
-.     ANY_NUM__4 = globals('GMSTPORT', MASTER_PORT)
+.     ANY_NUM__4 = globals('GDB' , trimlr(WEB_DB_NAME))
+.     ANY_NUM__4 = globals('GDB_PATH', trimlr(FOLDER))
+.     ANY_NUM__4 = globals('GMST_IP', MASTER_IP)
+.     ANY_NUM__4 = globals('GMST_PORT', MASTER_PORT)
 .   end rec is
 . endif
 c

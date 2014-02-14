@@ -1,30 +1,30 @@
-PROCEDURE      CONTROLLER.CASE_CONTROL:T  (156652,36066)  |Last amended Sep 07, 2011,10:01:06
+PROCEDURE      CONTROLLER.CASE_CONTROL:T  (157542,65344)  |Last amended Feb 13, 2014,18:09:04
 CALL WPF.DB_CHECKS.VALID_CASE
 
 c create a new case if that was selected
-CIF EQ 'new', '<GCASEOPTION>'
+CIF EQ 'new', '<GCASE_OPTION>'
 CALL WPF.DB_CHECKS.VALID_CASE
 CALL WPF.DB_UPDATE.CASE_NEW
 CIF END
 
 
 retrieval crwarn noautocase
-integer *     1   FOUNDCASE__4                | Case already exists
+integer *     1   FIRST_CASE__4                | Case already exists
 integer *     1   ANY_NUM__4                    | Use any time you want
 
-. set FOUNDCASE__4  (0)
+. set FIRST_CASE__4  (0)
 . OLD case is <CASEIS>
-.   compute FOUNDCASE__4 = 1
+.   compute FIRST_CASE__4 = 1
 . end case is
-. ifthen (FOUNDCASE__4 = 0)
+. ifthen (FIRST_CASE__4 = 0)
 .   ANY_NUM__4= globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
-.   ifthen ('new' = '<GCASEOPTION>')
+.   ifthen ('new' = '<GCASE_OPTION>')
 .     ANY_NUM__4 =  globals( 'GSOMEMESS', 'WARNING! <CASEISNQ> was not created!')
 .   else
 .     ANY_NUM__4 =  globals( 'GSOMEMESS', '<CASEISNQ> was not found')
 .   endif
 . else
-.   ifthen ('delete' = '<GCASEOPTION>')
+.   ifthen ('delete' = '<GCASE_OPTION>')
 .     ANY_NUM__4= globals( 'GSOMEMESS', 'Do you want to delete <CASEISNQ>?')
 .     ANY_NUM__4= globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_SUMMARY')
 .   else

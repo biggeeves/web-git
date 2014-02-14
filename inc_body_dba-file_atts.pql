@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.FILE_ATTS:T  (157219,51341)  |Last amended Mar 27, 2013,14:15:41
+PROCEDURE      INC_BODY_DBA.FILE_ATTS:T  (157542,79292)  |Last amended Feb 13, 2014,22:01:32
 program CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -12,14 +12,14 @@ write(cgi) '<tr><td>Output File</td><td>' [outfname(0)] '</td></tr>'
 for EACH_ATTRIBUTE = 1,  SYSTEM(52)
 c attribute
 . STR$1 = attrname(EACH_ATTRIBUTE)
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) STR$1 =  HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 =  HTML_TEXT
 . write(cgi) '<tr><td>' STR$1    '</td>'
 
 C path
 . STR$1 = dsn(STR$1)
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) STR$1 =  HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 =  HTML_TEXT
 . write(cgi) '<td>' STR$1    '</td></tr>'
 end for
 write(cgi) '</table>'

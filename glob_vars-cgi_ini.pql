@@ -1,4 +1,4 @@
-PROCEDURE      GLOB_VARS.CGI_INI:T  (157511,45726)  |Last amended Jan 13, 2014,12:42:06
+PROCEDURE      GLOB_VARS.CGI_INI:T  (157542,75242)  |Last amended Feb 13, 2014,20:54:02
 C ESSENTIAL start up globals FOR CGI ONLY!
 C NOTE A SPECIAL GLOBAL IS SET HERE.  IT TELLS YOU THAT SIR IS RUNNING IN CGI MODE, THUS NOT AS SIR.EXE
 C THE SPECIAL GLOBAL IS GRUNCGI AND IT IS SET TO "1".  IF YOU NEED TO FIND OUT IF YOU ARE IN CGI MODE, TEST THE VALUE OF GRUNCGI
@@ -11,7 +11,7 @@ integer *     4   ANY_NUM__4                    | Use any time you want
 . ANY_NUM__4 =  globals ('GUPICK', fst(trimlr(fst(cgivarpn('upick'), cgivarpn('UPICK'))), ''))
 . ANY_NUM__4 =  globals ('GJSENABLED', fst(cgivarpn('jsenabled'), cgivarpn('JSENABLED'), '-1'))
 . ANY_NUM__4 =  globals ('GSUBMIT'   , fst(cgivarpn('submit'), '-1'))
-. ANY_NUM__4 =  globals ('GDBPICK'   , upper(fst(cgivarpn('dbpick'), '-1')))
+. ANY_NUM__4 =  globals ('GDB_PICK'   , upper(fst(cgivarpn('dbpick'), '-1')))
 . ANY_NUM__4 =  globals ('GSHOWMENU' , fst(cgivarpn('showmenu'), '1')) | default is on,  dba can specify off by setting to value to 0
 . ifthen(cgivarpn('redirect')  = '')
 .   ANY_NUM__4 =  globals('GREDIRECT', '-1')

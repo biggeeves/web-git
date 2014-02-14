@@ -1,4 +1,4 @@
-PROCEDURE      TOOLS.ERR_REP:T  (157220,57713)  |Last amended Mar 28, 2013,16:01:53
+PROCEDURE      TOOLS.ERR_REP:T  (157542,79390)  |Last amended Feb 13, 2014,22:03:10
 program CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -22,11 +22,11 @@ for EACH_GLOBAL = 1,  SYSTEM(53)
 . if(exists(STR$1) eq 0) STR$1 = sglobal (VNAME$)
 . if(upper(STR$1) ='<' + upper(VNAME$) + '>') next for
 
-. execute subroutine WPF.TOOLS.HTMLTEXT (VNAME$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) VNAME$ = HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (VNAME$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) VNAME$ = HTML_TEXT
 
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 
 . write(err_rep) '<tr><td>'VNAME$ '</td><td>' STR$1 '</td></tr>'
 end for
@@ -36,14 +36,14 @@ write(err_rep) '<tr><td><hr></td><td><hr></td></tr>'
 for EACH_ATTRIBUTE = 1, SYSTEM(52)
 c attribute
 . STR$1 = attrname(EACH_ATTRIBUTE)
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 . write(err_rep) '<tr><td>' STR$1    '</td>'
 
 C path
 . STR$1 = dsn(STR$1)
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) STR$1= HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1= HTML_TEXT
 . write(err_rep) '<td>' STR$1    '</td></tr>'
 end for
 

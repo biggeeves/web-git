@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157542,58462)  |Last amended Feb 13, 2014,16:14:22
+PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157542,79375)  |Last amended Feb 13, 2014,22:02:55
 C READONLY data entry page
 
 retrieval progress CRWARN noautocase
@@ -64,8 +64,8 @@ CIF END
 .       if (VNAME$ eq 'DWHO' or 'DCCWHO' or 'DCCWHEN' OR 'DCCDATE' OR 'DCCTIME' OR 'DCCEDITS' OR 'DSTAMP' ) next for
 .       VNAME$CB = '{' +  trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  + '}'
 .       VAR_LABEL = trimlr(varlabsc(REC_TYPE_NUMBER, VNAME$CB))
-.       execute subroutine WPF.TOOLS.HTMLTEXT (VAR_LABEL, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.       if(RET_CODE__4 eq 0) VAR_LABEL =  HTMLTEXT
+.       execute subroutine WPF.TOOLS.HTML_TEXT (VAR_LABEL, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.       if(RET_CODE__4 eq 0) VAR_LABEL =  HTML_TEXT
 .       if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
 
 c add Variable specific text above the variable
@@ -120,8 +120,8 @@ c get the value of the variable,  missing user defined missings after invalid da
 .       endif
 .       ifthen (exists(STRING_VARGET) eq 1)
 .         ifNOTthen(STRING_VARGET eq '-')
-.            execute subroutine WPF.TOOLS.HTMLTEXT (STRING_VARGET, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.            if(RET_CODE__4 eq 0) STRING_VARGET = HTMLTEXT
+.            execute subroutine WPF.TOOLS.HTML_TEXT (STRING_VARGET, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.            if(RET_CODE__4 eq 0) STRING_VARGET = HTML_TEXT
 .         endif
 .       endif
 .       ifthen (vtype(REC_TYPE_NUMBER, VNAME$CB) eq 3) |date
@@ -145,8 +145,8 @@ c       Value labels column
 .       ifthen (nvallab(REC_TYPE_NUMBER, VNAME$CB) gt 0)
 .         ifNOTthen(STRING_VARGET = '-')  | for some reason it was picking the first value label if the var value was system missing
 .           VAL_LAB_VALUE = trimlr(vallabsc (REC_TYPE_NUMBER, VNAME$CB, STRING_VARGET ))
-.           execute subroutine WPF.TOOLS.HTMLTEXT (VAL_LAB_VALUE, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-.           if(RET_CODE__4 eq 0) VAL_LAB_VALUE = HTMLTEXT
+.           execute subroutine WPF.TOOLS.HTML_TEXT (VAL_LAB_VALUE, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+.           if(RET_CODE__4 eq 0) VAL_LAB_VALUE = HTML_TEXT
 .           STR$1 = '<em> ' + VAL_LAB_VALUE  + '</em>'
 .           write(cgi)  STR$1
 .         endif

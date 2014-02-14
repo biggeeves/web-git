@@ -1,11 +1,11 @@
-PROCEDURE      INC_BODY_DBA.GLOBAL_VALUES:T  (157219,51531)  |Last amended Mar 27, 2013,14:18:51
+PROCEDURE      INC_BODY_DBA.GLOBAL_VALUES:T  (157542,79303)  |Last amended Feb 13, 2014,22:01:43
 c CALL this program when you need to see the global values that are set.
 
 program CRWARN
 string  *   600   STR$1                      | General String use at any time
 string  *    32   VNAME$                     | Variable name
 string  *   600   ASCIITEXT                  | HTML to be cleaned
-string  *   600   HTMLTEXT                   | HTML after it has been cleaned
+string  *   600   HTML_TEXT                   | HTML after it has been cleaned
 integer *     4   RET_CODE__4                 | Return code for other things
 
 
@@ -17,11 +17,11 @@ for EACH_GLOBAL = 1, SYSTEM(53)
 . if(exists(STR$1) eq 0) STR$1 = sglobal (VNAME$)
 . if(upper(STR$1) eq '<' + upper(VNAME$) + '>') next for
 
-. execute subroutine WPF.TOOLS.HTMLTEXT (VNAME$, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) VNAME$ = HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (VNAME$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) VNAME$ = HTML_TEXT
 
-. execute subroutine WPF.TOOLS.HTMLTEXT (STR$1, 1) RETURNING (HTMLTEXT, RET_CODE__4)
-. if(RET_CODE__4 eq 0) STR$1 = HTMLTEXT
+. execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
+. if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 
 . write(cgi) '<tr><td>'VNAME$ '</td><td>' STR$1 '</td></tr>'
 end for

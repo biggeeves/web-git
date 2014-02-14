@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_USERNAME:T  (157542,59999)  |Last amended Feb 13, 2014,16:39:59
+PROCEDURE      P_SECURITY.CHECK_USER_NAME:T  (157542,64228)  |Last amended Feb 13, 2014,17:50:28
 program
 integer *     4   ANY_NUM__4                    | Use any time you want
 . ifthen (sglobal('USER_NAME') eq '') | missing USER_NAME

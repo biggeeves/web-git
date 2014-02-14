@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_SUMMARY:T  (157221,47112)  |Last amended Mar 29, 2013,13:05:12
+PROCEDURE      INC_BODY_FORMS.CASE_SUMMARY:T  (157542,65396)  |Last amended Feb 13, 2014,18:09:56
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -9,7 +9,7 @@ write(cgi)  '<h3>' CASE_LABEL ' <CASEISNQ> case snapshot</h3>'
 c DELETE PORTION!  MUST SEE A CASE SUMMARY BEFORE BEING ABLE TO DELETE AN ENTIRE CASE
 C note: that if you did not press delete in the previous screen, you will NOT have the ability to delete here.
 ifthen (0<GSECLEVEL> eq 30)
-. ifthen ('delete' eq '<GCASEOPTION>')
+. ifthen ('delete' eq '<GCASE_OPTION>')
 .   write(cgi)  '<h4><form method="post" action="<mycgi>">'
 .   write(cgi)  '<input type="hidden" name="member" id="member" value="WPF.INC_BODY_FORMS.CASE_SUMMARY">'
 .   CALL WPF.INC_ELEMENTS.CASE_IS

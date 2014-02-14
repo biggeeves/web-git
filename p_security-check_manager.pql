@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157542,58899)  |Last amended Feb 13, 2014,16:21:39
+PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157542,79026)  |Last amended Feb 13, 2014,21:57:06
 | set security globals to lowest level by default
 global GSECURITL_LEVEL   = 0
 global GWRITE_SECURITY   = 0
@@ -39,12 +39,12 @@ SESSION_ID = sglobal('SESSION_ID')
 
 c set the db and USER_NAME to something so the VIA does not complain if these are not found.
 . old rec is SESSIONS VIA (USER_ID SESSION_ID )
-.   DB_NAME__4   = fst(SESSIONDB , 'OPPS1')
-.   USER_NAME__4 = fst(USER_NAMEIS, 'OPPS2')
+.   DB_NAME__4   = fst(WEB_DB_NAME , 'OPPS1')
+.   USER_NAME__4 = fst(USER_NAME, 'OPPS2')
 C   CHECK cookie value, start time and
 .   START_IN_SECONDS =  CDATE(START_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(START_TIME, 'HHiMMiSS') + 18*60*60
 .   LAST_IN_SECONDS  =  CDATE(LAST_REQUEST_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(LAST_REQUEST_TIME, 'HHiMMiSS') + 35*60
-.   ifthen(LOGGEDOUT eq 1)
+.   ifthen(LOGGED_OUT eq 1)
 .     ANY_NUM__4 = globaln('STOP__4', 1)
 .     ANY_NUM__4 = globals('GSOMEMESS', 'You were logged out. Please log in again.')
 .     EXIT RETRIEVAL
@@ -60,7 +60,7 @@ C   CHECK cookie value, start time and
 .     endif
 .   endif
 . end rec
-. process rec DBUSERS VIA (DB_NAME__4 USER_NAME__4)
+. process rec DB_USERS VIA (DB_NAME__4 USER_NAME__4)
 .   GOON__4  = 2
 .   if(exists(SECURITY_LEVEL) eq 1)    ANY_NUM__4 = globaln('GSECURITY_LEVEL', SECURITY_LEVEL)     | Global security level
 .   if(exists(WRITE_SECURITY) eq 1)          ANY_NUM__4 = globaln('GWRITE_SECURITY', WRITE_SECURITY)                 | Write Security
