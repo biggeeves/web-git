@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_VIA:T  (157452,40256)  |Last amended Nov 15, 2013,11:10:56
+PROCEDURE      DB_CHECKS.VALID_VIA:T  (157543,53129)  |Last amended Feb 14, 2014,14:45:29
 c check the via and see if it access a record
 
 ERROR LIMIT NONE
@@ -12,7 +12,7 @@ process cases
 | old case is <CASEIS>
 CIF END
 
-. process rec <GDBREC> | <GVIA#>
+. process rec <GDB_REC> | <GVIA#>
 . end rec
 
 CIF EQ 1, 0<GCASED>

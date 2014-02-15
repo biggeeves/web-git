@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.BUG:T  (157542,79281)  |Last amended Feb 13, 2014,22:01:21
+PROCEDURE      INC_DBA.BUG:T  (157543,52451)  |Last amended Feb 14, 2014,14:34:11
 c Report a bug and list of bugs
 program
 ifthen(len(cgivarpn('buginfo')) gt 0)
@@ -17,7 +17,7 @@ program crwarn
 . CALL WPF.SYSTEM.INI_VARS
 . write(cgi) '<h3>Request an UPDATE or report a bug</h3>'
 . write(cgi) '<form method="post" action="<mycgi>" style="text-align:center;">'
-. write(cgi) '<input class="widthwidest" type="hidden" name="member" value="WPF.INC_DBA.BUG">'
+. write(cgi) '<input class="widthwidest" type="hidden" name="member" value="WPF.INC__BODY_DBA.BUG">'
 . CALL WPF.INC_ELEMENTS.CASE_IS
 . write(cgi) '  <textarea name= "buginfo" rows="4" cols="150"></textarea><br>'
 . write(cgi) '  <input type="submit" name="submit" value="Submit" class="btn btn-primary"><br>'
@@ -64,7 +64,7 @@ program crwarn
 .         STR$1 = 'Unable to read line'
 .       endif
 .       LINK__4 = ''
-.       if('<USER_NAME>' eq 'Greg Neils') LINK__4 = '<a href="<mycgi>?member=WPF.INC_DBA.BUG&amp;webvalue1=' + format(ANY_NUM__4) +'">'
+.       if('<USER_NAME>' eq 'Greg Neils') LINK__4 = '<a href="<mycgi>?member=WPF.INC__BODY_DBA.BUG&amp;webvalue1=' + format(ANY_NUM__4) +'">'
 .       write(cgi) '<li>' LINK__4 STR$1 '</a></li>'
 .     END LOOP
 .     DONE:

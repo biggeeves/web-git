@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.UNK_ERR:T  (157515,44050)  |Last amended Jan 17, 2014,12:14:10
+PROCEDURE      INC_BODY_FORMS.UNK_ERR:T  (157543,53633)  |Last amended Feb 14, 2014,14:53:53
 CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
 
 
@@ -10,11 +10,11 @@ set COUNTS__4  (0)
 if(len('<GSOMEMESS>') eq 0 ) write(cgi) '<h3>Opps, I am sorry but I dont know what just happened. </h3>'
 write(cgi) '<h6><p><a class="smallfont leftalign" href = "/index.html">If you were logged out, click here to return to Log In</a></p></h6>'
 
-ifthen('<GMASTERCRASH>' eq '1')
-. ifnotthen('<GDBREC>' eq '')
+ifthen('<GMST_CRASH>' eq '1')
+. ifnotthen('<GDB_REC>' eq '')
 .   write(cgi) '<p>The data was not saved.  We have attemped to dispaly the values you tried to enter.  Please print this and re-enter it.  Let us know, we would like to fix it!</p>'
 .   write(cgi) '<table class="table table-striped table-hover"><tr><td>Variable</td><td>Label</td><td>Value</td></tr>'
-.   REC_TYPE_NUMBER = 0<GDBREC>
+.   REC_TYPE_NUMBER = 0<GDB_REC>
 .   for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
 .     VNAME$ = trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  | works with non standard variable names
 .     if(exists(cgivarpn(VNAME$)) eq 0) NEXT FOR
@@ -28,7 +28,7 @@ ifthen('<GMASTERCRASH>' eq '1')
 . endif
 endif
 
-ifNOTthen (sglobal('GJSENABLED') eq 'NO')  | I do not want to see JavaScript Disabled Errors
+ifNOTthen (sglobal('GJS_ENABLED') eq 'NO')  | I do not want to see JavaScript Disabled Errors
 . EXECUTE DBMS "call WPF.TOOLS.ERR_REP"
 endif
 end program

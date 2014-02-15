@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.PICK_OLD_KEYS:T  (157542,79351)  |Last amended Feb 13, 2014,22:02:31
+PROCEDURE      INC_BODY_FORMS.PICK_OLD_KEYS:T  (157543,53198)  |Last amended Feb 14, 2014,14:46:38
 retrieval progress CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -14,7 +14,7 @@ old case is <CASEIS>
 CIF END
 . write(cgi) '<table class="table table-hover">'
 . write(cgi) '<tr><th>Keys</th><th>View</th><th>Edit</th></tr>'
-. process rec <GDBREC>
+. process rec <GDB_REC>
 .   execute subprocedure START_ROW
 . end rec
 CIF EQ 1, 0<GCASED>

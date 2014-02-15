@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.VAR_NAME_FREQ:T  (157542,79322)  |Last amended Feb 13, 2014,22:02:02
+PROCEDURE      INC_DBA.VAR_NAME_FREQ:T  (157542,79322)  |Last amended Feb 13, 2014,22:02:02
 | Varname Frequencies.  How many times is a var name used.
 | Dump all of the var names to an array, sort the array.  Second arry holds varname, table, and sum from first array.
 

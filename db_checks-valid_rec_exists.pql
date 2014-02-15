@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_REC_EXISTS:T  (157452,40288)  |Last amended Nov 15, 2013,11:11:28
+PROCEDURE      DB_CHECKS.VALID_REC_EXISTS:T  (157543,53114)  |Last amended Feb 14, 2014,14:45:14
 c Check if the record actually exists.  If not send them to PICKOLDKEYS
 
 retrieval
@@ -9,7 +9,7 @@ CIF EQ 1, 0<GCASED>
 old case is <CASEIS>
 CIF END
 
-. old rec is <GDBREC> <GVIA#>
+. old rec is <GDB_REC> <GVIA#>
 .   GOON__4 = 1
 . end rec
 

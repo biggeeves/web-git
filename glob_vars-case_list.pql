@@ -1,5 +1,5 @@
-PROCEDURE      GLOB_VARS.CASE_LIST:T  (157542,65184)  |Last amended Feb 13, 2014,18:06:24
-c globals to create GCASENAV GSTARTID GNAV#
+PROCEDURE      GLOB_VARS.CASE_LIST:T  (157543,52670)  |Last amended Feb 14, 2014,14:37:50
+c globals to create GCASE_NAV GSTART_ID GNAV#
 c these values are used to help construct process cases lines
 
 retrieval CRWARN

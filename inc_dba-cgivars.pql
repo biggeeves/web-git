@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.CGIVARS:T  (157542,59793)  |Last amended Feb 13, 2014,16:36:33
+PROCEDURE      INC_DBA.CGIVARS:T  (157542,59793)  |Last amended Feb 13, 2014,16:36:33
 program  crwarn
 
 write(cgi) '<h3>CGI vars</h3>'

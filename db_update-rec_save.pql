@@ -1,21 +1,20 @@
-PROCEDURE      DB_UPDATE.REC_SAVE:T  (157542,59709)  |Last amended Feb 13, 2014,16:35:09
+PROCEDURE      DB_UPDATE.REC_SAVE:T  (157543,58536)  |Last amended Feb 14, 2014,16:15:36
 c Saves data to a record.
 GLOBAL ERR__4 = 999  | SET TO ONE ERROR AND IF THE RETRIEVAL UPDATE DOESN'T WORK IT WILL GET REPORTED BACK TO THE USER
 
 
 retrieval UPDATE crwarn showmiss | LOADMAP VARMAP UPSTAT
-print back noremarks NOcommands
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 set ERR__4 (-1)
-REC_TYPE_NUMBER = 0<GDBREC>
+REC_TYPE_NUMBER = 0<GDB_REC>
 
 
 CIF EQ 1, 0<GCASED>
 old case is <CASEIS>
 CIF END
-process rec <GDBREC> <GVIA#>
+process rec <GDB_REC> <GVIA#>
 . if(ERR__4 = -1) ERR__4 = 0 | made it into the record
 . ANY_NUM__4 = globaln('ERR__4', 0)
 . for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)

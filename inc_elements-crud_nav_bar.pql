@@ -1,5 +1,5 @@
-PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157459,46616)  |Last amended Nov 22, 2013,12:56:56
-REC_TYPE_NUMBER  = 0<GDBREC>
+PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157543,53314)  |Last amended Feb 14, 2014,14:48:34
+REC_TYPE_NUMBER  = 0<GDB_REC>
 
 write(cgi) '  <form name="dataentry" action="<mycgi>"  method="post" onKeyPress="return disableEnterKey(event)">'
 write(cgi) '    <input type="hidden" name="member" value="WPF.CONTROLLER.REC_NAV">'
@@ -12,7 +12,7 @@ write(cgi) '<div class="span11 offset1">'
 write(cgi) '<span id="entryleft">'
 c SAVE if permission is OK
 STR$1 = '&nbsp;'
-ifthen (0<GWS> ne 0)
+ifthen (0<GWRITE_SECURITY> ne 0)
 . ifthen (0<REC_STAT> le 4)
 .   STR$1 ='<input type="submit" id="b_saverec" name="upick" value="Save" class="btn btn-primary" title="Save" onclick="return beforeSave();pressedSave();serverRequest(''Saving'')">'
 . endif
@@ -20,11 +20,11 @@ endif
 write(cgi) STR$1
 
 STR$1 = '&nbsp;'
-ifthen (0<GWS> ne 0)
+ifthen (0<GWRITE_SECURITY> ne 0)
 . ifthen (0<REC_STAT> le 4)
 .   cif nb <CASEIS>
 .     CASE IS <CASEIS>
-.       ifthen(count(nglobal('GDBREC')) lt maxrecs(nglobal('GDBREC')) )
+.       ifthen(count(nglobal('GDB_REC')) lt maxrecs(nglobal('GDB_REC')) )
 .         STR$1 = '<input type="submit" id="b_newrec" name="upick" value="New" title="New Record" class="btn btn-primary">'
 .       endif
 .     END CASE IS
@@ -34,9 +34,9 @@ endif
 write(cgi) STR$1
 
 STR$1 = '&nbsp;'
-ifthen (0<GWS> ne 0)
+ifthen (0<GWRITE_SECURITY> ne 0)
 . ifthen (0<REC_STAT> le 4)
-.   ifthen (0<GDELREC> eq 1)
+.   ifthen (0<GDELETE_RECS> eq 1)
 .     STR$1 = '<input type="submit" id="b_deleterec" name="upick" value="Delete" class="btn btn-primary" title="Delete this record" onclick="return confirmDelRec()">'
 .   endif
 . endif
@@ -56,7 +56,7 @@ CIF END
 | Show First, Previous, Next, Last buttons
 ANY_NUM__4 = 0
 STR$1 = '&nbsp;'
-process rec <GDBREC> reverse <GTHRU#>
+process rec <GDB_REC> reverse <GTHRU#>
 . ANY_NUM__4 = ANY_NUM__4 + 1
 . ifthen (ANY_NUM__4 eq 2)
 .   STR$1 = '<input type="submit" id="b_firstrec" name="upick" value="First" class="btn btn-primary" title="First Record">&nbsp;'
@@ -68,7 +68,7 @@ write(cgi) STR$1
 
 ANY_NUM__4 = 0
 STR$1 = '&nbsp;'
-process rec <GDBREC> <GFROM#>
+process rec <GDB_REC> <GFROM#>
 . ANY_NUM__4 = ANY_NUM__4 + 1;
 . ifthen (ANY_NUM__4 eq 2)
 .   STR$1 = '<input type="submit" id="b_nextrec" name="upick" value="Next" class="btn btn-primary" title="Next Record">&nbsp;'
@@ -84,7 +84,7 @@ end cases
 CIF END
 
 STR$1 = '&nbsp;'
-ifthen (0<GSECLEVEL> eq  30)
+ifthen (0<GSECURITY_LEVEL> eq  30)
 . ifthen (0<REC_STAT> le 4)
 .   STR$1 = '<input type="reset" id="b_refresh" value="Refresh" class="btn btn-primary" title="Reset values">'  | perhaps display this button for DBAs later.
 . endif

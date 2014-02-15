@@ -1,4 +1,4 @@
-PROCEDURE      GLOB_VARS.CGI_DB:T  (157542,65367)  |Last amended Feb 13, 2014,18:09:27
+PROCEDURE      GLOB_VARS.CGI_DB:T  (157543,55793)  |Last amended Feb 14, 2014,15:29:53
 c Create global values from CGI Vars
 C Only values that can be obtained once through security
 PROGRAM
@@ -6,7 +6,7 @@ string  *   600   STR$1                      | General String use at any time
 integer *     4   ANY_NUM__4                  | Use any time you want
 
 . ANY_NUM__4 =  globaln ('GCASED', dbtype(0))
-. ANY_NUM__4 =  globals ("GDBREC", fst(cgivarpn('gdbrec'), '9999'))
+. ANY_NUM__4 =  globals ("GDB_REC", fst(cgivarpn('gdbrec'), '9999'))
 . ANY_NUM__4 =  globals ('GSEARCHTEXT', cgivarpn('gsearchtext'))
 . ANY_NUM__4 =  globals ('GVARLABELS', cgivarpn('gvarlabels'))
 . ANY_NUM__4 =  globals ('GVARNAMES', cgivarpn('gvarnames'))
@@ -20,15 +20,15 @@ integer *     4   ANY_NUM__4                  | Use any time you want
 . ANY_NUM__4 =  globals ('GEXACTMATCH', cgivarpn('exactmatch'))
 . ANY_NUM__4 =  globals ('GPROG1', fst(cgivarpn('webprog1'), ''))
 . ANY_NUM__4 =  globals ('GPROGTITLE', fst(cgivarpn('progtitle'), ''))
-. ANY_NUM__4 =  globals ('GSAVECODE', fst(cgivarpn('savecode'), ''))
+. ANY_NUM__4 =  globals ('GSAVE_CODE', fst(cgivarpn('savecode'), ''))
 . ANY_NUM__4 =  globals ('GDAY', fst(cgivarpn('gday'), '-1'))
 
 C CASEIS
 . ifthen (dbtype(0) eq 1) |case structured
 .   ANY_NUM__4 = globals ('CASEISNQ', fst(cgivarpn('caseis'), ''))
-.   ANY_NUM__4 = globals ('GCASE_OPTION', fst(cgivarpn('CASE_OPTION'), ''))
-.   ANY_NUM__4 = globals ('GCASENAV', fst(cgivarpn('casenav'), ''))
-.   ANY_NUM__4 = globals ('GSTARTID', fst(cgivarpn('startid'), ''))
+.   ANY_NUM__4 = globals ('GCASE_OPTION', fst(cgivarpn('case_option'), ''))
+.   ANY_NUM__4 = globals ('GCASE_NAV', fst(cgivarpn('casenav'), ''))
+.   ANY_NUM__4 = globals ('GSTART_ID', fst(cgivarpn('startid'), ''))
 .   ifthen (vtype (0,  keyname(0, 1)) eq 1)
 .     STR$1  = '"' +  cgivarpn('caseis')  + '"'
 .   else
@@ -41,7 +41,7 @@ C CASEIS
 . STR$1  = famname(numbr(cgivarpn('runfamnum')))
 . ANY_NUM__4 = globals ('GRUNFAMNAME', fst(STR$1, ''))
 . ANY_NUM__4 = globals ('GRUNMEMNAME', fst(cgivarpn('runmemname'), ''))
-. ANY_NUM__4 =  globals  ('GRECNAV', trimlr( fst(cgivarpn('grecnav'), cgivarpn('GRECNAV'), '')))
+. ANY_NUM__4 =  globals  ('GREC_NAV', trimlr( fst(cgivarpn('grecnav'), cgivarpn('GRECNAV'), '')))
 
 end program
 
@@ -59,10 +59,10 @@ program
 . string  *    32   VNAME$CB                  | Variable name
 . VNUMBER__4 = nglobal('VNUM__4')
 . if(exists(VNUMBER__4) eq 0) VNUMBER__4 = 0  | if it is missing, then SIR complains on the following line.  not good.
-. VNAME$ = trimlr(varnamec(<GDBREC>, VNUMBER__4))
+. VNAME$ = trimlr(varnamec(<GDB_REC>, VNUMBER__4))
 . VNAME$CB = stdname(VNAME$)
 . ifthen(exists(VNAME$) eq 1)
-.   X = GLOBALN('GVTYPE', vtype(<GDBREC>, VNAME$CB))
+.   X = GLOBALN('GVTYPE', vtype(<GDB_REC>, VNAME$CB))
 . else
 .   X = GLOBALN('GVTYPE', 0)
 . endif

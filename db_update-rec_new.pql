@@ -1,4 +1,4 @@
-PROCEDURE      DB_UPDATE.REC_NEW:T  (157452,48212)  |Last amended Nov 15, 2013,13:23:32
+PROCEDURE      DB_UPDATE.REC_NEW:T  (157543,53565)  |Last amended Feb 14, 2014,14:52:45
 c create a new record and double check
 
 global GOON__4 = '0'
@@ -19,7 +19,7 @@ CALL WPF.SYSTEM.INI_VARS
 CIF EQ 1, 0<GCASED>
 . case is <CASEIS>
 CIF END
-.   rec is <GDBREC> <GVIA#>   | GVIA# was constructed before this retrieval ran.
+.   rec is <GDB_REC> <GVIA#>   | GVIA# was constructed before this retrieval ran.
 .     ANY_NUM__4 = globaln('GOON__4', 1)
 .   end rec is
 CIF EQ 1, 0<GCASED>

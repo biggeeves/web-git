@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_LIST:T  (157221,47107)  |Last amended Mar 29, 2013,13:05:07
+PROCEDURE      INC_BODY_FORMS.CASE_LIST:T  (157543,52641)  |Last amended Feb 14, 2014,14:37:21
 c Show  a list of CASE IDs
 
 CALL WPF.GLOB_VARS.CASE_LIST
@@ -14,7 +14,7 @@ write(cgi) '<h3>' STR$1 ' List'
 write(cgi) '  <form name = "caselist" action="<mycgi>" method="post">'
 write(cgi) '    <input type="hidden" name="member" value="WPF.INC_BODY_FORMS.CASE_LIST">'
 write(cgi) '<table class="table table-striped table-hover">'
-STR$1 = sglobal('GSTARTID')
+STR$1 = sglobal('GSTART_ID')
 ifnot(len(STR$1) gt 0) STR$1 =  ""
 write(cgi) '  <tr><td class="indent">Starting with</td>'
 write(cgi) '      <td><input type="text"   name="startid" value="' STR$1 '"></td>'

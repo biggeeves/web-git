@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.VAR_USAGE:T  (157221,45374)  |Last amended Mar 29, 2013,12:36:14
+PROCEDURE      INC_REPORTS.VAR_USAGE:T  (157543,53765)  |Last amended Feb 14, 2014,14:56:05
 retrieval CRWARN NOAUTOCASE
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -52,8 +52,8 @@ CIF EQ 1, 0<GCASED>
 process cases
 get vars all
 CIF END
-CIF NE 0, <GDBREC>
-. process rec <GDBREC>
+CIF NE 0, <GDB_REC>
+. process rec <GDB_REC>
 CIF END
 .   for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
 .     VNAME$ = varnamec(REC_TYPE_NUMBER, EACH_VARIABLE)
@@ -84,7 +84,7 @@ CIF END
 .       VAREXISTS(EACH_VARIABLE) = VAREXISTS(EACH_VARIABLE) + 1
 .     endif
 .   end for
-CIF NE 0, <GDBREC>
+CIF NE 0, <GDB_REC>
 . end rec
 CIF END
 CIF EQ 1, 0<GCASED>
@@ -122,7 +122,7 @@ CIF END
 .   ifthen (REC_TYPE_NUMBER eq 0)
 .     write(cgi) 2t '<td>n.a.</td>'
 .   else
-.     STR$1 = '"<mycgi>?member=WPF.INC_REPORTS.FREQ_1&amp;submit=Frequencies&amp;gdbrec=' + sglobal('gdbrec')  + '&amp;webvnum=' + format(EACH_VARIABLE) + '"'
+.     STR$1 = '"<mycgi>?member=WPF.INC_REPORTS.FREQ_1&amp;submit=Frequencies&amp;gdbrec=' + sglobal('GDB_REC')  + '&amp;webvnum=' + format(EACH_VARIABLE) + '"'
 .     write(cgi) 4t '<td><a class="bluetext" href=' STR$1 '>Freq.</a></td>'
 .   endif
 .   write(cgi) 2t '</tr>'

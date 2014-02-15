@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.JAVASCRIPT:T  (157542,80509)  |Last amended Feb 13, 2014,22:21:49
+PROCEDURE      INC_ELEMENTS.JAVASCRIPT:T  (157543,53341)  |Last amended Feb 14, 2014,14:49:01
 . write(cgi) '<script type="text/javascript" src="<full_url>js/global.js"></script>'
 ifthen (system(40) eq 1)
 . STR$1 =  '"<full_url>' + DB_NAME__4 + '/js/casenav.js"'
@@ -9,7 +9,7 @@ ifthen (system(40) eq 1)
 . write(cgi) '<script type="text/javascript" src=' STR$1 '></script>'
 
 c record specific JS
-. REC_NAME__4 = trimlr(recname(nglobal('GDBREC')))
+. REC_NAME__4 = trimlr(recname(nglobal('GDB_REC')))
 . if(exists(REC_NAME__4) eq 0) REC_NAME__4 = 'noexist'
 . if(len(REC_NAME__4) eq 0) REC_NAME__4 = 'noexist'
 . compute MEMBER_NAME = 'SIR0' +  format(system(39)) + '4.' + 'JS' +  REC_NAME__4  + '.'

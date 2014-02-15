@@ -1,4 +1,4 @@
-PROCEDURE      DB_UPDATE.REC_DEL:T  (157542,59690)  |Last amended Feb 13, 2014,16:34:50
+PROCEDURE      DB_UPDATE.REC_DEL:T  (157543,53137)  |Last amended Feb 14, 2014,14:45:37
 GLOBAL GOON__4 = -1
 
 retrieval UPDATE crwarn | LOADMAP VARMAP UPSTAT
@@ -8,12 +8,12 @@ CALL WPF.SYSTEM.INI_VARS
 CIF EQ 1, 0<GCASED>
 old case is <CASEIS>
 CIF END
-old rec is <GDBREC> <GVIA#>
+old rec is <GDB_REC> <GVIA#>
 . ANY_NUM__4 = globaln('GOON__4', 1)
 . delete rec
 end rec is
 c test to see if deleted
-old rec is <GDBREC> <GVIA#>
+old rec is <GDB_REC> <GVIA#>
 . ANY_NUM__4 = globaln('GOON__4', 0)
 end rec
 CIF EQ 1, 0<GCASED>

@@ -1,8 +1,7 @@
-PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157542,79375)  |Last amended Feb 13, 2014,22:02:55
+PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157543,58515)  |Last amended Feb 14, 2014,16:15:15
 C READONLY data entry page
 
 retrieval progress CRWARN noautocase
-c print back on
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 set REC_ACCESSED__4 (0)
@@ -11,7 +10,7 @@ write(cgi) '  <h3 title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
 if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <CASEISNQ> '
 write(cgi) REC_LABEL__4
 ifthen (0<GVIEW_SCHEMA> eq 1)
-. write(cgi) '<a class="smallfont" target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDBREC>">Codebook</a>'
+. write(cgi) '<a class="smallfont" target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDB_REC>">Codebook</a>'
 endif
 write(cgi) '</h3>'
 
@@ -38,9 +37,9 @@ CIF EQ <GCASED>, 1
 . CASE IS <CASEIS>
 CIF END
 
-. process rec <GDBREC> <GVIA#> onetime
+. process rec <GDB_REC> <GVIA#> onetime
 .   REC_ACCESSED__4  = 1
-.   ifthen (0<GWS> ne 0)
+.   ifthen (0<GWRITE_SECURITY> ne 0)
 .     ifthen (0<REC_STAT> ne 6)
 .       LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Edit'
 .       if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis='+ sglobal('CASEISNQ')

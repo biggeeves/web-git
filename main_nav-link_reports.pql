@@ -1,11 +1,11 @@
-PROCEDURE      MAIN_NAV.LINK_REPORTS:T  (157452,50898)  |Last amended Nov 15, 2013,14:08:18
+PROCEDURE      MAIN_NAV.LINK_REPORTS:T  (157543,51583)  |Last amended Feb 14, 2014,14:19:43
 write(cgi) 10t '<li class="dropdown">'
 write(cgi) 10t '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports<b class="caret"></b></a>'
 write(cgi) 10t '  <ul class="dropdown-menu">'
 
 c generic reports
 
-ifthen(nglobal('GREPGEN') eq 1) | Can see generic reports
+ifthen(nglobal('GREPORTS_GENERAL') eq 1) | Can see generic reports
 c DB Stats
 . STR$1 = '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_REPORTS.DB_STATS'
 . if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
@@ -50,7 +50,7 @@ c Rec Case List
 endif
 
 c local reports
-ifthen(nglobal('GREPSPEC') eq 1) | Defined in MANAGER DB
+ifthen(nglobal('GREPORTS_SPECICAL') eq 1) | Defined in MANAGER DB
 . ifthen(system(40) gt 0)  | must have a database attached.  I should also check fo the SIR014 file attribute.  Added later!!
 .   for EACH_MEMBER = 1, MEMCOUNT('INC_REPORTS')
 .     ifthen (MEMINFO('INC_REPORTS.' + MEMNAME('INC_REPORTS', EACH_MEMBER), 1) eq 1) |T
@@ -66,7 +66,7 @@ c.       if(substr(reverse(STR$1), 1, 1) eq '}') STR$1 = substr(STR$1, 1, len(ST
 . endif
 endif
 
-ifthen (nglobal("GVIEWDBA") eq 1)
+ifthen (nglobal("GVIEW_DBA") eq 1)
 .  CALL WPF.MAIN_NAV.LINK_REPORTS_DBA
 endif
 

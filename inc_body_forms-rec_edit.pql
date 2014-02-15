@@ -1,8 +1,7 @@
-PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157542,79363)  |Last amended Feb 13, 2014,22:02:43
+PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157543,58508)  |Last amended Feb 14, 2014,16:15:08
 C display a generic data entry page for one record (ROW)
 
 retrieval progress CRWARN noautocase
-c print back on
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 set TAB_INDEX  (0)
@@ -15,7 +14,7 @@ write(cgi) '  <h3 title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
 if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <CASEISNQ> '
 write(cgi) REC_LABEL__4
 ifthen (0<GVIEW_SCHEMA> eq 1)
-. write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDBREC>">'
+. write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDB_REC>">'
 . write(cgi) '<small> (codebook)</small></a>'
 endif
 write(cgi) '</h3>'
@@ -72,7 +71,7 @@ cif false
 CIF END
 CIF END
 
-. process rec <GDBREC> <GVIA#> onetime
+. process rec <GDB_REC> <GVIA#> onetime
 .     REC_ACCESSED__4  = 1
 .     for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
 .       ifthen (nvarsc(REC_TYPE_NUMBER) gt 40)
@@ -117,7 +116,7 @@ endif
 .       VAR_MAX_STR = smax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
 .       SIR_VARTYPE = vtype(REC_TYPE_NUMBER,VNAME$CB)
 .       SIR_VARFORMAT = trimlr(upper(vformat(REC_TYPE_NUMBER, VNAME$CB)))
-.       ifthen (pattern(vardocsn (<gdbrec>, VNAME$CB, 1), '@radio@') eq 1)
+.       ifthen (pattern(vardocsn (<GDB_REC>, VNAME$CB, 1), '@radio@') eq 1)
 .         DISPLAY_AS = 1
 .       else
 .         DISPLAY_AS = 0

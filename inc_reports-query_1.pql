@@ -1,13 +1,13 @@
-PROCEDURE      INC_REPORTS.QUERY_1:T  (157542,59889)  |Last amended Feb 13, 2014,16:38:09
+PROCEDURE      INC_REPORTS.QUERY_1:T  (157543,53420)  |Last amended Feb 14, 2014,14:50:20
 c Query, Calls Query2 which is the retrieval portion of the program
 c must re-set the globals to first record type, first var, for the first loading of the query1
 
 program
-ANY_NUM__4 = 0<GDBREC>
+ANY_NUM__4 = 0<GDB_REC>
 ifthen(ANY_NUM__4 eq 9999 OR 0)
 . for EACH_RECORD_NUMBER  = 1, nrecs(0)
 .   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-.   ANY_NUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = globaln('GDB_REC', EACH_RECORD_NUMBER)
 .   EXIT FOR
 . end for
 endif
@@ -55,7 +55,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . endif
 . STR$1 = 'value="' + format(EACH_RECORD_NUMBER )  + '"'
 . STR$2 = 'title="'  + format(EACH_RECORD_NUMBER) + ': ' + trimlr(recname(EACH_RECORD_NUMBER))  + '"'
-. if (nglobal('GDBREC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + ' selected="selected"'
+. if (nglobal('GDB_REC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + ' selected="selected"'
 . write(cgi) 4t '<option ' STR$1 ' ' STR$2    ' >' REC_LABEL__4 '</option>'
 end for
 write(cgi) '  </select>'
@@ -95,8 +95,8 @@ write(cgi) '  <div id="reporttext" style="display:inline;"></div></td></tr>'
 write(cgi) '</table>'
 write(cgi) '</form>'
 write(cgi) '<script type="text/javascript">'
-write(cgi) ' whichrec(''<gdbrec>'',''varselect'');'
-write(cgi) ' document.getElementById(''gdbrec'').value =<gdbrec>;'
+write(cgi) ' whichrec(''<GDB_REC>'',''varselect'');'
+write(cgi) ' document.getElementById(''gdbrec'').value =<GDB_REC>;'
 write(cgi) ' document.getElementById("varselect").selectedIndex = <VNUM__4> - 1;'
 write(cgi) ' document.getElementById("operator").selectedIndex = ' SIGNNUM__4 ';'
 write(cgi) '</script>'

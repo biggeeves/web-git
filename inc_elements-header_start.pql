@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.HEADER_START:T  (157542,77360)  |Last amended Feb 13, 2014,21:29:20
+PROCEDURE      INC_ELEMENTS.HEADER_START:T  (157543,53332)  |Last amended Feb 14, 2014,14:48:52
 c this is a generic header for all of the INC_BODY_FORMS
 compute STR$1 ='<' + CHAR(33) + 'DOCTYPE html>'
 write(cgi) STR$1
@@ -26,7 +26,7 @@ write(cgi) '  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv
 write(cgi) '  <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>'
 write(cgi) '<![endif]-->'
 
-REC_NAME__4 = trimlr(recname(nglobal('GDBREC')))
+REC_NAME__4 = trimlr(recname(nglobal('GDB_REC')))
 if(exists(REC_NAME__4) eq 0) REC_NAME__4 = 'noexist'
 if(len(REC_NAME__4) eq 0) REC_NAME__4 = 'noexist'
 

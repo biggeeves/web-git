@@ -1,4 +1,4 @@
-PROCEDURE      CSS.BOOTSTRAP:T  (157543,33122)  |Last amended Feb 14, 2014,09:12:02
+PROCEDURE      CSS.BOOTSTRAP:T  (157543,28934)  |Last amended Feb 14, 2014,08:02:14
 /*!
  * Bootstrap v3.1.1 (http://getbootstrap.com)
  * Copyright 2011-2014 Twitter, Inc.
@@ -2378,7 +2378,7 @@ input[type="button"].btn-block {
   font-family: 'Glyphicons Halflings';
 
   src: url('../fonts/glyphicons-halflings-regular.eot');
-  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-ha
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-h
 }
 .glyphicon {
   position: relative;

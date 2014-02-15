@@ -1,6 +1,6 @@
-PROCEDURE      MAIN_NAV.LINK_HOME:T  (157219,49663)  |Last amended Mar 27, 2013,13:47:43
+PROCEDURE      MAIN_NAV.LINK_HOME:T  (157543,52265)  |Last amended Feb 14, 2014,14:31:05
 LINK__4 = 'href="<mycgi>?member=WPF.INC_BODY_FORMS.WELCOME"'  | default to Welcom page
-ifthen(nglobal('GVIEWIDS') eq 1)
+ifthen(nglobal('GVIEW_IDS') eq 1)
 . ifthen (dbtype(0) eq 1)
 |   case structured home button goes to case nav
 .   LINK__4 = ' href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NAV'

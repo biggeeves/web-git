@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_TABLE:T  (157542,79381)  |Last amended Feb 13, 2014,22:03:01
+PROCEDURE      INC_BODY_FORMS.REC_TABLE:T  (157543,53280)  |Last amended Feb 14, 2014,14:48:00
 c you get to this by choosing Detailed Case Summary and then clicking on Table.
 c All variables for a case in a table format.
 
@@ -15,24 +15,24 @@ ifthen(dbtype(0) eq 1)
 . endif
 endif
 
-REC_CNT__4 = numrecs(nglobal('GDBREC'))
+REC_CNT__4 = numrecs(nglobal('GDB_REC'))
 
 CIF EQ 1, 0<GCASED>
 . CIF NE '<GUPICK>',  'ALLCASES'
 .   old case is <CASEIS>
-.     REC_CNT__4 = count(nglobal('GDBREC'))
+.     REC_CNT__4 = count(nglobal('GDB_REC'))
 .   end case is
 . CIF END
 CIF END
-STR$1 = '<h3 class="smallfont" title ="' + pack(recname(<GDBREC>)) +  '">Table view for ' +  REC_LABEL__4  + '. '
+STR$1 = '<h3 class="smallfont" title ="' + pack(recname(<GDB_REC>)) +  '">Table view for ' +  REC_LABEL__4  + '. '
         + format(REC_CNT__4) +  ' records as of ' +  datec(today(0), 'Wwwwwwwww MM.DD.YYYY') + ' at '  + timec(now(0), 'hh:mm')
 write(cgi) STR$1 '</h3>'
 write(cgi) '<div style="overflow:auto; width:870px; "> '
 write(cgi) '  <table class="table table-striped table-hover" >'
 write(cgi) '    <tr><th>&nbsp;</th>'
-for EACH_VARIABLE = 1, nvarsc(<GDBREC>)
-. VNAME$ = trimlr(varnamec(<GDBREC>, EACH_VARIABLE))
-. VAR_LABEL = varlabsc(<GDBREC>, '{' + VNAME$ + '}')
+for EACH_VARIABLE = 1, nvarsc(<GDB_REC>)
+. VNAME$ = trimlr(varnamec(<GDB_REC>, EACH_VARIABLE))
+. VAR_LABEL = varlabsc(<GDB_REC>, '{' + VNAME$ + '}')
 . execute subroutine WPF.TOOLS.HTML_TEXT (VAR_LABEL, 1) RETURNING (HTML_TEXT, RET_CODE__4)
 . ifthen(RET_CODE__4 eq 0); VAR_LABEL =  HTML_TEXT
 . else; VAR_LABEL  = "incorrect text"
@@ -49,7 +49,7 @@ CIF EQ 1, 0<GCASED>
 .   old case is <CASEIS>
 . CIF END
 CIF END
-. process rec <GDBREC>
+. process rec <GDB_REC>
 .   COUNTS__4 = COUNTS__4 + 1
 .   ifthen (COUNTS__4 gt 500)
 .     exit rec | to much to display on the web even for DBAs.
@@ -68,7 +68,7 @@ c   Keys (used for the link)
 .   else
       LINK__4 = ''
 .   endif
-.   LINK__4 = '<mycgi>?member=WPF.CONTROLLER.REC_NAV' +  LINK__4 + '&amp;gdbrec=<GDBREC>&amp;upick=View'
+.   LINK__4 = '<mycgi>?member=WPF.CONTROLLER.REC_NAV' +  LINK__4 + '&amp;gdbrec=<GDB_REC>&amp;upick=View'
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))
@@ -77,8 +77,8 @@ c   Keys (used for the link)
 .   write(cgi) '    <td><a href="' LINK__4 '">View</a></td>'
 
 c   Variable values
-.   for EACH_VARIABLE = 1, nvarsc(<GDBREC>)
-.     VNAME$ = trimlr(varnamec(<GDBREC>, EACH_VARIABLE))
+.   for EACH_VARIABLE = 1, nvarsc(<GDB_REC>)
+.     VNAME$ = trimlr(varnamec(<GDB_REC>, EACH_VARIABLE))
 .     VNAME$CB =  '{' +  VNAME$  + '}'
 .     SIR_VARTYPE = vtype(REC_TYPE_NUMBER, VNAME$CB)
 .     SIR_VARFORMAT = trimlr(upper(vformat(REC_TYPE_NUMBER, VNAME$CB)))
@@ -96,8 +96,8 @@ c   Variable values
 
 .     ifthen (exists(varget(VNAME$CB)) eq 0) |it MIGHT be a missing value.
 .       evaluate MISVAL = "misnum(" + trim(VNAME$CB) + ")"
-.       if then (exists(miss(<GDBREC>, VNAME$CB, MISVAL)) eq 1)
-.         write(cgi) ['    <td class="alt">' + miss(<GDBREC>, VNAME$CB, MISVAL) + '&nbsp;</td>']
+.       if then (exists(miss(<GDB_REC>, VNAME$CB, MISVAL)) eq 1)
+.         write(cgi) ['    <td class="alt">' + miss(<GDB_REC>, VNAME$CB, MISVAL) + '&nbsp;</td>']
 .       else
 .         write(cgi) '    <td class="alt">&nbsp;</td>'
 .       end if

@@ -1,13 +1,13 @@
-PROCEDURE      INC_REPORTS.REC_CASE_LIST:T  (157221,45959)  |Last amended Mar 29, 2013,12:45:59
+PROCEDURE      INC_REPORTS.REC_CASE_LIST:T  (157543,53527)  |Last amended Feb 14, 2014,14:52:07
 c list of all cases in a record type.
 c must re-set the globals to first record type, for the first load
 
 program
-ANY_NUM__4 = 0<GDBREC>
+ANY_NUM__4 = 0<GDB_REC>
 ifthen(ANY_NUM__4 eq 9999 OR 0)
 . for EACH_RECORD_NUMBER  = 1, nrecs(0)
 .   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-.   ANY_NUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = globaln('GDB_REC', EACH_RECORD_NUMBER)
 .   EXIT FOR
 . end for
 endif
@@ -43,7 +43,7 @@ for EACH_RECORD_NUMBER =1, nrecs(0)
 . endif
 . STR$1 =  'value="' + format(EACH_RECORD_NUMBER )  + '"'
 . STR$2 = 'title="'  + format(EACH_RECORD_NUMBER) + ': ' + trimlr(recname(EACH_RECORD_NUMBER))  + '"'
-. if (nglobal('GDBREC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + 'selected="selected"'
+. if (nglobal('GDB_REC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + 'selected="selected"'
 . write(cgi) 4t '<option ' STR$1 ' ' STR$2    ' >'
 . write(cgi) 4t REC_LABEL__4 '</option>'
 end for
@@ -52,7 +52,7 @@ write(cgi) '  </select>'
 write(cgi) '  <input type="submit" name="submit" class="btn btn-primary" value="Show Cases">'
 write(cgi) '</p>'
 write(cgi) '<script type="text/javascript">'
-write(cgi) ' document.getElementById(''gdbrec'').value =<gdbrec>;'
+write(cgi) ' document.getElementById(''gdbrec'').value =<GDB_REC>;'
 write(cgi) '</script>'
 
 CIF EQ '<GSUBMIT>' ,  'Show Cases'
@@ -64,7 +64,7 @@ process cases
 . ifthen (count(REC_TYPE_NUMBER) gt 0)
 .   COUNTS__4 = COUNTS__4 + 1
 .   write(cgi) '<tr>'
-.   STR$1 = '<td><a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=<GDBREC>&amp;upick=View&amp;caseis=' + STRING_VARGET  + '">' + STRING_VARGET  + '<a/></td>'
+.   STR$1 = '<td><a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=<GDB_REC>&amp;upick=View&amp;caseis=' + STRING_VARGET  + '">' + STRING_VARGET  + '<a/></td>'
 .   write(cgi) 2t STR$1
 .   write(cgi) 2t '<td>' [count(REC_TYPE_NUMBER)] '</td>'
 .   write(cgi) '</tr>'
@@ -80,7 +80,7 @@ ANY_NUM__4 = 0
 for EACH_RECORD_NUMBER  = 1, nrecs(0)
 . IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
 . ANY_NUM__4 = ANY_NUM__4 + 1
-. IF (EACH_RECORD_NUMBER  = 0<gdbrec>) EXIT FOR
+. IF (EACH_RECORD_NUMBER  = 0<GDB_REC>) EXIT FOR
 end for
 ANY_NUM__4 = ANY_NUM__4 - 1
 write(cgi) 4t 'document.getElementById("recselect").selectedIndex=' ANY_NUM__4 ';'

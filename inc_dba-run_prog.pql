@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.RUN_PROG:T  (157219,54499)  |Last amended Mar 27, 2013,15:08:19
+PROCEDURE      INC_DBA.RUN_PROG:T  (157543,52713)  |Last amended Feb 14, 2014,14:38:33
 program
 . string  *  4094   CGI__4                     | get the value of the CGI variable
 . real    *     8   ANY_NUM__4                  | Use any time you want
@@ -13,7 +13,7 @@ program crwarn
 . string  *  4094   STR$1                      | General String use at any time
 . integer *     1   IOSTAT__4                  | Return code of IOSTAT
 . real    *     8   ANY_NUM__4                  | Use any time you want
-. ifthen (nglobal('GSAVECODE')  eq 1)
+. ifthen (nglobal('GSAVE_CODE')  eq 1)
 .   ifthen(sglobal('GPROGTITLE') ne '')
 .     FPATH__4 = sglobal('GPROGTITLE')
 .   else
@@ -60,7 +60,7 @@ CIF EQ 0<GOON__4>, 1
 . program
 .   write(cgi) '</div>'
 .   write(cgi) '<h3>End of the results</h3>'
-.   ifNOT (nglobal('GSAVECODE') eq 1) ANY_NUM__4 =  DELFILE(dsn('PROG1'))
+.   ifNOT (nglobal('GSAVE_CODE') eq 1) ANY_NUM__4 =  DELFILE(dsn('PROG1'))
 . end program
 CIF END
 

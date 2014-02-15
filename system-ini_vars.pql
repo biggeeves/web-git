@@ -1,11 +1,11 @@
-PROCEDURE      SYSTEM.INI_VARS:T  (156618,57170)  |Last amended Aug 04, 2011,15:52:50
+PROCEDURE      SYSTEM.INI_VARS:T  (157543,53551)  |Last amended Feb 14, 2014,14:52:31
 . DB_NAME__4 = trim(dbname(0))
 
 . CASENAME$ = trimlr(keyname(0, 1))
 . CASE_LABEL = trimlr(varlabsc(0, CASENAME$))
 . if(CASE_LABEL = '') CASE_LABEL = CASENAME$
 
-. REC_TYPE_NUMBER  = nglobal('GDBREC')
+. REC_TYPE_NUMBER  = nglobal('GDB_REC')
 . if(exists(REC_TYPE_NUMBER) = 0) REC_TYPE_NUMBER  = 9999
 
 . REC_NAME__4 = trimlr(recname(REC_TYPE_NUMBER))

@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.DAYS_ENTRY:T  (157221,40999)  |Last amended Mar 29, 2013,11:23:19
+PROCEDURE      INC_DBA.DAYS_ENTRY:T  (157543,52539)  |Last amended Feb 14, 2014,14:35:39
 PROGRAM
 . date              VARDATE__4 ('MMIDDIYYYY')  | Validating Date values
 . ifthen(nglobal('GDAY') eq -1)

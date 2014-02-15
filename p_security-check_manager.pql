@@ -1,6 +1,6 @@
-PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157542,79026)  |Last amended Feb 13, 2014,21:57:06
+PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157543,54925)  |Last amended Feb 14, 2014,15:15:25
 | set security globals to lowest level by default
-global GSECURITL_LEVEL   = 0
+global GSECURITY_LEVEL   = 0
 global GWRITE_SECURITY   = 0
 global GREAD_SECURITY    = 0
 global GREPORTS_GENERAL  = 0

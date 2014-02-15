@@ -1,23 +1,23 @@
-PROCEDURE      CONTROLLER.REC_CHANGE_KEYS:T  (156803,48653)  |Last amended Feb 05, 2012,13:30:53
+PROCEDURE      CONTROLLER.REC_CHANGE_KEYS:T  (157543,53945)  |Last amended Feb 14, 2014,14:59:05
 C GET THE NEXT OR PREVIOUS KEYS.
 
 retrieval crwarn noautocase
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-REC_TYPE_NUMBER = nglobal('GDBREC')
+REC_TYPE_NUMBER = nglobal('GDB_REC')
 
 CIF EQ 1, 0<GCASED>
 CASE IS <CASEIS>
 CIF END
 
-ifthen (sglobal('GRECNAV') eq 'First' or 'Last')
+ifthen (sglobal('GREC_NAV') eq 'First' or 'Last')
 . ANY_NUM__4 = 1
 else
 . ANY_NUM__4 = 0
 endif
 
-process rec <GDBREC> <GPROCESS>
+process rec <GDB_REC> <GPROCESS>
 
 . ANY_NUM__4 = ANY_NUM__4 + 1;
 . IFNOT (ANY_NUM__4  = 2) NEXT REC

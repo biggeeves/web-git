@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.COLORS:T  (156819,51834)  |Last amended Feb 21, 2012,14:23:54
+PROCEDURE      INC_DBA.COLORS:T  (156819,51834)  |Last amended Feb 21, 2012,14:23:54
 program
 write (cgi) '<h1>h1</h1>'
 write (cgi) '<h2>h2</h2>'

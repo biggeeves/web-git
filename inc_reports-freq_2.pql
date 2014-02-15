@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.FREQ_2:T  (157219,58108)  |Last amended Mar 27, 2013,16:08:28
+PROCEDURE      INC_REPORTS.FREQ_2:T  (157543,53727)  |Last amended Feb 14, 2014,14:55:27
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -53,7 +53,7 @@ CIF EQ 1, 0<GCASED>
 process cases
 . get vars all
 CIF END
-. process rec <GDBREC>
+. process rec <GDB_REC>
 .   get vars all
 CIF EQ 5,<GVTYPE>
 .   perform procs

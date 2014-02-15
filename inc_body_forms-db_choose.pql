@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157542,78533)  |Last amended Feb 13, 2014,21:48:53
+PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157543,54902)  |Last amended Feb 14, 2014,15:15:02
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -27,7 +27,6 @@ GOON__4 = 0
 .   end rec
 . else
 .   process rec DB_USERS
-WRITE USER_NAME ':<USER_NAME>:'
 .     ifNOT (sglobal('USER_NAME') eq USER_NAME) NEXT REC
 .     COUNTS__4 = COUNTS__4 +1
 .     STR$1 = '<option value = "'  + trimlr(WEB_DB_NAME) + '"'

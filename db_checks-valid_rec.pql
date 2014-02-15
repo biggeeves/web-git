@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_REC:T  (157452,52645)  |Last amended Nov 15, 2013,14:37:25
+PROCEDURE      DB_CHECKS.VALID_REC:T  (157543,53107)  |Last amended Feb 14, 2014,14:45:07
 c check that a record type exists
 c
 program
@@ -21,7 +21,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4 = 1
 end for
 ifthen (GOON__4 = 0)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'The table number <GDBREC> was not found')
+. ANY_NUM__4 = globals( 'GSOMEMESS', 'The table number <GDB_REC> was not found')
 . ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif

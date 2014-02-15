@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.FIRST_PAGE:T  (157452,52549)  |Last amended Nov 15, 2013,14:35:49
+PROCEDURE      CONTROLLER.FIRST_PAGE:T  (157543,52229)  |Last amended Feb 14, 2014,14:30:29
 program
 integer *     4   ANY_NUM__4                    | Use any time you want
 . ifthen (dbtype(0) eq 0)
@@ -9,6 +9,6 @@ integer *     4   ANY_NUM__4                    | Use any time you want
 .   compute ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
 . endif
 | For people that can not see IDs set the initial page to a general welcome screen.
-. ifnot(nglobal('GVIEWIDS') eq 1) ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.WELCOME')
+. ifnot(nglobal('GVIEW_IDS') eq 1) ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.WELCOME')
 end program
 END PROCEDURE

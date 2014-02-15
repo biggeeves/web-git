@@ -1,6 +1,6 @@
-PROCEDURE      MAIN_NAV.LINK_DBA:T  (157542,53492)  |Last amended Feb 13, 2014,14:51:32
+PROCEDURE      MAIN_NAV.LINK_DBA:T  (157543,52257)  |Last amended Feb 14, 2014,14:30:57
 
-ifthen (nglobal("GVIEWDBA") eq 1)
+ifthen (nglobal("GVIEW_DBA") eq 1)
 
 . write(cgi) 10t '<li class="dropdown">'
 . write(cgi) 10t '<a href="#" class="dropdown-toggle" data-toggle="dropdown">DBA<b class="caret"></b></a>'

@@ -1,4 +1,4 @@
-PROCEDURE      CONNECTIONS.MANAGER:T  (157512,44712)  |Last amended Jan 14, 2014,12:25:12
+PROCEDURE      CONNECTIONS.MANAGER:T  (157543,52052)  |Last amended Feb 14, 2014,14:27:32
 c Establish database connection to MANGAER database
 
 PROGRAM CRWARN
@@ -28,7 +28,7 @@ PQL CONNECT DATABASE 'MANAGER' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__
 
 
 ifnotthen (IOSTAT__4 GE 0)
-. if(nglobal('GSECLEVEL') = 30) execute subprocedure SHOWERRORS
+. if(nglobal('GSECURITY_LEVEL') = 30) execute subprocedure SHOWERRORS
 . STR$1 = 'Error getting through the security. Contact Administrator. code:'
 . ifthen(exists(IOSTAT__4 ) eq 1) STR$1 = STR$1 + format(IOSTAT__4)
 . else STR$1 = STR$1 + ' Canada'

@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.DEVELOPMENT:T  (156826,55265)  |Last amended Feb 28, 2012,15:21:05
+PROCEDURE      INC_DBA.DEVELOPMENT:T  (156826,55265)  |Last amended Feb 28, 2012,15:21:05
 program
 write(cgi)'<h3>Development Notes</h3>'
 write(cgi)'Priority<ul>'

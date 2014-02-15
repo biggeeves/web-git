@@ -1,11 +1,11 @@
-PROCEDURE      DB_CHECKS.VALID_KEYS:T  (157452,48177)  |Last amended Nov 15, 2013,13:22:57
+PROCEDURE      DB_CHECKS.VALID_KEYS:T  (157543,53098)  |Last amended Feb 14, 2014,14:44:58
 
 
 PROGRAM crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-REC_TYPE_NUMBER = nglobal('GDBREC')
+REC_TYPE_NUMBER = nglobal('GDB_REC')
 
 for EACH_VARIABLE = 1 + dbtype(0),nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 . KEYVNAME__4 = trimlr(keyname(REC_TYPE_NUMBER, EACH_VARIABLE))  | tricky because Key1 in a case structured DB is actually 2!

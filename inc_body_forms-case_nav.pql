@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_NAV:T  (157220,68556)  |Last amended Mar 28, 2013,19:02:36
+PROCEDURE      INC_BODY_FORMS.CASE_NAV:T  (157543,52105)  |Last amended Feb 14, 2014,14:28:25
 C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
 
 PROGRAM CRWARN
@@ -15,9 +15,9 @@ write(cgi) '<div class="row">'
 write(cgi) '<div class="span2 offset1">'
 write(cgi) '  <ul class="nav nav-tabs nav-stacked">'
 write(cgi) '  <li class="nav-header">ID Navigation</li>'
-ifthen (0<GSECLEVEL> ne 0)
+ifthen (0<GSECURITY_LEVEL> ne 0)
 . write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NEW"> - New ID</a></li>'
-. ifthen (0<GDELCASE> eq 1)
+. ifthen (0<GDELETE_CASES> eq 1)
 .   write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASEDEL"> - Delete an ID</a></li>'
 . endif
 endif

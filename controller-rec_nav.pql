@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.REC_NAV:T  (157452,52665)  |Last amended Nov 15, 2013,14:37:45
+PROCEDURE      CONTROLLER.REC_NAV:T  (157543,53087)  |Last amended Feb 14, 2014,14:44:47
 c hub for record navigation.  All trafic to and from a record should go here.
 
 CALL WPF.DB_CHECKS.VALID_REC
@@ -87,7 +87,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4  = 1
 end for
 ifthen (GOON__4  = 0)
-. ANY_NUM__4  =  globals( 'GSOMEMESS', 'The table number <GDBREC> was not found')
+. ANY_NUM__4  =  globals( 'GSOMEMESS', 'The table number <GDB_REC> was not found')
 . ANY_NUM__4 =  globals('GMEMOUT', 'WPF.INC_BODY_FORMS.UNK_ERR')
 endif
 

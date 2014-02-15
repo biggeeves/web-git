@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.UPLOAD:T  (157542,79414)  |Last amended Feb 13, 2014,22:03:34
+PROCEDURE      INC_DBA.UPLOAD:T  (157542,79414)  |Last amended Feb 13, 2014,22:03:34
 c CALL this program when you need to see the global values that are set.
 
 program CRWARN

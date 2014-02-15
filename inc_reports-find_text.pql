@@ -1,13 +1,13 @@
-PROCEDURE      INC_REPORTS.FIND_TEXT:T  (157542,64265)  |Last amended Feb 13, 2014,17:51:05
+PROCEDURE      INC_REPORTS.FIND_TEXT:T  (157543,53705)  |Last amended Feb 14, 2014,14:55:05
 c Search for text in a record type.  Searches all variables.
 c
 c must re-set the globals to first record type, first var
 program
-ANY_NUM__4 = 0<GDBREC>
+ANY_NUM__4 = 0<GDB_REC>
 ifthen(ANY_NUM__4 eq 9999 OR 0)
 . for EACH_RECORD_NUMBER  = 1,  nrecs(0)
 .   IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-.   ANY_NUM__4 = globaln('GDBREC', EACH_RECORD_NUMBER)
+.   ANY_NUM__4 = globaln('GDB_REC', EACH_RECORD_NUMBER)
 .   EXIT FOR
 . end for
 endif
@@ -43,11 +43,11 @@ for EACH_RECORD_NUMBER  = 1, nrecs(0)
 . endif
 . STR$1 =  'value="' + format(EACH_RECORD_NUMBER )  + '"'
 . STR$2 = 'title="'  + format(EACH_RECORD_NUMBER) + ': ' + trimlr(recname(EACH_RECORD_NUMBER))  + '"'
-. if (nglobal('GDBREC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + 'selected="selected"'
+. if (nglobal('GDB_REC') eq EACH_RECORD_NUMBER) STR$2 = STR$2 + 'selected="selected"'
 . write(cgi) 4t '<option ' STR$1 ' ' STR$2    ' >'
 . write(cgi) 4t REC_LABEL__4 '</option>'
 end for
-REC_TYPE_NUMBER = nglobal('GDBREC')
+REC_TYPE_NUMBER = nglobal('GDB_REC')
 ifthen (len(trimlr(recdoc(REC_TYPE_NUMBER, 0))) gt 0)
 . REC_LABEL__4 = trimlr(recdoc(REC_TYPE_NUMBER, 0))
 elseif (len(trimlr(recdoc(REC_TYPE_NUMBER, 1))) gt 0)
@@ -99,7 +99,7 @@ c show keys for each record type
 . CIF EQ 1, 0<GCASED>
 . process cases
 . CIF END
-. process rec <GDBREC>
+. process rec <GDB_REC>
 .   GOON__4   = 1
 .   set STR__4   (missing)
 .   set NUM__4   (missing)
@@ -168,7 +168,7 @@ subprocedure START_ROW
 . SHOW_KEYS__4 = ''
 . STR$1 = '<tr>'
 . write(cgi) STR$1
-. STR$1 = '<a class="bluetext" href = "<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;gdbrec=' + sglobal('GDBREC')
+. STR$1 = '<a class="bluetext" href = "<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;gdbrec=' + sglobal('GDB_REC')
 . ifthen (dbtype(0) eq 1)
 .   KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
 .   KEY_VALUE__4 = trimlr(varget(KEYVNAME__4))

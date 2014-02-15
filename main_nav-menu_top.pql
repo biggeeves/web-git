@@ -1,6 +1,6 @@
-PROCEDURE      MAIN_NAV.MENU_TOP:T  (157542,59908)  |Last amended Feb 13, 2014,16:38:28
+PROCEDURE      MAIN_NAV.MENU_TOP:T  (157543,54053)  |Last amended Feb 14, 2014,15:00:53
 
-ifthen(1 eq nglobal('GMENU') and nglobal('GSHOWMENU'))  | Sometimes the menu should NOT be possible
+ifthen(1 eq nglobal('GMENU') and nglobal('GSHOW_MENU'))  | Sometimes the menu should NOT be possible
 . write(cgi) '  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">'
 . write(cgi) '    <div class="container">'
 . write(cgi) '      <div class="navbar-header">'

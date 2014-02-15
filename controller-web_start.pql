@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.WEB_START:T  (157543,25900)  |Last amended Feb 14, 2014,07:11:40
+PROCEDURE      CONTROLLER.WEB_START:T  (157543,58606)  |Last amended Feb 14, 2014,16:16:46
 C CAN ALSO COUNT ON THESE THINGS REMAINING STATIC.
 | turn on "task" to see elapsed time in msec
 | turn on "commands" to see all PQL code
@@ -7,7 +7,7 @@ C CAN ALSO COUNT ON THESE THINGS REMAINING STATIC.
 
 global MY_DEBUG = 1
 
-PRINT BACK  OFF  | nocommands notask remark call user
+PRINT BACK  COMMANDS  | nocommands notask remark call user
 CALL WPF.SYSTEM.CUSTOM_ATTS
 CALL WPF.SYSTEM.MASTER_IP
 CALL WPF.GLOB_VARS.HTML_CODE

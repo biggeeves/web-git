@@ -1,10 +1,10 @@
-PROCEDURE      INC_ELEMENTS.BODY_HEADER:T  (157459,49662)  |Last amended Nov 22, 2013,13:47:42
+PROCEDURE      INC_ELEMENTS.BODY_HEADER:T  (157543,52873)  |Last amended Feb 14, 2014,14:41:13
 write(cgi) '<!--Header Section.  Database Name and Title-->'
 HOVER_TITLE  = ' title="'
 ifthen ((exists(DB_NAME__4) eq 1) and (DB_NAME__4 ne ''))
 . HOVER_TITLE  = HOVER_TITLE  + DB_NAME__4
 endif
-HOVER_TITLE  = HOVER_TITLE + ':<GMSTPORT>"'
+HOVER_TITLE  = HOVER_TITLE + ':<GMST_PORT>"'
 STR$1 = '<h1 id="top"' + HOVER_TITLE  + '>' |CLOSE THE OPEN H1
 . ifthen (len(recdoc(0, 0)) gt 0)
 .   STR$1 = STR$1 + trimlr(recdoc(0, 0))

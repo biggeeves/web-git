@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_NAV:T  (157220,1963)  |Last amended Mar 28, 2013,00:32:43
+PROCEDURE      INC_BODY_FORMS.REC_NAV:T  (157543,51984)  |Last amended Feb 14, 2014,14:26:24
 C list the record types.  CASE id is used if available.
 
 retrieval crwarn
@@ -41,7 +41,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . write(cgi) 4T REC_LABEL__4
 . write(cgi) 4T '</label></td>'
 . ifthen (count(EACH_RECORD_NUMBER) eq 0)
-.   ifthen (0<GWS> ne 0)
+.   ifthen (0<GWRITE_SECURITY> ne 0)
 .     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=New&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'New</a></td>'
 .   else
@@ -57,7 +57,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 .     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Table&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi)  STR$1 'Table</a></td>'
 . else
-.   ifthen (0<GWS> ne 0)
+.   ifthen (0<GWRITE_SECURITY> ne 0)
 .     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=New&amp;caseis=<CASEISNQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'New</a></td>'
 .   else

@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.QUERY_2:T  (157221,47124)  |Last amended Mar 29, 2013,13:05:24
+PROCEDURE      INC_REPORTS.QUERY_2:T  (157543,53446)  |Last amended Feb 14, 2014,14:50:46
 C QUERY
 
 retrieval crwarn
@@ -71,7 +71,7 @@ write(cgi)  '<tr><th>Value</th><th>Value label</th><th>Keys</th></tr>'
 CIF EQ 1, 0<GCASED>
 process cases | count =30
 CIF END
-. process rec <GDBREC>
+. process rec <GDB_REC>
 .   set MISSNUM__4 (missing)
 .   set NUM__4   (missing)
 .   set STR__4   (missing)
@@ -135,8 +135,8 @@ endif
 write(cgi)  '</table>'
 
 write(cgi) '<script type="text/javascript">'
-write(cgi) ' whichrec(''<gdbrec>'',''varselect'');'
-write(cgi) ' document.getElementById(''gdbrec'').value =<gdbrec>;'
+write(cgi) ' whichrec(''<GDB_REC>'',''varselect'');'
+write(cgi) ' document.getElementById(''gdbrec'').value =<GDB_REC>;'
 write(cgi) ' document.getElementById(''varselect'').value =<VNUM__4>;'
 write(cgi) '</script>'
 

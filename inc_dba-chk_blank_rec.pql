@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_DBA.CHK_BLANK_REC:T  (156804,50727)  |Last amended Feb 06, 2012,14:05:27
+PROCEDURE      INC_DBA.CHK_BLANK_REC:T  (156804,50727)  |Last amended Feb 06, 2012,14:05:27
 c find blank records.  Should be links to the records and not a form
 
 PROGRAM
