@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.CODEBOOK_NAV_BAR:T  (157459,46626)  |Last amended Nov 22, 2013,12:57:06
+PROCEDURE      INC_ELEMENTS.CODEBOOK_NAV_BAR:T  (157547,60947)  |Last amended Feb 18, 2014,16:55:47
 program crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -33,7 +33,7 @@ CALL WPF.SYSTEM.INI_VARS
 .   if (exists(REC_LABEL__4) eq 0) REC_LABEL__4  ='&nbsp;'
 .   write(cgi) '<td><a class="bluetext" href= ' STR$1  '>' REC_LABEL__4  '</a></td>'
 c   Var Usage
-.   ifthen(0<GREPGEN> eq 1)
+.   ifthen(0<GREPORTS_GENERAL> eq 1)
 .     STR$1 ='<a class="bluetext" href="<mycgi>?member=WPF.INC_REPORTS.VAR_USAGE&amp;gdbrec=' + format(EACH_RECORD_NUMBER)  + '">View</a>'
 .   else
 .     STR$1 = '&nbsp;'
