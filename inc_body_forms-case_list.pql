@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_LIST:T  (157543,52641)  |Last amended Feb 14, 2014,14:37:21
+PROCEDURE      INC_BODY_FORMS.CASE_LIST:T  (157548,47164)  |Last amended Feb 19, 2014,13:06:04
 c Show  a list of CASE IDs
 
 CALL WPF.GLOB_VARS.CASE_LIST
@@ -27,7 +27,7 @@ write(cgi) '</form>'
 write(cgi) '</h3>'
 
 write(cgi)  '<table class="table table-striped table-hover">'
-c write(cgi)  'Starting with ID: <CASEISNQ>'
+c write(cgi)  'Starting with ID: <GCASE_IS_NQ>'
 write(cgi)  '<tr><th>' VAR_LABEL '</th><th>Record Count</th></tr>'
 
 COUNTS__4 = 0

@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.PW_RESET:T  (157542,59870)  |Last amended Feb 13, 2014,16:37:50
+PROCEDURE      INC_BODY_FORMS.PW_RESET:T  (157548,46284)  |Last amended Feb 19, 2014,12:51:24
 PROGRAM
 CALL WPF.SYSTEM.DEFINE_VARS
 . compute STR$1 ='<' + CHAR(33) + 'DOCTYPE html>'
@@ -40,11 +40,11 @@ CALL WPF.SYSTEM.DEFINE_VARS
 . write(cgi) '<div id="container">'  |this applies a css for the entire contents (centers it on the page)
 . write(cgi) '<h1 title="Data Coordinating Center, New York, NY">'
 . write(cgi) 'Please Reset Your Password.</h1>'
-. if ('<GMEMIN>' = 'WPF.CONTROLLER.PW_RESET2') write (cgi) '<p>Sorry that password will not work</p>'
+. if ('<GMEM_IN>' = 'WPF.CONTROLLER.PW_RESET2') write (cgi) '<p>Sorry that password will not work</p>'
 
 . write(cgi) '<form method="post" action="<mycgi>">'
 . write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLLER.PW_RESET2">'
-. write(cgi) '<input type="hidden" name="user_name" value="<user_name>">'
+. write(cgi) '<input type="hidden" name="user_name" value="<GUSER_NAME>">'
 . write(cgi) '<table class="center" width="100%"><tr><td width="40%">'
 . write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'
 . write(cgi) '  <tr><td colspan ="2">&nbsp;</td></tr>'

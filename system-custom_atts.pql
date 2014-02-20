@@ -1,28 +1,23 @@
-PROCEDURE      SYSTEM.CUSTOM_ATTS:T  (157543,52847)  |Last amended Feb 14, 2014,14:40:47
-C CREATED BY THE WEB INSTALLER ON Feb. 14, 2014
+PROCEDURE      SYSTEM.CUSTOM_ATTS:T  (157542,53523)  |Last amended Feb 13, 2014,14:52:03
+C CREATED BY THE WEB INSTALLER ON Feb. 12, 2014
 
 C WPF ATTRIBUTE IS A COPY.  GOLD STANDARD IS IN THE FILE DEFAULT.PQL!!!
 global mycgi = "/pql/sirweb.cgi"
-global WEBSITE_TITLE = D.C.C.
-global full_url = http://localhost/web/
 ATTRIBUTE WEBPROC_FOLDER = "C:\SIR XS\web\"
-ATTRIBUTE WPF = "C:\SIR XS\web\wp.srp" | 02140802
-ATTRIBUTE WEB_ROOT = "C:\htdocs\"
-attribute customcss = "C:\htdocs\css\custom.css"
-attribute bootstrapcss = "C:\htdocs\css\bootstrap.css"
-attribute globaljs = "C:\htdocs\js\global.js"
-attribute bootstrapjs = "C:\htdocs\js\bootstrap.js"
-attribute jqueryjs = "C:\htdocs\js\jquery.js"
-attribute casenav = "C:\htdocs\js\casenav.js"
-attribute index = "C:\htdocs\index.html"
-attribute logout = "C:\htdocs\logout.html"
-attribute js_req = "C:\htdocs\javascript_required.html"
-attribute dblock = "C:\htdocs\dblock\dblocks.txt"
-attribute err403 = "C:\htdocs\err403.html"
-attribute err404 = "C:\htdocs\err404.html"
-attribute badlogins = "C:\htdocs\login\badLogins.txt"
+ATTRIBUTE WPF = "C:\SIR XS\web\wp.srp" | 02120957
+ATTRIBUTE WEB_ROOT = "C:\apache-fake\htdocs\"
+attribute customcss = "C:\apache-fake\htdocs\css\custom.css"
+attribute globaljs = "C:\apache-fake\htdocs\js\global.js"
+attribute index = "C:\apache-fake\htdocs\index.html"
+attribute logout = "C:\apache-fake\htdocs\logout.html"
+attribute js_req = "C:\apache-fake\htdocs\javascript_required.html"
+attribute casenav = "C:\apache-fake\htdocs\js\casenav.js"
+attribute dblock = "C:\apache-fake\htdocs\dblock\dblocks.txt"
+attribute err403 = "C:\apache-fake\htdocs\err403.html"
+attribute err404 = "C:\apache-fake\htdocs\err404.html"
+attribute badlogins = "C:\apache-fake\htdocs\login\badLogins.txt"
 ATTRIBUTE LOGIN_FOLDER = "C:\SIR XS\web\dbs\login\"
 ATTRIBUTE MANAGER_FOLDER = "C:\SIR XS\web\dbs\manager\"
-GLOBAL GMST_IP = g-PC
+GLOBAL GMST_IP = Greg-PC
 GLOBAL GMST_PORT = 3000
 END PROCEDURE

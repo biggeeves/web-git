@@ -1,20 +1,20 @@
-PROCEDURE      STATIC_PAGES.JAVASCRIPT_REQUIRED:T  (157542,77430)  |Last amended Feb 13, 2014,21:30:30
+PROCEDURE      STATIC_PAGES.JAVASCRIPT_REQUIRED:T  (157548,46336)  |Last amended Feb 19, 2014,12:52:16
 program
 string  *   600   STR$1                      | General String use at any time
 
-if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write(cgi)  '<br> JS Required' 20t [dsn('js_req')]
+if (sglobal('GMEM_IN')='WPF.INC_DBA.UPDATE_DB_FILES') write(cgi)  '<br> JS Required' 20t [dsn('js_req')]
 STR$1 = '<' + CHAR(33) + 'DOCTYPE html>'
 open (js_req) write lrecl = 600
 write (js_req) STR$1 /
-               '<head ><title ><WEBSITE_TITLE>| JavaScript required to view these pages</title>'/
-               '  <link rel="icon" type="image/ico" href="<full_url>images/DCC.ico"  title="<WEBSITE_TITLE>" >'/
+               '<head ><title ><GWEBSITE_TITLE>| JavaScript required to view these pages</title>'/
+               '  <link rel="icon" type="image/ico" href="<GFULL_URL>images/DCC.ico"  title="<GWEBSITE_TITLE>" >'/
                '  <link href="css/bootstrap.css" rel="stylesheet">'/
                '  <link type="text/css" href="css/custom.css" rel="stylesheet">'/
                '</head>'/
                '<body>'/
                '<div class="smallcontainer">'/
                '<h3>JavaScript must be enable to use this website.</h3>/'
-               '<h3>Return to <a href = "<full_url>index.html"> Sign in</a></h3>'/
+               '<h3>Return to <a href = "<GFULL_URL>index.html"> Sign in</a></h3>'/
                '</div>'/
                '</body></html>'/
 close js_req

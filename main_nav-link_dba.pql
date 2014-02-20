@@ -1,4 +1,4 @@
-PROCEDURE      MAIN_NAV.LINK_DBA:T  (157543,52257)  |Last amended Feb 14, 2014,14:30:57
+PROCEDURE      MAIN_NAV.LINK_DBA:T  (157548,47270)  |Last amended Feb 19, 2014,13:07:50
 
 ifthen (nglobal("GVIEW_DBA") eq 1)
 
@@ -14,87 +14,87 @@ ifthen (nglobal("GVIEW_DBA") eq 1)
 
 | report a bug
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.BUG'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Report a bug</a></li>'
 . write(cgi) 4T STR$1
 
 | RUN PROGRAM
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.RUN_PROG'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Run Program</a></li>'
 . write(cgi) 4T STR$1
 
 | Run Member
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.RUN_MEMBER'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Run Memeber</a></li>'
 . write(cgi) 4T STR$1
 
 | System Fucntion Values
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.SYSFUNC'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">System Values</a></li>'
 . write(cgi) 4T STR$1
 
 | Documenation
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.DOCUMENTATION'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: Proc Documenation</a></li>'
 . write(cgi) 4T STR$1
 
 | Development
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.DEVELOPMENT'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: Development</a></li>'
 . write(cgi) 4T STR$1
 
 
 | File Attributes
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.FILE_ATTS'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: File Attributes</a></li>'
 . write(cgi) 4T STR$1
 
 
 | CGI VARS
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.CGIVARS'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: CGI Vars</a></li>'
 . write(cgi) 4T STR$1
 
 | Global Vars
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.GLOBAL_VALUES'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: Global Vars</a></li>'
 . write(cgi) 4T STR$1
 
 | VARMAP
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.VAR_MAP'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: Var Map</a></li>'
 . write(cgi) 4T STR$1
 
 | Colors
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.COLORS'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: Colors</a></li>'
 . write(cgi) 4T STR$1
 
 | Upload file
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.UPLOAD'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Upload a file</a></li>'
 . write(cgi) 4T STR$1
 
 | Update JS
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.UPDATE_DB_FILES'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: Update DB Files</a></li>'
 . write(cgi) 4T STR$1
 
 | Run System Initialize
 . STR$1  = '<li><a href="<mycgi>?member=WPF.INC_DBA.UPDATE_INI'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Web: Re-Initialize</a></li>'
 . write(cgi) 4T STR$1
 . write(cgi) 10t '  </ul>'

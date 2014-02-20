@@ -1,14 +1,14 @@
-PROCEDURE      INC_BODY_FORMS.CASE_SUMMARY:T  (157543,52078)  |Last amended Feb 14, 2014,14:27:58
+PROCEDURE      INC_BODY_FORMS.CASE_SUMMARY:T  (157548,47173)  |Last amended Feb 19, 2014,13:06:13
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 set ANY_NUM__4  (0)
 
-write(cgi)  '<h3>' CASE_LABEL ' <CASEISNQ> case snapshot</h3>'
+write(cgi)  '<h3>' CASE_LABEL ' <GCASE_IS_NQ> case snapshot</h3>'
 c DELETE PORTION!  MUST SEE A CASE SUMMARY BEFORE BEING ABLE TO DELETE AN ENTIRE CASE
 C note: that if you did not press delete in the previous screen, you will NOT have the ability to delete here.
-ifthen (0<GSECURITY_LEVEL> eq 30)
+ifthen (0<GSECLEVEL> eq 30)
 . ifthen ('delete' eq '<GCASE_OPTION>')
 .   write(cgi)  '<h4><form method="post" action="<mycgi>">'
 .   write(cgi)  '<input type="hidden" name="member" id="member" value="WPF.INC_BODY_FORMS.CASE_SUMMARY">'
@@ -21,7 +21,7 @@ endif
 write(cgi)  '<table class="table table-striped table-hover">'
 write(cgi)  '<tr><th>Table</th><th>Count</th></tr>'
 CIF EQ <GCASED>, 1
-old case is <CASEIS>
+old case is <GCASE_IS>
 CIF END
 . for EACH_RECORD_NUMBER = 1, nrecs(0)
 .   ifnot (len(recname(EACH_RECORD_NUMBER)) gt 0) next for

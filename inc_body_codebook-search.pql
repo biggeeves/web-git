@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_CODEBOOK.SEARCH:T  (157542,79267)  |Last amended Feb 13, 2014,22:01:07
+PROCEDURE      INC_BODY_CODEBOOK.SEARCH:T  (157548,41789)  |Last amended Feb 19, 2014,11:36:29
 c Searches Codebook.
 
 program crwarn
@@ -7,8 +7,8 @@ CALL WPF.SYSTEM.INI_VARS
 
 . set COUNTS__4   (0)
 
-. FIND_TEXT__4 = fst(trimlr(sglobal('GSEARCHTEXT')), '')
-C write 'text: <GSEARCHTEXT><br> VL: <GVARLABELS><BR> VN: <GVARNAMES><BR>VL: <GVALUELABELS><BR>V:<GVALUES>'
+. FIND_TEXT__4 = fst(trimlr(sglobal('GSEARCH_TEXT')), '')
+C write 'text: <GSEARCH_TEXT><br> VL: <GVAR_LABELS><BR> VN: <GVAR_NAMES><BR>VL: <GVALUE_LABELS><BR>V:<GVALUES>'
 
 . write(cgi)'<h3>Search Code Book </h3>'
 . write(cgi)'<br>'
@@ -18,16 +18,16 @@ C write 'text: <GSEARCHTEXT><br> VL: <GVARLABELS><BR> VN: <GVARNAMES><BR>VL: <GV
 . write(cgi) '  <input type="text" name="gsearchtext" value ="' FIND_TEXT__4 '"><br>'
 . write(cgi) '  <table>'
 
-. STR$1 = ''; if ('<GVARLABELS>' eq 'on') STR$1 = ' checked'
-. if ('<GVARLABELS><GVARNAMES><GVALUELABELS><GVALUES>' ='') STR$1 = ' checked'
+. STR$1 = ''; if ('<GVAR_LABELS>' eq 'on') STR$1 = ' checked'
+. if ('<GVAR_LABELS><GVAR_NAMES><GVALUE_LABELS><GVALUES>' ='') STR$1 = ' checked'
 . write(cgi) '  <tr><td class="right"><input type="checkbox" name="gvarlabels" id="gvarlabels"' STR$1 '></td>'
 . write(cgi) '  <td><label for="gvarlabels">Variable label</label></td></tr>'
 
-. STR$1 = ''; if ('<GVARNAMES>' eq 'on') STR$1 = ' checked'
+. STR$1 = ''; if ('<GVAR_NAMES>' eq 'on') STR$1 = ' checked'
 . write(cgi) '  <tr><td class="right"><input type="checkbox" name="gvarnames" id="gvarnames"'STR$1'></td>'
 . write(cgi) '  <td><label for="gvarnames">Variable Name</label></td></tr>'
 
-. STR$1 = ''; if ('<GVALUELABELS>' eq 'on') STR$1 = ' checked'
+. STR$1 = ''; if ('<GVALUE_LABELS>' eq 'on') STR$1 = ' checked'
 . write(cgi) '  <tr><td class="right"><input type="checkbox" name="gvaluelabels" id="gvaluelabels"' STR$1 '></td>'
 . write(cgi) '  <td><label for="gvaluelabels">Value Label</label></td></tr>'
 
@@ -56,21 +56,21 @@ c     Var names
 .       VNAME$ = trimlr(upper(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE)))
 .       if(VNAME$ = 'DCCWHO' or 'DCCTIME' or 'DCCDATE' or 'DCCEDITS' or 'DWHO' or 'DSTAMP') NEXT FOR
 .       VAR_LABEL = trimlr(varlabsc(EACH_RECORD_NUMBER, VNAME$))
-.       ifthen ('<GVARNAMES>' eq 'on')
+.       ifthen ('<GVAR_NAMES>' eq 'on')
 .         ifthen (pattern(VNAME$, FIND_TEXT__4) eq 1)
 .           STR$2 = VNAME$
 .           SCH_VARNAME  = 1
 .         endif
 .       endif
 c       Var labels
-.       ifthen ('<GVARLABELS>' eq 'on')
+.       ifthen ('<GVAR_LABELS>' eq 'on')
 .         ifthen (pattern(upper(varlabsc(EACH_RECORD_NUMBER, VNAME$)), FIND_TEXT__4) eq 1)
 .           STR$2 = VAR_LABEL
 .           SCH_VARLABEL = 1
 .         endif
 .       endif
 c       Value labels
-.       ifthen ('<GVALUELABELS>'EQ 'on')
+.       ifthen ('<GVALUE_LABELS>'EQ 'on')
 .         for EACH_VALUE_LABEL = 1, nvallab(EACH_RECORD_NUMBER, VNAME$)
 .           ifthen (pattern(upper(vallabsn(EACH_RECORD_NUMBER, VNAME$, EACH_VALUE_LABEL)), FIND_TEXT__4) eq 1)
 .             SCH_VALVALUE = 1
@@ -104,7 +104,7 @@ c         missing values
 .           endif
 .         end for
 c         ranges
-.         ifthen (nglobal('GSEARCHTEXT') eq nmax(EACH_RECORD_NUMBER, VNAME$) or nmin(EACH_RECORD_NUMBER, VNAME$))
+.         ifthen (nglobal('GSEARCH_TEXT') eq nmax(EACH_RECORD_NUMBER, VNAME$) or nmin(EACH_RECORD_NUMBER, VNAME$))
 .           SCH_RANGE = 1
 .           STR$2 = format(nmin(EACH_RECORD_NUMBER, VNAME$)) + ' - '  + format(nmax(EACH_RECORD_NUMBER, VNAME$))
 .         endif

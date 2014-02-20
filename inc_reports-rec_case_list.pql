@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.REC_CASE_LIST:T  (157543,53527)  |Last amended Feb 14, 2014,14:52:07
+PROCEDURE      INC_REPORTS.REC_CASE_LIST:T  (157548,45863)  |Last amended Feb 19, 2014,12:44:23
 c list of all cases in a record type.
 c must re-set the globals to first record type, for the first load
 

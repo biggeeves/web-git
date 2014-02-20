@@ -1,8 +1,8 @@
-PROCEDURE      INC_ELEMENTS.INCLUDE_REC_JS:T  (156661,52618)  |Last amended Sep 16, 2011,14:36:58
+PROCEDURE      INC_ELEMENTS.INCLUDE_REC_JS:T  (157548,46172)  |Last amended Feb 19, 2014,12:49:32
 program
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
-. ifthen(1 eq pattern('<GMEMOUT>', '@REC_EDIT@') or pattern('<GMEMOUT>', '@REC_READONLY@'))
+. ifthen(1 eq pattern('<GMEM_OUT>', '@REC_EDIT@') or pattern('<GMEM_OUT>', '@REC_READONLY@'))
 .   MEMBER_NAME = 'SIR0' +  format(system(39)) + '4.' + 'JS_DOSOMETHING.'+ REC_NAME__4 + ':T'
 .   ifthen (meminfo(MEMBER_NAME, 1) eq 1)
 .     EXECUTE DBMS 'call ' + MEMBER_NAME

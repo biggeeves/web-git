@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_DETAILS:T  (157542,59833)  |Last amended Feb 13, 2014,16:37:13
+PROCEDURE      INC_BODY_FORMS.CASE_DETAILS:T  (157548,47155)  |Last amended Feb 19, 2014,13:05:55
 c Show all of the record types, records and pertaining keys that belong to a case.
 
 retrieval crwarn
@@ -7,10 +7,10 @@ CALL WPF.SYSTEM.INI_VARS
 
 set ANY_NUM__4  (0)
 
-write(cgi)  '<h3>' CASE_LABEL  ' <CASEISNQ> Detailed Case Summary </h3>'
-write(cgi)  '<h6 class="smallfont" >Report created on ' [datec(today(0), 'mm/dd/yy')] ' by ' [sglobal('USER_NAME')]  '</h6>'
+write(cgi)  '<h3>' CASE_LABEL  ' <GCASE_IS_NQ> Detailed Case Summary </h3>'
+write(cgi)  '<h6 class="smallfont" >Report created on ' [datec(today(0), 'mm/dd/yy')] ' by ' [sglobal('GUSER_NAME')]  '</h6>'
 CIF EQ <GCASED>, 1
-old case is <CASEIS>
+old case is <GCASE_IS>
 CIF END
 . do repeat RECN = <GREC1>
                  <GREC2>
@@ -39,7 +39,7 @@ c   display each record and corresponding key values
 .     compute SHOW_KEYS__4 = ''
 .     execute subprocedure START_ROW
 .   end rec
-.   STR$1 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' + sglobal('CASEISNQ')+ '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Table"'
+.   STR$1 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' + sglobal('GCASE_IS_NQ')+ '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Table"'
 .   if(count(REC_TYPE_NUMBER) gt 0) write(cgi) '<li><a href=' STR$1 '> Table</a></li>'
 .   write(cgi) 2t '</ul>'
 .   write(cgi) '</p>'
@@ -68,7 +68,7 @@ subprocedure START_ROW
 .   end for
 
 c   Keys (used for the link)
-.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&caseis=' +  CASE_STR + '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=View'
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))

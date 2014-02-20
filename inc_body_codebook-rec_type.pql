@@ -1,21 +1,13 @@
-PROCEDURE      INC_BODY_CODEBOOK.REC_TYPE:T  (157543,58595)  |Last amended Feb 14, 2014,16:16:35
-PROGRAM
-WRITE (CGI) '<HR> WHAT IS GOING ON?<GDB_REC>|'
-. REC_TYPE_NUMBER = 0<GDB_REC>
-END PROGRAM
-
-
-
+PROCEDURE      INC_BODY_CODEBOOK.REC_TYPE:T  (157548,41706)  |Last amended Feb 19, 2014,11:35:06
 program crwarn
-
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-. integer *  2   RECDOCN#  EACH_REC_LINE
-. string *  32   CASE$     MISS$     REC$      KEY$
-. string * 255   VARDOC$   RECDOC$   VALLAB$   VARLAB$
+. integer * 2 RECDOCN# EACH_REC_LINE
+. string * 32 CASE$ MISS$ REC$ KEY$
+. string * 255 VARDOC$ RECDOC$ VALLAB$ VARLAB$
 . set RECDOC$ ('')
-WRITE (CGI) 'DEBUG: AM I HERE IN THE CODEBOOK: <GDB_REC>::::'
+
 . write(cgi)'<h3>Codebook for the ' DB_NAME__4 ' Database ' [datec(today(0), 'Wwwwwwwww MM/DD/YYYY')] '</h3>'
 |Index of Record Types
 . REC_TYPE_NUMBER = 0<GDB_REC>

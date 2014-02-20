@@ -6,13 +6,13 @@ CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
 CIF EQ 1,2  | THIS WOULD BE A GOOD COMMENT SYSTEM TO ROLE OUT.  TIMES ARE ADDED SO THAT THE PROGRAM IS NOT A NULL PROGRAM
 PROGRAM
 integer *     1   ANY_NUM__4                    | Use any time you want
-. ANY_NUM__4= globals("RUNCOMMENT", ".")
+. ANY_NUM__4= globals("GRUN_COMMENT", ".")
 END PROGRAM
 
 program
 time SHOWTIME# ('HH:MM:SS')
 SHOWTIME#=now(0)
-<RUNCOMMENT> write SHOWTIME# 'system.initialize<br>'
+<GRUN_COMMENT> write SHOWTIME# 'system.initialize<br>'
 end program
 CIF END
 

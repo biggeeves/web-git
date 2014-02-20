@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_CASE:T  (157221,61159)  |Last amended Mar 29, 2013,16:59:19
+PROCEDURE      DB_CHECKS.VALID_CASE:T  (157548,47120)  |Last amended Feb 19, 2014,13:05:20
 C CHECK THE CASE ID VALUE AND PREVENT USER FROM GOING TO NON-FUNCTIONING DATA ENTRY SCREEN
 CIF EQ 1, 0<GCASED>
 
@@ -7,18 +7,18 @@ program
 . integer *     1   VALID_RESULT                 | does this value validate?
 . VNAME$ = keyname(0, 1)
 . ifthen(vtype(0, VNAME$ ) eq 1)
-.   VALID_RESULT = validate(0, VNAME$, '<CASEISNQ>')
+.   VALID_RESULT = validate(0, VNAME$, '<GCASE_IS_NQ>')
 . else
-.   VALID_RESULT = validate(0, VNAME$, <CASEISNQ>)
+.   VALID_RESULT = validate(0, VNAME$, <GCASE_IS_NQ>)
 . endif
 . ifthen (VALID_RESULT ne 0)
-.   ANY_NUM__4 = globals('GSOMEMESS', '<CASEISNQ> is not a valid ID.')
-.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+.   ANY_NUM__4 = globals('GSOME_MESS', '<GCASE_IS_NQ> is not a valid ID.')
+.   ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
 .   EXECUTE DBMS 'call WPF.CONTROLLER.STOP_PAGE'
 . endif
-. ifthen ('<CASEISNQ>' eq '')
-.   ANY_NUM__4 = globals('GSOMEMESS', 'Please Specify an ID.')
-.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+. ifthen ('<GCASE_IS_NQ>' eq '')
+.   ANY_NUM__4 = globals('GSOME_MESS', 'Please Specify an ID.')
+.   ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
 .   EXECUTE DBMS 'call WPF.CONTROLLER.STOP_PAGE'
 . endif
 end program

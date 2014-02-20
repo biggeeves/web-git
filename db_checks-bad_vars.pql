@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.BAD_VARS:T  (157452,52624)  |Last amended Nov 15, 2013,14:37:04
+PROCEDURE      DB_CHECKS.BAD_VARS:T  (157548,46567)  |Last amended Feb 19, 2014,12:56:07
 c ID and NAME tokens must begin with a letter ([A-Za-z])
 c and may be followed by any number of letters, digits ([0-9]), hyphens ("-"),
 c underscores ("_"), colons (":"), and periods (".").
@@ -47,8 +47,8 @@ CIF END
 .   end for
 . end for
 . ifthen (GOON__4 eq 0) | no database connected, stupid, but happens
-.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Some variables names need to change before using the web interface.  You have been warned.')
-.   ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals( 'GSOME_MESS', 'Some variables names need to change before using the web interface.  You have been warned.')
+.   ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 c .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'   | this stops the toolbar from loading.  The user can NOT continue!  Which can be great
 . endif
 

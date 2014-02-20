@@ -1,16 +1,16 @@
-PROCEDURE      INC_BODY_FORMS.PICK_OLD_KEYS:T  (157543,53198)  |Last amended Feb 14, 2014,14:46:38
+PROCEDURE      INC_BODY_FORMS.PICK_OLD_KEYS:T  (157548,47186)  |Last amended Feb 19, 2014,13:06:26
 retrieval progress CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-if(dbtype(0) eq 1) write(cgi) '<h3>' CASE_LABEL': <CASEISNQ></h3>'
+if(dbtype(0) eq 1) write(cgi) '<h3>' CASE_LABEL': <GCASE_IS_NQ></h3>'
 
 write(cgi) '<h3 title = "' [pack(recname(REC_TYPE_NUMBER))]  '">'
 write(cgi) REC_LABEL__4 '</h3>'
 
 write(cgi) '<h4>Option A: Choose an existing record below</h4>'
 CIF EQ 1, 0<GCASED>
-old case is <CASEIS>
+old case is <GCASE_IS>
 CIF END
 . write(cgi) '<table class="table table-hover">'
 . write(cgi) '<tr><th>Keys</th><th>View</th><th>Edit</th></tr>'
@@ -127,7 +127,7 @@ write(cgi) '</form>'
 subprocedure START_ROW
 .   SHOW_KEYS__4 = ''
 .   LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER)
-.   if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis=' +  sglobal('CASEISNQ')
+.   if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis=' +  sglobal('GCASE_IS_NQ')
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))

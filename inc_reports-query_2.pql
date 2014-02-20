@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.QUERY_2:T  (157543,53446)  |Last amended Feb 14, 2014,14:50:46
+PROCEDURE      INC_REPORTS.QUERY_2:T  (157548,45835)  |Last amended Feb 19, 2014,12:43:55
 C QUERY
 
 retrieval crwarn
@@ -8,7 +8,7 @@ CALL WPF.SYSTEM.INI_VARS
 set SUM_EXISTS  (0)
 QNUM__4  = nglobal('GVALUE1')
 QSTR__4  = upper(sglobal('GVALUE1'))
-VNUM__4  = nglobal('VNUM__4')
+VNUM__4  = nglobal('GVNUM__4')
 if(exists(VNUM__4) eq 0) VNUM__4 = 0
 
 VNAME$    = trimlr(varnamec(REC_TYPE_NUMBER, VNUM__4))
@@ -135,9 +135,9 @@ endif
 write(cgi)  '</table>'
 
 write(cgi) '<script type="text/javascript">'
-write(cgi) ' whichrec(''<GDB_REC>'',''varselect'');'
+write(cgi) ' whichrec(''<gdb_rec>'',''varselect'');'
 write(cgi) ' document.getElementById(''gdbrec'').value =<GDB_REC>;'
-write(cgi) ' document.getElementById(''varselect'').value =<VNUM__4>;'
+write(cgi) ' document.getElementById(''varselect'').value =<GVNUM__4>;'
 write(cgi) '</script>'
 
 

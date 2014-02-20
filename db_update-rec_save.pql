@@ -1,9 +1,10 @@
-PROCEDURE      DB_UPDATE.REC_SAVE:T  (157543,58536)  |Last amended Feb 14, 2014,16:15:36
+PROCEDURE      DB_UPDATE.REC_SAVE:T  (157548,41543)  |Last amended Feb 19, 2014,11:32:23
 c Saves data to a record.
-GLOBAL ERR__4 = 999  | SET TO ONE ERROR AND IF THE RETRIEVAL UPDATE DOESN'T WORK IT WILL GET REPORTED BACK TO THE USER
+GLOBAL GERR__4 = 999  | SET TO ONE ERROR AND IF THE RETRIEVAL UPDATE DOESN'T WORK IT WILL GET REPORTED BACK TO THE USER
 
 
 retrieval UPDATE crwarn showmiss | LOADMAP VARMAP UPSTAT
+print back noremarks NOcommands
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
@@ -12,11 +13,11 @@ REC_TYPE_NUMBER = 0<GDB_REC>
 
 
 CIF EQ 1, 0<GCASED>
-old case is <CASEIS>
+old case is <GCASE_IS>
 CIF END
 process rec <GDB_REC> <GVIA#>
 . if(ERR__4 = -1) ERR__4 = 0 | made it into the record
-. ANY_NUM__4 = globaln('ERR__4', 0)
+. ANY_NUM__4 = globaln('GERR__4', 0)
 . for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
 .   ISKEY__4 = 0
 .   VNAME$ = trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))  | works with non standard variable names
@@ -59,8 +60,8 @@ C SIRS BUILT IN VARIABLE SECURITY
 C write SIR_VARTYPE  VNAME$ VALID_RESULT 'string: 'STR__4 '  number:' NUM__4'<br>'
 .   ifNOTthen (VALID_RESULT eq 0 or 3 or 4 or 5 or 6)
 .     ERR__4 = ERR__4  + 1
-.     ANY_NUM__4 = globaln('REC_STAT', 3)
-.     ANY_NUM__4 = globaln('ERR__4', ERR__4)
+.     ANY_NUM__4 = globaln('GREC_STAT', 3)
+.     ANY_NUM__4 = globaln('GERR__4', ERR__4)
 CIF EQ 1,2 | KEEP FOR DEBUG
 .     write(cgi) 'validate: '   VALID_RESULT '<br>'
             'cgi: '        [CGIVARPN(VNAME$)] '<br>'
@@ -74,9 +75,9 @@ CIF END
 .     ifnotthen (ANY_NUM__4 = 0 or 3 or 4 or 5 or 6 or 7)
 .       write 'error in var put!' ANY_NUM__4 ':' VNAME$  ":" STR__4 ' Type: ' SIR_VARTYPE 'Len: ' [len(STR__4)] '<br>'
 .       ERR__4 = ERR__4  + 1
-.       ANY_NUM__4 = globaln('REC_STAT', 3)
-.       ANY_NUM__4 = globaln('ERR__4', ERR__4)
-.       ANY_NUM__4 = globals( 'GSOMEMESS',  '<GSOMEMESS>,<br>' + VNAME$)
+.       ANY_NUM__4 = globaln( 'GREC_STAT', 3)
+.       ANY_NUM__4 = globaln( 'GERR__4', ERR__4)
+.       ANY_NUM__4 = globals( 'GSOME_MESS',  '<GSOME_MESS>,<br>' + VNAME$)
 .     endif
 .   endif
 
@@ -98,21 +99,21 @@ PROGRAM
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
-ifthen (0<ERR__4> eq 0)
-. ANY_NUM__4 = globals('GSOMEMESS', REC_LABEL__4 + ' was saved')
-. ifthen ('<USER_NAME>' = 'Greg Neils' or 'Ming')
-.   ANY_NUM__4 = globals('GUPICK', 'Edit')
+ifthen (0<GERR__4> eq 0)
+. ANY_NUM__4 = globals('GSOME_MESS', REC_LABEL__4 + ' was saved')
+. ifthen ('<GUSER_NAME>' = 'Greg Neils' or 'Ming')
+.   ANY_NUM__4 = globals('GU_PICK', 'Edit')
 .   EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 . else
-.   ANY_NUM__4 = globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_NAV')
+.   ANY_NUM__4 = globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_NAV')
 . endif
-elseif (0<ERR__4> eq 999)
-. ANY_NUM__4 = globals('GUPICK', 'Edit')
-. ANY_NUM__4 = globals( 'GSOMEMESS',  'There was an issue trying to save the record' + REC_LABEL__4 )
+elseif (0<GERR__4> eq 999)
+. ANY_NUM__4 = globals('GU_PICK', 'Edit')
+. ANY_NUM__4 = globals( 'GSOME_MESS',  'There was an issue trying to save the record' + REC_LABEL__4 )
 . EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 else
-. ANY_NUM__4 = globals('GUPICK', 'Edit')
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'Data Validation Errors' + '<GSOMEMESS>')
+. ANY_NUM__4 = globals('GU_PICK', 'Edit')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'Data Validation Errors' + '<GSOME_MESS>')
 . EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 endif
 END PROGRAM

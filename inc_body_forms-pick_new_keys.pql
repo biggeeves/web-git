@@ -1,10 +1,11 @@
-PROCEDURE      INC_BODY_FORMS.PICK_NEW_KEYS:T  (157543,58503)  |Last amended Feb 14, 2014,16:15:03
+PROCEDURE      INC_BODY_FORMS.PICK_NEW_KEYS:T  (157548,47310)  |Last amended Feb 19, 2014,13:08:30
 PROGRAM
+print back noremarks nocommands
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 ifthen(dbtype(0) eq 1)
-. write(cgi) '<h3>' CASE_LABEL': <CASEISNQ></h3>'
+. write(cgi) '<h3>' CASE_LABEL': <GCASE_IS_NQ></h3>'
 endif
 
 write(cgi) '<h3 title = "' [pack(recname(REC_TYPE_NUMBER))]  '">' REC_LABEL__4 '</h3>'

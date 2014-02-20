@@ -1,4 +1,4 @@
-PROCEDURE      SYSTEM.INI_VARS:T  (157543,53551)  |Last amended Feb 14, 2014,14:52:31
+PROCEDURE      SYSTEM.INI_VARS:T  (157548,45886)  |Last amended Feb 19, 2014,12:44:46
 . DB_NAME__4 = trim(dbname(0))
 
 . CASENAME$ = trimlr(keyname(0, 1))

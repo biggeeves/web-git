@@ -3,12 +3,12 @@ retrieval crwarn noautocase UPDATE
 integer *     1   FIRST_CASE__4                | Case already exists
 
 . set FIRST_CASE__4  (0)
-. OLD case is <CASEIS>
+. OLD case is <GCASE_IS>
 .   compute FIRST_CASE__4 = 1
 . end case is
 . ifthen(FIRST_CASE__4 = 0)  | CASE already existsed don't try to create a new one
 .   ifthen ('new' = '<GCASE_OPTION>')
-.     new case is <CASEIS>
+.     new case is <GCASE_IS>
 .     end case is
 .   endif
 . endif

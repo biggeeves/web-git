@@ -16,11 +16,11 @@ if(iostat__4 ne 0) write // 'problem opening file' IOSTAT__4 //
 
 . compute STR$1  = '<' + CHAR(33) + 'DOCTYPE html>'
 . write(index) STR$1
-. write(index) '<head ><title ><WEBSITE_TITLE>| Log in</title>'/
-               '  <link href="<full_url>css/custom.css" rel="stylesheet">'/
-               '  <link href="<full_url>css/bootstrap.css" rel="stylesheet">'/
-               '  <script type="text/javascript" src="<full_url>js/global.js"></script>'/
-               '  <link rel="icon" type="image/ico" href="<full_url>images/DCC.ico"  title="<WEBSITE_TITLE>" >'/
+. write(index) '<head ><title ><GWEBSITE_TITLE>| Log in</title>'/
+               '  <link href="<GFULL_URL>css/custom.css" rel="stylesheet">'/
+               '  <link href="<GFULL_URL>css/bootstrap.css" rel="stylesheet">'/
+               '  <script type="text/javascript" src="<GFULL_URL>js/global.js"></script>'/
+               '  <link rel="icon" type="image/ico" href="<GFULL_URL>images/DCC.ico"  title="<GWEBSITE_TITLE>" >'/
                '  <meta charset="UTF-8">'/
                '  <meta content="noindex,nofollow,noarchive" name="robots">'/
                '  <meta http-equiv="Pragma" content="no-cache">'/
@@ -39,7 +39,7 @@ if(iostat__4 ne 0) write // 'problem opening file' IOSTAT__4 //
                '<body onload="setCookie(''USER_ID'',''loggedOut'',1);setCookie(''SESSION_ID'',''loggedOut'',1)">'/
                '  <div class="container">'/
                '    <div class="row">'/
-               '      <h3 class="col-xs-6 col-xs-push-3" title="<WEBSITE_TITLE>">Welcome to the <WEBSITE_TITLE></h3>'/
+               '      <h3 class="col-xs-6 col-xs-push-3" title="<GWEBSITE_TITLE>">Welcome to the <GWEBSITE_TITLE></h3>'/
                '    </div>'/
                '    <div class="row">'/
                '      <div class="col-xs-6 col-xs-push-3">'/
@@ -85,7 +85,7 @@ if(iostat__4 ne 0) write // 'problem opening file' IOSTAT__4 //
                '    <!-- Le javascript'/
                '================================================== -->'/
                '    <!-- Placed at the end of the document so the pages load faster -->'/
-               '  <script src="<full_url>js/bootstrap.js"></script>'/
+               '  <script src="<GFULL_URL>js/bootstrap.js"></script>'/
                '</body></html>'
 close index
 end program

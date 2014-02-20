@@ -1,4 +1,4 @@
-PROCEDURE      MAIN_NAV.MENU_TOP:T  (157543,54053)  |Last amended Feb 14, 2014,15:00:53
+PROCEDURE      MAIN_NAV.MENU_TOP:T  (157548,47393)  |Last amended Feb 19, 2014,13:09:53
 
 ifthen(1 eq nglobal('GMENU') and nglobal('GSHOW_MENU'))  | Sometimes the menu should NOT be possible
 . write(cgi) '  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">'
@@ -21,7 +21,7 @@ ifthen(1 eq nglobal('GMENU') and nglobal('GSHOW_MENU'))  | Sometimes the menu sh
 . call wpf.MAIN_NAV.LINK_CODEBOOK
 . call wpf.MAIN_NAV.LINK_DBA
 . write(cgi) '           <li><a href="<mycgi>?member=WPF.P_SECURITY.PUT_LOGOUT">Log Out</a></li>'
-. write(cgi) '           <li><a href="#"><user_name></a></li>'
+. write(cgi) '           <li><a href="#"><GUSER_NAME></a></li>'
 . write(cgi) '        </ul>'
 . write(cgi) '      </div><!--/.nav-collapse -->'
 . write(cgi) '    </div><!--/ container -->'

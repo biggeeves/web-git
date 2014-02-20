@@ -1,30 +1,30 @@
-PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157542,67793)  |Last amended Feb 13, 2014,18:49:53
+PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157548,46627)  |Last amended Feb 19, 2014,12:57:07
 C UPDATE MANAGER WITH USER_NAME, REMOTE ADDRESS START DATE AND TIME
 
 retrieval UPDATE CRWARN
 integer *     4   ANY_NUM__4                    | Use any time you want
 integer *     1   GOON__4                    | Control flow variable
 
-ifthen ('<USER_ID>' NE '')
-. ifthen ('<SESSION_ID>' NE '')
-.   record is SESSIONS via ('<USER_ID>' '<SESSION_ID>')
+ifthen ('<GUSER_ID>' NE '')
+. ifthen ('<GSESSION_ID>' NE '')
+.   record is SESSIONS via ('<GUSER_ID>' '<GSESSION_ID>')
 .     if(exists(START_DATE) eq 0)  START_DATE = today(0)
 .     if(exists(START_TIME) eq 0)  START_TIME = NOW(0)
-.     USER_NAME = sglobal('USER_NAME')
+.     USER_NAME = sglobal('GUSER_NAME')
 .     REMOTE_ADDRESS =  cgivarsv('REMOTE_ADDRESS')
 .   end rec
 . ELSE
-.   ANY_NUM__4 = globals('GSOMEMESS', 'Sorry.  Please contact the D.C.C. Error Location: Paris')
-.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('GSOME_MESS', 'Sorry.  Please contact the D.C.C. Error Location: Paris')
+.   ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . endif
 ELSE
-.   ANY_NUM__4 = globals('GSOMEMESS', 'Sorry.  Please contact the D.C.C. Error Location: Madrid')
-.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('GSOME_MESS', 'Sorry.  Please contact the D.C.C. Error Location: Madrid')
+.   ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
 endif
 
 end retrieval
 
-CIF EQ '<GMEMSTOP>', 'WPF.INC_BODY_FORMS.UNK_ERR'
+CIF EQ '<GMEM_STOP>', 'WPF.INC_BODY_FORMS.UNK_ERR'
 . CALL WPF.CONTROLLER.STOP_PAGE
 CIF END
 END PROCEDURE

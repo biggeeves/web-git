@@ -1,0 +1,37 @@
+PROCEDURE      INC_BODY_DBA.DOCUMENTATION:T  (156563,37469)  |Last amended Jun 10, 2011,10:24:29
+SET PROCFILE WPF
+
+program
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+write(cgi) '<h3>Web Proc Documenation</h3>'
+write(cgi) '<p>This program reads the first two lines of every member in the web proc</p>'
+for EACH_FAMILY =  1, system(57)
+. for EACH_MEMBER = 1, memcount(famname(EACH_FAMILY))
+.   MEMBER_NAME = memname(famname(EACH_FAMILY), EACH_MEMBER)
+.   STR$1 = famname(EACH_FAMILY) +  '.'+ MEMBER_NAME
+.   ifnot (substr(reverse(STR$1), 1, 1) eq 'T') NEXT FOR
+.   write(cgi) '<p>' STR$1
+.   IOSTAT__4 = 0
+.   open member dsnvar = STR$1 read member iostat = IOSTAT__4 lrecL = 600
+.     ifthen (IOSTAT__4 eq 0)
+.       set ANY_NUM__4 (0)
+.       loop
+.         read (member, iostat = IOSTAT__4) STR$2 (A200)
+.           IFNOT (IOSTAT__4 eq 0) EXIT LOOP
+.           if (ANY_NUM__4 GE 2) EXIT LOOP
+.           ANY_NUM__4 = ANY_NUM__4  + 1
+.           ifthen (upper(substr(STR$2, 1, 2)) eq 'C ')  | MAKE SURE TO INCLUDE THE SPACE
+.             STR$2 =  substr(STR$2, 2, len(STR$2)); write(cgi) '<br> &nbsp;&nbsp;&nbsp; ' STR$2 ''
+.           endif
+.       end loop
+.    endif
+.    close member
+.   write(CGI) '</p>'
+. end for
+end for
+write(cgi) '  </p>'
+
+end program
+END PROCEDURE

@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157543,53314)  |Last amended Feb 14, 2014,14:48:34
+PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157548,45658)  |Last amended Feb 19, 2014,12:40:58
 REC_TYPE_NUMBER  = 0<GDB_REC>
 
 write(cgi) '  <form name="dataentry" action="<mycgi>"  method="post" onKeyPress="return disableEnterKey(event)">'
@@ -13,7 +13,7 @@ write(cgi) '<span id="entryleft">'
 c SAVE if permission is OK
 STR$1 = '&nbsp;'
 ifthen (0<GWRITE_SECURITY> ne 0)
-. ifthen (0<REC_STAT> le 4)
+. ifthen (0<GREC_STAT> le 4)
 .   STR$1 ='<input type="submit" id="b_saverec" name="upick" value="Save" class="btn btn-primary" title="Save" onclick="return beforeSave();pressedSave();serverRequest(''Saving'')">'
 . endif
 endif
@@ -21,9 +21,9 @@ write(cgi) STR$1
 
 STR$1 = '&nbsp;'
 ifthen (0<GWRITE_SECURITY> ne 0)
-. ifthen (0<REC_STAT> le 4)
-.   cif nb <CASEIS>
-.     CASE IS <CASEIS>
+. ifthen (0<GREC_STAT> le 4)
+.   cif nb <GCASE_IS>
+.     CASE IS <GCASE_IS>
 .       ifthen(count(nglobal('GDB_REC')) lt maxrecs(nglobal('GDB_REC')) )
 .         STR$1 = '<input type="submit" id="b_newrec" name="upick" value="New" title="New Record" class="btn btn-primary">'
 .       endif
@@ -35,7 +35,7 @@ write(cgi) STR$1
 
 STR$1 = '&nbsp;'
 ifthen (0<GWRITE_SECURITY> ne 0)
-. ifthen (0<REC_STAT> le 4)
+. ifthen (0<GREC_STAT> le 4)
 .   ifthen (0<GDELETE_RECS> eq 1)
 .     STR$1 = '<input type="submit" id="b_deleterec" name="upick" value="Delete" class="btn btn-primary" title="Delete this record" onclick="return confirmDelRec()">'
 .   endif
@@ -44,11 +44,11 @@ endif
 write(cgi) STR$1
 
 CIF EQ 0<GCASED>, 1
-. CIF EQ 0<REC_STAT>, 6
+. CIF EQ 0<GREC_STAT>, 6
 . cif true
 .   PROCESS CASES COUNT  = 1
 . cif false
-.   CASE IS <CASEIS>
+.   CASE IS <GCASE_IS>
 . CIF END
 CIF END
 
@@ -85,7 +85,7 @@ CIF END
 
 STR$1 = '&nbsp;'
 ifthen (0<GSECURITY_LEVEL> eq  30)
-. ifthen (0<REC_STAT> le 4)
+. ifthen (0<GREC_STAT> le 4)
 .   STR$1 = '<input type="reset" id="b_refresh" value="Refresh" class="btn btn-primary" title="Reset values">'  | perhaps display this button for DBAs later.
 . endif
 endif

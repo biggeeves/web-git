@@ -1,7 +1,8 @@
-PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157543,58508)  |Last amended Feb 14, 2014,16:15:08
+PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157548,47190)  |Last amended Feb 19, 2014,13:06:30
 C display a generic data entry page for one record (ROW)
 
 retrieval progress CRWARN noautocase
+c print back on
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 set TAB_INDEX  (0)
@@ -11,16 +12,16 @@ set REC_ACCESSED__4 (0)
 c note disableEnterKey needs to be in two places.  A) On the form to disable enter in Firefox.  B) In the body to allow IE to move from field to field with the enter key.
 
 write(cgi) '  <h3 title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
-if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <CASEISNQ> '
+if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <GCASE_IS_NQ> '
 write(cgi) REC_LABEL__4
 ifthen (0<GVIEW_SCHEMA> eq 1)
-. write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDB_REC>">'
+. write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GD_BREC>">'
 . write(cgi) '<small> (codebook)</small></a>'
 endif
 write(cgi) '</h3>'
 
-if(0<REC_STAT> eq 5) write '<h3>Deleted</h3>'
-if(0<REC_STAT> eq 6) write '<h3>Sample</h3>'
+if(0<GREC_STAT> eq 5) write '<h3>Deleted</h3>'
+if(0<GREC_STAT> eq 6) write '<h3>Sample</h3>'
 
 CALL WPF.INC_ELEMENTS.CRUD_NAV_BAR
 
@@ -63,11 +64,11 @@ write(cgi) '<div class="span11 offset1">'
 write(cgi) '  <table class="table table-striped table-hover" id="page1"> '
 
 CIF EQ 0<GCASED>, 1
-CIF EQ 0<REC_STAT>, 6
+CIF EQ 0<GREC_STAT>, 6
 cif true
 . PROCESS CASES COUNT  = 1
 cif false
-. CASE IS <CASEIS>
+. CASE IS <GCASE_IS>
 CIF END
 CIF END
 
@@ -116,7 +117,7 @@ endif
 .       VAR_MAX_STR = smax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
 .       SIR_VARTYPE = vtype(REC_TYPE_NUMBER,VNAME$CB)
 .       SIR_VARFORMAT = trimlr(upper(vformat(REC_TYPE_NUMBER, VNAME$CB)))
-.       ifthen (pattern(vardocsn (<GDB_REC>, VNAME$CB, 1), '@radio@') eq 1)
+.       ifthen (pattern(vardocsn (<gdb_rec>, VNAME$CB, 1), '@radio@') eq 1)
 .         DISPLAY_AS = 1
 .       else
 .         DISPLAY_AS = 0
@@ -147,7 +148,7 @@ endif
 .       set VALID_RESULT (0)
 .       TAB_INDEX = TAB_INDEX  + 1
 c get the value of the variable, missing user defined missings after invalid data entry
-CIF NE 1,0<REC_STAT>
+CIF NE 1,0<GREC_STAT>
 .       ifthen (SIR_VARTYPE eq 1)
 .         STRING_VARGET = sget(VNAME$CB); MISSNUM__4  = misnum(STRING_VARGET)
 .       elseif (SIR_VARTYPE eq 2)
@@ -169,9 +170,9 @@ c .         STRING_VARGET = varget(VNAME$)
 .       elseif (MISSNUM__4 eq 1 OR 2 OR 3)
 .         STRING_VARGET = MISS(REC_TYPE_NUMBER, VNAME$CB, MISSNUM__4)
 .       endif
-.       ifthen (0<REC_STAT> eq 1) | New
+.       ifthen (0<GREC_STAT> eq 1) | New
 .         STRING_VARGET = ''
-.       elseif (0<REC_STAT> eq 3) | Tried to save with errors.  Note!  use varget if it validates!
+.       elseif (0<GREC_STAT> eq 3) | Tried to save with errors.  Note!  use varget if it validates!
 .         CGI__4 = trimlr(cgivarpn(VNAME$))
 .           ifthen (SIR_VARTYPE eq 1) | STRINGS
 .             compute VALID_RESULT = validate(REC_TYPE_NUMBER, VNAME$CB, CGI__4)
@@ -385,7 +386,7 @@ end subprocedure
 subprocedure VAR_INPUT
 c Variable value column
 . ifthen(ISKEY__4 eq 1)
-.   ifthen (0<REC_STAT> eq 6)
+.   ifthen (0<GREC_STAT> eq 6)
 .     write(cgi)  "&nbsp;"
 .   else
 .     write(cgi)  STRING_VARGET
@@ -398,7 +399,7 @@ c    ifthen(recname(REC_TYPE_NUMBER) eq 'RECNOTES')
 .   STR$1 = 'name= "' + VNAME$  + '" id= "' + VNAME$ + '" tabindex= '  + format(EACH_VARIABLE) + ' title="' + SIR_VARFORMAT  +'"'
 .   write(cgi)  4t STR$1
 .   ifthen (exists(STRING_VARGET ) eq 1)
-.     ifthen (0<REC_STAT> eq 6)
+.     ifthen (0<GREC_STAT> eq 6)
 .       STR$1 = 'value=""'  | blank record
 .     else
 .       STR$1 = 'value= "'  + STRING_VARGET  + '"'
@@ -436,7 +437,7 @@ c RADIO CHOICES
 .   write(cgi)  '<input type="radio" '
 .   STR$1 = 'name= "' + VNAME$  + '" id="' + VNAME$ + format(EACH_LABEL) + '" tabindex=  '  + format(EACH_VARIABLE)  | This is an intentional error.  It wont be selected but it wont be skipped either.
 .   ifthen (VAL_LAB_POS eq EACH_LABEL)
-.     ifNOTthen (0<REC_STAT> eq 6)
+.     ifNOTthen (0<GREC_STAT> eq 6)
 .       if(len(STRING_VARGET) gt 0) STR$1 = STR$1 +' checked'
 .     endif
 .   endif
@@ -481,7 +482,7 @@ c First option is blank (system missing, zero length string, whatever)
 .   endif
 .   SELECTED__4  = ''
 .   ifthen (VAL_LAB_POS eq EACH_LABEL)
-.     ifNOTthen (0<REC_STAT> eq 6)
+.     ifNOTthen (0<GREC_STAT> eq 6)
 .       if(len(STRING_VARGET) gt 0) SELECTED__4  = 'selected'
 .     endif
 .   endif

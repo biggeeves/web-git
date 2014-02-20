@@ -1,6 +1,6 @@
-PROCEDURE      GLOB_VARS.KEYS:T  (157543,53578)  |Last amended Feb 14, 2014,14:52:58
+PROCEDURE      GLOB_VARS.KEYS:T  (157548,41692)  |Last amended Feb 19, 2014,11:34:52
 c passing keys globals
-c Note that Case structured database, KEY1 = CASEIS.  For caseless databases, KEY1 =  1st key.
+c Note that Case structured database, KEY1 = GCASE_IS.  For caseless databases, KEY1 =  1st key.
 
 program
 . string  *    32   STR$1                      | General String use at any time

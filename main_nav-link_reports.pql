@@ -1,4 +1,4 @@
-PROCEDURE      MAIN_NAV.LINK_REPORTS:T  (157547,61192)  |Last amended Feb 18, 2014,16:59:52
+PROCEDURE      MAIN_NAV.LINK_REPORTS:T  (157548,47288)  |Last amended Feb 19, 2014,13:08:08
 write(cgi) 10t '<li class="dropdown">'
 write(cgi) 10t '<a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports<b class="caret"></b></a>'
 write(cgi) 10t '  <ul class="dropdown-menu">'
@@ -8,37 +8,37 @@ c generic reports
 ifthen(nglobal('GREPORTS_GENERAL') eq 1) | Can see generic reports
 c DB Stats
 . STR$1 = '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_REPORTS.DB_STATS'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '"' + '>DB Stats</a></li>'
 . write(cgi) 4T STR$1
 
 c Frequency
 . STR$1 = '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_REPORTS.FREQ_1'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Frequency</a></li>'
 . write(cgi) 4T STR$1
 
 c Query
 . STR$1 = '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_REPORTS.QUERY_1'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Query</a></li>'
 . write(cgi) 4T STR$1
 
 c Cross tabs
 . STR$1 = '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_REPORTS.CROSS_TABS'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Cross tabs</a></li>'
 . write(cgi) 4T STR$1
 
 c Complex Query
 . STR$1 = '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_REPORTS.COMPLEX_QUERY'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1 + '">Complex Query</a></li>'
 . write(cgi) 4T STR$1
 
 c Find Text
 . STR$1 = '<li><a onClick="serverRequest(''Requesting'');" href="<mycgi>?member=WPF.INC_REPORTS.FINDTEXT'
-. if('<CASEIS>' ne '') STR$1 = STR$1 + '&amp;caseis=<CASEISNQ>'
+. if('<GCASE_IS>' ne '') STR$1 = STR$1 + '&amp;caseis=<GCASE_IS_NQ>'
 . STR$1 = STR$1  + '">Find Text</a></li>'
 . write(cgi) 4T STR$1
 

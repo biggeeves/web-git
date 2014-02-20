@@ -1,9 +1,9 @@
-PROCEDURE      P_SECURITY.CHECK_JS:T  (157543,52956)  |Last amended Feb 14, 2014,14:42:36
+PROCEDURE      P_SECURITY.CHECK_JS:T  (157548,46307)  |Last amended Feb 19, 2014,12:51:47
 program
 remark 'p_security.check_js'
 ifNOTthen (sglobal('GJS_ENABLED') eq 'YES')
-. ANY_NUM__4 =  globals('GSOMEMESS', 'Please enable JavaScript and log on again.')
-. ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 =  globals('GSOME_MESS', 'Please enable JavaScript and log on again.')
+. ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 end program

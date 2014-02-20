@@ -1,4 +1,4 @@
-PROCEDURE      CONNECTIONS.UPW:T  (157452,52617)  |Last amended Nov 15, 2013,14:36:57
+PROCEDURE      CONNECTIONS.UPW:T  (157548,46397)  |Last amended Feb 19, 2014,12:53:17
 c Connects to UPW database
 
 
@@ -14,23 +14,23 @@ MST = ''
 c MST = '3010'  | uncomment this line to use master on port 3010 for the upw database
 
 ifthen(fileis(DBPATH  + 'upw.sr1') ne 1)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'Oh oh, We are currently updating or system.')
-. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'Oh oh, We are currently updating or system.')
+. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
 IF (MST ne '') EXECUTE DBMS "SET MASTER <GMASTER_IP>:" + MST
 PQL CONNECT DATABASE 'UPW' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
 IFNOTTHEN (IOSTAT__4 GE 0)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'We are currently updating our system.  Please try back later.')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'We are currently updating our system.  Please try back later.')
 . execute subprocedure SHOWERRORS
-. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 
 elseif (MST ne '')
 . ifthen (system(38) eq 0)
 .   execute subprocedure SHOWERRORS
-.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Sorry, ' +  MST + 'is being worked on.  Access temporarily denied.  Contact your DBA for time frame')
-.   ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+.   ANY_NUM__4 = globals( 'GSOME_MESS', 'Sorry, ' +  MST + 'is being worked on.  Access temporarily denied.  Contact your DBA for time frame')
+.   ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . endif
 endif

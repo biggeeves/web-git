@@ -1,4 +1,4 @@
-PROCEDURE      GLOB_VARS.CASE_LIST:T  (157543,52670)  |Last amended Feb 14, 2014,14:37:50
+PROCEDURE      GLOB_VARS.CASE_LIST:T  (157548,46980)  |Last amended Feb 19, 2014,13:03:00
 c globals to create GCASE_NAV GSTART_ID GNAV#
 c these values are used to help construct process cases lines
 

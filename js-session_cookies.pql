@@ -2,7 +2,7 @@ PROCEDURE      JS.SESSION_COOKIES:T  (157542,63806)  |Last amended Feb 13, 2014,
 C setCookie(c_name, valueX, expiredays, path, domain, secure )'
 
 write(cgi) ' <script type="text/javascript">'
-write(cgi) '   setCookie(''USER_ID'', ''<USER_ID>'', 1);'
-write(cgi) '   setCookie(''SESSION_ID'', ''<SESSION_ID>'', 1);'
+write(cgi) '   setCookie(''USER_ID'', ''<GUSER_ID>'', 1);'
+write(cgi) '   setCookie(''SESSION_ID'', ''<GSESSION_ID>'', 1);'
 write(cgi) ' </script>'
 END PROCEDURE

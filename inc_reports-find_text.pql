@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.FIND_TEXT:T  (157543,53705)  |Last amended Feb 14, 2014,14:55:05
+PROCEDURE      INC_REPORTS.FIND_TEXT:T  (157548,46888)  |Last amended Feb 19, 2014,13:01:28
 c Search for text in a record type.  Searches all variables.
 c
 c must re-set the globals to first record type, first var
@@ -64,12 +64,12 @@ write(cgi) '  </td></tr>'
 write(cgi) '</table>'
 write(cgi) '  <p class="left">'
 write(cgi) '  Options<br>'
-ifthen(nglobal('GEXACTMATCH') eq 1) STR$1 = ' checked'
+ifthen(nglobal('GEXACT_MATCH') eq 1) STR$1 = ' checked'
 else STR$1 =''
 endif
 write(cgi) '  <input type="checkbox" id="exactmatch"  name="exactmatch" value="1"' STR$1 '><label for="exactmatch">Exact Match</label><br>'
 
-ifthen(nglobal('GCASEMATCH') eq 1) STR$1 = ' checked'
+ifthen(nglobal('GCASE_MATCH') eq 1) STR$1 = ' checked'
 else STR$1 =''
 endif
 write(cgi) '  <input type="checkbox" id="casematch" name="casematch" value="1"' STR$1 '><label for="casematch">Case Sensitive</label>'
@@ -77,7 +77,7 @@ write(cgi) '</p>'
 
 CIF EQ 'Find Text', '<GSUBMIT>'
 . QSTR__4 = sglobal('GVALUE1')
-. ifnot (nglobal('GCASEMATCH') eq 1) QSTR__4 = trimlr(upper(sglobal('GVALUE1')))
+. ifnot (nglobal('GCASE_MATCH') eq 1) QSTR__4 = trimlr(upper(sglobal('GVALUE1')))
 
 . write(cgi) '<h4>Find Text Results in ' REC_LABEL__4
 c show keys for each record type
@@ -132,8 +132,8 @@ c show keys for each record type
 .     else
 .       STRING_VARGET = varget(VNAME$CB)
 .     endif
-.     ifnot (nglobal('GCASEMATCH') eq 1) STRING_VARGET = trimlr(upper(STRING_VARGET))
-.     ifthen(nglobal('GEXACTMATCH') eq 1)
+.     ifnot (nglobal('GCASE_MATCH') eq 1) STRING_VARGET = trimlr(upper(STRING_VARGET))
+.     ifthen(nglobal('GEXACT_MATCH') eq 1)
 .       ifthen (STRING_VARGET eq QSTR__4)
 .         execute subprocedure START_ROW
 .         write(cgi) '<td>' vname$ '</td><td>' STRING_VARGET '</td></tr>'

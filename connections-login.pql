@@ -1,4 +1,4 @@
-PROCEDURE      CONNECTIONS.LOGIN:T  (157542,53580)  |Last amended Feb 13, 2014,14:53:00
+PROCEDURE      CONNECTIONS.LOGIN:T  (157548,46371)  |Last amended Feb 19, 2014,12:52:51
 c Connects to LOGIN database IF NOT ALREADY CONNECTED
 
 PROGRAM crwarn
@@ -9,8 +9,8 @@ integer *     1   IOSTAT__4                  | Return code of IOSTAT
 DBPATH  = dsn('LOGIN_FOLDER')
 
 ifthen(fileis(DBPATH  + 'login.sr1') ne 1)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'Oh oh, We are currently updating or system.')
-. ANY_NUM__4 = globals( 'G_DEBUG_INFO', 'Could not find the LOGIN database.')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'Oh oh, We are currently updating or system.')
+. ANY_NUM__4 = globals( 'GDEBUG_INFO', 'Could not find the LOGIN database.')
 . exit program
 endif
 
@@ -22,8 +22,8 @@ END FOR
 PQL CONNECT DATABASE 'LOGIN' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
 
 IFNOTTHEN (IOSTAT__4 GE 0)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'We are currently updating our system.  Please try back later.')
-. ANY_NUM__4 = globals( 'G_DEBUG_INFO', 'Did not connect to LOGIN database')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'We are currently updating our system.  Please try back later.')
+. ANY_NUM__4 = globals( 'GDEBUG_INFO', 'Did not connect to LOGIN database')
 endif
 
 END PROGRAM

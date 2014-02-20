@@ -1,30 +1,30 @@
-PROCEDURE      DB_UPDATE.CASE_DEL:T  (157542,65295)  |Last amended Feb 13, 2014,18:08:15
+PROCEDURE      DB_UPDATE.CASE_DEL:T  (157548,47126)  |Last amended Feb 19, 2014,13:05:26
 CALL WPF.DB_CHECKS.VALID_CASE
 
 retrieval UPDATE
 integer *     1   FIRST_CASE__4                  | Case already exists
 integer *     4   ANY_NUM__4
 set FIRST_CASE__4 (0)
-OLD case is <CASEIS>
+OLD case is <GCASE_IS>
 . compute FIRST_CASE__4 = 1
 . DELETE CASE
 end case is
 C check to see if they tried to do an existing CASE ID
-OLD case is <CASEIS>
+OLD case is <GCASE_IS>
 . compute FIRST_CASE__4 = 2
 end case is
 
 ifthen (FIRST_CASE__4 = 0)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'Case Deletion failed because ID: <CASEISNQ> did not exist.')
-. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'Case Deletion failed because ID: <GCASE_IS_NQ> did not exist.')
+. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.CASE_NAV')
 elseif (FIRST_CASE__4 = 2)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'WARNING! Case Deletion failed.  <CASEISNQ> still exits!')
-. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASEDEL')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'WARNING! Case Deletion failed.  <GCASE_IS_NQ> still exits!')
+. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.CASEDEL')
 else
-. ANY_NUM__4 = dglobal('CASEIS')
-. ANY_NUM__4 = dglobal('CASEISNQ')
-. ANY_NUM__4 = globals( 'GSOMEMESS', '<CASEISNQ> was succesfully deleted.')
-. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.CASE_NAV')
+. ANY_NUM__4 = dglobal('GCASE_IS')
+. ANY_NUM__4 = dglobal('GCASE_IS_NQ')
+. ANY_NUM__4 = globals( 'GSOME_MESS', '<GCASE_IS_NQ> was succesfully deleted.')
+. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.CASE_NAV')
 endif
 end retrieval
 

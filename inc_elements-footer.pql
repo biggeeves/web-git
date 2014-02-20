@@ -1,14 +1,14 @@
-PROCEDURE      INC_ELEMENTS.FOOTER:T  (157543,26374)  |Last amended Feb 14, 2014,07:19:34
-C EXECUTE DBMS "call WPF.INC_ELEMENTS.GLOBALVALUES"  | FOR DEBUG PURPOSES.
+PROCEDURE      INC_ELEMENTS.FOOTER:T  (157548,46162)  |Last amended Feb 19, 2014,12:49:22
+EXECUTE DBMS "call WPF.INC_BODY_DBA.GLOBAL_VALUES"  | FOR DEBUG PURPOSES.
 
 write(cgi) '<div class="row">'
-write(cgi) '  <h6 class="span12 text-center" title="Administrator: Greg Neils: <GMEMIN><GMEMOUT>">'
+write(cgi) '  <h6 class="span12 text-center" title="Administrator: Greg Neils: <GMEM_IN><GMEM_OUT>">'
 write(cgi) '  Designed by the Data Coordinating Center At Columbia University in New York. V2.00'
 write(cgi) '  </h6>'
 write(cgi) '</div>'
 write(cgi) '</div>' | close container
-write(cgi) '<script src="<full_url>js/jquery.js"></script>'
-write(cgi) '<script src="<full_url>js/bootstrap.js"></script>'
+write(cgi) '<script src="<GFULL_URL>js/jquery.js"></script>'
+write(cgi) '<script src="<GFULL_URL>js/bootstrap.js"></script>'
 c write(cgi) '<script src="/datepicker/js/bootstrap-datepicker.js"></script>'
 write(cgi) '<script type="text/javascript">'
 write(cgi) '$(''.datepicker'').datepicker()'

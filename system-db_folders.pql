@@ -26,7 +26,7 @@ c database users folder
 . if (ANY_NUM__4 eq -1) write 'Can not make USERS folder' [fileis(ANY_DIR__4)] ANY_DIR__4
 
 c database specific user
-. ANY_DIR__4 = dsn('web_root') + DB_NAME__4 + '\users\<user_name>\'
+. ANY_DIR__4 = dsn('web_root') + DB_NAME__4 + '\users\<GUSER_NAME>\'
 . if (fileis(ANY_DIR__4) eq 0) ANY_NUM__4 = makedir(ANY_DIR__4) | NOT A DIRECTORY OR A FILE
 . if (ANY_NUM__4 eq -1) write 'Can not make USERS folder' [fileis(ANY_DIR__4)] ANY_DIR__4
 end program

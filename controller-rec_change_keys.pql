@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.REC_CHANGE_KEYS:T  (157543,53945)  |Last amended Feb 14, 2014,14:59:05
+PROCEDURE      CONTROLLER.REC_CHANGE_KEYS:T  (157548,41216)  |Last amended Feb 19, 2014,11:26:56
 C GET THE NEXT OR PREVIOUS KEYS.
 
 retrieval crwarn noautocase
@@ -8,7 +8,7 @@ CALL WPF.SYSTEM.INI_VARS
 REC_TYPE_NUMBER = nglobal('GDB_REC')
 
 CIF EQ 1, 0<GCASED>
-CASE IS <CASEIS>
+CASE IS <GCASE_IS>
 CIF END
 
 ifthen (sglobal('GREC_NAV') eq 'First' or 'Last')
@@ -23,7 +23,7 @@ process rec <GDB_REC> <GPROCESS>
 . IFNOT (ANY_NUM__4  = 2) NEXT REC
 
 | must reset globals and then re-assign them so they don't cary past information.
-. ANY_NUM__4 = globals('REC_STAT', '2') |OLD
+. ANY_NUM__4 = globals('GREC_STAT', '2') |OLD
 . ANY_NUM__4 = globals('GKEY1#', '')
 . ANY_NUM__4 = globals('GKEY2#', '')
 . ANY_NUM__4 = globals('GKEY3#', '')

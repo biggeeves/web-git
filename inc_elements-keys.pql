@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.KEYS:T  (157543,55850)  |Last amended Feb 14, 2014,15:30:50
+PROCEDURE      INC_ELEMENTS.KEYS:T  (157548,45711)  |Last amended Feb 19, 2014,12:41:51
 . ifthen ('<GKEY1#>' eq '')
 .   write(cgi) '<input type="hidden" id="key1" name="key1"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 1 + dbtype(0))) eq 1 or 3 or 4 )

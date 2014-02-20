@@ -1,0 +1,79 @@
+PROCEDURE      INC_BODY_DBA.N_CASES:T  (157548,47148)  |Last amended Feb 19, 2014,13:05:48
+retrieval | CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+
+set FREQINT__4 * (0)
+set REC_TOT__4  (0)    | in this case, keeps track of maximum number of records
+VNAME$ = trimlr(keyname(0, 1))
+VAR_LABEL = trimlr(varlabsc(0, VNAME$))
+if(VAR_LABEL = '') VAR_LABEL = VNAME$
+
+
+write(cgi) '<div class="row">'
+write(cgi) '<div class="span12 text-center">'
+ifthen (sglobal('GU_PICK') eq '')
+. write(cgi) '<h3>Total count of ' VAR_LABEL 'by number of records as of ' [datec(today(0),  'Wwwwwwwww MM.DD.YYYY')] '</h3>'
+else
+. write(cgi) '<h4> List of ' VAR_LABEL ' with <GU_PICK> records as of ' [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '</h4>'
+endif
+write(cgi) '</div>'
+write(cgi) '</div>'
+write(cgi) '<div class="row">'
+write(cgi) '<div class="span10 offset1">'
+write(cgi) '<table class="table table-striped table-hover table-bordered">'
+ifthen (sglobal('GU_PICK') eq '')
+. write(cgi) 2t '<tr><th title="N Cases">Count of ' VAR_LABEL '</th><th title="NRecs">Have this many records</th></tr>'
+else
+. write(cgi) 2t '<tr><th title="Case">' VAR_LABEL '</th><th>Number of Records</th></tr>' | note that it flips the column order from above
+endif
+
+CIF EQ 1, 0<GCASED>
+process cases
+CIF END
+
+REC_CNT__4 = 0
+for EACH_RECORD_NUMBER = 1, nrecs(0)
+. if(exists(count(EACH_RECORD_NUMBER)) eq 1)  REC_CNT__4 = REC_CNT__4 + count(EACH_RECORD_NUMBER)
+end for
+ifthen('<GU_PICK>' ne '') | must test because nglobal fo missing was returning 0
+. if (nglobal('GU_PICK') eq REC_CNT__4) execute subprocedure SHOW_CASE |wanted id list
+else
+. FREQINT__4(REC_CNT__4) = FREQINT__4(REC_CNT__4) + 1
+. if(REC_CNT__4 gt REC_TOT__4) REC_TOT__4 = REC_CNT__4
+endif
+
+
+CIF EQ 1, 0<GCASED>
+end cases
+CIF END
+
+c display list of record counts by case counts
+ifthen (sglobal('GU_PICK') eq '')
+. for EACH_NUMBER = 0, REC_TOT__4
+.   IF(FREQINT__4(EACH_NUMBER) = 0) NEXT FOR | do not display empty rows
+.   LINK__4 = '"<mycgi>?member=WPF.INC_DBA.N_CASES&amp;caseis=<GCASE_IS_NQ>&amp;upick=' + format(EACH_NUMBER)  + '"'
+.   write(cgi) 4t '<tr><td><a href=' LINK__4 '>'  FREQINT__4(EACH_NUMBER) '</a></td>'
+.   write(cgi) 6t '<td>' EACH_NUMBER '</td></tr>'
+. end for
+endif
+
+write(cgi) '</table>'
+write(cgi) '</div>' |span
+write(cgi) '</div>' |row
+
+subprocedure SHOW_CASE
+c show the case id
+. write(cgi) 4T '<tr>'
+. KEYVNAME__4 = varname(0, 1)
+. VNAME$CB = stdname(KEYVNAME__4)
+. CASE_STR = varget(VNAME$CB)
+
+. LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.CASE_CONTROL&caseis=' + CASE_STR + '"'
+. write(cgi) 6T '<td><a href=' LINK__4 '>' CASE_STR '</a></td>'
+. write(cgi) 6T '<td>' REC_CNT__4 '</td></tr>'
+end subprocedure
+
+
+end retrieval
+END PROCEDURE

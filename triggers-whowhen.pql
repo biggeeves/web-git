@@ -2,8 +2,8 @@ PROCEDURE      TRIGGERS.WHOWHEN:T  (156430,45559)  |Last amended Jan 28, 2011,12
 SUBPROCEDURE WHOWHEN
 . ANY_NUM__4 = varput('DCCDATE',datec(today(0), 'mm/dd/yyyy'))
 . ANY_NUM__4 = varput('DCCTIME', timec(now(0), 'hh:mm'))
-. ANY_NUM__4 = varput('DWHO', upper(sglobal('USERNAME')))
-. ANY_NUM__4 = varput('DCCWHO', upper(sglobal('USERNAME')))
+. ANY_NUM__4 = varput('DWHO', upper(sglobal('GUSER_NAME')))
+. ANY_NUM__4 = varput('DCCWHO', upper(sglobal('GUSER_NAME')))
 . ifthen (exists(varget('DSTAMP')) eq 0)
 .   ANY_NUM__4 = varput('DSTAMP', datec(today(0), 'mm/dd/yyyy'))
 . endif

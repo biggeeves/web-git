@@ -18,10 +18,10 @@ EXECUTE DBMS STR$1
 STR$1 = 'attribute showmems= "'+ ANY_DIR__4 +'\js\showmems.js"'
 EXECUTE DBMS STR$1
 
-STR$1 = 'attribute user_rep = "' + ANY_DIR__4 +'\users\<user_name>\<user_name>_rep.txt"'
+STR$1 = 'attribute user_rep = "' + ANY_DIR__4 +'\users\<GUSER_NAME>\<GUSER_NAME>_rep.txt"'
 EXECUTE DBMS STR$1
 
-STR$1 = 'attribute user_folder = "' + ANY_DIR__4 +'\users\<user_name>\"'
+STR$1 = 'attribute user_folder = "' + ANY_DIR__4 +'\users\<GUSER_NAME>\"'
 EXECUTE DBMS STR$1
 
 

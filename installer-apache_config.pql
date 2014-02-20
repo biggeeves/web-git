@@ -1,8 +1,13 @@
-PROCEDURE      INSTALLER.APACHE_CONFIG:T  (157542,44248)  |Last amended Feb 13, 2014,12:17:28
+PROCEDURE      INSTALLER.APACHE_CONFIG:T  (157549,33036)  |Last amended Feb 20, 2014,09:10:36
+# Tell Apache that CGI scripts are in this folder.
+# SIR Web always calls the "file/executable" sirweb.cgi, which handles all requests.
+# SIRWEB.cgi looks for a file called "default.pql" in the SIR.exe folder.
+
 <IfModule alias_module>
     ScriptAlias /pql/ "C:/SIR XS/"
 </IfModule>
 
+# Grants users permission to access the directory where sirweb.cgi resides.
 <Directory "C:/SIR XS">
     AllowOverride None
     Options None

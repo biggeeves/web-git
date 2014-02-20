@@ -16,7 +16,7 @@ end program
 
 program
 c GPROCESS
-. STR__4  = sglobal('GUPICK')
+. STR__4  = sglobal('GU_PICK')
 . ifthen (STR__4 eq 'First')
 .   ANY_NUM__4 =  globals('GPROCESS', '')
 . elseif (STR__4 eq 'Next')

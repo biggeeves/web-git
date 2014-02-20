@@ -1,4 +1,4 @@
-PROCEDURE      INC_DBA.RUN_PROG:T  (157543,52713)  |Last amended Feb 14, 2014,14:38:33
+PROCEDURE      INC_DBA.RUN_PROG:T  (157548,46956)  |Last amended Feb 19, 2014,13:02:36
 program
 . string  *  4094   CGI__4                     | get the value of the CGI variable
 . real    *     8   ANY_NUM__4                  | Use any time you want
@@ -14,8 +14,8 @@ program crwarn
 . integer *     1   IOSTAT__4                  | Return code of IOSTAT
 . real    *     8   ANY_NUM__4                  | Use any time you want
 . ifthen (nglobal('GSAVE_CODE')  eq 1)
-.   ifthen(sglobal('GPROGTITLE') ne '')
-.     FPATH__4 = sglobal('GPROGTITLE')
+.   ifthen(sglobal('GPROG_TITLE') ne '')
+.     FPATH__4 = sglobal('GPROG_TITLE')
 .   else
 .     FPATH__4 = FPATH__4 + 'Generic'
 .   endif
@@ -87,7 +87,7 @@ program
 . endif
 
 
-. STR$1 = sglobal('GPROGTITLE')
+. STR$1 = sglobal('GPROG_TITLE')
 . if(STR$1 ne '') STR$1 = ' value="' + STR$1 + '"'
 . write(cgi) '  <div class="controls controls-row">'
 . write(cgi) '      <input type="submit" name="submit" value="Run Program" class="btn btn-primary span2">'

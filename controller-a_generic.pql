@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.A_GENERIC:T  (157542,63942)  |Last amended Feb 13, 2014,17:45:42
+PROCEDURE      CONTROLLER.A_GENERIC:T  (157548,46223)  |Last amended Feb 19, 2014,12:50:23
 c What to do if the user is already using a database.
 
 CALL WPF.GLOB_VARS.USER_ID
@@ -11,13 +11,13 @@ CALL WPF.P_SECURITY.CHECK_USER_NAME   | make sure USER_NAME is valid and not bla
 CALL WPF.P_SECURITY.CHECK_REFERER    | Check the referring page to make sure that the Cookies were not falsified
 CALL WPF.P_SECURITY.CHECK_QUERY      | Check links as they are coming in.  Characters like # make SIR break
 
-CIF EQ '<GMEMIN>', 'WPF.P_SECURITY.PUT_LOGOUT'
+CIF EQ '<GMEM_IN>', 'WPF.P_SECURITY.PUT_LOGOUT'
 . CALL WPF.P_SECURITY.PUT_LOGOUT
 . CALL WPF.INC_BODY_FORMS.LOGOUT_DYNAMIC
 . CALL WPF.CONNECTIONS.FULL_EXIT
 CIF END
 
-CIF EQ '<GMEMIN>', 'WPF.CONTROLLER.FIRST_PAGE'
+CIF EQ '<GMEM_IN>', 'WPF.CONTROLLER.FIRST_PAGE'
 . CALL WPF.P_SECURITY.PUT_DB  | UPDATE manager DB to include dbname for this session
 CIF FALSE
 . CALL WPF.P_SECURITY.GET_DB
@@ -44,7 +44,7 @@ CALL WPF.GLOB_VARS.CGI_DB
 CALL WPF.GLOB_VARS.VIA_FROM_THRU
 
 
-cif ne '<GMEMIN>', 'WPF.INC_DBA.UPDATE_DB_FILES'
+cif ne '<GMEM_IN>', 'WPF.INC_DBA.UPDATE_DB_FILES'
 | the only time you do not want to CALL this file is when you are going to CALL it via Update_Dbfiles.
 . CALL WPF.SYSTEM.MAKE_DB_FILES
 CIF END
@@ -52,10 +52,10 @@ CIF END
 GLOBAL GMENU = 1
 
 PROGRAM
-IFTHEN (1 eq pattern(sglobal('GMEMIN'), '@INC_BODY_FORMS@') or pattern(sglobal('GMEMIN'), '@INC_DBA@') or pattern(sglobal('GMEMIN'), '@INC_REPORTS@'))
+IFTHEN (1 eq pattern(sglobal('GMEM_IN'), '@INC_BODY_FORMS@') or pattern(sglobal('GMEM_IN'), '@INC_DBA@') or pattern(sglobal('GMEM_IN'), '@INC_REPORTS@'))
 . EXECUTE DBMS "CALL WPF.CONTROLLER.SHOW_PAGE"
 ELSE
-. EXECUTE DBMS "CALL <GMEMIN>"
+. EXECUTE DBMS "CALL <GMEM_IN>"
 . EXECUTE DBMS "CALL WPF.CONTROLLER.SHOW_PAGE"
 endif
 END PROGRAM

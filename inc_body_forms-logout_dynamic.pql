@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.LOGOUT_DYNAMIC:T  (157541,37042)  |Last amended Feb 12, 2014,10:17:22
+PROCEDURE      INC_BODY_FORMS.LOGOUT_DYNAMIC:T  (157548,46643)  |Last amended Feb 19, 2014,12:57:23
 program crwarn
 string  * 600   STR$1            | General String use at any time
 integer *   1   IOSTAT__4        | Return code of IOSTAT
@@ -9,8 +9,8 @@ c This outputs to cgi.  It outputs the logout HTML source from the WPF
 
 open (logout) read lrecl = 600 iostat = IOSTAT__4
 . ifthen (iostat__4 ne 0)
-.   ANY_NUM__4 = globals('GSOMEMESS', 'The usual sign out page was unavailable.')
-.   ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('GSOME_MESS', 'The usual sign out page was unavailable.')
+.   ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 .   exit program
 . endif

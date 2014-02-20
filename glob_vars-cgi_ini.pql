@@ -1,14 +1,14 @@
-PROCEDURE      GLOB_VARS.CGI_INI:T  (157543,54037)  |Last amended Feb 14, 2014,15:00:37
+PROCEDURE      GLOB_VARS.CGI_INI:T  (157548,47370)  |Last amended Feb 19, 2014,13:09:30
 C ESSENTIAL start up globals FOR CGI ONLY!
 C NOTE A SPECIAL GLOBAL IS SET HERE.  IT TELLS YOU THAT SIR IS RUNNING IN CGI MODE, THUS NOT AS SIR.EXE
-C THE SPECIAL GLOBAL IS GRUNCGI AND IT IS SET TO "1".  IF YOU NEED TO FIND OUT IF YOU ARE IN CGI MODE, TEST THE VALUE OF GRUNCGI
+C THE SPECIAL GLOBAL IS GRUN_CGI AND IT IS SET TO "1".  IF YOU NEED TO FIND OUT IF YOU ARE IN CGI MODE, TEST THE VALUE OF GRUN_CGI
 c note: disabled elements are not submitted with the form
 
 program
 integer *     4   ANY_NUM__4                    | Use any time you want
-. ANY_NUM__4 =  globals ('GRUNCGI'  , '1' )     | RUNNING AS CGI
-. ANY_NUM__4 =  globals ('GMEMIN'   , upper(fst(cgivarpn('member'), '-1') ) )
-. ANY_NUM__4 =  globals ('GUPICK', fst(trimlr(fst(cgivarpn('upick'), cgivarpn('UPICK'))), ''))
+. ANY_NUM__4 =  globals ('GRUN_CGI'  , '1' )     | RUNNING AS CGI
+. ANY_NUM__4 =  globals ('GMEM_IN'   , upper(fst(cgivarpn('member'), '-1') ) )
+. ANY_NUM__4 =  globals ('GU_PICK', fst(trimlr(fst(cgivarpn('upick'), cgivarpn('UPICK'))), ''))
 . ANY_NUM__4 =  globals ('GJS_ENABLED', fst(cgivarpn('jsenabled'), cgivarpn('JSENABLED'), '-1'))
 . ANY_NUM__4 =  globals ('GSUBMIT'   , fst(cgivarpn('submit'), '-1'))
 . ANY_NUM__4 =  globals ('GDB_PICK'   , upper(fst(cgivarpn('dbpick'), '-1')))

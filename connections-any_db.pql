@@ -1,4 +1,4 @@
-PROCEDURE      CONNECTIONS.ANY_DB:T  (157543,51941)  |Last amended Feb 14, 2014,14:25:41
+PROCEDURE      CONNECTIONS.ANY_DB:T  (157548,46374)  |Last amended Feb 19, 2014,12:52:54
 C Connect to any database using globals
 
 error limit 99
@@ -7,12 +7,12 @@ PROGRAM
 . ifthen(sglobal('GDB') eq 'COMPANY')
 .   PQL CONNECT DATABASE "<GDB>" PREFIX "<GDB_PATH>" IOSTAT=RC SECURITY 'COMPANY','LOW','LOW'
 . else
-.   PQL CONNECT DATABASE "<GDB>" PREFIX "<GDB_PATH>" IOSTAT=RC SECURITY '<DBPW>', '<GREAD_SECURITY>','<GWS>'
+.   PQL CONNECT DATABASE "<GDB>" PREFIX "<GDB_PATH>" IOSTAT=RC SECURITY '<DBPW>', '<GRS>','<GWS>'
 . endif
 
 . ifnotthen (RC GE 0)
-.   compute DUMMY = globals("GMEMIN","WPF.INC_BODY_FORMS.UNK_ERR")
-.   compute DUMMY = globals("GSOMEMESS",'<GDB> Database Connection Failed: ' + format(RC) )
+.   compute DUMMY = globals("GMEM_IN","WPF.INC_BODY_FORMS.UNK_ERR")
+.   compute DUMMY = globals("GSOME_MESS",'<GDB> <GDB_PATH> Database Connection Failed: ' + format(RC) )
 .   EXECUTE DBMS "CALL WPF.CONTROLLER.SHOW_PAGE"
 . endif
 END PROGRAM

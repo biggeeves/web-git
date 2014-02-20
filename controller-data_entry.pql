@@ -1,6 +1,9 @@
-PROCEDURE      CONTROLLER.DATA_ENTRY:T  (157543,58482)  |Last amended Feb 14, 2014,16:14:42
+PROCEDURE      CONTROLLER.DATA_ENTRY:T  (157548,46146)  |Last amended Feb 19, 2014,12:49:06
 c Choose customized data entry screens or default data entry screens.
 C NOTE THAT ALL RECORD CREATION MUST HAPPEN BEFORE COMING TO THIS SCREEN.
+
+print back off
+
 
 program
 c LOCAL DATA ENTRY PAGES
@@ -21,10 +24,10 @@ c LOCAL DATA ENTRY PAGES
 .   endif
 . end for
 . ifthen (GOON__4 = 1)
-.   ifthen (sglobal('GUPICK') = 'Edit' OR 'New' OR 'First' or 'Last' or 'Next' or 'Previous')
-.     ANY_NUM__4= globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_EDIT')
-.   elseif (sglobal('GUPICK') = 'View')
-.     ANY_NUM__4= globals('GMEMOUT', 'WPF.INC_BODY_FORMS.REC_READONLY')
+.   ifthen (sglobal('GU_PICK') = 'Edit' OR 'New' OR 'First' or 'Last' or 'Next' or 'Previous')
+.     ANY_NUM__4= globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_EDIT')
+.   elseif (sglobal('GU_PICK') = 'View')
+.     ANY_NUM__4= globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_READONLY')
 .   endif
 . else
 .   write 'Should go to a cutsomized page'

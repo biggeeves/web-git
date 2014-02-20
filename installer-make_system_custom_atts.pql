@@ -1,4 +1,4 @@
-PROCEDURE      INSTALLER.MAKE_SYSTEM_CUSTOM_ATTS:T  (157542,77640)  |Last amended Feb 13, 2014,21:34:00
+PROCEDURE      INSTALLER.MAKE_SYSTEM_CUSTOM_ATTS:T  (157549,34108)  |Last amended Feb 20, 2014,09:28:28
 program
 . string * 4000 STR$1
 . STRING * 100 PATH$
@@ -11,10 +11,10 @@ program
 .   STR$1 = 'global mycgi = "/pql/sirweb.cgi"'
 .   WRITE (CATTS) STR$1
 
-.   STR$1 = 'global WEBSITE_TITLE = <WEBSITE_TITLE>'
+.   STR$1 = 'global GWEBSITE_TITLE = <GWEBSITE_TITLE>'
 .   WRITE (CATTS) STR$1
 
-.   STR$1 = 'global full_url = <full_url>'
+.   STR$1 = 'global GFULL_URL = <GFULL_URL>'
 .   WRITE (CATTS) STR$1
 
 .   STR$1 = 'ATTRIBUTE WEBPROC_FOLDER = "' + DSN('WEBPROC_FOLDER') + '"'
@@ -74,9 +74,9 @@ program
 
 
 c   create global values for master.  will use these for the login and manager database
-.   STR$1 = 'GLOBAL GMSTIP = <GMSTIP>'
+.   STR$1 = 'GLOBAL GMST_IP = <GMST_IP>'
 .   WRITE (CATTS) STR$1
-.   STR$1 = 'GLOBAL GMSTPORT = <GMSTPORT> '
+.   STR$1 = 'GLOBAL GMST_PORT = <GMST_PORT> '
 .   WRITE (CATTS) STR$1
 . close CATTS
 end program

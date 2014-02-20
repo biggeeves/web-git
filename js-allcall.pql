@@ -1,4 +1,4 @@
-PROCEDURE      JS.ALLCALL:T  (157540,57514)  |Last amended Feb 11, 2014,15:58:34
+PROCEDURE      JS.ALLCALL:T  (157548,46289)  |Last amended Feb 19, 2014,12:51:29
 CALL WPF.JS.GLOBAL_JS  | make the global JS file again.
 
 program crwarn
@@ -6,17 +6,17 @@ program crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 
 | this is called from wpf.system.initialize as well.  If you run it in a SIR session, it reports back less than what it actually does.
-. if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br> JS.GLOBAL: ' 20t [DSN('globaljs')]
-. if (sglobal('GMEMIN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br>' 10t ' includes JS.TOP_MENU, JS.COOKIE, JS.DROPDOWNS, JS.KEYS'
+. if (sglobal('GMEM_IN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br> JS.GLOBAL: ' 20t [DSN('globaljs')]
+. if (sglobal('GMEM_IN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br>' 10t ' includes JS.TOP_MENU, JS.COOKIE, JS.DROPDOWNS, JS.KEYS'
 
 . ifnot (system(39) gt 0) exit program  | Exit if no database is attached at this point
 
 . EXECUTE DBMS "call WPF.JS.SHOW_VARS"
-. if (sglobal('GMEMIN') eq 'WPF.INC_DBA.UPDATE_DB_FILES') write(cgi) '<br> JS.SHOW_VARS: ' [dsn('showvars')]
+. if (sglobal('GMEM_IN') eq 'WPF.INC_DBA.UPDATE_DB_FILES') write(cgi) '<br> JS.SHOW_VARS: ' [dsn('showvars')]
 . EXECUTE DBMS "call WPF.JS.SHOW_MEMS"
-. if (sglobal('GMEMIN') eq 'WPF.INC_DBA.UPDATE_DB_FILES') write(cgi) '<br> JS.SHOW_MEMS: ' [dsn('showmems')]
+. if (sglobal('GMEM_IN') eq 'WPF.INC_DBA.UPDATE_DB_FILES') write(cgi) '<br> JS.SHOW_MEMS: ' [dsn('showmems')]
 . EXECUTE DBMS "call WPF.JS.CASE_NAV"
-. if (sglobal('GMEMIN') eq 'WPF.INC_DBA.UPDATE_DB_FILES') write(cgi)'<br> JS.CASE_NAV: '   [dsn('casenav')]
+. if (sglobal('GMEM_IN') eq 'WPF.INC_DBA.UPDATE_DB_FILES') write(cgi)'<br> JS.CASE_NAV: '   [dsn('casenav')]
 
 end program
 END PROCEDURE

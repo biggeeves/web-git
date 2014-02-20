@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_VAR:T  (157543,53122)  |Last amended Feb 14, 2014,14:45:22
+PROCEDURE      DB_CHECKS.VALID_VAR:T  (157548,41412)  |Last amended Feb 19, 2014,11:30:12
 C VALIDATE THE SEARCH
 
 program
@@ -6,12 +6,12 @@ CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 REC_TYPE_NUMBER    = nglobal('GDB_REC')
-VNUM__4  = nglobal('VNUM__4')
+VNUM__4  = nglobal('GVNUM__4')
 VNAME$   = trimlr(varnamec(REC_TYPE_NUMBER , VNUM__4))
 VAR_LABEL  = trimlr(varlabsc(REC_TYPE_NUMBER , VNAME$))
 SIR_VARTYPE = vtype(REC_TYPE_NUMBER , VNAME$)
 compute VALID_RESULT = validate(REC_TYPE_NUMBER, VNAME$,  '<GVALUE1>')
-ifthen (sglobal('GMEMIN') eq 'WPF.INC_REPORTS.SIMPLEQ_RESULTS')
+ifthen (sglobal('GMEM_IN') eq 'WPF.INC_REPORTS.SIMPLEQ_RESULTS')
 . ifthen(vtype(REC_TYPE_NUMBER, VNAME$) eq 3)
 .   compute VALID_RESULT = validate(-1, 'VARDATE__4', '<GVALUE1>')
 . elseif(vtype(REC_TYPE_NUMBER, VNAME$) eq 4)
@@ -21,11 +21,11 @@ ifthen (sglobal('GMEMIN') eq 'WPF.INC_REPORTS.SIMPLEQ_RESULTS')
 . endif
 endif
 ifthen (VALID_RESULT eq 1 OR 2 OR 7) | NOT VALID
-. ANY_NUM__4 = globals( 'GSOMEMESS',  '<GVALUE1> is not a valid for ' + VNAME$ + ': ' + VAR_LABEL )
-. ifthen(sglobal('NEXTMEMBER') ne '')
+. ANY_NUM__4 = globals( 'GSOME_MESS',  '<GVALUE1> is not a valid for ' + VNAME$ + ': ' + VAR_LABEL )
+. ifthen(sglobal('GNEXT_MEMBER') ne '')
 .   EXECUTE DBMS "call WPF.INC_REPORTS.SIMPLEQ_GUI"
 . else
-.   EXECUTE DBMS "call WPF.INC_BODY_FORMSS.NONVALID"
+.   EXECUTE DBMS "call WPF.INC_BODY_FORMS.NONVALID"
 . endif
 endif
 

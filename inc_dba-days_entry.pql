@@ -1,4 +1,4 @@
-PROCEDURE      INC_DBA.DAYS_ENTRY:T  (157543,52539)  |Last amended Feb 14, 2014,14:35:39
+PROCEDURE      INC_DBA.DAYS_ENTRY:T  (157548,45610)  |Last amended Feb 19, 2014,12:40:10
 PROGRAM
 . date              VARDATE__4 ('MMIDDIYYYY')  | Validating Date values
 . ifthen(nglobal('GDAY') eq -1)
@@ -6,7 +6,7 @@ PROGRAM
 . else
 .   VALID_RESULT = validate(-1, 'VARDATE__4', '<GDAY>')
 .   ifthen (VALID_RESULT eq 0)
-.     VARDATE__4 = sglobal('gday')
+.     VARDATE__4 = sglobal('GDAY')
 .     ifthen (exists(cdate(vardate__4, 'mmiddiyyyy')) eq 0)
 .       write(cgi)'<h3 class="smallfont">Please pick a valid date. <GDAY> is invalid </h3>'
 .       VARDATE__4 = today(0)
@@ -28,7 +28,7 @@ PROGRAM
 . write(cgi) '</form>'
 END PROGRAM
 
-GLOBAL TOTALCNT = 0
+GLOBAL GTOTAL_CNT = 0
 
 CIF ne '<GDAY>', '-1'
 do repeat RECN =  1 <GREC1>
@@ -60,7 +60,7 @@ CIF END
 . process rec RECN
 .   ifnot (nget('DCCDATE') eq VARDATE__4) next rec
 .   COUNTS__4 = COUNTS__4 + 1
-.   ANY_NUM__4 = globaln('TOTALCNT', nglobal('TOTALCNT')  + 1)
+.   ANY_NUM__4 = globaln('GTOTAL_CNT', nglobal('GTOTAL_CNT')  + 1)
 .   if(COUNTS__4 eq 1 ) write (cgi) '</h3><p><ul>'
 .   execute subprocedure START_ROW
 . end rec
@@ -95,7 +95,7 @@ subprocedure START_ROW
 .     SHOW_KEYS__4 = SHOW_KEYS__4 + '<span class="xsmallfont"> at ' + fst(varget('DCCTIME'), '') +'</span>'
 
 c   Keys (used for the link)
-.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' +  CASE_STR + '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=View'
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))
@@ -111,7 +111,7 @@ end retrieval
 end repeat
 
 program
-write(CGI) '<h3>Total Records entered in: <TOTALCNT></h3>'
+write(CGI) '<h3>Total Records entered in: <GTOTAL_CNT></h3>'
 end program
 
 CIF END

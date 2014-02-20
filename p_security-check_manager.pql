@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157543,54925)  |Last amended Feb 14, 2014,15:15:25
+PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157548,46678)  |Last amended Feb 19, 2014,12:57:58
 | set security globals to lowest level by default
 global GSECURITY_LEVEL   = 0
 global GWRITE_SECURITY   = 0
@@ -28,12 +28,12 @@ REAL    *     8   LAST_IN_SECONDS
 
 set GOON__4 (0)
 NOW_IN_SECONDS = today(0) *60*60*24 + NOW(0)    |now returns seconds, convert days to seconds and you have the seconds from start of gregorian calendar
-USER_ID = sglobal('USER_ID')
-SESSION_ID = sglobal('SESSION_ID')
+USER_ID = sglobal('GUSER_ID')
+SESSION_ID = sglobal('GSESSION_ID')
 
-. ifthen ('<USER_ID>' eq 'loggedOut')
-.   ANY_NUM__4 = globaln('STOP__4', 1)
-.   ANY_NUM__4 = globals('GSOMEMESS', 'You must re-enable your cookies before continuing')
+. ifthen ('<GUSER_ID>' eq 'loggedOut')
+.   ANY_NUM__4 = globaln('GSTOP__4', 1)
+.   ANY_NUM__4 = globals('GSOME_MESS', 'You must re-enable your cookies before continuing')
 .   EXIT RETRIEVAL
 . endif
 
@@ -45,12 +45,12 @@ C   CHECK cookie value, start time and
 .   START_IN_SECONDS =  CDATE(START_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(START_TIME, 'HHiMMiSS') + 18*60*60
 .   LAST_IN_SECONDS  =  CDATE(LAST_REQUEST_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(LAST_REQUEST_TIME, 'HHiMMiSS') + 35*60
 .   ifthen(LOGGED_OUT eq 1)
-.     ANY_NUM__4 = globaln('STOP__4', 1)
-.     ANY_NUM__4 = globals('GSOMEMESS', 'You were logged out. Please log in again.')
+.     ANY_NUM__4 = globaln('GSTOP__4', 1)
+.     ANY_NUM__4 = globals('GSOME_MESS', 'You were logged out. Please log in again.')
 .     EXIT RETRIEVAL
 .   elseif (NOW_IN_SECONDS GE LAST_IN_SECONDS)
-.     ANY_NUM__4 = globaln('STOP__4', 3)
-.     ANY_NUM__4 = globals('GSOMEMESS', 'Your session was idle.  You were automatically timed out.')
+.     ANY_NUM__4 = globaln('GSTOP__4', 3)
+.     ANY_NUM__4 = globals('GSOME_MESS', 'Your session was idle.  You were automatically timed out.')
 .     EXIT RETRIEVAL
 .   else | all OK Update Last Request
 .     LAST_REQUEST_DATE = TODAY(0)
@@ -93,12 +93,12 @@ C   CHECK cookie value, start time and
 .   ANY_NUM__4 =  globaln('GLOCK_RECORDS', 1)| Lock Records
 . endif
 . ifnotthen (GOON__4 eq 2)
-.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Contact your DBA about permissions to the database <GDB>, code:' + SGLOBAL('STOP__4'))
+.   ANY_NUM__4 = globals( 'GSOME_MESS', 'Contact your DBA about permissions to the database <GDB>, code:' + SGLOBAL('GSTOP__4'))
 . endif
 end retrieval
 
-CIF NB <STOP__4>
-. GLOBAL GMEMSTOP = 'WPF.INC_BODY_FORMS.UNK_ERR'
+CIF NB <GSTOP__4>
+. GLOBAL GMEM_STOP = 'WPF.INC_BODY_FORMS.UNK_ERR'
 . CALL WPF.CONTROLLER.STOP_PAGE
 CIF END
 END PROCEDURE

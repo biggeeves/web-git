@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.HEADER_START:T  (157543,53332)  |Last amended Feb 14, 2014,14:48:52
+PROCEDURE      INC_ELEMENTS.HEADER_START:T  (157548,45675)  |Last amended Feb 19, 2014,12:41:15
 c this is a generic header for all of the INC_BODY_FORMS
 compute STR$1 ='<' + CHAR(33) + 'DOCTYPE html>'
 write(cgi) STR$1
@@ -15,11 +15,11 @@ write(cgi) '<meta http-equiv="X-UA-Compatible" content="IE=edge">'
 write(cgi) '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
 
 
-write(cgi) '<link rel="icon" type="image/ico" href="<full_url>images/DCC.ico"  title="DCC Data Management" >'
+write(cgi) '<link rel="icon" type="image/ico" href="<GFULL_URL>images/DCC.ico"  title="DCC Data Management" >'
 write(cgi) '<!-- Bootstrap core CSS -->'
-write(cgi) '<link href="<full_url>css/bootstrap.css" rel="stylesheet">'
+write(cgi) '<link href="<GFULL_URL>css/bootstrap.css" rel="stylesheet">'
 c write(cgi) '<link href="datepicker/css/datepicker.css" rel="stylesheet">'
-write(cgi) '<link type="text/css" href="<full_url>css/custom.css" rel="stylesheet">'
+write(cgi) '<link type="text/css" href="<GFULL_URL>css/custom.css" rel="stylesheet">'
 write(cgi) '<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->'
 write(cgi) '<!--[if lt IE 9]>'
 write(cgi) '  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>'

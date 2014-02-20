@@ -1,0 +1,19 @@
+PROCEDURE      INC_BODY_DBA.UPLOAD:T  (157542,79414)  |Last amended Feb 13, 2014,22:03:34
+c CALL this program when you need to see the global values that are set.
+
+program CRWARN
+string  *   600   STR$1                      | General String use at any time
+string  *    32   VNAME$                     | Variable name
+string  *   600   ASCIITEXT                  | HTML to be cleaned
+string  *   600   HTML_TEXT                   | HTML after it has been cleaned
+integer *     4   RET_CODE__4                 | Return code for other things
+
+write '<hr>' [cgivarpn('myfile')] '<hr>Uploads Under Construction<br>'
+write(cgi) '<form method="post" action="<mycgi>">'
+write(cgi) '<input id="myfile" name="myfile" type="file" accept="image/gif,image/png">'
+write(cgi) '<input type="hidden" id="member" name="member" value="WPF.INC_DBA.UPLOAD">'
+write(cgi) '<input type="submit">'
+write(cgi) '</form>'
+
+end program
+END PROCEDURE

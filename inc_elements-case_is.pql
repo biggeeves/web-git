@@ -1,3 +1,3 @@
-PROCEDURE      INC_ELEMENTS.CASE_IS:T  (156498,51863)  |Last amended Apr 06, 2011,14:24:23
-write(cgi) '<input type="hidden" id="caseis" name="caseis" value="<CASEISNQ>">'   | ALWAYS NEED THE NO-QOUTES VERSION OF THE CASEID
+PROCEDURE      INC_ELEMENTS.CASE_IS:T  (157548,47237)  |Last amended Feb 19, 2014,13:07:17
+write(cgi) '<input type="hidden" id="caseis" name="caseis" value="<GCASE_IS_NQ>">'   | ALWAYS NEED THE NO-QOUTES VERSION OF THE CASEID
 END PROCEDURE

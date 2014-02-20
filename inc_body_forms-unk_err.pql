@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.UNK_ERR:T  (157543,53633)  |Last amended Feb 14, 2014,14:53:53
+PROCEDURE      INC_BODY_FORMS.UNK_ERR:T  (157548,45537)  |Last amended Feb 19, 2014,12:38:57
 CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
 
 
@@ -7,10 +7,10 @@ CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 set COUNTS__4  (0)
 
-if(len('<GSOMEMESS>') eq 0 ) write(cgi) '<h3>Opps, I am sorry but I dont know what just happened. </h3>'
+if(len('<GSOME_MESS>') eq 0 ) write(cgi) '<h3>Opps, I am sorry but I dont know what just happened. </h3>'
 write(cgi) '<h6><p><a class="smallfont leftalign" href = "/index.html">If you were logged out, click here to return to Log In</a></p></h6>'
 
-ifthen('<GMST_CRASH>' eq '1')
+ifthen('<GMASTER_CRASH>' eq '1')
 . ifnotthen('<GDB_REC>' eq '')
 .   write(cgi) '<p>The data was not saved.  We have attemped to dispaly the values you tried to enter.  Please print this and re-enter it.  Let us know, we would like to fix it!</p>'
 .   write(cgi) '<table class="table table-striped table-hover"><tr><td>Variable</td><td>Label</td><td>Value</td></tr>'

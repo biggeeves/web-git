@@ -14,7 +14,7 @@ program
 . if(ANY_NUM__4 eq -1) ANY_NUM__4 = LEN(STR$1)
 . STR$1 =  substr(STR$1, 1, ANY_NUM__4)
 . if (exists(STR$1) eq 0) set STR$1 ('')
-. ANY_NUM__4 =  globals ('USER_ID', STR$1)
+. ANY_NUM__4 =  globals ('GUSER_ID', STR$1)
 c
 . STR$1 = fst(cgivarsv('HTTP_COOKIE'), cgivarpn('http_cookie'))
 . ANY_NUM__4 = abs(srst(STR$1, "SESSION_ID=")) + len("SESSION_ID=")
@@ -23,6 +23,6 @@ c
 . if(ANY_NUM__4 eq -1) ANY_NUM__4 = len(STR$1)
 . STR$1 =  substr(STR$1, 1, ANY_NUM__4)
 . if (exists(STR$1) eq 0) set STR$1 ('')
-. ANY_NUM__4 =  globals ('SESSION_ID', STR$1)
+. ANY_NUM__4 =  globals ('GSESSION_ID', STR$1)
 end program
 END PROCEDURE

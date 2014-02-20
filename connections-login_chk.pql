@@ -1,4 +1,4 @@
-PROCEDURE      CONNECTIONS.LOGIN_CHK:T  (157542,53592)  |Last amended Feb 13, 2014,14:53:12
+PROCEDURE      CONNECTIONS.LOGIN_CHK:T  (157548,46380)  |Last amended Feb 19, 2014,12:53:00
 c CHECKS TO SEE IF LOGIN IS CONNECTED.  ONLY FOR WEB CONNECTIONS!
 c this will have to be reworked to do a proper test.
 PROGRAM crwarn
@@ -10,22 +10,24 @@ integer *     1   IOSTAT__4                  | Return code of IOSTAT
 DBPATH  = dsn('LOGIN_FOLDER')
 
 ifthen(fileis(DBPATH  + 'login.sr1') ne 1)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'Oh oh, We are currently updating or system.')
-. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'Oh oh, We are currently updating or system.')
+. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 endif
+
 PQL CONNECT DATABASE 'LOGIN' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4
+
 IFNOTTHEN (IOSTAT__4 GE 0)
-. ANY_NUM__4 = globals( 'GSOMEMESS', 'We are currently updating our system.  Please try back later.')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'We are currently updating our system.  Please try back later.')
 . execute subprocedure SHOWERRORS
-. ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 
 elseif (MST ne '')
 . ifthen (system(38) eq 0)
 .   execute subprocedure SHOWERRORS
-.   ANY_NUM__4 = globals( 'GSOMEMESS', 'Sorry, ' +  MST + 'is being worked on.  Access temporarily denied.  Contact your DBA for time frame')
-.   ANY_NUM__4 = globals( 'GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+.   ANY_NUM__4 = globals( 'GSOME_MESS', 'Sorry, ' +  MST + 'is being worked on.  Access temporarily denied.  Contact your DBA for time frame')
+.   ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . endif
 endif

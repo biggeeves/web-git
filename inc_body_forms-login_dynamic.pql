@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157452,52670)  |Last amended Nov 15, 2013,14:37:50
+PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157548,46443)  |Last amended Feb 19, 2014,12:54:03
 
 
 program crwarn
@@ -15,8 +15,8 @@ c note!  This does not write out to CGI
 
 open (index) read lrecl = 600 iostat = IOSTAT__4
 . ifthen (iostat__4 ne 0)
-.   ANY_NUM__4 = globals('GSOMEMESS', 'The sign in page was unavailable.')
-.   ANY_NUM__4 = globals('GMEMIN', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('GSOME_MESS', 'The sign in page was unavailable.')
+.   ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 .   exit program
 . endif
@@ -30,7 +30,7 @@ open (index) read lrecl = 600 iostat = IOSTAT__4
 .       write(cgi) '<script type="text/javascript">'
 .       write(cgi)  ' document.getElementById(''redirect'').value=window.location.href'
 .       write(cgi) '</script>'
-.       if('<GSOMEMESS>' ne '') write(cgi) '<p class="text-error"><GSOMEMESS></p>'
+.       if('<GSOME_MESS>' ne '') write(cgi) '<p class="text-error"><GSOME_MESS></p>'
 .     endif
 .   END LOOP
 .   DONE:

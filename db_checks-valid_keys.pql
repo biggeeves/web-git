@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_KEYS:T  (157543,53098)  |Last amended Feb 14, 2014,14:44:58
+PROCEDURE      DB_CHECKS.VALID_KEYS:T  (157548,41323)  |Last amended Feb 19, 2014,11:28:43
 
 
 PROGRAM crwarn
@@ -58,13 +58,13 @@ for EACH_VARIABLE = 1 + dbtype(0),nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 
 . ifNOTthen (VALID_RESULT eq 0)
 .   STR$3 = 'The value ' + fst(STR__4,'') + ' for ' + KEYVNAME__4 + ' is not valid.'
-.   ANY_NUM__4 = globals('GSOMEMESS', STR$3)
-.   ifthen(sglobal('GUPICK') eq 'New')
-.     ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
-.   elseif(sglobal('GUPICK') eq 'Edit' or 'View')
-.     ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.   ANY_NUM__4 = globals('GSOME_MESS', STR$3)
+.   ifthen(sglobal('GU_PICK') eq 'New')
+.     ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
+.   elseif(sglobal('GU_PICK') eq 'Edit' or 'View')
+.     ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
 .   else
-.     ANY_NUM__4 = globals('GMEMSTOP', 'CALL WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.     ANY_NUM__4 = globals('GMEM_STOP', 'CALL WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
 .   endif
 .   EXECUTE DBMS 'call WPF.CONTROLLER.STOP_PAGE'
 . endif

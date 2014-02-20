@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.GET_DB:T  (157542,78925)  |Last amended Feb 13, 2014,21:55:25
+PROCEDURE      P_SECURITY.GET_DB:T  (157548,46717)  |Last amended Feb 19, 2014,12:58:37
 GLOBAL GOON__4 = 1
 
 retrieval crwarn
@@ -8,15 +8,15 @@ integer *     1   GOON__4                 | Control flow variable
 
 SET GOON__4 (0)
 
-. process rec SESSIONS VIA ('<USER_ID>' '<SESSION_ID>')
+. process rec SESSIONS VIA ('<GUSER_ID>' '<GSESSION_ID>')
 .   DB_NAME__4 = WEB_DB_NAME
 .   GOON__4 =1
 . end rec
 . ifthen (exists(DB_NAME__4) eq 0)
 .   ANY_NUM__4 = GLOBALN('GOON__4', 0)
-.   ANY_NUM__4 = globals('GSOMEMESS', 'Contact your DBA about the database name. <db>')
-.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   ANY_NUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLLER.STOP_PAGE')
+.   ANY_NUM__4 = globals('GSOME_MESS', 'Contact your DBA about the database name. <db>')
+.   ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('GNEXT_MEMBER', 'WPF.CONTROLLER.STOP_PAGE')
 . endif
 . ifthen (GOON__4 eq 1)
 .   old rec is DB_INFO VIA (DB_NAME__4)
@@ -30,15 +30,15 @@ SET GOON__4 (0)
 c
 . ifnotthen (GOON__4 eq 2)
 .   ANY_NUM__4 = GLOBALN('GOON__4', 0)
-.   ANY_NUM__4 = globals('GSOMEMESS', 'Contact your DBA about access to the database <db>')
-.   ANY_NUM__4 = globals('GMEMSTOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   ANY_NUM__4 = globals('NEXTMEMBER', 'WPF.CONTROLLER.STOP_PAGE')
+.   ANY_NUM__4 = globals('GSOME_MESS', 'Contact your DBA about access to the database <db>')
+.   ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.UNK_ERR')
+.   ANY_NUM__4 = globals('GNEXT_MEMBER', 'WPF.CONTROLLER.STOP_PAGE')
 . endif
 end retrieval
 
 
 CIF EQ 0<GOON__4>, 0
 . CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
-. CALL <NEXTMEMBER>
+. CALL <GNEXT_MEMBER>
 CIF END
 END PROCEDURE

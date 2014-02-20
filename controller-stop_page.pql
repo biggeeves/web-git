@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.STOP_PAGE:T  (157543,55578)  |Last amended Feb 14, 2014,15:26:18
+PROCEDURE      CONTROLLER.STOP_PAGE:T  (157548,46667)  |Last amended Feb 19, 2014,12:57:47
 c this is the very last thing to call.   It will figure out if it is a generic or customized screen that needs to be returned.
 
 program
@@ -15,8 +15,8 @@ program
 . CALL WPF.INC_ELEMENTS.SOME_MESSAGE
 end program
 
-CIF NB <GMEMSTOP>
-. CALL <GMEMSTOP>
+CIF NB <GMEM_STOP>
+. CALL <GMEM_STOP>
 CIF FALSE
 . CALL WPF.INC_BODY_FORMS.UNK_ERR
 CIF END
@@ -26,8 +26,6 @@ program
 . CALL WPF.SYSTEM.INI_VARS
 . CALL WPF.INC_ELEMENTS.FOOTER
 end program
-
-CALL WPF.INC_DBA.GLOBAL_VALUES
 
 CALL WPF.CONNECTIONS.FULL_EXIT
 END PROCEDURE

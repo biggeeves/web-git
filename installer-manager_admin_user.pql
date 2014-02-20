@@ -9,10 +9,10 @@ NEW REC IS DB_INFO VIA ('MANAGER')
 . PROJECT_DESCRIPTION  = 'Handles information for SIR Web'
 . STAGE         = 4 | LIVE
 . FOLDER        = DSN('MANAGER_FOLDER')
-. COORDINATOR   = sglobal('ADMIN_NAME')
-. MASTER_IP     = sglobal('MST_IP')
-. MASTER_PORT   = sglobal('MST_PORT')
-. DB_PROGRAMMER = sglobal('ADMIN_NAME')
+. COORDINATOR   = sglobal('GADMIN_NAME')
+. MASTER_IP     = sglobal('GMST_IP')
+. MASTER_PORT   = sglobal('GMST_PORT')
+. DB_PROGRAMMER = sglobal('GADMIN_NAME')
 . PI            = 'INTERNAL'
 . DCCDATE       = TODAY(0)
 . DCCTIME       = NOW(0)
@@ -22,13 +22,11 @@ NEW REC IS DB_INFO VIA ('MANAGER')
 END REC
 
 | check for blanks, system missing etc.
-WRITE ':<ADMIN_NAME>:'
-
-if (pack( sglobal('ADMIN_NAME')) EQ '' ) EXIT RETRIEVAL
-if (exists( sglobal('ADMIN_NAME')) EQ 0 ) EXIT RETRIEVAL
+if (pack( sglobal('GADMIN_NAME')) EQ '' ) EXIT RETRIEVAL
+if (exists( sglobal('GADMIN_NAME')) EQ 0 ) EXIT RETRIEVAL
 
 
-NEW REC IS DB_USERS VIA ('MANAGER' '<ADMIN_NAME>')
+NEW REC IS DB_USERS VIA ('MANAGER' '<GADMIN_NAME>')
 WRITE 'CREATING NEW REC'
 . SECURITY_LEVEL = 30
 . READ_SECURITY = 30
@@ -58,10 +56,10 @@ NEW REC IS DB_INFO VIA ('DEMO')
 . PROJECT_DESCRIPTION  = 'For Demo purposes only.  No real data.'
 . STAGE         = 4 | LIVE
 . FOLDER        = DSN('DEMO_FOLDER')
-. COORDINATOR   = sglobal('ADMIN_NAME')
-. MASTER_IP     = sglobal('MST_IP')
-. MASTER_PORT   = sglobal('MST_PORT')
-. DB_PROGRAMMER = sglobal('ADMIN_NAME')
+. COORDINATOR   = sglobal('GADMIN_NAME')
+. MASTER_IP     = sglobal('GMST_IP')
+. MASTER_PORT   = sglobal('GMST_PORT')
+. DB_PROGRAMMER = sglobal('GADMIN_NAME')
 . PI            = 'INTERNAL'
 . DCCDATE       = TODAY(0)
 . DCCTIME       = NOW(0)
@@ -71,13 +69,12 @@ NEW REC IS DB_INFO VIA ('DEMO')
 END REC
 
 | check for blanks, system missing etc.
-WRITE ':<ADMIN_NAME>:'
 
-if (pack( sglobal('ADMIN_NAME')) EQ '' ) EXIT RETRIEVAL
-if (exists( sglobal('ADMIN_NAME')) EQ 0 ) EXIT RETRIEVAL
+if (pack( sglobal('GADMIN_NAME')) EQ '' ) EXIT RETRIEVAL
+if (exists( sglobal('GADMIN_NAME')) EQ 0 ) EXIT RETRIEVAL
 
 
-NEW REC IS DB_USERS VIA ('DEMO' '<ADMIN_NAME>')
+NEW REC IS DB_USERS VIA ('DEMO' '<GADMIN_NAME>')
 . SECURITY_LEVEL = 30
 . READ_SECURITY = 30
 . WRITE_SECURITY = 30

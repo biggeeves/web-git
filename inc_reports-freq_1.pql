@@ -1,4 +1,4 @@
-PROCEDURE      INC_REPORTS.FREQ_1:T  (157543,53720)  |Last amended Feb 14, 2014,14:55:20
+PROCEDURE      INC_REPORTS.FREQ_1:T  (157548,45767)  |Last amended Feb 19, 2014,12:42:47
 c must re-set the globals to first record type, first var, for the first loading of the FREQ1
 program
 ANY_NUM__4 = 0<GDB_REC>
@@ -9,7 +9,7 @@ ifthen(ANY_NUM__4 eq 9999 OR 0)
 .   EXIT FOR
 . end for
 endif
-if (0<VNUM__4> eq 0)  ANY_NUM__4 = globaln('VNUM__4', 1)
+if (0<GVNUM__4> eq 0)  ANY_NUM__4 = globaln('GVNUM__4', 1)
 end program
 
 PROGRAM crwarn
@@ -21,7 +21,7 @@ write '<div class="row">'
 write(cgi) '<h3 class="span3">Frequencies</h3>'
 ifthen('<GSUBMIT>' eq 'Frequencies')
 . write(cgi) '<h3 class="span9">Generated on ' [datec(today(0), 'mm/dd/yyyy')]
-. write(cgi) ' at ' [timec(now(0), 'hh:mm pp')] ' by ' [sglobal('user_name')]
+. write(cgi) ' at ' [timec(now(0), 'hh:mm pp')] ' by ' [sglobal('GUSER_NAME')]
 . write(cgi) '</h3>'
 endif
 write(cgi) '</div>' |row
@@ -30,10 +30,10 @@ write(cgi) '<form name="freq1" action="<mycgi>" method="post" >'
 write(cgi) '<input type="hidden" id="member" name="member" value="WPF.INC_REPORTS.FREQ_1">'
 CALL WPF.INC_ELEMENTS.GDB_REC | NECESSARY FOR PASSING THE RECORD TYPE NUMBER
 
-ifthen ("<VNUM__4>" eq "")
+ifthen ("<GVNUM__4>" eq "")
 . write(cgi) '<input type="hidden" name="webvnum" id="webvnum" value="1">'
 else
-. write(cgi) '<input type="hidden" name="webvnum" id="webvnum" value="<VNUM__4>">'
+. write(cgi) '<input type="hidden" name="webvnum" id="webvnum" value="<GVNUM__4>">'
 endif
 
 write(cgi) '  <table>'
@@ -60,7 +60,7 @@ write(cgi) '  </td>'
 write(cgi) '  <td class="leftindent"><span class="textbold">Variable </span><select style="display:inline;" name="varselect" id ="varselect" class="widthwide" onchange="setVarNum()">'
 
 C SELECT THE PROPER VARIABLE.
-ANY_NUM__4 = 0<VNUM__4>
+ANY_NUM__4 = 0<GVNUM__4>
 if(ANY_NUM__4 eq 0) ANY_NUM__4 = 1
 
 for EACH_RECORD_NUMBER  = 1,  nrecs(0)
@@ -84,7 +84,7 @@ write(cgi) '<div id="freqtext" style="display:inline;"></div>'
 write(cgi) '<script type="text/javascript">'
 write(cgi) ' whichrec(''<GDB_REC>'',''varselect'');'
 write(cgi) ' document.getElementById(''gdbrec'').value =<GDB_REC>;'
-write(cgi) ' document.getElementById(''varselect'').value =<VNUM__4>;'
+write(cgi) ' document.getElementById(''varselect'').value =<GVNUM__4>;'
 write(cgi) '</script>'
 
 ifthen('Frequencies' eq '<GSUBMIT>')

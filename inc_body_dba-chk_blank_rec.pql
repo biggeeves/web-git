@@ -1,0 +1,109 @@
+PROCEDURE      INC_BODY_DBA.CHK_BLANK_REC:T  (157548,45344)  |Last amended Feb 19, 2014,12:35:44
+c find blank records.  Should be links to the records and not a form
+
+PROGRAM
+. write(cgi)'<h3>Records with all variables equal to system missing OR zero length strings when packed'
+. write(cgi) [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] ''
+. write(cgi) '</h3>'
+END PROGRAM
+
+do repeat RECN = <GREC1>
+                 <GREC2>
+                 <GREC3>
+                 <GREC4>
+                 <GREC5>
+
+
+retrieval CRWARN
+CALL WPF.SYSTEM.DEFINE_VARS
+CALL WPF.SYSTEM.INI_VARS
+set COUNTS__4 (0)
+REC_TYPE_NUMBER = RECN
+ifthen (len(recdoc(REC_TYPE_NUMBER, 0)) gt 0)
+. REC_LABEL__4 = pack(recdoc(REC_TYPE_NUMBER, 0))
+elseif (len(recdoc(REC_TYPE_NUMBER, 1)) gt 0)
+. REC_LABEL__4 = pack(recdoc(REC_TYPE_NUMBER, 1))
+else
+. REC_LABEL__4 = pack(recname(REC_TYPE_NUMBER))
+endif
+write(cgi) '<h3>' REC_LABEL__4 '</h3>'
+
+CIF EQ 1, 0<GCASED>
+process cases
+CIF END
+
+
+. process rec RECN
+.   set MISSNUM__4 (missing)
+.   GOON__4   = 1
+.   set STR__4   (missing)
+.   set NUM__4   (missing)
+.   for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
+.     VNAME$ = trimlr(varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
+.     VNAME$CB = stdname(VNAME$)
+.     if (VNAME$ = 'DCCEDITS' or 'DCCWHO' or 'DSTAMP' or 'DCCTIME' or 'DCCDATE') NEXT FOR
+.     ANY_NUM__4 = 0
+.     for EACH_KEY = 1, nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.       KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))  | already returns {} for non-standard names
+.       if (KEYVNAME__4 eq VNAME$CB) ANY_NUM__4 = 1
+.     end for
+.     if (ANY_NUM__4 eq 1) NEXT FOR
+.     SIR_VARTYPE = vtype(REC_TYPE_NUMBER, VNAME$CB)
+.     ifthen (SIR_VARTYPE eq 1) | Strings
+.       STR__4 = sget(VNAME$); MISSNUM__4  = misnum(STR__4)
+.       STR__4 = pack(STR__4)
+.       if(len(STR__4) eq 0) MISSNUM__4  = 0
+.     else
+.       NUM__4 = nget(VNAME$); MISSNUM__4  = misnum(NUM__4)
+.     endif
+.     ifNOTthen (MISSNUM__4 eq 0) |NOT a missing value
+.       GOON__4 = 0
+.       NEXT REC | HAD A VALUE IN A VARIABLE
+.     endif
+.   end for
+.   ifthen (GOON__4 eq 1)
+.     if (COUNTS__4 eq 0) write '<ol>'
+.     execute subprocedure START_ROW
+.   endif
+. end rec
+
+CIF EQ 1, 0<GCASED>
+end cases
+CIF END
+
+if (COUNTS__4 gt 0) write '</ol>'
+
+write(cgi) '<h3 class="tanbkg smallfont">' COUNTS__4 ' blank records</h3>'
+
+subprocedure START_ROW
+.   COUNTS__4 = COUNTS__4 + 1
+.   STR$2 = ''
+.   SHOW_KEYS__4 = ''
+.   ifthen (dbtype(0) eq 1)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, 1))
+.     CASE_STR = trimlr(varget(KEYVNAME__4))
+.     SHOW_KEYS__4 = '<li> ' + SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + CASE_STR  + '</b><br> '
+.   endif
+
+.   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.     STRING_VARGET = trimlr(varget(KEYVNAME__4))
+.     SHOW_KEYS__4 = SHOW_KEYS__4 + KEYVNAME__4 +  ':<b> ' + STRING_VARGET  + '</b><br> '
+.   end for
+
+c   Keys (used for the link)
+.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' +  CASE_STR + '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
+.     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
+.     STRING_VARGET = trimlr(varget(KEYVNAME__4))
+.     STR$2 =  STR$2 +  '&key' + format(EACH_KEY - dbtype(0)) + '='  + STRING_VARGET
+.   end for
+.   STR$2 = STR$2 + '"'
+.   write(cgi) 4t '<a href=' STR$2 '>'
+.   write(cgi) 4t SHOW_KEYS__4 '</a></li>'
+end subprocedure
+
+
+end retrieval
+end repeat
+END PROCEDURE

@@ -4,7 +4,7 @@ program
 ifthen(len(cgivarpn('buginfo')) gt 0)
 . OPEN MEM DSN = "BUGPROC.BUGS.REPORTED" /MEMBER/write APPEND/IOSTAT = IOSTAT__4
 .   IFTHEN( IOSTAT__4 eq 0)
-.     write (MEM) '<USER_NAME>: ' [cgivarpn('buginfo')]
+.     write (MEM) '<GUSER_NAME>: ' [cgivarpn('buginfo')]
 .   ELSE
 .     write(CGI) 'Sorry the bug file was not UPDATEd:' IOSTAT__4
 .   endif
@@ -30,7 +30,7 @@ program crwarn
 .       read(MEM, END = DONE) LINE__4 (A1000)
 .       ANY_NUM__4 = ANY_NUM__4 + 1
 .       LINE__4 = TRIMLR(LINE__4)
-.       ifthen (nglobal('GWEBVALUE1') = ANY_NUM__4 )
+.       ifthen (nglobal('GWEB_VALUE1') = ANY_NUM__4 )
 .         STR$3 = LINE__4
 .       endif
 .       execute subroutine WPF.TOOLS.HTML_TEXT (LINE__4, 1) RETURNING (HTML_TEXT, RET_CODE__4)
@@ -64,7 +64,7 @@ program crwarn
 .         STR$1 = 'Unable to read line'
 .       endif
 .       LINK__4 = ''
-.       if('<USER_NAME>' eq 'Greg Neils') LINK__4 = '<a href="<mycgi>?member=WPF.INC__BODY_DBA.BUG&amp;webvalue1=' + format(ANY_NUM__4) +'">'
+.       if('<GUSER_NAME>' eq 'Greg Neils') LINK__4 = '<a href="<mycgi>?member=WPF.INC__BODY_DBA.BUG&amp;webvalue1=' + format(ANY_NUM__4) +'">'
 .       write(cgi) '<li>' LINK__4 STR$1 '</a></li>'
 .     END LOOP
 .     DONE:

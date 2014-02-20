@@ -1,3 +1,3 @@
-PROCEDURE      INC_ELEMENTS.SOME_MESSAGE:T  (157220,43744)  |Last amended Mar 28, 2013,12:09:04
-ifnot ('<GSOMEMESS>' eq '') write(cgi) '<h3><GSOMEMESS></h3>'
+PROCEDURE      INC_ELEMENTS.SOME_MESSAGE:T  (157548,46449)  |Last amended Feb 19, 2014,12:54:09
+ifnot ('<GSOME_MESS>' eq '') write(cgi) '<h3><GSOME_MESS></h3>'
 END PROCEDURE

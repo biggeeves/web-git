@@ -10,7 +10,7 @@ c note that in this style of HTML "noscript" can not go in the header without re
 c note also that "meta" can not go in the body without reporting an error.  Thus, expect HTML validation errors from these lines of code. No way to win!
 write(cgi) '<noscript>'
 write(cgi) '  You must have JavaScript enabled to use this page.'
-C write(cgi) '  <meta http-equiv="refresh" content="0; url=''<FULL_URL>javascript_required.html''">'
+C write(cgi) '  <meta http-equiv="refresh" content="0; url=''<GFULL_URL>javascript_required.html''">'
 write(cgi) '</noscript>'
 
 END PROCEDURE

@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_TABLE:T  (157543,53280)  |Last amended Feb 14, 2014,14:48:00
+PROCEDURE      INC_BODY_FORMS.REC_TABLE:T  (157548,47221)  |Last amended Feb 19, 2014,13:07:01
 c you get to this by choosing Detailed Case Summary and then clicking on Table.
 c All variables for a case in a table format.
 
@@ -10,16 +10,16 @@ CALL WPF.SYSTEM.INI_VARS
 set COUNTS__4   (0)
 KEYVNAME__4 = trimlr(keyname(0, 1))
 ifthen(dbtype(0) eq 1)
-. ifNOTthen (sglobal('GUPICK') eq 'ALLCASES')
-.   write(cgi) '<h3>'KEYVNAME__4 ': <CASEISNQ></h3>'
+. ifNOTthen (sglobal('GU_PICK') eq 'ALLCASES')
+.   write(cgi) '<h3>'KEYVNAME__4 ': <GCASE_IS_NQ></h3>'
 . endif
 endif
 
 REC_CNT__4 = numrecs(nglobal('GDB_REC'))
 
 CIF EQ 1, 0<GCASED>
-. CIF NE '<GUPICK>',  'ALLCASES'
-.   old case is <CASEIS>
+. CIF NE '<GU_PICK>',  'ALLCASES'
+.   old case is <GCASE_IS>
 .     REC_CNT__4 = count(nglobal('GDB_REC'))
 .   end case is
 . CIF END
@@ -43,10 +43,10 @@ end for
 write(cgi) '    </tr>'
 
 CIF EQ 1, 0<GCASED>
-. CIF EQ '<GUPICK>', 'ALLCASES'
+. CIF EQ '<GU_PICK>', 'ALLCASES'
 .   PROCESS CASES
 . CIF FALSE
-.   old case is <CASEIS>
+.   old case is <GCASE_IS>
 . CIF END
 CIF END
 . process rec <GDB_REC>
@@ -54,16 +54,16 @@ CIF END
 .   ifthen (COUNTS__4 gt 500)
 .     exit rec | to much to display on the web even for DBAs.
 .   elseif (COUNTS__4 gt 50)
-| .     ifNOT(sglobal('GUPICK') eq 'ALLCASES') EXIT REC | normal folks only get to see 50.
+| .     ifNOT(sglobal('GU_PICK') eq 'ALLCASES') EXIT REC | normal folks only get to see 50.
 .   endif
 .   write(cgi) '    <tr>'
 
 c   Keys (used for the link)
 .   ifthen (dbtype(0) eq 1)
-.     ifthen (sglobal('GUPICK') eq 'ALLCASES')
+.     ifthen (sglobal('GU_PICK') eq 'ALLCASES')
 .       LINK__4 ='&amp;caseis=' +  varget(keyname(0, 1))
 .     else
-.       LINK__4 = '&amp;caseis=' +  sglobal('CASEISNQ')
+.       LINK__4 = '&amp;caseis=' +  sglobal('GCASE_IS_NQ')
 .     endif
 .   else
       LINK__4 = ''
@@ -116,7 +116,7 @@ c   Variable values
 .   write(cgi) '    </tr>'
 . end rec
 CIF EQ 1, 0<GCASED>
-. CIF EQ '<GUPICK>', 'ALLCASES'
+. CIF EQ '<GU_PICK>', 'ALLCASES'
 .   END CASES
 . CIF FALSE
 .   end case is
@@ -124,7 +124,7 @@ CIF EQ 1, 0<GCASED>
 CIF END
 write(cgi) '  </table></div>'
 ifthen (COUNTS__4 gt 50)
-. ifthen (sglobal('GUPICK') eq  'ALLCASES')
+. ifthen (sglobal('GU_PICK') eq  'ALLCASES')
 .   if(COUNTS__4 gt 500) write(cgi) '<h2>Limited to 500) records.<br>There are more records that are not displayed.</h2>'
 . else
 .   write(cgi) '<h2>Limited to the 50 records.<br>There are more records that are not displayed.</h2>'

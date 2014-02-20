@@ -1,4 +1,4 @@
-PROCEDURE      INC_DBA.CHECK_DATES:T  (157221,42166)  |Last amended Mar 29, 2013,11:42:46
+PROCEDURE      INC_DBA.CHECK_DATES:T  (157548,45560)  |Last amended Feb 19, 2014,12:39:20
 PROGRAM
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -75,7 +75,7 @@ subprocedure START_ROW
 .   end for
 
 c   Keys (used for the link)
-.   LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' +  CASE_STR + '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=View'
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))

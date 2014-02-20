@@ -1,4 +1,4 @@
-PROCEDURE      INC_DBA.N_CASES:T  (157220,1855)  |Last amended Mar 28, 2013,00:30:55
+PROCEDURE      INC_DBA.N_CASES:T  (157548,47232)  |Last amended Feb 19, 2014,13:07:12
 retrieval | CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -12,17 +12,17 @@ if(VAR_LABEL = '') VAR_LABEL = VNAME$
 
 write(cgi) '<div class="row">'
 write(cgi) '<div class="span12 text-center">'
-ifthen (sglobal('GUPICK') eq '')
+ifthen (sglobal('GU_PICK') eq '')
 . write(cgi) '<h3>Total count of ' VAR_LABEL 'by number of records as of ' [datec(today(0),  'Wwwwwwwww MM.DD.YYYY')] '</h3>'
 else
-. write(cgi) '<h4> List of ' VAR_LABEL ' with <GUPICK> records as of ' [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '</h4>'
+. write(cgi) '<h4> List of ' VAR_LABEL ' with <GU_PICK> records as of ' [datec(today(0), 'Wwwwwwwww MM.DD.YYYY')] '</h4>'
 endif
 write(cgi) '</div>'
 write(cgi) '</div>'
 write(cgi) '<div class="row">'
 write(cgi) '<div class="span10 offset1">'
 write(cgi) '<table class="table table-striped table-hover table-bordered">'
-ifthen (sglobal('GUPICK') eq '')
+ifthen (sglobal('GU_PICK') eq '')
 . write(cgi) 2t '<tr><th title="N Cases">Count of ' VAR_LABEL '</th><th title="NRecs">Have this many records</th></tr>'
 else
 . write(cgi) 2t '<tr><th title="Case">' VAR_LABEL '</th><th>Number of Records</th></tr>' | note that it flips the column order from above
@@ -36,8 +36,8 @@ REC_CNT__4 = 0
 for EACH_RECORD_NUMBER = 1, nrecs(0)
 . if(exists(count(EACH_RECORD_NUMBER)) eq 1)  REC_CNT__4 = REC_CNT__4 + count(EACH_RECORD_NUMBER)
 end for
-ifthen('<GUPICK>' ne '') | must test because nglobal fo missing was returning 0
-. if (nglobal('GUPICK') eq REC_CNT__4) execute subprocedure SHOW_CASE |wanted id list
+ifthen('<GU_PICK>' ne '') | must test because nglobal fo missing was returning 0
+. if (nglobal('GU_PICK') eq REC_CNT__4) execute subprocedure SHOW_CASE |wanted id list
 else
 . FREQINT__4(REC_CNT__4) = FREQINT__4(REC_CNT__4) + 1
 . if(REC_CNT__4 gt REC_TOT__4) REC_TOT__4 = REC_CNT__4
@@ -49,10 +49,10 @@ end cases
 CIF END
 
 c display list of record counts by case counts
-ifthen (sglobal('GUPICK') eq '')
+ifthen (sglobal('GU_PICK') eq '')
 . for EACH_NUMBER = 0, REC_TOT__4
 .   IF(FREQINT__4(EACH_NUMBER) = 0) NEXT FOR | do not display empty rows
-.   LINK__4 = '"<mycgi>?member=WPF.INC_DBA.N_CASES&caseis=<CASEISNQ>&upick=' + format(EACH_NUMBER)  + '"'
+.   LINK__4 = '"<mycgi>?member=WPF.INC_DBA.N_CASES&amp;caseis=<GCASE_IS_NQ>&amp;upick=' + format(EACH_NUMBER)  + '"'
 .   write(cgi) 4t '<tr><td><a href=' LINK__4 '>'  FREQINT__4(EACH_NUMBER) '</a></td>'
 .   write(cgi) 6t '<td>' EACH_NUMBER '</td></tr>'
 . end for

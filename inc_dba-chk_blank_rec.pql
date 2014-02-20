@@ -1,4 +1,4 @@
-PROCEDURE      INC_DBA.CHK_BLANK_REC:T  (156804,50727)  |Last amended Feb 06, 2012,14:05:27
+PROCEDURE      INC_DBA.CHK_BLANK_REC:T  (157548,45581)  |Last amended Feb 19, 2014,12:39:41
 c find blank records.  Should be links to the records and not a form
 
 PROGRAM
@@ -92,7 +92,7 @@ subprocedure START_ROW
 .   end for
 
 c   Keys (used for the link)
-.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&caseis=' +  CASE_STR + '&gdbrec=' + format(REC_TYPE_NUMBER) + '&upick=View'
+.   STR$2 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;caseis=' +  CASE_STR + '&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=View'
 .   for EACH_KEY = 1 + dbtype(0), nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 .     KEYVNAME__4 = pack(keyname(REC_TYPE_NUMBER, EACH_KEY))
 .     STRING_VARGET = trimlr(varget(KEYVNAME__4))
