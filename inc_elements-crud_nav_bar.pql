@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157548,45658)  |Last amended Feb 19, 2014,12:40:58
+PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157549,44201)  |Last amended Feb 20, 2014,12:16:41
 REC_TYPE_NUMBER  = 0<GDB_REC>
 
 write(cgi) '  <form name="dataentry" action="<mycgi>"  method="post" onKeyPress="return disableEnterKey(event)">'
@@ -8,7 +8,7 @@ CALL WPF.INC_ELEMENTS.GDB_REC
 CALL WPF.INC_ELEMENTS.KEYS
 
 write(cgi) '<div class="row">'
-write(cgi) '<div class="span11 offset1">'
+write(cgi) '<div class="md-col-12">'
 write(cgi) '<span id="entryleft">'
 c SAVE if permission is OK
 STR$1 = '&nbsp;'

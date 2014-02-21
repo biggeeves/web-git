@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157542,78533)  |Last amended Feb 13, 2014,21:48:53
+PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157550,41612)  |Last amended Feb 21, 2014,11:33:32
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -8,37 +8,34 @@ CALL WPF.INC_ELEMENTS.HEADER_END
 CALL WPF.INC_ELEMENTS.BODY_START
 CALL WPF.INC_ELEMENTS.BODY_END
 CALL WPF.INC_ELEMENTS.STATUS_BLOCK
-CALL WPF.INC_ELEMENTS.BODY_HEADER
+c CALL WPF.INC_ELEMENTS.BODY_HEADER | it looks better without the normal header
 
-COUNTS__4 = 0
-write(cgi) '<h3 class="text-center">Welcome.</h3>'
 write(cgi) '<div class="row">'
-write(cgi) '<div class="span6 offset3 text-center">'
-write(cgi) '<form class="center" name="dbchoose" action="<mycgi>" method="post">'
-write(cgi) '<input type="hidden" name="redirect" value="<REDIRECT>">'
-write(cgi) '<input type="hidden" name="member" value="WPF.CONTROLLER.FIRST_PAGE">'
-write(cgi) '<p class="text-center"><strong>Choose a Database</strong></p>'
-write(cgi) '<select name="dbpick" size="10" id="dblist">'
-GOON__4 = 0
-. ifthen(sglobal('GUSER_NAME') eq 'Greg Neils')
-.   process rec DB_INFO
-.     STR$1 = '<option value = "'  + trimlr(WEB_DB_NAME) + '">' + trimlr(WEB_DB_NAME) +  '</OPTION>'  | user trimlr since case ids are always padded
-.     write(cgi) STR$1
-.   end rec
-. else
+write(cgi) '  <div class="col-md-6 col-md-offset-3">'
+write(cgi) '    <div class="row">'
+write(cgi) '      <h3>Welcome</h3>'
+write(cgi) '    </div>'
+write(cgi) '    <div class="row panel panel-default bottom-buffer">'
+write(cgi) '    <div class="col-md-8 col-md-offset-2 text-center">'
+write(cgi) '      <form class="center" name="dbchoose" action="<mycgi>" method="post">'
+write(cgi) '      <input type="hidden" name="redirect" value="<REDIRECT>">'
+write(cgi) '      <input type="hidden" name="member" value="WPF.CONTROLLER.FIRST_PAGE">'
+write(cgi) '      <p class="text-center top-buffer"><strong>Choose a Database</strong></p>'
+write(cgi) '      <div class="row">'
+write(cgi) '        <div class="col-md-12">'
+write(cgi) '          <select name="dbpick" size="10" id="dblist" class="form-control">'
 .   process rec DB_USERS
-WRITE USER_NAME ':<GUSER_NAME>:'
 .     ifNOT (sglobal('GUSER_NAME') eq USER_NAME) NEXT REC
-.     COUNTS__4 = COUNTS__4 +1
-.     STR$1 = '<option value = "'  + trimlr(WEB_DB_NAME) + '"'
-.     if(COUNTS__4 = 1) STR$1 = STR$1 + ' selected ="selected"'
-.     STR$1 = STR$1 + '>' + trimlr(WEB_DB_NAME) +  '</OPTION>'  | user trimlr since case ids are always padded
+.     STR$1 = '<option value = "'  + trimlr(WEB_DB_NAME) + '">' + trimlr(WEB_DB_NAME) +  '</OPTION>'
 .     write(cgi) STR$1
 .   end rec
-. endif
-write(cgi) '</select>'
-write(cgi) '<br><input type="submit" name="submit" value="Connect DB" class="btn btn-primary"><br>'
-write(cgi) '</form>'
+write(cgi) '          </select>'
+write(cgi) '        </div>'
+write(cgi) '      </div>'
+write(cgi) '      <input class="btn btn-default btn-lg top-buffer bottom-buffer" type="submit" name="submit" value="Connect DB" >'
+write(cgi) '      </form>'
+write(cgi) '    </div>'
+write(cgi) '  </div>'
 write(cgi) '</div>'
 
 CALL WPF.INC_ELEMENTS.SOME_MESSAGE

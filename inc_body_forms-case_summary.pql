@@ -1,25 +1,26 @@
-PROCEDURE      INC_BODY_FORMS.CASE_SUMMARY:T  (157548,47173)  |Last amended Feb 19, 2014,13:06:13
+PROCEDURE      INC_BODY_FORMS.CASE_SUMMARY:T  (157550,50014)  |Last amended Feb 21, 2014,13:53:34
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 set ANY_NUM__4  (0)
 
-write(cgi)  '<h3>' CASE_LABEL ' <GCASE_IS_NQ> case snapshot</h3>'
+write(cgi)  '<h3>' CASE_LABEL ' <GCASE_IS_NQ> Summary Report</h3>'
 c DELETE PORTION!  MUST SEE A CASE SUMMARY BEFORE BEING ABLE TO DELETE AN ENTIRE CASE
 C note: that if you did not press delete in the previous screen, you will NOT have the ability to delete here.
-ifthen (0<GSECLEVEL> eq 30)
+ifthen (0<GSECURITY_LEVEL> eq 30)
 . ifthen ('delete' eq '<GCASE_OPTION>')
-.   write(cgi)  '<h4><form method="post" action="<mycgi>">'
-.   write(cgi)  '<input type="hidden" name="member" id="member" value="WPF.INC_BODY_FORMS.CASE_SUMMARY">'
+.   write(cgi) '<h4><form method="post" action="<mycgi>">'
+.   write(cgi) '<input type="hidden" name="member" id="member" value="WPF.INC_BODY_FORMS.CASE_SUMMARY">'
 .   CALL WPF.INC_ELEMENTS.CASE_IS
-.   write(cgi) '<input type="submit" name="submit" value="Delete" onclick="return confirmDelCase()">'
-.   write(cgi) '<input type="submit" name="submit" value="Cancel" onclick="document.getElementById(''member'').value=''WPF.INC_BODY_FORMS.CASE_SUMMARY''">'
+.   write(cgi) '<input type="submit" name="submit" class="btn btn-danger" value="Delete" onclick="return confirmDelCase()">'
+.   write(cgi) '<input type="submit" name="submit" class="btn btn-default" value="Cancel" onclick="document.getElementById(''member'').value=''WPF.INC_BODY_FORMS.CASE_SUMMARY''">'
 .   write(cgi) '</form></h4>'
 . endif
 endif
-write(cgi)  '<table class="table table-striped table-hover">'
-write(cgi)  '<tr><th>Table</th><th>Count</th></tr>'
+write(cgi) '<div class="panel panel-default">'
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '<tr><th>Table</th><th>Count</th></tr>'
 CIF EQ <GCASED>, 1
 old case is <GCASE_IS>
 CIF END
@@ -41,10 +42,11 @@ CIF END
 .   STR$1 = '<tr>'
 .   write(cgi) STR$1
 .   ANY_NUM__4 = ANY_NUM__4  + count(EACH_RECORD_NUMBER)
-.   write(cgi)  '<td>'REC_LABEL__4 '</td><td>' [count(EACH_RECORD_NUMBER)]  '</td>'
+.   write(cgi)  '<td>' REC_LABEL__4 '</td><td>' [count(EACH_RECORD_NUMBER)]  '</td>'
 .   write(cgi) '</tr>'
 . end for
 . write(cgi) '</table>'
+. write(cgi) '</div>'
 CIF EQ <GCASED>, 1
 end case is
 CIF END

@@ -1,4 +1,7 @@
-PROCEDURE      INC_BODY_DBA.RECORDFREQS:T  (157221,43772)  |Last amended Mar 29, 2013,12:09:32
+PROCEDURE      INC_BODY_DBA.RECORDFREQS:T  (157550,48149)  |Last amended Feb 21, 2014,13:22:29
+c Produces a report
+c How many cases have XXX number of records
+
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS

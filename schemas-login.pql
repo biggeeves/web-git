@@ -1,4 +1,4 @@
-PROCEDURE      SCHEMAS.LOGIN:T  (157542,56887)  |Last amended Feb 13, 2014,15:48:07
+PROCEDURE      SCHEMAS.LOGIN:T  (157550,53597)  |Last amended Feb 21, 2014,14:53:17
 c create for version 3.0
 
 PROGRAM
@@ -34,7 +34,7 @@ DATA LIST
                 LOGIN_FAIL_TIME                           * (TIME 'HHIMMISS')
                 LOGIN_DATE                           * (DATE'MMIDDIYYYY')
                 LOGIN_TIME                           * (TIME 'HHIMMISS')
-                LOGIN_ATTEMPTS                          * (I2)
+                LOGIN_ATTEMPTS                       * (I2)
 
 
 VAR RANGES      START_DATE END_DATE                        ('01/01/2011' '03/01/2050')

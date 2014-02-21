@@ -1,4 +1,6 @@
-PROCEDURE      INC_BODY_DBA.CXSUM:T  (157219,58952)  |Last amended Mar 27, 2013,16:22:32
+PROCEDURE      INC_BODY_DBA.CXSUM:T  (157550,47752)  |Last amended Feb 21, 2014,13:15:52
+c produces a Check Sum for the entire database.
+
 retrieval CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS

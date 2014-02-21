@@ -1,4 +1,6 @@
-PROCEDURE      INC_BODY_DBA.DAYS_ENTRY:T  (157548,45374)  |Last amended Feb 19, 2014,12:36:14
+PROCEDURE      INC_BODY_DBA.DAYS_ENTRY:T  (157550,47778)  |Last amended Feb 21, 2014,13:16:18
+c produces a record of a single days data entry
+
 PROGRAM
 . date              VARDATE__4 ('MMIDDIYYYY')  | Validating Date values
 . ifthen(nglobal('GDAY') eq -1)

@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157548,47190)  |Last amended Feb 19, 2014,13:06:30
+PROCEDURE      INC_BODY_FORMS.REC_EDIT:T  (157550,42977)  |Last amended Feb 21, 2014,11:56:17
 C display a generic data entry page for one record (ROW)
 
 retrieval progress CRWARN noautocase
@@ -11,14 +11,17 @@ set REC_ACCESSED__4 (0)
 
 c note disableEnterKey needs to be in two places.  A) On the form to disable enter in Firefox.  B) In the body to allow IE to move from field to field with the enter key.
 
-write(cgi) '  <h3 title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
+write(cgi) '<div class="row">'
+write(cgi) '<h3 class="md-col-12" title = "' REC_TYPE_NUMBER ':' REC_NAME__4 '">'
+
 if (dbtype(0) eq 1) write(cgi) CASE_LABEL ': <GCASE_IS_NQ> '
 write(cgi) REC_LABEL__4
 ifthen (0<GVIEW_SCHEMA> eq 1)
-. write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GD_BREC>">'
+. write(cgi) '<a target="_blank" href="<mycgi>?member=WPF.INC_BODY_CODEBOOK.REC_TYPE&amp;showmenu=0&amp;gdbrec=<GDB_REC>">'
 . write(cgi) '<small> (codebook)</small></a>'
 endif
 write(cgi) '</h3>'
+write(cgi) '</div>'
 
 if(0<GREC_STAT> eq 5) write '<h3>Deleted</h3>'
 if(0<GREC_STAT> eq 6) write '<h3>Sample</h3>'
@@ -59,8 +62,9 @@ ifthen (nvarsc(REC_TYPE_NUMBER) gt 40) | break into multiple "pages"
 . end for
 . write(cgi) '</div><br>'
 endif
-write(cgi) '<div class="row">'
-write(cgi) '<div class="span11 offset1">'
+write(cgi) '<div class="row top-buffer">'
+write(cgi) '<div class="md-col-12">'
+write(cgi) '<div class="panel panel-default">' | add a nice bordered look to the table
 write(cgi) '  <table class="table table-striped table-hover" id="page1"> '
 
 CIF EQ 0<GCASED>, 1
@@ -77,7 +81,7 @@ CIF END
 .     for EACH_VARIABLE = 1, nvarsc(REC_TYPE_NUMBER)
 .       ifthen (nvarsc(REC_TYPE_NUMBER) gt 40)
 .         ifNOTthen (EACH_VARIABLE eq nvarsc(REC_TYPE_NUMBER)) | close last page table
-.           ifthen ( 0= amod(EACH_VARIABLE, 40) )
+.           ifthen ( 0 eq amod(EACH_VARIABLE, 40) )
 .             write(cgi) '</table>' | close previous page div
 .             STR$1 = '<table class="table table-striped table-hover" id="page'+ format( (EACH_VARIABLE/40) + 1) +'" style="display:none;">'+
                       '<tr><td colspan="2">Page ' + format( (EACH_VARIABLE/40) +1 ) + '</td></tr>'
@@ -110,14 +114,24 @@ ifthen (GOON__4 eq 1)
 . write(cgi) STR$1 '<br>'
 . write(cgi) '</td></tr>'
 endif
+| is it a key variable
+.       ISKEY__4 = 0
+.       for EACH_KEY = 1, nkeys( REC_TYPE_NUMBER ) +  dbtype(0)
+.         KEYVNAME__4 = trimlr( keyname( REC_TYPE_NUMBER, EACH_KEY ) )
+.         KEYVNAME__4 = REPLACE( KEYVNAME__4, '{', '', 1, 0, 0 )
+.         KEYVNAME__4 = REPLACE( KEYVNAME__4, '}', '', 1, 0, 0 )
+.         if (VNAME$ eq KEYVNAME__4) ISKEY__4 =  1; EXIT FOR
+.       end for
+
 .       HOVER_TITLE = 'title="' + VNAME$ | to start out the title
+.       if (ISKEY__4 EQ 1) HOVER_TITLE = HOVER_TITLE + ' (key) '
 .       VAR_MIN = nmin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
 .       VAR_MAX = nmax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
 .       VAR_MIN_STR = smin(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
 .       VAR_MAX_STR = smax(REC_TYPE_NUMBER, varnamec(REC_TYPE_NUMBER, EACH_VARIABLE))
 .       SIR_VARTYPE = vtype(REC_TYPE_NUMBER,VNAME$CB)
 .       SIR_VARFORMAT = trimlr(upper(vformat(REC_TYPE_NUMBER, VNAME$CB)))
-.       ifthen (pattern(vardocsn (<gdb_rec>, VNAME$CB, 1), '@radio@') eq 1)
+.       ifthen (pattern(vardocsn (<GDB_REC>, VNAME$CB, 1), '@radio@') eq 1)
 .         DISPLAY_AS = 1
 .       else
 .         DISPLAY_AS = 0
@@ -125,23 +139,16 @@ endif
 .   if(VAR_MIN eq 1) VAR_MIN = NMISS__4
 . if(VAR_MAX eq 3660000) VAR_MAX = NMISS__4
 .       ifthen (SIR_VARTYPE eq 3) |Date
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'D', '', 1, 1, 0)
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, "I", '&#47;', 3, 1, 0)
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, 'D', '', 1, 1, 0 )
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, 'E', '', 1, 1, 0 )
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, "'", '', 3, 1, 0 )
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, "I", '&#47;', 3, 1, 0 )
 .       elseif (SIR_VARTYPE eq 4) | Time
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'T', '', 1, 1, 0)
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'I', ':', 3, 1, 0)
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, 'E', '', 1, 1, 0)
-.         SIR_VARFORMAT = replace(SIR_VARFORMAT, "'", '', 3, 1, 0)
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, 'T', '', 1, 1, 0 )
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, 'I', ':', 3, 1, 0 )
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, 'E', '', 1, 1, 0 )
+.         SIR_VARFORMAT = replace( SIR_VARFORMAT, "'", '', 3, 1,  0)
 .       endif
-.       ISKEY__4 = 0
-.       for EACH_KEY = 1, nkeys(REC_TYPE_NUMBER) +  dbtype(0)
-.         KEYVNAME__4 = trimlr(keyname(REC_TYPE_NUMBER, EACH_KEY))
-.         KEYVNAME__4 = REPLACE(KEYVNAME__4, '{', '', 1, 0, 0)
-.         KEYVNAME__4 = REPLACE(KEYVNAME__4, '}', '', 1, 0, 0)
-.         if (VNAME$ eq KEYVNAME__4) ISKEY__4 =  1;EXIT FOR
-.       end for
 
 .       set MISSNUM__4 (missing)
 .       set NUM__4   (missing)
@@ -243,12 +250,13 @@ CIF END
 
 c       variable name and label
 
+.       RCLASS__4 = ''
 .       ifNOTTHEN (VALID_RESULT eq 0 OR 3 OR  4 OR  5 OR  6)   | VARPUT has an error with Common Vars.  1st one alphabetically
 .         RCLASS__4 = 'class= "error"'
 .       elseif (exists(VALID_RESULT) eq 0)
 .         RCLASS__4 = 'class= "error"'
 .       endif
-.       if (ISKEY__4 eq 1) RCLASS__4 = 'class= "key"'
+.       if (ISKEY__4 eq 1) RCLASS__4 = 'class= "key warning"'
 
 c       Variable Label Column  | since keys are not editable, they do not get a "label"
 .       write(cgi) '<tr ' RCLASS__4    HOVER_TITLE '>'
@@ -305,6 +313,7 @@ c       Value labels column
 .       write(cgi)  '</td></tr>'
 .     end for
 .     write(cgi)  '  </table>'
+.     write(cgi)  '  </div> '  | class=Panel
 .     write(cgi)  '  </div> '  | class=span
 .     write(cgi)  '  </div> '  | class=row
 c     construct audit variables

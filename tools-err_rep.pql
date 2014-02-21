@@ -1,4 +1,11 @@
-PROCEDURE      TOOLS.ERR_REP:T  (157542,79390)  |Last amended Feb 13, 2014,22:03:10
+PROCEDURE      TOOLS.ERR_REP:T  (157549,49499)  |Last amended Feb 20, 2014,13:44:59
+program
+. string  *  600  STR$1
+. STR$1   = 'attribute err_rep= "'  + dsn('ERROR_FOLDER') + datec(today(0), 'yyyy_mm_dd_at_') + timec(now(0), 'HH_MM')  + '_err_<USER_NAME>.htm"'
+. EXECUTE DBMS STR$1
+end program
+
+
 program CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS

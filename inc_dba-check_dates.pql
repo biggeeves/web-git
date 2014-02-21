@@ -1,9 +1,10 @@
-PROCEDURE      INC_DBA.CHECK_DATES:T  (157548,45560)  |Last amended Feb 19, 2014,12:39:20
-PROGRAM
-CALL WPF.SYSTEM.DEFINE_VARS
-CALL WPF.SYSTEM.INI_VARS
+PROCEDURE      INC_DBA.CHECK_DATES:T  (157550,49528)  |Last amended Feb 21, 2014,13:45:28
+c Creates a report that lists evry field that has a zero for a date
+c zero dates in SIR are stored as October 15, 1582.
 
-. write(cgi)'<h3>Dates October 15, 1582</h3>'
+PROGRAM
+. write(cgi) '<h3>Dates equal to zero or October 15, 1582</h3>'
+. write(cgi) '<div class="panel panel-default">'
 . write(cgi) '<table class="table table-striped table-hover">'
 . write(cgi) '<tr><th>View</th><th class="left">Record</th>'
 . write(cgi) '  <th>Rec. Name </th><th>Keys</th><th>Variable</th></tr>'
@@ -56,7 +57,7 @@ CIF EQ 1, 0<GCASED>
 end cases
 CIF END
 
-if (COUNTS__4 EQ 0) write(cgi) '<tr class="info"><td>&nbsp;</td><td colspan="2">' REC_NAME__4 '</td><td colspan="2"> Their are no dates equal to October 15, 1582</td></tr>'
+if (COUNTS__4 EQ 0) write(cgi) '<tr><td>&nbsp;</td><td colspan="2">' REC_NAME__4 '</td><td colspan="2"> Their are no dates equal to October 15, 1582</td></tr>'
 
 subprocedure START_ROW
 .   COUNTS__4 = COUNTS__4 + 1
@@ -91,6 +92,6 @@ end repeat
 
 program
 write(cgi) '</table>'
-write(cgi) '</form>'
+write(cgi) '</div>'
 end program
 END PROCEDURE

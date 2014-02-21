@@ -1,4 +1,7 @@
-PROCEDURE      INC_BODY_DBA.N_CASES:T  (157548,47148)  |Last amended Feb 19, 2014,13:05:48
+PROCEDURE      INC_BODY_DBA.N_CASES:T  (157550,48112)  |Last amended Feb 21, 2014,13:21:52
+c A report of the tobal number of records (by case is case structured)
+
+
 retrieval | CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -19,8 +22,8 @@ else
 endif
 write(cgi) '</div>'
 write(cgi) '</div>'
-write(cgi) '<div class="row">'
-write(cgi) '<div class="span10 offset1">'
+write(cgi) '<div class="row panel panel-default">'
+write(cgi) '<div class="col-md-10 col-md-offset-1">'
 write(cgi) '<table class="table table-striped table-hover table-bordered">'
 ifthen (sglobal('GU_PICK') eq '')
 . write(cgi) 2t '<tr><th title="N Cases">Count of ' VAR_LABEL '</th><th title="NRecs">Have this many records</th></tr>'

@@ -1,4 +1,7 @@
-PROCEDURE      INC_BODY_DBA.DEVELOPMENT:T  (156826,55265)  |Last amended Feb 28, 2012,15:21:05
+PROCEDURE      INC_BODY_DBA.DEVELOPMENT:T  (157550,47802)  |Last amended Feb 21, 2014,13:16:42
+c any notes that should be kept handy.
+c tends to get outdated fast.
+
 program
 write(cgi)'<h3>Development Notes</h3>'
 write(cgi)'Priority<ul>'

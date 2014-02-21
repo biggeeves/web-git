@@ -1,12 +1,13 @@
-PROCEDURE      INC_BODY_FORMS.CASEDEL:T  (157548,47136)  |Last amended Feb 19, 2014,13:05:36
-C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
+PROCEDURE      INC_BODY_FORMS.CASEDEL:T  (157550,49738)  |Last amended Feb 21, 2014,13:48:58
+C DELETE A CASE ID
+C THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
 
 PROGRAM
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 write(cgi) '<h4>Delete a ' CASE_LABEL '</h4>'
-ifthen (0<GSECLEVEL> ne 0)
+ifthen (0<GSECURITY_LEVEL> ne 0)
 . write(cgi) '<br>'
 . write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
 . write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'

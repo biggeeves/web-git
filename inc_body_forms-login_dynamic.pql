@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157548,46443)  |Last amended Feb 19, 2014,12:54:03
+PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157550,54139)  |Last amended Feb 21, 2014,15:02:19
 
 
 program crwarn
@@ -30,7 +30,7 @@ open (index) read lrecl = 600 iostat = IOSTAT__4
 .       write(cgi) '<script type="text/javascript">'
 .       write(cgi)  ' document.getElementById(''redirect'').value=window.location.href'
 .       write(cgi) '</script>'
-.       if('<GSOME_MESS>' ne '') write(cgi) '<p class="text-error"><GSOME_MESS></p>'
+.       if('<GSOME_MESS>' ne '') write(cgi) '<p class="bg-primary"><GSOME_MESS></p>'
 .     endif
 .   END LOOP
 .   DONE:

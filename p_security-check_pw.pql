@@ -1,65 +1,74 @@
-PROCEDURE      P_SECURITY.CHECK_PW:T  (157548,46649)  |Last amended Feb 19, 2014,12:57:29
+PROCEDURE      P_SECURITY.CHECK_PW:T  (157550,53913)  |Last amended Feb 21, 2014,14:58:33
 | checks user name and password.
 | if matched assigns a unique user ID.
 | session ID is created after user is directed to a database (has 1DB) or selects a DB (Many DBS)
 
 
-retrieval crwarn
+retrieval crwarn UPDATE
 . CALL WPF.SYSTEM.DEFINE_VARS
 . CALL WPF.SYSTEM.INI_VARS
 . GOON__4  = 0
-. ANY_NUM__4 = numbr(format(today(0)) + format(now(0)))
-. USER_NAME__4 = trimlr(cgivarpn('user_name'))
-. PASSWORD__4 = trimlr(cgivarpn('password'))
-. for EACH_LETTER = 1, len(USER_NAME__4 )
-.   ANY_NUM__4 = ANY_NUM__4 + ichar(substr(USER_NAME__4, EACH_LETTER, 1))
+. ANY_NUM__4 = numbr( format( today(0) ) + format( now(0) ) )
+. USER_NAME__4 = trimlr( cgivarpn( 'user_name') )
+. PASSWORD__4 = trimlr( cgivarpn( 'password') )
+. for EACH_LETTER = 1, len( USER_NAME__4 )
+.   ANY_NUM__4 = ANY_NUM__4 + ichar( substr( USER_NAME__4, EACH_LETTER, 1 ) )
 . end for
-. USER_NAME__4 = trimlr(cgivarpn('user_name'))
-. PASSWORD__4 = trimlr(cgivarpn('password'))
+. USER_NAME__4 = trimlr( cgivarpn( 'user_name' ) )
+. PASSWORD__4 = trimlr( cgivarpn( 'password' ) )
 . STR$1 = ''
 
-. process rec LOGIN_INFO VIA (USER_NAME__4 )
-.   ifthen (PASSWORD__4 eq PW)
-      ANY_NUM__4 =  globaln('GOON__4', 1)
-.     ANY_NUM__4 =  globals("GUSER_NAME", USER_NAME)
-.     USER_ID = ''
-.     ANY_NUM__4 = today(0)
-.     ANY_NUM__4 = rand(ANY_NUM__4) * 1103515245  + 12345
-.     STR$1 = format(ANY_NUM__4 )
-.     ANY_NUM__4 = now(0)
-.     ANY_NUM__4 = rand(ANY_NUM__4) * 1103515245  + 12345
-.     STR$1 = STR$1 + format(ANY_NUM__4 )
-.     ANY_NUM__4 = today(0) + now(0)
-.     ANY_NUM__4 = rand(ANY_NUM__4) * 1103515245  + 12345
-.     STR$1 = STR$1 + format(ANY_NUM__4 )
-.     STR$1 = replace(STR$1,'.','',5, 1, 0)
-.     for EACH_LETTER = 1, len(STR$1)
-.       ifthen (numbr(substr(STR$1, EACH_LETTER , 2)) ge 48 and le 57)   USER_ID = USER_ID + char(numbr(substr(STR$1, EACH_LETTER , 2)))
-.       elseif (numbr(substr(STR$1, EACH_LETTER , 2)) ge 65 and le 90)   USER_ID = USER_ID + char(numbr(substr(STR$1, EACH_LETTER , 2)))
-.       elseif (numbr(substr(STR$1, EACH_LETTER , 2)) ge 97 and le 99)   USER_ID = USER_ID + char(numbr(substr(STR$1, EACH_LETTER , 2)))
-.       elseif (numbr(substr(STR$1, EACH_LETTER , 3)) ge 100 and le 122) USER_ID = USER_ID + char(numbr(substr(STR$1, EACH_LETTER , 3)))
-.       else
-.        USER_ID = USER_ID + substr(STR$1, EACH_LETTER , 1)
-.       endif
-.     end for
-.     USER_ID = pack('U' + USER_ID)
-.     ANY_NUM__4 =  globals("GUSER_ID", USER_ID)
-.     ANY_NUM__4 =  globals("GSESSION_ID", datec(today(0), 'yyyymmdd') + timec(now(0), 'HHMMSS'))
+. process rec LOGIN_INFO VIA ( USER_NAME__4 )
+.   ifthen ( PASSWORD__4 eq PW )
+.     get vars PW USER_NAME
+.     LOGIN_SUCESS_DATE = today(0)
+.     LOGIN_SUCESS_TIME = now(0)
 .     GOON__4  = 1
-.     EXIT REC
+.   else
+.     LOGIN_FAIL_DATE = today(0)
+.     LOGIN_FAIL_TIME = NOW(0)
+.     if( exists( LOGIN_ATTEMPTS ) EQ 0 ) LOGIN_ATTEMPTS = 0
+.     LOGIN_ATTEMPTS = LOGIN_ATTEMPTS + 1
 .   endif
 . end rec
-. ifthen (GOON__4 eq 0)
-.   ANY_NUM__4 =  globals('GSOME_MESS', 'Either the USER_NAME and password is incorrect.')
-.   ANY_NUM__4 =  globaln('GOON__4', 0)
+
+. ifthen (GOON__4  EQ 1)
+.   ANY_NUM__4 =  globaln( 'GOON__4', 1 )
+.   ANY_NUM__4 =  globals( 'GUSER_NAME', USER_NAME )
+.   USER_ID = ''
+.   ANY_NUM__4 = today(0)
+.   ANY_NUM__4 = rand( ANY_NUM__4 ) * 1103515245  + 12345
+.   STR$1 = format( ANY_NUM__4 )
+.   ANY_NUM__4 = now(0)
+.   ANY_NUM__4 = rand( ANY_NUM__4 ) * 1103515245  + 12345
+.   STR$1 = STR$1 + format( ANY_NUM__4 )
+.   ANY_NUM__4 = today(0) + now(0)
+.   ANY_NUM__4 = rand( ANY_NUM__4 ) * 1103515245  + 12345
+.   STR$1 = STR$1 + format( ANY_NUM__4 )
+.   STR$1 = replace( STR$1, '.', '', 5, 1, 0 )
+.   for EACH_LETTER = 1, len(STR$1)
+.     ifthen ( numbr( substr( STR$1, EACH_LETTER , 2 ) ) ge 48 and le 57 )   USER_ID = USER_ID + char( numbr( substr( STR$1, EACH_LETTER , 2)))
+.     elseif ( numbr( substr( STR$1, EACH_LETTER , 2 ) ) ge 65 and le 90 )   USER_ID = USER_ID + char( numbr( substr( STR$1, EACH_LETTER , 2)))
+.     elseif ( numbr( substr( STR$1, EACH_LETTER , 2 ) ) ge 97 and le 99 )   USER_ID = USER_ID + char( numbr( substr( STR$1, EACH_LETTER , 2)))
+.     elseif ( numbr( substr( STR$1, EACH_LETTER , 3 ) ) ge 100 and le 122 ) USER_ID = USER_ID + char( numbr( substr( STR$1, EACH_LETTER , 3)))
+.     else
+.       USER_ID = USER_ID + substr(STR$1, EACH_LETTER , 1)
+.     endif
+.   end for
+.   USER_ID = pack('U' + USER_ID)
+.   ANY_NUM__4 =  globals( 'GUSER_ID', USER_ID)
+.   ANY_NUM__4 =  globals( 'GSESSION_ID', datec(today(0), 'yyyymmdd') + timec(now(0), 'HHMMSS'))
+.   ANY_NUM__4 =  globaln( 'GOON__4', 1)
+. ELSE
+.   ANY_NUM__4 =  globals( 'GSOME_MESS', 'Please double check your user name and password.')
+.   ANY_NUM__4 =  globaln( 'GOON__4', 0)
 .   open badLogins append lrecl = 300
 .     write (badLogins) [datec(today(0), 'mm/dd/yyyy')] 14t USER_NAME__4 50t PASSWORD__4
 .   close badLogins
-. else
-.   ANY_NUM__4 =  globaln('GOON__4', 1)
 . endif
 end retrieval
 
+C FOR FAILED LOG INS CALL THE DYNAMIC LOG IN PAGE AND EXIT
 CIF EQ 0<GOON__4>, 0
 . CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
 . CALL WPF.INC_BODY_FORMS.LOGIN_DYNAMIC

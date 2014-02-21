@@ -1,5 +1,6 @@
-PROCEDURE      INC_BODY_DBA.DOCUMENTATION:T  (156563,37469)  |Last amended Jun 10, 2011,10:24:29
-SET PROCFILE WPF
+PROCEDURE      INC_BODY_DBA.DOCUMENTATION:T  (157550,47851)  |Last amended Feb 21, 2014,13:17:31
+c Produces a short page of documentation
+c Reads the first two lines of each member
 
 program
 CALL WPF.SYSTEM.DEFINE_VARS

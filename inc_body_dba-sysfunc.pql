@@ -1,4 +1,7 @@
-PROCEDURE      INC_BODY_DBA.SYSFUNC:T  (157219,51252)  |Last amended Mar 27, 2013,14:14:12
+PROCEDURE      INC_BODY_DBA.SYSFUNC:T  (157550,48229)  |Last amended Feb 21, 2014,13:23:49
+c Produces a table of system functions and their defintions.
+c It is nice to keep these on hand
+
 program CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS

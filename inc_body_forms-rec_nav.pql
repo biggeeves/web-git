@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_NAV:T  (157548,47202)  |Last amended Feb 19, 2014,13:06:42
+PROCEDURE      INC_BODY_FORMS.REC_NAV:T  (157550,42899)  |Last amended Feb 21, 2014,11:54:59
 C list the record types.  CASE id is used if available.
 
 retrieval crwarn
@@ -21,8 +21,11 @@ CALL WPF.INC_ELEMENTS.GDB_REC
 CIF EQ <GCASED>, 1
 OLD CASE IS <GCASE_IS>
 CIF END
-. write(cgi) '<table class="table table-striped table-hover" ><tr><th>Form</th><th>Create</th><th>Existing</th><th>Entry Count</th></tr>'
-
+. write(cgi) '<div class="panel panel-default">'
+. write(cgi) '<table class="table table-striped table-hover">'
+. write(cgi) '<tr class="info">'
+. write(cgi) '<th>Form</th><th>Create</th><th>Existing</th><th>Entry Count</th>'
+. write(cgi) '</tr>'
 
 for EACH_RECORD_NUMBER = 1, nrecs(0)
 . IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
@@ -83,6 +86,7 @@ end for
 
 write(cgi) '<tr><td colspan=3>&nbsp;</td><td>Total Records: ' REC_CNT__4 '</td></tr>'
 write(cgi) '</table>'
+write(cgi) '</div>'
 write(cgi) '</form>'
 CIF EQ <GCASED>, 1
 end case is

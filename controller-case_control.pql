@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.CASE_CONTROL:T  (157548,46663)  |Last amended Feb 19, 2014,12:57:43
+PROCEDURE      CONTROLLER.CASE_CONTROL:T  (157550,49806)  |Last amended Feb 21, 2014,13:50:06
 CALL WPF.DB_CHECKS.VALID_CASE
 
 c create a new case if that was selected
@@ -16,19 +16,19 @@ integer *     1   ANY_NUM__4                    | Use any time you want
 . OLD case is <GCASE_IS>
 .   compute FIRST_CASE__4 = 1
 . end case is
-. ifthen (FIRST_CASE__4 = 0)
-.   ANY_NUM__4= globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
+. ifthen (FIRST_CASE__4 eq 0)
+.   ANY_NUM__4 = globals( 'GMEM_STOP', 'WPF.INC_BODY_FORMS.CASE_NAV')
 .   ifthen ('new' = '<GCASE_OPTION>')
 .     ANY_NUM__4 =  globals( 'GSOME_MESS', 'WARNING! <GCASE_IS_NQ> was not created!')
 .   else
 .     ANY_NUM__4 =  globals( 'GSOME_MESS', '<GCASE_IS_NQ> was not found')
 .   endif
 . else
-.   ifthen ('delete' = '<GCASE_OPTION>')
-.     ANY_NUM__4= globals( 'GSOME_MESS', 'Do you want to delete <GCASE_IS_NQ>?')
-.     ANY_NUM__4= globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.CASE_SUMMARY')
+.   ifthen ('delete' eq '<GCASE_OPTION>')
+.     ANY_NUM__4 = globals( 'GSOME_MESS', 'Do you want to delete <GCASE_IS_NQ>?')
+.     ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.CASE_SUMMARY')
 .   else
-.     ANY_NUM__4= globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_NAV')
+.     ANY_NUM__4 = globals( 'GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_NAV')
 .   endif
 . endif
 end retrieval

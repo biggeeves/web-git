@@ -1,4 +1,4 @@
-PROCEDURE      GLOB_VARS.CGI_DB:T  (157548,47131)  |Last amended Feb 19, 2014,13:05:31
+PROCEDURE      GLOB_VARS.CGI_DB:T  (157550,49602)  |Last amended Feb 21, 2014,13:46:42
 c Create global values from CGI Vars
 C Only values that can be obtained once through security
 PROGRAM
@@ -26,7 +26,7 @@ integer *     4   ANY_NUM__4                  | Use any time you want
 C CASE
 . ifthen (dbtype(0) eq 1) |case structured
 .   ANY_NUM__4 = globals ('GCASE_IS_NQ', fst(cgivarpn('caseis'), ''))
-.   ANY_NUM__4 = globals ('GCASE_OPTION', fst(cgivarpn('CASE_OPTION'), ''))
+.   ANY_NUM__4 = globals ('GCASE_OPTION', fst(cgivarpn('case_option'), ''))
 .   ANY_NUM__4 = globals ('GCASE_NAV', fst(cgivarpn('casenav'), ''))
 .   ANY_NUM__4 = globals ('GSTART_ID', fst(cgivarpn('startid'), ''))
 .   ifthen (vtype (0,  keyname(0, 1)) eq 1)

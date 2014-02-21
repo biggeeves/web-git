@@ -1,4 +1,6 @@
-PROCEDURE      INC_BODY_DBA.FILE_ATTS:T  (157542,79292)  |Last amended Feb 13, 2014,22:01:32
+PROCEDURE      INC_BODY_DBA.FILE_ATTS:T  (157550,47884)  |Last amended Feb 21, 2014,13:18:04
+c Produces a table of file attributes and their paths
+
 program CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS

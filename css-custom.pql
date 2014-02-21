@@ -1,4 +1,4 @@
-PROCEDURE      CSS.CUSTOM:T  (157459,52109)  |Last amended Nov 22, 2013,14:28:29
+PROCEDURE      CSS.CUSTOM:T  (157550,41932)  |Last amended Feb 21, 2014,11:38:52
 c Style sheets, should be incuded in every page
 
 program crwarn
@@ -28,11 +28,8 @@ write(customcss) '.smallcontainer {' /
 write(customcss) 'textarea {width:auto;}'/
 
 write(customcss) 'h1 {'
-                 5t 'background-color: #3399CC;' /
                  5t 'text-align: center;' /
-                 5t 'color:  #FFFFFF;' /
-                 5t 'text-shadow:2px 3px 0 #555 ;' /
-                 5t 'border-bottom-color: #B0E0E6;' /
+                 5t 'padding: 12px;' /
                  '}'/
 write(customcss) 'h2 {'/
                  5t 'color: #000;'/
@@ -49,17 +46,16 @@ write(customcss) 'h5 {'/
                  5t 'padding: 5px;'/
                  5t 'text-align: left;'/
                  '}'/
-c write(customcss) 'table {text-align:left;'/
-c                  5t 'width: 100%;'/
-c                  5t 'padding: 10px 20px 5px 20px;' /
-c                  '}'/
+
 write(customcss) 'p {'/
-                 5t 'text-align:left;'/
                  5t 'padding-left:20px;'/
                  '}'/
 write(customcss) 'dl {font-weight:bold;}'/
                  'dd {font-weight:normal;}'/
 
+write(customcss) '#dblist {'/
+                 5t 'padding: 20px;'/
+                 '}'/
 
 
 
@@ -73,16 +69,6 @@ write(customcss) '#statusblock {'/
                  5t 'color: #82CAFF;'/
                  5t 'z-index: 401;'/
                  '}'/
-write(customcss) '#dblist {'/
-                 5t 'width: 200px;'/
-                 5t 'vertical-align: middle;'/
-                 5t 'background: #82CAFF;'/
-                 5t 'font-family: Tahoma;'/
-                 5t 'letter-spacing: 1px;'/
-                 5t 'margin-left:  30px;'/
-                 5t 'margin-right: 30px;'/
-                 5t 'padding-left: 10px;'/
-                 '}'
 write(customcss) '#dccvars {'/
                  5t 'text-align: right;'/
                  5t 'padding-right: 5px;'/
@@ -139,6 +125,11 @@ write(customcss) '.widthwide   { width: 240px;}'/
 write(customcss) '.widthwidest { width: 450px;}'/
 write(customcss) '.label_rec   {font-style: italic; font-weight: bold; font-size: 120%;}'/
 write(customcss) 'input.readonly {background-color: #DDD;}'/
+
+write(customcss) '.top-buffer { margin-top:20px; }'
+write(customcss) '.bottom-buffer { margin-bottom:20px; }'
+write(customcss) '.key { font-size: 1.6em; font-weight: bold;}'
+
 close customcss
 end program
 END PROCEDURE

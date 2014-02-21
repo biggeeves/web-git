@@ -1,4 +1,6 @@
-PROCEDURE      INC_BODY_DBA.RUN_PROG:T  (157548,46946)  |Last amended Feb 19, 2014,13:02:26
+PROCEDURE      INC_BODY_DBA.RUN_PROG:T  (157550,48189)  |Last amended Feb 21, 2014,13:23:09
+c runs the specified program
+
 program
 . string  *  4094   CGI__4                     | get the value of the CGI variable
 . real    *     8   ANY_NUM__4                  | Use any time you want

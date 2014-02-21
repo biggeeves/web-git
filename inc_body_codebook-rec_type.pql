@@ -1,4 +1,6 @@
-PROCEDURE      INC_BODY_CODEBOOK.REC_TYPE:T  (157548,41706)  |Last amended Feb 19, 2014,11:35:06
+PROCEDURE      INC_BODY_CODEBOOK.REC_TYPE:T  (157550,47680)  |Last amended Feb 21, 2014,13:14:40
+C Creates a specific record type codebook in an html table
+
 program crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -178,7 +180,7 @@ CALL WPF.SYSTEM.INI_VARS
 .       endif
 .       execute subroutine WPF.TOOLS.HTML_TEXT (VALLAB$, 1) RETURNING (HTML_TEXT, RET_CODE__4)
 .       if(RET_CODE__4 eq 0) VALLAB$ = HTML_TEXT
-.       STR$1 = '<li class="spacecompress">(' + vallabsv(REC_TYPE_NUMBER, VNAME$, I) + ') ' + VALLAB$ + '</li>'
+.       STR$1 = '<li class="spacecompress">(' + vallabsv(REC_TYPE_NUMBER, VNAME$, EACH_VALUE_LABEL) + ') ' + VALLAB$ + '</li>'
 .       write(cgi) 2t STR$1
 .     end for
 .     write(cgi)'</ul></dd>'

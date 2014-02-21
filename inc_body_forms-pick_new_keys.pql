@@ -1,14 +1,14 @@
-PROCEDURE      INC_BODY_FORMS.PICK_NEW_KEYS:T  (157548,47310)  |Last amended Feb 19, 2014,13:08:30
-PROGRAM
-print back noremarks nocommands
+PROCEDURE      INC_BODY_FORMS.PICK_NEW_KEYS:T  (157550,47241)  |Last amended Feb 21, 2014,13:07:21
+PROGRAM crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 ifthen(dbtype(0) eq 1)
-. write(cgi) '<h3>' CASE_LABEL': <GCASE_IS_NQ></h3>'
+. write(cgi) '<h3>' CASE_LABEL ': <GCASE_IS_NQ></h3>'
 endif
 
 write(cgi) '<h3 title = "' [pack(recname(REC_TYPE_NUMBER))]  '">' REC_LABEL__4 '</h3>'
+write(cgi)  '<div class="panel panel-default">'
 write(cgi)  '<form method="post" action="<mycgi>">'
 write(cgi)  '<input type="hidden" name="member" value="WPF.DB_UPDATE.REC_NEW">'
 write(cgi)  '<input type="hidden" name="upick" value="New">'
@@ -85,21 +85,21 @@ c create javascript CALL to validate
 . STR$1 = '  checkVartype(this,''' + format(SIR_VARTYPE) + "' , '"   + SIR_VARFORMAT  + "'" + ')"'
 . write(cgi)  STR$1 '>'
 
-. if(0 eq len(VAR_LABEL) or exists(VAR_LABEL)) VAR_LABEL = '&nbsp;'
+. if( 0 eq len(VAR_LABEL) or exists(VAR_LABEL) ) VAR_LABEL = '&nbsp;'
 
-. ifthen(vtype(REC_TYPE_NUMBER, VNAME$) NE 1)  | for right now, lets stick with non-string key value labels
-.   ifthen (nvallab(REC_TYPE_NUMBER, VNAME$) ge 1)
+. ifthen( vtype(REC_TYPE_NUMBER, VNAME$) NE 1 )  | for right now, lets stick with non-string key value labels
+.   ifthen ( nvallab(REC_TYPE_NUMBER, VNAME$) ge 1 )
 .     write(cgi)  ''
 .     STR$1 = '<select class="widthmed"  id="'  + VNAME$  + '_list" '
 .     write(cgi)  4t STR$1
-.     STR$2 = 'newkeys(this, key' + format(EACH_VARIABLE - dbtype(0))  + '); '
+.     STR$2 = 'newkeys(this, key' + format( EACH_VARIABLE - dbtype(0) )  + '); '
 .     STR$1 = 'onchange="SelectValueByList(this, ''' + VNAME$ + ''');' +  STR$2  + '">'
 .     write(cgi)  4t STR$1
 c     MUST MATCH UP WITH DATA ENTRY VALUES BECAUSE JAVASCRIPT IS THE SAME FOR EACH OF THESE!
 .     write(cgi)  '  <option value=""></option>'
 .     for EACH_LABEL = 1, nvallab(REC_TYPE_NUMBER, VNAME$)
-.       STR$1 = trimlr(vallabsn(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
-.       STR$2 = trimlr(vallabsv(REC_TYPE_NUMBER, VNAME$, EACH_LABEL))
+.       STR$1 = trimlr( vallabsn( REC_TYPE_NUMBER, VNAME$, EACH_LABEL ) )
+.       STR$2 = trimlr( vallabsv( REC_TYPE_NUMBER, VNAME$, EACH_LABEL ) )
 .       execute subroutine WPF.TOOLS.HTML_TEXT (STR$1, 1) RETURNING (HTML_TEXT, RET_CODE__4)
 .       if(RET_CODE__4 eq 0) STR$1 = HTML_TEXT
 .       STR$2 = '<option value="'  + STR$2  + '">'
@@ -114,14 +114,12 @@ write(cgi)  '  <td class="left"><input type="submit" name="gotorecord" value="Ne
 write(cgi)  '</tr>'
 write(cgi)  '</table>'
 write(cgi)  '</form>'
+write(cgi)  '</div>'
 c this sets the focues after the input has loaded.   Must be located after the input loads.
 
 VNAME$ = trimlr(keyname(REC_TYPE_NUMBER, 1 + dbtype(0)))
 STR$1 = '<script type="text/javascript"> document.forms[0].' +  VNAME$  + '.focus();</script>'
 write(cgi)  STR$1
-
-
-
 
 end retrieval
 END PROCEDURE

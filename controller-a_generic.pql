@@ -1,9 +1,7 @@
-PROCEDURE      CONTROLLER.A_GENERIC:T  (157548,46223)  |Last amended Feb 19, 2014,12:50:23
+PROCEDURE      CONTROLLER.A_GENERIC:T  (157550,44791)  |Last amended Feb 21, 2014,12:26:31
 c What to do if the user is already using a database.
 
 CALL WPF.GLOB_VARS.USER_ID
-
-CALL WPF.SYSTEM.USER_ATTS
 
 CALL WPF.CONNECTIONS.MANAGER
 CALL WPF.P_SECURITY.GET_USER_NAME      | get USER_NAME by checking cookie values
@@ -52,7 +50,10 @@ CIF END
 GLOBAL GMENU = 1
 
 PROGRAM
-IFTHEN (1 eq pattern(sglobal('GMEM_IN'), '@INC_BODY_FORMS@') or pattern(sglobal('GMEM_IN'), '@INC_DBA@') or pattern(sglobal('GMEM_IN'), '@INC_REPORTS@'))
+IFTHEN (1 eq pattern(sglobal('GMEM_IN'), '@INC_BODY_FORMS@') or
+             pattern(sglobal('GMEM_IN'), '@INC_DBA@') or
+             pattern(sglobal('GMEM_IN'), '@INC_BODY_CODEBOOK@') or
+             pattern(sglobal('GMEM_IN'), '@INC_REPORTS@'))
 . EXECUTE DBMS "CALL WPF.CONTROLLER.SHOW_PAGE"
 ELSE
 . EXECUTE DBMS "CALL <GMEM_IN>"

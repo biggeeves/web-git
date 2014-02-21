@@ -1,12 +1,11 @@
-PROCEDURE      SYSTEM.DB_FOLDERS:T  (157542,60100)  |Last amended Feb 13, 2014,16:41:40
-c  The log in is called first and points to the DCC database to check user name and password
-c  Change program.LOGIN to point to the correct location of the DCC database
+PROCEDURE      SYSTEM.DB_FOLDERS:T  (157550,48357)  |Last amended Feb 21, 2014,13:25:57
+c Creates the necessary folders for the database
 
 program crwarn
 . string  *   600   STR$1                      | General String use at any time
-. string  *   600   ANY_DIR__4                  | Database folder
-. string  *    32   DB_NAME__4                   | Database Name
-. integer *     1   ANY_NUM__4                    | does the directory exists
+. string  *   600   ANY_DIR__4                 | Database folder
+. string  *    32   DB_NAME__4                 | Database Name
+. integer *     1   ANY_NUM__4                 | does the directory exists
 
 . DB_NAME__4 = trimlr(dbname(0))
 

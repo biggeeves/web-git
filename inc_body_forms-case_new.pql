@@ -1,18 +1,18 @@
-PROCEDURE      INC_BODY_FORMS.CASE_NEW:T  (157542,65389)  |Last amended Feb 13, 2014,18:09:49
+PROCEDURE      INC_BODY_FORMS.CASE_NEW:T  (157549,39252)  |Last amended Feb 20, 2014,10:54:12
 C Create a new case
 
 PROGRAM
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 write(cgi) '<h4>Create a new ' CASE_LABEL '</h4>'
-ifthen (0<GSECLEVEL> ne 0)
-. write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
-. write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'
-. write(cgi) '  <input type="hidden" name="case_option" id="case_option" value="new">'
-. write(cgi) '    <br><p><div id="caseidlabel" class ="indent">' CASE_LABEL '</div>'
-. write(cgi) '      <input type="text" id="caseis" class="input_medium" name="caseis">'
-. write(cgi) '      <input type="submit" value="Create" accesskey="z" class="btn btn-success"><br>'
-. write(cgi) '</form>'
+ifthen (0<GSECURITY_LEVEL> ne 0)
+. write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">' /
+             '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">' /
+             '  <input type="hidden" name="case_option" id="case_option" value="new">' /
+             '    <br><p><div id="caseidlabel" class ="indent">' CASE_LABEL '</div>' /
+             '      <input type="text" id="caseis" class="input_medium" name="caseis">' /
+             '      <input type="submit" value="Create" accesskey="z" class="btn btn-success"><br>' /
+             '</form>'
 else
 . write(cgi) 'Sorry, please ask your manager for permission to create new IDs'
 endif

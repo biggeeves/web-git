@@ -1,4 +1,4 @@
-PROCEDURE      CONNECTIONS.LOGIN:T  (157548,46371)  |Last amended Feb 19, 2014,12:52:51
+PROCEDURE      CONNECTIONS.LOGIN:T  (157549,48598)  |Last amended Feb 20, 2014,13:29:58
 c Connects to LOGIN database IF NOT ALREADY CONNECTED
 
 PROGRAM crwarn
@@ -6,17 +6,17 @@ STRING  *   254   DBPATH                     | vars for connecting to db
 integer *     4   ANY_NUM__4                  | Use any time you want
 integer *     1   IOSTAT__4                  | Return code of IOSTAT
 
-DBPATH  = dsn('LOGIN_FOLDER')
+DBPATH  = dsn( 'LOGIN_FOLDER' )
 
-ifthen(fileis(DBPATH  + 'login.sr1') ne 1)
+ifthen( fileis( DBPATH  + 'login.sr1' ) ne 1)
 . ANY_NUM__4 = globals( 'GSOME_MESS', 'Oh oh, We are currently updating or system.')
 . ANY_NUM__4 = globals( 'GDEBUG_INFO', 'Could not find the LOGIN database.')
 . exit program
 endif
 
 | CHECK TO SEE IF ALREADY CONNECTED
-for EACH_DB= 1, SYSTEM(40)
-. IF ( 'LOGIN' EQ DBNAME(EACH_DB) ) EXIT PROGRAM
+for EACH_DB = 1, SYSTEM(40)
+. IF ( 'LOGIN' EQ DBNAME( EACH_DB ) ) EXIT PROGRAM
 END FOR
 
 PQL CONNECT DATABASE 'LOGIN' PREFIX DBPATH SECURITY '','','' IOSTAT = IOSTAT__4

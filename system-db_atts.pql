@@ -1,9 +1,11 @@
-PROCEDURE      SYSTEM.DB_ATTS:T  (157542,60065)  |Last amended Feb 13, 2014,16:41:05
+PROCEDURE      SYSTEM.DB_ATTS:T  (157550,48308)  |Last amended Feb 21, 2014,13:25:08
+c creates database specific attributes and references
+
 program crwarn
 
-string  *   600   STR$1                      | General String use at any time
-string  *   600   ANY_DIR__4                    | Database folder
-string  *    32   DB_NAME__4                   | Database Name
+string  *   600   STR$1                     | General String use at any time
+string  *   600   ANY_DIR__4                | Database folder
+string  *    32   DB_NAME__4                | Database Name
 
 DB_NAME__4 = trimlr(dbname(0))
 ANY_DIR__4  = dsn('web_root') + DB_NAME__4 + '\'
