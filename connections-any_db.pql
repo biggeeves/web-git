@@ -1,10 +1,10 @@
-PROCEDURE      CONNECTIONS.ANY_DB:T  (157548,46374)  |Last amended Feb 19, 2014,12:52:54
+PROCEDURE      CONNECTIONS.ANY_DB:T  (157555,40690)  |Last amended Feb 26, 2014,11:18:10
 C Connect to any database using globals
 
 error limit 99
 
 PROGRAM
-. ifthen(sglobal('GDB') eq 'COMPANY')
+. ifthen ( sglobal('GDB') eq 'COMPANY' )
 .   PQL CONNECT DATABASE "<GDB>" PREFIX "<GDB_PATH>" IOSTAT=RC SECURITY 'COMPANY','LOW','LOW'
 . else
 .   PQL CONNECT DATABASE "<GDB>" PREFIX "<GDB_PATH>" IOSTAT=RC SECURITY '<DBPW>', '<GRS>','<GWS>'

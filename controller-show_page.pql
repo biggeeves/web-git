@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.SHOW_PAGE:T  (157548,46238)  |Last amended Feb 19, 2014,12:50:38
+PROCEDURE      CONTROLLER.SHOW_PAGE:T  (157555,44048)  |Last amended Feb 26, 2014,12:14:08
 c this is the very last thing to call.   It will figure out if it is a generic or customized screen that needs to be returned.
 
 program
@@ -28,6 +28,10 @@ program
 . CALL WPF.SYSTEM.DEFINE_VARS
 . CALL WPF.SYSTEM.INI_VARS
 . CALL WPF.INC_ELEMENTS.STATUS_BLOCK
+cif eq '<GDEBUG>','1'
+WRITE '<HR>HERE<HR>'
+. CALL WPF.INC_ELEMENTS.DEBUG_INFO
+CIF END
 . CALL WPF.INC_ELEMENTS.FOOTER
 end program
 

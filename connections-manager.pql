@@ -1,4 +1,4 @@
-PROCEDURE      CONNECTIONS.MANAGER:T  (157548,46390)  |Last amended Feb 19, 2014,12:53:10
+PROCEDURE      CONNECTIONS.MANAGER:T  (157555,41006)  |Last amended Feb 26, 2014,11:23:26
 c Establish database connection to MANGAER database
 
 PROGRAM CRWARN
@@ -13,7 +13,7 @@ DBPATH  = dsn('MANAGER_FOLDER')
 MST = ''
 c MST = '3010'  | uncomment this line to use master 3010.
 
-IF (MST ne '') EXECUTE DBMS "SET MASTER <GMASTER_IP>:" + MST
+c IF (MST ne '') EXECUTE DBMS "SET MASTER <GMST_IP>:" + MST
 
 ifthen (MST ne '')
 . ifthen (system(38) eq 0)

@@ -1,6 +1,8 @@
-PROCEDURE      P_SECURITY.CHECK_JS:T  (157548,46307)  |Last amended Feb 19, 2014,12:51:47
+PROCEDURE      P_SECURITY.CHECK_LOGIN_JS:T  (157555,45081)  |Last amended Feb 26, 2014,12:31:21
+C CHECK TO SEE IF JavaScript is enabled.  This happens during log in.
+
 program
-remark 'p_security.check_js'
+remark 'P_SECURITY.CHECK_LOGIN_JS'
 ifNOTthen (sglobal('GJS_ENABLED') eq 'YES')
 . ANY_NUM__4 =  globals('GSOME_MESS', 'Please enable JavaScript and log on again.')
 . ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')

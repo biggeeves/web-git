@@ -1,12 +1,20 @@
-PROCEDURE      CONTROLLER.A_GENERIC:T  (157550,44791)  |Last amended Feb 21, 2014,12:26:31
-c What to do if the user is already using a database.
+PROCEDURE      CONTROLLER.A_GENERIC:T  (157555,44960)  |Last amended Feb 26, 2014,12:29:20
+c MAIN CONTROLLING FILE FOR WEB PROC
+
+CIF EQ '<GMEM_IN>', 'WPF.CONTROLLER.A_LOGIN'
+. CALL WPF.CONTROLLER.A_LOGIN
+CIF FALSE
 
 CALL WPF.GLOB_VARS.USER_ID
 
 CALL WPF.CONNECTIONS.MANAGER
-CALL WPF.P_SECURITY.GET_USER_NAME      | get USER_NAME by checking cookie values
-CALL WPF.P_SECURITY.CHECK_USER_NAME   | make sure USER_NAME is valid and not blank
+
+CALL WPF.P_SECURITY.GET_USER_NAME    | get USER_NAME by checking cookie values
+
+CALL WPF.P_SECURITY.CHECK_USER_NAME  | make sure USER_NAME is valid and not blank
+
 CALL WPF.P_SECURITY.CHECK_REFERER    | Check the referring page to make sure that the Cookies were not falsified
+
 CALL WPF.P_SECURITY.CHECK_QUERY      | Check links as they are coming in.  Characters like # make SIR break
 
 CIF EQ '<GMEM_IN>', 'WPF.P_SECURITY.PUT_LOGOUT'

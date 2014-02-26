@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_PW:T  (157554,56117)  |Last amended Feb 25, 2014,15:35:17
+PROCEDURE      P_SECURITY.CHECK_LOGIN_PW:T  (157555,45131)  |Last amended Feb 26, 2014,12:32:11
 | checks user name and password.
 | if matched assigns a unique user ID.
 | session ID is created after user is directed to a database (has 1DB) or selects a DB (Many DBS)

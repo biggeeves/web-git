@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157550,41612)  |Last amended Feb 21, 2014,11:33:32
+PROCEDURE      INC_BODY_FORMS.DB_CHOOSE:T  (157555,46301)  |Last amended Feb 26, 2014,12:51:41
 retrieval crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -8,7 +8,6 @@ CALL WPF.INC_ELEMENTS.HEADER_END
 CALL WPF.INC_ELEMENTS.BODY_START
 CALL WPF.INC_ELEMENTS.BODY_END
 CALL WPF.INC_ELEMENTS.STATUS_BLOCK
-c CALL WPF.INC_ELEMENTS.BODY_HEADER | it looks better without the normal header
 
 write(cgi) '<div class="row">'
 write(cgi) '  <div class="col-md-6 col-md-offset-3">'
