@@ -1,5 +1,6 @@
-PROCEDURE      CONNECTIONS.LOGIN:T  (157549,48598)  |Last amended Feb 20, 2014,13:29:58
+PROCEDURE      CONNECTIONS.LOGIN:T  (157554,55211)  |Last amended Feb 25, 2014,15:20:11
 c Connects to LOGIN database IF NOT ALREADY CONNECTED
+c Archived
 
 PROGRAM crwarn
 STRING  *   254   DBPATH                     | vars for connecting to db

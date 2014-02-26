@@ -1,4 +1,4 @@
-PROCEDURE      SYSTEM.CUSTOM_ATTS:T  (157542,53523)  |Last amended Feb 13, 2014,14:52:03
+PROCEDURE      SYSTEM.CUSTOM_ATTS:T  (157554,55608)  |Last amended Feb 25, 2014,15:26:48
 C CREATED BY THE WEB INSTALLER ON Feb. 12, 2014
 
 C WPF ATTRIBUTE IS A COPY.  GOLD STANDARD IS IN THE FILE DEFAULT.PQL!!!
@@ -16,7 +16,6 @@ attribute dblock = "C:\apache-fake\htdocs\dblock\dblocks.txt"
 attribute err403 = "C:\apache-fake\htdocs\err403.html"
 attribute err404 = "C:\apache-fake\htdocs\err404.html"
 attribute badlogins = "C:\apache-fake\htdocs\login\badLogins.txt"
-ATTRIBUTE LOGIN_FOLDER = "C:\SIR XS\web\dbs\login\"
 ATTRIBUTE MANAGER_FOLDER = "C:\SIR XS\web\dbs\manager\"
 GLOBAL GMST_IP = Greg-PC
 GLOBAL GMST_PORT = 3000

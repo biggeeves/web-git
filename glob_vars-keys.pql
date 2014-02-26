@@ -1,4 +1,4 @@
-PROCEDURE      GLOB_VARS.KEYS:T  (157548,41692)  |Last amended Feb 19, 2014,11:34:52
+PROCEDURE      GLOB_VARS.KEYS:T  (157554,61022)  |Last amended Feb 25, 2014,16:57:02
 c passing keys globals
 c Note that Case structured database, KEY1 = GCASE_IS.  For caseless databases, KEY1 =  1st key.
 
@@ -10,13 +10,7 @@ program
 .   STR$1  = 'key!KEYNUM'
 .   STR$2  = cgivarpn(STR$1)
 .   if (vtype(<GDB_REC>, keyname(<GDB_REC>, KEYNUM + dbtype(0))) eq 1 or 3 or 4 )  STR$2 = '"' + STR$2 + '"'
-.   ANY_NUM__4 =  globals('GKEY!KEYNUM!#', fst(STR$2, ''))
+.   ANY_NUM__4 =  globals('GKEY!KEYNUM', fst(STR$2, ''))
 . end repeat
 end program
-
-C PROGRAM
-C . DO REPEAT KEYNUM = 1 TO 7
-C WRITE [KEYNAME(<GDB_REC>, KEYNUM + DBTYPE(0))] '<GKEY!KEYNUM!> <BR>'
-C . END REPEAT
-C END PROGRAM
 END PROCEDURE

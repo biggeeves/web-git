@@ -1,15 +1,15 @@
-PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157548,46627)  |Last amended Feb 19, 2014,12:57:07
+PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157554,57611)  |Last amended Feb 25, 2014,16:00:11
 C UPDATE MANAGER WITH USER_NAME, REMOTE ADDRESS START DATE AND TIME
 
 retrieval UPDATE CRWARN
-integer *     4   ANY_NUM__4                    | Use any time you want
+integer *     4   ANY_NUM__4                 | Use any time you want
 integer *     1   GOON__4                    | Control flow variable
 
-ifthen ('<GUSER_ID>' NE '')
-. ifthen ('<GSESSION_ID>' NE '')
-.   record is SESSIONS via ('<GUSER_ID>' '<GSESSION_ID>')
-.     if(exists(START_DATE) eq 0)  START_DATE = today(0)
-.     if(exists(START_TIME) eq 0)  START_TIME = NOW(0)
+ifthen ( '<GUSER_ID>' NE '')
+. ifthen ( '<GSESSION_ID>' NE '')
+.   record is SESSION_INFO via ('<GUSER_ID>' '<GSESSION_ID>')
+.     if ( exists(SESSION_START_DATE) eq 0 )  SESSION_START_DATE = today(0)
+.     if ( exists(SESSION_START_TIME) eq 0 )  SESSION_START_TIME = now(0)
 .     USER_NAME = sglobal('GUSER_NAME')
 .     REMOTE_ADDRESS =  cgivarsv('REMOTE_ADDRESS')
 .   end rec

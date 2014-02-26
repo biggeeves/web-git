@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.REC_CHANGE_KEYS:T  (157548,41216)  |Last amended Feb 19, 2014,11:26:56
+PROCEDURE      CONTROLLER.REC_CHANGE_KEYS:T  (157554,59020)  |Last amended Feb 25, 2014,16:23:40
 C GET THE NEXT OR PREVIOUS KEYS.
 
 retrieval crwarn noautocase
@@ -24,13 +24,13 @@ process rec <GDB_REC> <GPROCESS>
 
 | must reset globals and then re-assign them so they don't cary past information.
 . ANY_NUM__4 = globals('GREC_STAT', '2') |OLD
-. ANY_NUM__4 = globals('GKEY1#', '')
-. ANY_NUM__4 = globals('GKEY2#', '')
-. ANY_NUM__4 = globals('GKEY3#', '')
-. ANY_NUM__4 = globals('GKEY4#', '')
-. ANY_NUM__4 = globals('GKEY5#', '')
-. ANY_NUM__4 = globals('GKEY6#', '')
-. ANY_NUM__4 = globals('GKEY7#', '')
+. ANY_NUM__4 = globals('GKEY1', '')
+. ANY_NUM__4 = globals('GKEY2', '')
+. ANY_NUM__4 = globals('GKEY3', '')
+. ANY_NUM__4 = globals('GKEY4', '')
+. ANY_NUM__4 = globals('GKEY5', '')
+. ANY_NUM__4 = globals('GKEY6', '')
+. ANY_NUM__4 = globals('GKEY7', '')
 . for EACH_KEY =  1 +  DBTYPE(0), nkeys(REC_TYPE_NUMBER) + DBTYPE(0)
 .   KEYVNAME__4 = keyname(REC_TYPE_NUMBER, EACH_KEY)
 .   STRING_VARGET = varget(KEYVNAME__4)
@@ -50,37 +50,37 @@ process rec <GDB_REC> <GPROCESS>
 .   if (exists(STRING_VARGET ) eq 0) set STRING_VARGET ('')
 .   ifthen (DBTYPE(0) eq 1) | case structured.
 .     ifthen (EACH_KEY eq 2)
-.       ANY_NUM__4 =  globals('GKEY1#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY1', STRING_VARGET )
 .     elseif (EACH_KEY eq 3)
-.       ANY_NUM__4 =  globals('GKEY2#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY2', STRING_VARGET )
 .     elseif (EACH_KEY eq 4)
-.       ANY_NUM__4 =  globals('GKEY3#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY3', STRING_VARGET )
 .     elseif (EACH_KEY eq 5)
-.       ANY_NUM__4 =  globals('GKEY4#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY4', STRING_VARGET )
 .     elseif (EACH_KEY eq 6)
-.       ANY_NUM__4 =  globals('GKEY5#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY5', STRING_VARGET )
 .     elseif (EACH_KEY eq 7)
-.       ANY_NUM__4 =  globals('GKEY6#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY6', STRING_VARGET )
 .     elseif (EACH_KEY eq 8)
-.       ANY_NUM__4 =  globals('GKEY7#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY7', STRING_VARGET )
 .     endif
 .   else
 .     ifthen (EACH_KEY eq 1)
-.       ANY_NUM__4 =  globals('GKEY1#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY1', STRING_VARGET )
 .     elseif (EACH_KEY eq 2)
-.       ANY_NUM__4 =  globals('GKEY2#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY2', STRING_VARGET )
 .     elseif (EACH_KEY eq 3)
-.       ANY_NUM__4 =  globals('GKEY3#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY3', STRING_VARGET )
 .     elseif (EACH_KEY eq 4)
-.       ANY_NUM__4 =  globals('GKEY3#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY3', STRING_VARGET )
 .     elseif (EACH_KEY eq 5)
-.       ANY_NUM__4 =  globals('GKEY4#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY4', STRING_VARGET )
 .     elseif (EACH_KEY eq 6)
-.       ANY_NUM__4 =  globals('GKEY5#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY5', STRING_VARGET )
 .     elseif (EACH_KEY eq 7)
-.       ANY_NUM__4 =  globals('GKEY6#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY6', STRING_VARGET )
 .     elseif (EACH_KEY eq 8)
-.       ANY_NUM__4 =  globals('GKEY7#', STRING_VARGET )
+.       ANY_NUM__4 =  globals('GKEY7', STRING_VARGET )
 .     endif
 .   endif
 . END FOR

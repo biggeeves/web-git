@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_KEYS:T  (157548,41323)  |Last amended Feb 19, 2014,11:28:43
+PROCEDURE      DB_CHECKS.VALID_KEYS:T  (157554,61581)  |Last amended Feb 25, 2014,17:06:21
 
 
 PROGRAM crwarn
@@ -11,19 +11,19 @@ for EACH_VARIABLE = 1 + dbtype(0),nkeys(REC_TYPE_NUMBER) +  dbtype(0)
 . KEYVNAME__4 = trimlr(keyname(REC_TYPE_NUMBER, EACH_VARIABLE))  | tricky because Key1 in a case structured DB is actually 2!
 . SIR_VARTYPE = vtype(REC_TYPE_NUMBER, KEYVNAME__4)
 . ifthen (EACH_VARIABLE eq 1 + dbtype(0) )
-.   STR__4 = sglobal('GKEY1#')
+.   STR__4 = sglobal('GKEY1')
 . elseif (EACH_VARIABLE eq 2 + dbtype(0) )
-.   STR__4 = sglobal('GKEY2#')
+.   STR__4 = sglobal('GKEY2')
 . elseif (EACH_VARIABLE eq 3 + dbtype(0) )
-.   STR__4 = sglobal('GKEY3#')
+.   STR__4 = sglobal('GKEY3')
 . elseif (EACH_VARIABLE eq 4 + dbtype(0) )
-.   STR__4 = sglobal('GKEY4#')
+.   STR__4 = sglobal('GKEY4')
 . elseif (EACH_VARIABLE eq 5 + dbtype(0) )
-.   STR__4 = sglobal('GKEY5#')
+.   STR__4 = sglobal('GKEY5')
 . elseif (EACH_VARIABLE eq 6 + dbtype(0) )
-.   STR__4 = sglobal('GKEY6#')
+.   STR__4 = sglobal('GKEY6')
 . elseif (EACH_VARIABLE eq 7 + dbtype(0) )
-.   STR__4 = sglobal('GKEY7#')
+.   STR__4 = sglobal('GKEY7')
 . end if
 . ifthen (SIR_VARTYPE EQ 1 or 2 or 3 or 4)  | STRINGS, DATES, TIMES
 .   STR__4 = substr(STR__4, 2, len(STR__4) - 2)  | remove the qoutes

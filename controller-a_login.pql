@@ -1,17 +1,12 @@
-PROCEDURE      CONTROLLER.A_LOGIN:T  (157542,67494)  |Last amended Feb 13, 2014,18:44:54
+PROCEDURE      CONTROLLER.A_LOGIN:T  (157554,55259)  |Last amended Feb 25, 2014,15:20:59
 c What to do when user comes from the Sign in page
-
 c comments are inserted because blank lines do NOT let the global values get set intime for the CIFs
 
 CALL WPF.P_SECURITY.CHECK_JS
 c
-CALL WPF.CONNECTIONS.LOGIN
+CALL WPF.CONNECTIONS.MANAGER
 c
 CALL WPF.P_SECURITY.CHECK_PW
-c
-CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
-c
-CALL WPF.CONNECTIONS.MANAGER
 c
 CALL WPF.P_SECURITY.PUT_SESSION_IDS
 c

@@ -1,4 +1,4 @@
-PROCEDURE      SCHEMAS.MANAGER:T  (157542,78545)  |Last amended Feb 13, 2014,21:49:05
+PROCEDURE      SCHEMAS.MANAGER:T  (157554,57328)  |Last amended Feb 25, 2014,15:55:28
 c created for version 2.0
 PROGRAM
 EXECUTE DBMS ['CREATE DATABASE MANAGER PREFIX= "' + DSN('MANAGER_FOLDER') + '"']
@@ -13,9 +13,103 @@ RECTYPE COLS    1  2
 MAX REC TYPES   30
 MAX REC COUNT   3000000
 MAX KEY SIZE    67
-TASK NAME       Record Definition for DB_INFO Record Number     1
 
-RECORD SCHEMA   1  DB_INFO
+
+RECORD SCHEMA   1  USER_INFO 'User Sign In Data'
+KEY FIELDS      USER_NAME(A)
+MAX REC COUNT   3000000
+DATA LIST
+                USER_NAME                            * (A32)
+                PW                                   * (A32)
+                START_DATE                           * (DATE'MMIDDIYYYY')
+                END_DATE                             * (DATE'MMIDDIYYYY')
+                RESET_PW                             * (I1)
+                RESET_CODE                           * (A32)
+                RESET_EXPIRES_DATE                   * (DATE 'MMIDDIYYYY')
+                RESET_EXPIRES_TIME                   * (TIME 'HHIMMISS')
+                LOGIN_SUCESS_DATE                    * (DATE 'MMIDDIYYYY')
+                LOGIN_SUCESS_TIME                    * (TIME 'HHIMMISS')
+                LOGIN_FAIL_DATE                      * (DATE 'MMIDDIYYYY')
+                LOGIN_FAIL_TIME                      * (TIME 'HHIMMISS')
+                LOGIN_DATE                           * (DATE 'MMIDDIYYYY')
+                LOGIN_TIME                           * (TIME 'HHIMMISS')
+                LOGIN_ATTEMPTS                       * (I2)
+
+
+VAR RANGES      START_DATE END_DATE                        ('01/01/2011' '03/01/2050')
+                RESET_PW                          (0 1)
+                RESET_EXPIRES_DATE                ('01/01/2011' '01/01/2050')
+                LOGIN_DATE                        ('01/01/2011' '01/01/2050')
+VALUE LABELS    RESET_PW                          (0)'No'
+                                                  (1)'Yes'
+VAR LABEL       USER_NAME                         'User Name'
+                PW                                'Password'
+                END_DATE                          'Password End Date'
+                RESET_PW                          'Reset This PW'
+                RESET_CODE                        'Type in a code for the link'
+                RESET_EXPIRES_DATE                'Reset option expires Date'
+                RESET_EXPIRES_TIME                'Reset option expires Time'
+                LOGIN_SUCESS_DATE                 'Last Log In Success Date'
+                LOGIN_SUCESS_TIME                 'Last Log In Success Time'
+                LOGIN_FAIL_DATE                   'Last Log In Attempt Date.'
+                LOGIN_FAIL_TIME                   'Last Log In Attempt Time.'
+                LOGIN_ATTEMPTS                    'FAILED LOGIN ATTEMPS'
+
+END SCHEMA
+
+
+
+
+
+RECORD SCHEMA   2  SESSION_INFO 'Session Information'
+KEY FIELDS      USER_ID(A) SESSION_ID(A)
+MAX REC COUNT   3000000
+MAX REC COUNT   3000000
+DATA LIST       USER_ID                           3 -    34 (A32)
+                USER_NAME                         35 -    66 (A32)
+                SESSION_ID                        67 -    98 (A32)
+                WEB_DB_NAME                       99 -   130 (A32)
+                REMOTE_ADDRESS                    131 -   150 (A20)
+                PAGE_VIEWS                        *             (I4)
+                SESSION_START_DATE                   * (DATE 'MMIDDIYYYY')
+                SESSION_START_TIME                   * (TIME 'HHIMMISS')
+                LAST_REQUEST_DATE                 169 -   178 (DATE'EMM/DD/YYYY')
+                LAST_REQUEST_TIME                 179 -   186 (TIME'EHH:MM:SS')
+                SESSION_ATTEMPTS                     * (I2)
+                LOGGED_OUT                        187         (I1)
+                LOGGED_OUT_DATE                   188 -   197 (DATE'mm/dd/yyyy')
+                LOGGED_OUT_TIME                   198 -   205 (TIME'HH:MM:SS')
+
+
+VAR RANGES      SESSION_START_DATE
+                LAST_REQUEST_DATE
+                LOGGED_OUT_DATE                   ('01/01/2011' '03/01/2050')
+                LOGGED_OUT                        (0 1)
+
+VALUE LABELS    LOGGED_OUT                        (0)'No'
+                                                  (1)'Yes'
+
+VAR LABEL       SESSION_ID                        'Session ID'
+                SESSION_START_DATE                'Session Start Date'
+                SESSION_START_TIME                'Session Start Time'
+                LAST_REQUEST_DATE                 'last Request Date'
+                LAST_REQUEST_TIME                 'Last Request time'
+                SESSION_ATTEMPTS                  'FAILED SESSION ATTEMPS'
+                LOGGED_OUT                        'User initiated log out'
+                LOGGED_OUT_DATE                   'Log out Date'
+                LOGGED_OUT_TIME                   'Log out Time'
+                PAGE_VIEWS                        'Page Views for current Sessions'
+                USER_ID                           'User ID'
+                SESSION_ID                        'Session ID'
+                WEB_DB_NAME                        'Selected Database for this session'
+                REMOTE_ADDRESS                      'Remote Address'
+END SCHEMA
+
+
+
+TASK NAME       Record Definition for DB_INFO Record Number     10
+
+RECORD SCHEMA   10  DB_INFO
 DOCUMENT        Administrative Information
 KEY FIELDS      WEB_DB_NAME(A)
 MAX REC COUNT   3000000
@@ -58,19 +152,19 @@ VAR LABEL       PROJECT_NAME                             'Expanded Project Name'
 END SCHEMA
 TASK NAME       Record Definition for DB_USERS Record Number     2
 
-RECORD SCHEMA   2  DB_USERS
+RECORD SCHEMA   11  DB_USERS
 DOCUMENT Manage Users
 KEY FIELDS      WEB_DB_NAME(A) USER_NAME(A)
 MAX REC COUNT   10000
 DATA LIST
-                WEB_DB_NAME                            3 -    34 (A32)
-                USER_NAME                          35 -    84 (A32)
-                FULL_NAME                            85 -   124 (A40)
-                SECURITY_LEVEL                           125 -   126 (I1)
-                READ_SECURITY                                 127 -   128 (I1)
-                WRITE_SECURITY                                 129 -   130 (I1)
-                REPORTS_GENERAL                             131         (I1)
-                REPORTS_SPECIAL                            132         (I1)
+                WEB_DB_NAME                          3 -    34 (A32)
+                USER_NAME                           35 -    84 (A32)
+                FULL_NAME                           85 -   124 (A40)
+                SECURITY_LEVEL                     125 -   126 (I1)
+                READ_SECURITY                      127 -   128 (I1)
+                WRITE_SECURITY                     129 -   130 (I1)
+                REPORTS_GENERAL                    131         (I1)
+                REPORTS_SPECIAL                    132         (I1)
                 LOCK_RECORDS                        133         (I1)
                 LOCK_CASES                          134         (I1)
                 VIEW_SCHEMA                         135         (I1)
@@ -151,43 +245,5 @@ VAR LABEL       FULL_NAME                         'Full name of the user'
                 CREATE_DATE                          'Created on'
                 CREATE_TIME                          'Created at'
                 CREATE_BY                          'Created by'
-END SCHEMA
-TASK NAME       Record Definition for SESSIONS Record Number     3
-
-RECORD SCHEMA   3  SESSIONS
-KEY FIELDS      USER_ID(A) SESSION_ID(A)
-MAX REC COUNT   3000000
-DATA LIST
-                USER_ID                               3 -    34 (A32)
-                USER_NAME                          35 -    66 (A32)
-                SESSION_ID                           67 -    98 (A32)
-                WEB_DB_NAME                           99 -   130 (A32)
-                REMOTE_ADDRESS                        131 -   150 (A20)
-                START_DATE                          151 -   160 (DATE'EMM/DD/YYYY')
-                START_TIME                          161 -   168 (TIME'EHH:MM:SS')
-                PAGE_VIEWS                        *             (I4)
-                LAST_REQUEST_DATE                    169 -   178 (DATE'EMM/DD/YYYY')
-                LAST_REQUEST_TIME                    179 -   186 (TIME'EHH:MM:SS')
-                LOGGED_OUT                          187         (I1)
-                LOGGED_OUT_DATE                      188 -   197 (DATE'mm/dd/yyyy')
-                LOGGED_OUT_TIME                      198 -   205 (TIME'HH:MM:SS')
-VAR RANGES      START_DATE                        ('01/01/2011' '01/01/2060')
-                LOGGED_OUT                        (0 1)
-                LOGGED_OUT_DATE                    ('01/01/2011' '01/01/2031')
-VALUE LABELS    LOGGED_OUT                        (0)'No'
-                                                 (1)'Yes'
-VAR LABEL       USER_ID                           'User ID'
-                USER_NAME                       'User name'
-                SESSION_ID                        'Session ID'
-                WEB_DB_NAME                        'Selected Database for this session'
-                REMOTE_ADDRESS                      'Remote Address'
-                START_DATE                        'Session Start Date'
-                START_TIME                        'Session Start Time'
-                PAGE_VIEWS                        'Page Views for current Sessions'
-                LAST_REQUEST_DATE                  'Last Request Date'
-                LAST_REQUEST_TIME                  'Last Request Time'
-                LOGGED_OUT                        'User initiated log out'
-                LOGGED_OUT_DATE                    'Logged out on'
-                LOGGED_OUT_TIME                    'Logged out at'
 END SCHEMA
 END PROCEDURE

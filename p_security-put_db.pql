@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.PUT_DB:T  (157548,46605)  |Last amended Feb 19, 2014,12:56:45
+PROCEDURE      P_SECURITY.PUT_DB:T  (157554,57474)  |Last amended Feb 25, 2014,15:57:54
 cif eq '<GDB_PICK>', '-1'
 . global GSOME_MESS = 'You must pick a database'
 call WPF.INC_BODY_FORMS.DB_CHOOSE
@@ -38,7 +38,7 @@ c double checks, DB path is correct and user has access to database
 
 . ifthen ('<GUSER_ID>' NE '')
 .   ifthen ('<GSESSION_ID>' NE '')
-.     record is SESSIONS via ('<GUSER_ID>' '<GSESSION_ID>')
+.     record is SESSION_INFO via ('<GUSER_ID>' '<GSESSION_ID>')
 .       LAST_REQUEST_DATE = today(0)
 .       LAST_REQUEST_TIME = now(0)
 .       WEB_DB_NAME = DB_NAME__4

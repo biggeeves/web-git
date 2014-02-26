@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.GET_DB:T  (157548,46717)  |Last amended Feb 19, 2014,12:58:37
+PROCEDURE      P_SECURITY.GET_DB:T  (157554,58114)  |Last amended Feb 25, 2014,16:08:34
 GLOBAL GOON__4 = 1
 
 retrieval crwarn
@@ -8,7 +8,7 @@ integer *     1   GOON__4                 | Control flow variable
 
 SET GOON__4 (0)
 
-. process rec SESSIONS VIA ('<GUSER_ID>' '<GSESSION_ID>')
+. process rec SESSION_INFO VIA ('<GUSER_ID>' '<GSESSION_ID>')
 .   DB_NAME__4 = WEB_DB_NAME
 .   GOON__4 =1
 . end rec

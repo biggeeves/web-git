@@ -1,57 +1,75 @@
-PROCEDURE      INC_ELEMENTS.KEYS:T  (157548,45711)  |Last amended Feb 19, 2014,12:41:51
-. ifthen ('<GKEY1#>' eq '')
+PROCEDURE      INC_ELEMENTS.KEYS:T  (157554,60182)  |Last amended Feb 25, 2014,16:43:02
+
+DO REPEAT EACH_KEY = 1 TO 8
+. ifthen ('<GKEY1>' eq '')
+.   STR$1 = '""'
+. elseif ( vtype( <GDB_REC>, keyname( <GDB_REC>, EACH_KEY + dbtype(0) ) ) eq 1 or 3 or 4 )
+.   STR$1 = '<GKEY!EACH_KEY>'
+. else
+.   STR$1 = '"<GKEY!EACH_KEY>">'
+. endif
+. ifthen ( EACH_KEY LE NKEYS( NGLOBAL( 'GDB_REC' ) ) )
+.   write(cgi) '<input type="hidden" id="key!EACH_KEY" name="key!EACH_KEY"  value=' STR$1 '>'
+. endif
+END REPEAT
+
+
+CIF EQ 1,2
+
+. ifthen ('<GKEY1>' eq '')
 .   write(cgi) '<input type="hidden" id="key1" name="key1"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 1 + dbtype(0))) eq 1 or 3 or 4 )
-.   write(cgi) '<input type="hidden" id="key1" name="key1"  value=<GKEY1#>>'
+.   write(cgi) '<input type="hidden" id="key1" name="key1"  value=<GKEY1>>'
 . else
-.   write(cgi) '<input type="hidden" id="key1"  name="key1"  value="<GKEY1#>">'
+.   write(cgi) '<input type="hidden" id="key1"  name="key1"  value="<GKEY1>">'
 . endif
 
-. ifthen ('<GKEY2#>' eq '')
+. ifthen ('<GKEY2>' eq '')
 .   write(cgi) '<input type="hidden" id="key2" name="key2"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 2 + dbtype(0))) eq 1 or 3 or 4 )
-.   write(cgi) '<input type="hidden" id="key2" name="key2"  value=<GKEY2#>>'
+.   write(cgi) '<input type="hidden" id="key2" name="key2"  value=<GKEY2>>'
 . else
-.   write(cgi) '<input type="hidden" id="key2"  name="key2"  value="<GKEY2#>">'
+.   write(cgi) '<input type="hidden" id="key2"  name="key2"  value="<GKEY2>">'
 . endif
 
-. ifthen ('<GKEY3#>' eq '')
+. ifthen ('<GKEY3>' eq '')
 .   write(cgi) '<input type="hidden" id="key3" name="key3"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 3 + dbtype(0))) eq 1 or 3 or 4 )
-.   write(cgi) '<input type="hidden" id="key3"  name="key3"  value=<GKEY3#>>'
+.   write(cgi) '<input type="hidden" id="key3"  name="key3"  value=<GKEY3>>'
 . else
-.   write(cgi) '<input type="hidden" id="key3"  name="key3"  value="<GKEY3#>">'
+.   write(cgi) '<input type="hidden" id="key3"  name="key3"  value="<GKEY3>">'
 . endif
 
-. ifthen ('<GKEY4#>' eq '')
+. ifthen ('<GKEY4>' eq '')
 .   write(cgi) '<input type="hidden" id="key4" name="key4"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 4 + dbtype(0))) eq 1 or 3 or 4 )
-.   write(cgi) '<input type="hidden" id="key4"  name="key4"  value=<GKEY4#>>'
+.   write(cgi) '<input type="hidden" id="key4"  name="key4"  value=<GKEY4>>'
 . else
-.   write(cgi) '<input type="hidden" id="key4"  name="key4"  value="<GKEY4#>">'
+.   write(cgi) '<input type="hidden" id="key4"  name="key4"  value="<GKEY4>">'
 . endif
 
-. ifthen ('<GKEY5#>' eq '')
+. ifthen ('<GKEY5>' eq '')
 .   write(cgi) '<input type="hidden" id="key5" name="key5"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 5 + dbtype(0))) eq 1 or 3 or 4 )
-.   write(cgi) '<input type="hidden" id="key5"  name="key5"  value=<GKEY5#>>'
+.   write(cgi) '<input type="hidden" id="key5"  name="key5"  value=<GKEY5>>'
 . else
-.   write(cgi) '<input type="hidden" id="key5"  name="key5"  value="<GKEY5#>">'
+.   write(cgi) '<input type="hidden" id="key5"  name="key5"  value="<GKEY5>">'
 . endif
 
-. ifthen ('<GKEY6#>' eq '')
+. ifthen ('<GKEY6>' eq '')
 .   write(cgi) '<input type="hidden" id="key6" name="key6"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 6 + dbtype(0))) eq 1 or 3 or 4 )
-.   write(cgi) '<input type="hidden" id="key6"  name="key6"  value=<GKEY6#>>'
+.   write(cgi) '<input type="hidden" id="key6"  name="key6"  value=<GKEY6>>'
 . else
-.   write(cgi) '<input type="hidden" id="key6"  name="key6"  value="<GKEY6#>">'
+.   write(cgi) '<input type="hidden" id="key6"  name="key6"  value="<GKEY6>">'
 . endif
 
-. ifthen ('<GKEY7#>' eq '')
+. ifthen ('<GKEY7>' eq '')
 .   write(cgi) '<input type="hidden" id="key7" name="key7"  value="">'
 . elseif (vtype(<GDB_REC>, keyname(<GDB_REC>, 6 + dbtype(0))) eq 1 or 3 or 4 )
-.   write(cgi) '<input type="hidden" id="key7"  name="key7"  value=<GKEY7#>>'
+.   write(cgi) '<input type="hidden" id="key7"  name="key7"  value=<GKEY7>>'
 . else
-.   write(cgi) '<input type="hidden" id="key7"  name="key7"  value="<GKEY7#>">'
+.   write(cgi) '<input type="hidden" id="key7"  name="key7"  value="<GKEY7>">'
 . endif
+CIF END
 END PROCEDURE

@@ -1,5 +1,5 @@
-PROCEDURE      SYSTEM.README:T  (157542,53548)  |Last amended Feb 13, 2014,14:52:28
-c The LOGIN Database (USER PASSWORD) and the MANAGER DATABASE (DATABASE PATHS AND PERMISSIONS)  handles the sign in process.  You'll have to add some users and a database to it, plus point to it.
+PROCEDURE      SYSTEM.README:T  (157554,55647)  |Last amended Feb 25, 2014,15:27:27
+c The MANAGER DATABASE handles sign in AND SESSIONS.  You'll have to add some users and a database to it, plus point to it.
 c When created this file matched V39.
 
 SIR Web utilizes Twitter Bootstrap and JQuery.  Download "boostrap.css", "bootstrap.js" and "jquery.js".

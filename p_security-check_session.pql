@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_PW:T  (157554,56117)  |Last amended Feb 25, 2014,15:35:17
+PROCEDURE      P_SECURITY.CHECK_SESSION:T  (157554,55960)  |Last amended Feb 25, 2014,15:32:40
 | checks user name and password.
 | if matched assigns a unique user ID.
 | session ID is created after user is directed to a database (has 1DB) or selects a DB (Many DBS)
@@ -7,7 +7,6 @@ PROCEDURE      P_SECURITY.CHECK_PW:T  (157554,56117)  |Last amended Feb 25, 2014
 retrieval crwarn UPDATE
 . CALL WPF.SYSTEM.DEFINE_VARS
 . CALL WPF.SYSTEM.INI_VARS
-. STRING * 32 TMP_SESSION_ID
 . GOON__4  = 0
 . ANY_NUM__4 = numbr( format( today(0) ) + format( now(0) ) )
 . USER_NAME__4 = trimlr( cgivarpn( 'user_name') )
@@ -21,9 +20,6 @@ retrieval crwarn UPDATE
 
 . process rec USER_INFO VIA ( USER_NAME__4 )
 .   ifthen ( PASSWORD__4 eq PW )
-.     LOGIN_SUCESS_DATE = today(0)
-.     LOGIN_SUCESS_TIME = now(0)
-.     LOGIN_ATTEMPTS = 0  | Correct user name and pasword, reset log in attempts
 .     get vars PW USER_NAME
 .     GOON__4  = 1
 .   else
@@ -31,7 +27,6 @@ retrieval crwarn UPDATE
 .     LOGIN_FAIL_TIME = NOW(0)
 .     if( exists( LOGIN_ATTEMPTS ) EQ 0 ) LOGIN_ATTEMPTS = 0
 .     LOGIN_ATTEMPTS = LOGIN_ATTEMPTS + 1
-.     get vars LOGIN_ATTEMPTS
 .   endif
 . end rec
 
@@ -59,24 +54,22 @@ retrieval crwarn UPDATE
 .     endif
 .   end for
 .   USER_ID = pack('U' + USER_ID)
-.   TMP_SESSION_ID = datec(today(0), 'yyyymmdd') + timec(now(0), 'HHMMSS')
 .   ANY_NUM__4 = globals( 'GUSER_ID', USER_ID)
-.   ANY_NUM__4 = globals( 'GSESSION_ID', TMP_SESSION_ID )
+.   ANY_NUM__4 = globals( 'GSESSION_ID', datec(today(0), 'yyyymmdd') + timec(now(0), 'HHMMSS'))
 .   ANY_NUM__4 = globaln( 'GOON__4', 1)
-|   Update the database with appropriate SESSION info
-.   process rec SESSION_INFO  VIA ( TMP_SESSION_ID )
-.     REMOTE_ADDRESS = cgivarsv( 'REMOTE_ADDR' )
-.     SESSION_START_DATE = today(0)
-.     SESSION_START_TIME = NOW(0)
-.     LAST_REQUEST_DATE = today(0)
-.     LAST_REQUEST_TIME = NOW(0)
-.     SESSION_ATTEMPTS = 0
+|   Update the login database with appropriate info
+.   process rec USER_INFO  VIA ( USER_NAME__4 )
+.     SESSION_ID = sglobal( 'GSESSION_ID' )
+.     REMOVE_ADDR = cgivarsv( 'REMOTE_ADDR' )
+.     LOGIN_SUCESS_DATE = today(0)
+.     LOGIN_SUCESS_TIME = now(0)
+.     LOGIN_ATTEMPTS = 0  | Correct user name and pasword, reset log in attempts
 .   end rec
 . ELSE
 .   ANY_NUM__4 =  globals( 'GSOME_MESS', 'Please double check your user name and password.')
 .   ANY_NUM__4 =  globaln( 'GOON__4', 0)
 .   open badLogins append lrecl = 300
-.     write (badLogins) [datec(today(0), 'yyyy-dd-mm')] 14t USER_NAME__4  [cgivarsv( 'REMOTE_ADDR' )]
+.     write (badLogins) [datec(today(0), 'mm/dd/yyyy')] 14t USER_NAME__4 50t PASSWORD__4
 .   close badLogins
 . endif
 end retrieval

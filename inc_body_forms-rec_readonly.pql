@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157548,47213)  |Last amended Feb 19, 2014,13:06:53
+PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157554,58209)  |Last amended Feb 25, 2014,16:10:09
 C READONLY data entry page
 
 retrieval progress CRWARN noautocase
@@ -31,7 +31,7 @@ for ANY_NUM__4 = 1, recdocn(REC_TYPE_NUMBER)
 . if(srst(upper(recdoc(REC_TYPE_NUMBER, ANY_NUM__4 )), 'ENDHEADER') gt 0); exit for
 end for
 if(GOON__4 eq 1) write(cgi) '</h4>'
-
+write(cgi) '<div class="panel panel-default">'
 write(cgi) '  <table class="table table-striped table-hover"> '
 
 CIF EQ <GCASED>, 1
@@ -155,6 +155,7 @@ c       Value labels column
 .       write(cgi)  '</td></tr>'
 .     end for
 .     write(cgi)  '  </table> '
+.     write(cgi) '</div>'
 
 c     construct audit variables
 .     STR$1 = 'Created '

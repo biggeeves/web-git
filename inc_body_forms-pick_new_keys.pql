@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.PICK_NEW_KEYS:T  (157550,47241)  |Last amended Feb 21, 2014,13:07:21
+PROCEDURE      INC_BODY_FORMS.PICK_NEW_KEYS:T  (157554,61546)  |Last amended Feb 25, 2014,17:05:46
 PROGRAM crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -74,7 +74,7 @@ c If String,  set max string length
 .   STR$1 = " maxlength = " + substr(SIR_VARFORMAT, 2, len(SIR_VARFORMAT))
 .   write(cgi)  STR$1
 . endif
-c construct the key field updating
+C JavaScript to update the REAL key field in the form
 . STR$2 = 'onchange="newkeys(this,key' + format(EACH_VARIABLE -dbtype(0))  + '); '
 . write(cgi)  4t STR$2
 . ifthen (nvallab(REC_TYPE_NUMBER, VNAME$) gt 0)

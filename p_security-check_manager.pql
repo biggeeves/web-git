@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157548,46678)  |Last amended Feb 19, 2014,12:57:58
+PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157554,57908)  |Last amended Feb 25, 2014,16:05:08
 | set security globals to lowest level by default
 global GSECURITY_LEVEL   = 0
 global GWRITE_SECURITY   = 0
@@ -38,43 +38,43 @@ SESSION_ID = sglobal('GSESSION_ID')
 . endif
 
 c set the db and USER_NAME to something so the VIA does not complain if these are not found.
-. old rec is SESSIONS VIA (USER_ID SESSION_ID )
+. old rec is SESSION_INFO VIA (USER_ID SESSION_ID )
 .   DB_NAME__4   = fst(WEB_DB_NAME , 'OPPS1')
 .   USER_NAME__4 = fst(USER_NAME, 'OPPS2')
 C   CHECK cookie value, start time and
-.   START_IN_SECONDS =  CDATE(START_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(START_TIME, 'HHiMMiSS') + 18*60*60
-.   LAST_IN_SECONDS  =  CDATE(LAST_REQUEST_DATE, 'MMIDDIYYYY')*24*60*60 + CTIME(LAST_REQUEST_TIME, 'HHiMMiSS') + 35*60
-.   ifthen(LOGGED_OUT eq 1)
-.     ANY_NUM__4 = globaln('GSTOP__4', 1)
-.     ANY_NUM__4 = globals('GSOME_MESS', 'You were logged out. Please log in again.')
+.   START_IN_SECONDS =  CDATE(SESSION_START_DATE, 'MMIDDIYYYY') *24*60*60 + ctime( SESSION_START_TIME, 'HHiMMiSS' ) + 18*60*60
+.   LAST_IN_SECONDS  =  CDATE(LAST_REQUEST_DATE, 'MMIDDIYYYY')*24*60*60 + ctime( LAST_REQUEST_TIME, 'HHiMMiSS') + 35*60
+.   ifthen ( LOGGED_OUT eq 1 )
+.     ANY_NUM__4 = globaln( 'GSTOP__4', 1 )
+.     ANY_NUM__4 = globals( 'GSOME_MESS', 'You were logged out. Please log in again.' )
 .     EXIT RETRIEVAL
 .   elseif (NOW_IN_SECONDS GE LAST_IN_SECONDS)
-.     ANY_NUM__4 = globaln('GSTOP__4', 3)
-.     ANY_NUM__4 = globals('GSOME_MESS', 'Your session was idle.  You were automatically timed out.')
+.     ANY_NUM__4 = globaln( 'GSTOP__4', 3 )
+.     ANY_NUM__4 = globals( 'GSOME_MESS', 'Your session was idle.  You were automatically timed out.' )
 .     EXIT RETRIEVAL
 .   else | all OK Update Last Request
 .     LAST_REQUEST_DATE = TODAY(0)
 .     LAST_REQUEST_TIME = NOW(0)
-.     ifthen(exists(PAGE_VIEWS) EQ 0) PAGE_VIEWS = 1
+.     ifthen ( exists( PAGE_VIEWS ) EQ 0 ) PAGE_VIEWS = 1
 .     else PAGE_VIEWS = PAGE_VIEWS + 1
 .     endif
 .   endif
 . end rec
-. process rec DB_USERS VIA (DB_NAME__4 USER_NAME__4)
+. process rec DB_USERS VIA ( DB_NAME__4   USER_NAME__4 )
 .   GOON__4  = 2
-.   if(exists(SECURITY_LEVEL) eq 1)    ANY_NUM__4 = globaln('GSECURITY_LEVEL', SECURITY_LEVEL)     | Global security level
-.   if(exists(WRITE_SECURITY) eq 1)          ANY_NUM__4 = globaln('GWRITE_SECURITY', WRITE_SECURITY)                 | Write Security
-.   if(exists(READ_SECURITY) eq 1)          ANY_NUM__4 = globaln('GREAD_SECURITY', READ_SECURITY)                 | Read Security
-.   if(exists(REPORTS_GENERAL) eq 1)      ANY_NUM__4 = globaln('GREPORTS_GENERAL',     REPORTS_GENERAL )    | Run General reports
-.   if(exists(REPORTS_SPECIAL) eq 1)     ANY_NUM__4 = globaln('GREPORTS_SPECIAL',    REPORTS_SPECIAL)    | Run Reports Specific
-.   if(exists(VIEW_DBA) eq 1)     ANY_NUM__4 = globaln('GVIEW_DBA',    VIEW_DBA)    | View DBA Drop Down
-.   if(exists(VIEW_SCHEMA) eq 1)  ANY_NUM__4 = globaln('GVIEW_SCHEMA', VIEW_SCHEMA) | View Schema
-.   if(exists(VIEW_IDS) eq 1)     ANY_NUM__4 = globaln('GVIEW_IDS',    VIEW_IDS)    | See Cases and keys
-.   if(exists(VIEW_RECS) eq 1)    ANY_NUM__4 = globaln('GVIEW_RECS',   VIEW_RECS)   | See Forms
-.   if(exists(DELETE_RECS) eq 1)      ANY_NUM__4 = globaln('GDELETE_RECS',     DELETE_RECS)     | Delete Record
-.   if(exists(DELETE_CASES) eq 1)     ANY_NUM__4 = globaln('GDELETE_CASES',    DELETE_CASES)    | Delete Case
-.   if(exists(LOCK_CASES) eq 1)   ANY_NUM__4 = globaln('GLOCK_CASES',  LOCK_CASES)   | Lock Specific Cases
-.   if(exists(LOCK_RECORDS) eq 1) ANY_NUM__4 = globaln('GLOCK_RECORDS',LOCK_RECORDS) | Lock Specific Records
+.   if ( exists( SECURITY_LEVEL ) eq 1)   ANY_NUM__4 = globaln('GSECURITY_LEVEL', SECURITY_LEVEL)     | Global security level
+.   if ( exists( WRITE_SECURITY ) eq 1 )  ANY_NUM__4 = globaln('GWRITE_SECURITY', WRITE_SECURITY)                 | Write Security
+.   if ( exists( READ_SECURITY ) eq 1 )   ANY_NUM__4 = globaln('GREAD_SECURITY', READ_SECURITY)                 | Read Security
+.   if ( exists( REPORTS_GENERAL ) eq 1 ) ANY_NUM__4 = globaln('GREPORTS_GENERAL',     REPORTS_GENERAL )    | Run General reports
+.   if ( exists( REPORTS_SPECIAL ) eq 1 ) ANY_NUM__4 = globaln('GREPORTS_SPECIAL',    REPORTS_SPECIAL)    | Run Reports Specific
+.   if ( exists( VIEW_DBA ) eq 1 )        ANY_NUM__4 = globaln('GVIEW_DBA',    VIEW_DBA)    | View DBA Drop Down
+.   if ( exists( VIEW_SCHEMA ) eq 1 )     ANY_NUM__4 = globaln('GVIEW_SCHEMA', VIEW_SCHEMA) | View Schema
+.   if ( exists( VIEW_IDS ) eq 1 )        ANY_NUM__4 = globaln('GVIEW_IDS',    VIEW_IDS)    | See Cases and keys
+.   if ( exists( VIEW_RECS ) eq 1 )       ANY_NUM__4 = globaln('GVIEW_RECS',   VIEW_RECS)   | See Forms
+.   if ( exists( DELETE_RECS ) eq 1 )     ANY_NUM__4 = globaln('GDELETE_RECS',     DELETE_RECS)     | Delete Record
+.   if ( exists( DELETE_CASES ) eq 1 )    ANY_NUM__4 = globaln('GDELETE_CASES',    DELETE_CASES)    | Delete Case
+.   if ( exists( LOCK_CASES ) eq 1 )      ANY_NUM__4 = globaln('GLOCK_CASES',  LOCK_CASES)   | Lock Specific Cases
+.   if ( exists( LOCK_RECORDS ) eq 1 )    ANY_NUM__4 = globaln('GLOCK_RECORDS',LOCK_RECORDS) | Lock Specific Records
 . end rec
 . ifthen (USER_NAME__4 eq 'Greg Neils')
 .   GOON__4  = 2

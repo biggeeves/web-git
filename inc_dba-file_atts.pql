@@ -1,8 +1,9 @@
-PROCEDURE      INC_DBA.FILE_ATTS:T  (157542,79292)  |Last amended Feb 13, 2014,22:01:32
+PROCEDURE      INC_DBA.FILE_ATTS:T  (157554,61928)  |Last amended Feb 25, 2014,17:12:08
 program CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
-write(cgi) '<h3>Attributes</h3>'
+write(cgi) '<h3>All Attributes</h3>'
+write(cgi) '<div class="panel panel-default">'
 write(cgi) '<table class="table table-striped table-hover">'
 write(cgi) '<tr><th>Attribute</th><th>Setting</th></tr>'
 c attributes
@@ -23,6 +24,7 @@ C path
 . write(cgi) '<td>' STR$1    '</td></tr>'
 end for
 write(cgi) '</table>'
+write(cgi) '</div>'
 end program
 
 

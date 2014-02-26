@@ -1,8 +1,8 @@
-PROCEDURE      P_SECURITY.PUT_LOGOUT:T  (157542,63963)  |Last amended Feb 13, 2014,17:46:03
+PROCEDURE      P_SECURITY.PUT_LOGOUT:T  (157554,57483)  |Last amended Feb 25, 2014,15:58:03
 retrieval UPDATE crwarn
 ifthen ('<GUSER_ID>' NE '')
 . ifthen ('<GSESSION_ID>' NE '')
-.   record is SESSIONS via ('<GUSER_ID>' '<GSESSION_ID>')
+.   record is SESSION_INFO via ('<GUSER_ID>' '<GSESSION_ID>')
 .     LOGGED_OUT_DATE = today(0)
 .     LOGGED_OUT_TIME = NOW(0)
 .     LOGGED_OUT = 1

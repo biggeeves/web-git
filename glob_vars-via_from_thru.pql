@@ -1,10 +1,10 @@
-PROCEDURE      GLOB_VARS.VIA_FROM_THRU:T  (156659,60144)  |Last amended Sep 14, 2011,16:42:24
+PROCEDURE      GLOB_VARS.VIA_FROM_THRU:T  (157554,59059)  |Last amended Feb 25, 2014,16:24:19
 c Construct the VIA for going to specific records
 program
 . string  *   600   STR$1                      | General String use at any time
 . string  *   600   STR$2                      | General String use at any time
 . integer *     4   ANY_NUM__4                    | Use any time you want
-. STR$1 = '<GKEY1#> <GKEY2#> <GKEY3#> <GKEY4#> <GKEY5#>'
+. STR$1 = '<GKEY1> <GKEY2> <GKEY3> <GKEY4> <GKEY5>'
 . STR$1 = trimlr(STR$1)
 
 . ifNOTthen(STR$1 eq '')
