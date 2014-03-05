@@ -1,0 +1,42 @@
+PROCEDURE      INC_DBA.BUGS_REPORTED:T  (157561,42214)  |Last amended Mar 04, 2014,11:43:34
+Greg Neils: In a case-less database, if a person views a list of records available and then types in their own value for the key, it does not handle it right.  For example: In Manager view records, type in new value for key and press view or go to and t
+Greg Neils: First screen viewed by someone may have the DBA dropdown enabled.  After that DBA dropdown disappears.  Review flow at some point.
+Greg Neils: If master does not connect, the DBAs have no way of going in VIA the web.  Figure out how to override that!
+Greg Neils: When there is a security level on a record type, if access is not granted a better message should come up.
+Greg Neils: I went in at the same time as Harmon Moats:  I got the following error for the NeuSTARTII Database Cannot open database. (Error 67) DFC ERROR
+Greg Neils: Last Selection in Easy Report is not working.  This is shown after the first report is generated.
+Tshah#: Previous button did not work from Main Menu
+Ming: Freq:6.329   end retrieval
+Error opening file during retrieval execution. (Error 301 - 'C:\inetpub\wwwroot\sirweb\NEUSTART\users\Ming\Ming_rep.txt')
+Error opening file during retrieval execution. (Error 301 - 'C:\inetpub\wwwroot\sirweb\NEUSTAR')
+Ming: Run program: Error DBA Program file: -6
+Greg Neils: Add a question mark and then pop up a box with variable definition and the value and value labels.
+Greg Neils: When a new user is added and they do not see a single database (not in manager yet) then should not see the DB Choose screen at all.
+Greg Neils: Categorical vars do not work for Query.  Try Gender = 1
+Greg Neils: Query that returns results with Keys Date and Time like CT in NeuSTARTII, the links do not go all the way to the record.
+Greg Neils: Rethink where permissions are set.  Currently set in two places depending on if user sees one or many databases.
+Greg Neils: sample record should not have refresh button in a wierd place
+Greg Neils: add a cgivar that is the member that the user was last on (ie not the one they are calling).  This will allow me to figure out where to return the user to incase of an error.  perhaps call it GMEMLAST, or GMEMRETURN.
+Greg Neils: Get rid of TIMEC things because it reports server time, not local time.
+Greg Neils: Add another screen: Pick a record type and it displays the cases with atleast one record in it.
+Greg Neils: Customized data entry screens will have to work with wrong data and show wrong data accordingly!  This will be a hard one.
+Greg Neils: Case Summary should provide links to records or choose rec keys.
+Greg Neils: Frequencies must be adding stuff after it should have stopped.
+Greg Neils: Report a bug should have a button "Move to Closed" or something like it.
+Greg Neils: add a record called casecontrol and create a variable called READONLYCASE 1=Yes 0=No and folks can permanently mark a case as readonly.
+Greg Neils: Quickly Press View then Edit and it will break master.
+Greg Neils: Tejal pressed Home and she saw two headers on the welcome.
+Greg Neils: Get a person with one db to the case nav as first screen
+Greg Neils: iPhone safari does not haves horizontal scrollbar for things like tables
+Greg Neils: Add JavaScript call or dummy after key function in data entry headr
+Greg Neils: Add ability to customize each screen with CSS and JavaScript called right at the beginning
+Greg Neils: Add case nav header that someone can customize in the sir014 file. Folks could then see demog info and more for a Cassie in the casenav screen. Perhaps add to recant screen to.
+Greg Neils: All reports should have a title and the ability to save it.  Ask Tom if reports should be compiled first because that will catch any errors
+Greg Neils: Member should be uppercased in sir global.  Also get rid of SPF because that is automatic any way.
+Greg Neils: WHEN THE PWRESET = 0 OR THE DATE IS WRONG, THE WRONG ERROR MESSAGE IS COMING UP.
+Greg Neils: Create two tables in the DB.  RecLocks and CaseLocks.  If Caselock=Y, then no deleting, or editing the data in the tables.  If RecLocks=Y then individual records for a specific case can be locked.
+Greg Neils: As a DBA add ability to Query Varaiable Usage by clicking on Max, Min, Miss1, Miss2, etc.
+Greg Neils: Connect database error -2041 can be corrected by offering up an initial case or record screen for the database.  (failed to initialize)
+Greg Neils: variable GOON__4 could be changed to TRIGGERYN or something like it.
+Greg Neils: Under Report - Records in a table goes to case list.  It should probably go to a place to choose the table you want to see.
+END PROCEDURE

@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.KEYS:T  (157554,60182)  |Last amended Feb 25, 2014,16:43:02
+PROCEDURE      INC_ELEMENTS.KEYS:T  (157561,42849)  |Last amended Mar 04, 2014,11:54:09
 
 DO REPEAT EACH_KEY = 1 TO 8
 . ifthen ('<GKEY1>' eq '')
@@ -6,7 +6,7 @@ DO REPEAT EACH_KEY = 1 TO 8
 . elseif ( vtype( <GDB_REC>, keyname( <GDB_REC>, EACH_KEY + dbtype(0) ) ) eq 1 or 3 or 4 )
 .   STR$1 = '<GKEY!EACH_KEY>'
 . else
-.   STR$1 = '"<GKEY!EACH_KEY>">'
+.   STR$1 = '"<GKEY!EACH_KEY>"'
 . endif
 . ifthen ( EACH_KEY LE NKEYS( NGLOBAL( 'GDB_REC' ) ) )
 .   write(cgi) '<input type="hidden" id="key!EACH_KEY" name="key!EACH_KEY"  value=' STR$1 '>'

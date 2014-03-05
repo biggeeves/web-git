@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.CODEBOOK_NAV_BAR:T  (157550,46074)  |Last amended Feb 21, 2014,12:47:54
+PROCEDURE      INC_ELEMENTS.CODEBOOK_NAV_BAR:T  (157561,43194)  |Last amended Mar 04, 2014,11:59:54
 program crwarn
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -7,7 +7,8 @@ CALL WPF.SYSTEM.INI_VARS
 
 
 . write(cgi) '<h3>' DB_NAME__4 ' Codebook</h3>'
-. write(cgi) '<div class="panel panel-default">'
+. write(cgi) '<div class="row panel panel-default">'
+. write(cgi) '  <div class="md-col-12">'
 . write(cgi) '<table class="table table-striped table-hover">'
 . write(cgi) '<tr><th>Table</th><th>Form</th><th>Variable Usage<br>takes a long time.</th><th>Sample Form</th></tr>'
 |Index of Record Types
@@ -51,7 +52,8 @@ c   Sample Rec
 . end for
 
 . write(cgi) '</table>'
-. write(cgi) '</div>'
+. write(cgi) '  </div>' | col
+. write(cgi) '</div>' | row
 
 
 end program

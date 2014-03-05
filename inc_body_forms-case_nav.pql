@@ -1,41 +1,56 @@
-PROCEDURE      INC_BODY_FORMS.CASE_NAV:T  (157550,42496)  |Last amended Feb 21, 2014,11:48:16
+PROCEDURE      INC_BODY_FORMS.CASE_NAV:T  (157556,42853)  |Last amended Feb 27, 2014,11:54:13
+C Case Navigation Page.  Main Case Page
 C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
 
 PROGRAM CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
+IFTHEN ( 0<GREAD_CASES> eq 0 )
+. write(cgi) 2t '<div class="row">'
+. write(cgi) 4t '<div class="col-md-8 col-md-offset-1 text-center panel panel-default">'
+. write(cgi) 6t '<p class="bg-warning">You do not have suffient permission to view this page</p>'
+. write(cgi) 4t '</div>'
+. write(cgi) 2t '</div>'
+. EXIT PROGRAM  | MUST BE ABLE TO READ CASES AT MINIMUM
+ENDIF
+
 ifthen ('<GCASE_IS>' ne '')
 . STR$1 = 'value="<GCASE_IS_NQ>" '
 else
 . STR$1 = 'value="" '
 endif
-write(cgi) 2t '<div class="row">'/
-write(cgi) 4t '<div class="col-md-3 bg-info panel panel-default">'/
-write(cgi) 6t '<h3>Manage IDs</h3>'/
-write(cgi) 6t '<ul class="nav nav-tabs nav-stacked">'/
-ifthen (0<GSECURITY_LEVEL> ne 0)
-. write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NEW"> New ID</a></li>'
-. ifthen (0<GDELETE_CASES> eq 1)
-.   write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASEDEL"> Delete ID</a></li>'
+write(cgi) 2t '<div class="row">'
+DISPLAY_SECTION = 0
+IF ( 0<GCREATE_CASES> eq 1 ) DISPLAY_SECTION = 1
+IF ( 0<GDELETE_CASES> eq 1 ) DISPLAY_SECTION = 1
+ifthen ( DISPLAY_SECTION EQ 1 )
+. write(cgi) 4t '<div class="col-md-3 bg-info panel panel-default">'
+. write(cgi) 6t '<h3>Manage IDs</h3>'
+. write(cgi) 6t '<ul class="nav nav-tabs nav-stacked">'
+. ifthen ( 0<GCREATE_CASES> eq 1 )
+.   write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASE_NEW">New ID</a></li>'
+. endif
+. ifthen ( 0<GDELETE_CASES> eq 1 )
+.   write(cgi) 6t '<li><a href="<mycgi>?member=WPF.INC_BODY_FORMS.CASEDEL">Delete ID</a></li>'
 . endif
 endif
-write(cgi) '</ul>' /
-write(cgi) 4t '</div>' /
-write(cgi) 4t '<div class="col-md-8 col-md-offset-1 text-center panel panel-default">' /
-write(cgi) 6t '<h3>Navigate IDs</h3>'/
-write(cgi) 6t '<h4>' CASE_LABEL '</h4>' /
-write(cgi) 6t '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)" class="bottom-buffer">' /
-write(cgi) 8t '<input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">' /
-write(cgi) 8t '<input type="text" id="caseis" style="margin-bottom:0;" name="caseis" ' STR$1 '>' /
-write(cgi) 8t '<input type="submit" value="View forms" class="btn btn-success"><br><br>' /
-write(cgi) 8t '<input type="button" value="First"    class="btn btn-primary" onclick="forwardCase(0);">' /
-write(cgi) 8t '<input type="button" value="Previous" class="btn btn-primary" onClick="backwardCase(caseNum);">' /
-write(cgi) 8t '<input type="button" value="Next"     class="btn btn-primary" onClick="forwardCase(caseNum);">' /
-write(cgi) 8t '<input type="button" value="Last"     class="btn btn-primary" onClick="backwardCase(101);">' /
-write(cgi) 6t '</form>' /
-write(cgi) 4t '</div>' /
-write(cgi) 2t '</div>' /
+write(cgi) '</ul>'
+write(cgi) 4t '</div>'
+write(cgi) 4t '<div class="col-md-8 col-md-offset-1 text-center panel panel-default">'
+write(cgi) 6t '<h3>Navigate IDs</h3>'
+write(cgi) 6t '<h4>' CASE_LABEL '</h4>'
+write(cgi) 6t '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)" class="bottom-buffer">'
+write(cgi) 8t '<input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'
+write(cgi) 8t '<input type="text" id="caseis" style="margin-bottom:0;" name="caseis" ' STR$1 '>'
+write(cgi) 8t '<input type="submit" value="View forms" class="btn btn-success"><br><br>'
+write(cgi) 8t '<input type="button" value="First"    class="btn btn-primary" onclick="forwardCase(0);">'
+write(cgi) 8t '<input type="button" value="Previous" class="btn btn-primary" onClick="backwardCase(caseNum);">'
+write(cgi) 8t '<input type="button" value="Next"     class="btn btn-primary" onClick="forwardCase(caseNum);">'
+write(cgi) 8t '<input type="button" value="Last"     class="btn btn-primary" onClick="backwardCase(101);">'
+write(cgi) 6t '</form>'
+write(cgi) 4t '</div>'
+write(cgi) 2t '</div>'
 
 write(cgi) '<script type="text/javascript">document.getElementById("caseis").focus();</script>'
 

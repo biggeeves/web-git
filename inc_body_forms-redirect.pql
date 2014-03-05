@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REDIRECT:T  (156659,59145)  |Last amended Sep 14, 2011,16:25:45
+PROCEDURE      INC_BODY_FORMS.REDIRECT:T  (157561,44096)  |Last amended Mar 04, 2014,12:14:56
 PROGRAM
 string * 600 STR$1            | General String use at any time
 
@@ -9,7 +9,7 @@ string * 600 STR$1            | General String use at any time
 . write(cgi) '<script type="text/javascript">'
 . write(cgi) '<!--'
 . write(cgi) 'function delayer(){'
-. write(cgi) '    window.location = "<GREDIRECT>"'
+. write(cgi) '    window.location = "<GURL_REDIRECT>"'
 . write(cgi) '}'
 . write(cgi) '//-->'
 . write(cgi) '</script>'

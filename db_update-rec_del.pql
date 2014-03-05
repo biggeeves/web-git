@@ -1,4 +1,4 @@
-PROCEDURE      DB_UPDATE.REC_DEL:T  (157548,41455)  |Last amended Feb 19, 2014,11:30:55
+PROCEDURE      DB_UPDATE.REC_DEL:T  (157561,43698)  |Last amended Mar 04, 2014,12:08:18
 GLOBAL GOON__4 = -1
 
 retrieval UPDATE crwarn | LOADMAP VARMAP UPSTAT
@@ -29,7 +29,7 @@ ifthen (nglobal('GOON__4')  eq 1)
 .   ANY_NUM__4 = globals('GU_PICK', 'Edit')
 .   EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 . else
-.   ANY_NUM__4 = globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_NAV')
+.   ANY_NUM__4 = globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.REC_NAV')
 . endif
 elseif (nglobal('GOON__4')  eq -1)
 . ANY_NUM__4 = globaln('GREC_STAT', 6)

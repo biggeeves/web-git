@@ -1,9 +1,9 @@
-PROCEDURE      SYSTEM.INITIALIZE:T  (157550,47449)  |Last amended Feb 21, 2014,13:10:49
+PROCEDURE      SYSTEM.INITIALIZE:T  (157561,44422)  |Last amended Mar 04, 2014,12:20:22
 PRINT BACK OFF
 
 CALL WPF.CONNECTIONS.DISCONNECT_ALL_DBS
 
-CALL WPF.SYSTEM.ALLCALL   | COMPILES NECESSARY SUBROUTINES
+CALL WPF.SYSTEM.ALL_CALL   | COMPILES NECESSARY SUBROUTINES
 
 CIF EQ 1,2  | THIS WOULD BE A GOOD COMMENT SYSTEM TO ROLE OUT.  TIMES ARE ADDED SO THAT THE PROGRAM IS NOT A NULL PROGRAM
 PROGRAM
@@ -26,7 +26,7 @@ CALL WPF.STATIC_PAGES.LOGIN       | Static Page: Initial log on
 
 CALL WPF.STATIC_PAGES.LOGOUT      | Static Page: log out
 
-CALL WPF.JS.ALLCALL               | Creates the javascript globals, file and "Java disabled web page"
+CALL WPF.JS.ALL_CALL               | Creates the javascript globals, file and "Java disabled web page"
 
 CALL WPF.CSS.CUSTOM               | CSS file contains look and feel
 END PROCEDURE

@@ -1,4 +1,4 @@
-PROCEDURE      JS.GLOBAL_JS:T  (157542,63790)  |Last amended Feb 13, 2014,17:43:10
+PROCEDURE      JS.GLOBAL_JS:T  (157561,40784)  |Last amended Mar 04, 2014,11:19:44
 program
 . open globaljs /write lrecl = 600 IOSTAT =  IOSTAT__4
 . ifNOTthen (IOSTAT__4 eq 0)
@@ -364,8 +364,6 @@ write(globaljs) '    else {'
 write(globaljs) '  document.getElementById(limitCount).innerHTML = limitNum - limitField.value.length;'
 write(globaljs) '    }'
 write(globaljs) '}'
-
-call js.top_menu | kept in a separate file to make it easier to modify
 
 close globaljs
 

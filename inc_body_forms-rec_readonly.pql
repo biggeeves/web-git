@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157554,58209)  |Last amended Feb 25, 2014,16:10:09
+PROCEDURE      INC_BODY_FORMS.REC_READONLY:T  (157556,41723)  |Last amended Feb 27, 2014,11:35:23
 C READONLY data entry page
 
 retrieval progress CRWARN noautocase
@@ -40,7 +40,7 @@ CIF END
 
 . process rec <GDB_REC> <GVIA#> onetime
 .   REC_ACCESSED__4  = 1
-.   ifthen (0<GWRITE_SECURITY> ne 0)
+.   ifthen (0<GUPDATE_RECS> EQ 1)
 .     ifthen (0<GREC_STAT> ne 6)
 .       LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;gdbrec=' + format(REC_TYPE_NUMBER) + '&amp;upick=Edit'
 .       if(dbtype(0) eq 1) LINK__4 = LINK__4 + '&amp;caseis='+ sglobal('GCASE_IS_NQ')

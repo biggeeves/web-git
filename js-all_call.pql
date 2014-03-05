@@ -1,4 +1,4 @@
-PROCEDURE      JS.ALLCALL:T  (157548,46289)  |Last amended Feb 19, 2014,12:51:29
+PROCEDURE      JS.ALL_CALL:T  (157561,44446)  |Last amended Mar 04, 2014,12:20:46
 CALL WPF.JS.GLOBAL_JS  | make the global JS file again.
 
 program crwarn
@@ -7,7 +7,7 @@ CALL WPF.SYSTEM.DEFINE_VARS
 
 | this is called from wpf.system.initialize as well.  If you run it in a SIR session, it reports back less than what it actually does.
 . if (sglobal('GMEM_IN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br> JS.GLOBAL: ' 20t [DSN('globaljs')]
-. if (sglobal('GMEM_IN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br>' 10t ' includes JS.TOP_MENU, JS.COOKIE, JS.DROPDOWNS, JS.KEYS'
+. if (sglobal('GMEM_IN')='WPF.INC_DBA.UPDATE_DB_FILES') write (cgi) '<br>' 10t ' includes JS.COOKIE, JS.DROPDOWNS, JS.KEYS'
 
 . ifnot (system(39) gt 0) exit program  | Exit if no database is attached at this point
 

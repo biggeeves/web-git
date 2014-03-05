@@ -1,4 +1,4 @@
-PROCEDURE      SCHEMAS.MANAGER:T  (157554,57328)  |Last amended Feb 25, 2014,15:55:28
+PROCEDURE      SCHEMAS.MANAGER:T  (157556,44621)  |Last amended Feb 27, 2014,12:23:41
 c created for version 2.0
 PROGRAM
 EXECUTE DBMS ['CREATE DATABASE MANAGER PREFIX= "' + DSN('MANAGER_FOLDER') + '"']
@@ -165,15 +165,21 @@ DATA LIST
                 WRITE_SECURITY                     129 -   130 (I1)
                 REPORTS_GENERAL                    131         (I1)
                 REPORTS_SPECIAL                    132         (I1)
-                LOCK_RECORDS                        133         (I1)
-                LOCK_CASES                          134         (I1)
                 VIEW_SCHEMA                         135         (I1)
                 VIEW_IDS                            136         (I1)
                 VIEW_RECS                           137         (I1)
                 VIEW_NOTES                          138         (I1)
                 VIEW_DBA                            139         (I1)
-                DELETE_RECS                             140         (I1)
+                CREATE_RECS                             * (I1)
+                READ_RECS                             * (I1)
+                UPDATE_RECS                             * (I1)
+                DELETE_RECS                            * (I1)
+                LOCK_RECORDS                         * (I1)
+                CREATE_CASES                           * (I1)
+                READ_CASES                            * (I1)
+                UPDATE_CASES                            * (I1)
                 DELETE_CASES                            141         (I1)
+                LOCK_CASES                          134         (I1)
                 USER_PHONE                              142 -   156 (A15)
                 USER_EMAIL                              157 -   206 (A50)
                 USER_CELL                               207 -   221 (A15)
@@ -186,30 +192,40 @@ DATA LIST
                 CREATE_DATE                         * (DATE'EMM/DD/YYYY')
                 CREATE_TIME                         * (TIME'HHIMM')
                 CREATE_BY                           * (A100)
-VAR RANGES      SECURITY_LEVEL                         (0 30)
-                READ_SECURITY                               (0 30)
-                WRITE_SECURITY                               (0 30)
-                REPORTS_GENERAL                           (0 1)
-                REPORTS_SPECIAL                          (0 1)
-                LOCK_RECORDS                      (0 1)
-                LOCK_CASES                        (0 1)
+VAR RANGES      SECURITY_LEVEL                    (0 30)
+                READ_SECURITY                     (0 30)
+                WRITE_SECURITY                    (0 30)
+                REPORTS_GENERAL                   (0 1)
+                REPORTS_SPECIAL                   (0 1)
                 VIEW_SCHEMA                       (0 1)
                 VIEW_IDS                          (0 1)
                 VIEW_RECS                         (0 1)
                 VIEW_NOTES                        (0 1)
                 VIEW_DBA                          (0 1)
-                DELETE_RECS                           (0 1)
-                DELETE_CASES                          (0 1)
-VALUE LABELS    SECURITY_LEVEL                         (0)'Read Only'
+                CREATE_RECS                       (0 1)
+                READ_RECS                         (0 1)
+                UPDATE_RECS                       (0 1)
+                DELETE_RECS                       (0 1)
+                LOCK_RECORDS                      (0 1)
+                CREATE_CASES                      (0 1)
+                READ_CASES                        (0 1)
+                UPDATE_CASES                      (0 1)
+                DELETE_CASES                      (0 1)
+                LOCK_CASES                        (0 1)
+VALUE LABELS    SECURITY_LEVEL                   (0)'Read Only'
+                                                 (1)'Write'
                                                  (30)'Full DBA rights'
-                READ_SECURITY                               (0)'None'
+                READ_SECURITY                    (0)'None'
+                                                 (1)'Read - Yes'
                                                  (30)'DBA'
-                WRITE_SECURITY                               (0)'No Write'
+                WRITE_SECURITY                   (0)'No Write'
+                                                 (1)'Write - Yes'
                                                  (30)'DBA'
-                REPORTS_GENERAL                           (0)'No'
+                REPORTS_GENERAL                  (0)'No'
                                                  (1)'Yes'
-                REPORTS_SPECIAL                          (0)'No'
+                REPORTS_SPECIAL                  (0)'No'
                                                  (1)'Yes'
+                CREATE_RECS READ_RECS UPDATE_RECS DELETE_RECS
                 LOCK_RECORDS                      (0)'No'
                                                  (1)'Yes'
                 LOCK_CASES                        (0)'No'
@@ -224,10 +240,11 @@ VALUE LABELS    SECURITY_LEVEL                         (0)'Read Only'
                                                  (1)'Yes'
                 VIEW_DBA                          (0)'No'
                                                  (1)'Yes'
-                DELETE_RECS                           (0)'No'
+                CREATE_CASES READ_CASES UPDATE_CASES DELETE_CASES                          (0)'No'
                                                  (1)'Yes'
-                DELETE_CASES                          (0)'No'
+                LOCK_CASES                        (0)'No'
                                                  (1)'Yes'
+
 VAR LABEL       FULL_NAME                         'Full name of the user'
                 READ_SECURITY                               'Read Security'
                 WRITE_SECURITY                               'Write Security'
@@ -240,8 +257,14 @@ VAR LABEL       FULL_NAME                         'Full name of the user'
                 VIEW_RECS                         'User can view record types (forms)?'
                 VIEW_NOTES                        'User can view notes?'
                 VIEW_DBA                          'User can view DBA drop down?'
-                DELETE_RECS                           'User has permission to delete records?'
-                DELETE_CASES                          'User has permission to delete cases'
+                CREATE_RECS                           'User has permission to CREATE records?'
+                READ_RECS                           'User has permission to READ records?'
+                UPDATE_RECS                           'User has permission to UPDATE records?'
+                DELETE_RECS                           'User has permission to DELETE records?'
+                CREATE_CASES                          'User has permission to CREATE cases'
+                READ_CASES                          'User has permission to READ cases'
+                UPDATE_CASES                          'User has permission to UPDATE cases'
+                DELETE_CASES                          'User has permission to DELETE cases'
                 CREATE_DATE                          'Created on'
                 CREATE_TIME                          'Created at'
                 CREATE_BY                          'Created by'

@@ -1,6 +1,5 @@
-PROCEDURE      SYSTEM.README:T  (157554,55647)  |Last amended Feb 25, 2014,15:27:27
+PROCEDURE      SYSTEM.README:T  (157562,36420)  |Last amended Mar 05, 2014,10:07:00
 c The MANAGER DATABASE handles sign in AND SESSIONS.  You'll have to add some users and a database to it, plus point to it.
-c When created this file matched V39.
 
 SIR Web utilizes Twitter Bootstrap and JQuery.  Download "boostrap.css", "bootstrap.js" and "jquery.js".
 Copy the files to your root directory.

@@ -1,0 +1,54 @@
+PROCEDURE      INC_DBA.BUGS_CLOSED:T  (157561,42219)  |Last amended Mar 04, 2014,11:43:39
+HAndrews#:User Name should be pre-pended to bug/request item
+Ming: Edited by MING Edited on Jun 09,2011 Edited at: 10:31 Total Edits-->simplify
+Ming: Frequency select var does not work
+Ming: Change Last time to Max on DB usage
+Ming: Find text only case sensitive working.   FIX: global was returning sys miss.  Used ifNOT to test value, which works better with missing values.
+Ming: Save new delete button all Old Rec on roll over
+Ming: Simplify search code results.  FIX: Created columns and multiple results get a check mark in the column
+Ming: Number of cases by number of recordsThursday 06.09.2011: Terrible:  Fixed.  Wording is better now
+Ming: View form could be Edit Form  Fixed: Added View and Edit
+Tshah#: Generated on 06/08/11 at 12:44 PM by Tshah# (Change to CASE Report requested BY)
+Tshah#: Select first Field would help.
+Greg Neils: Change the word CASE to the actual CASEID or the CASE variable label
+Greg Neils: Im seeing this error Code Scottland 67.168.88.115 156.111.218.40  can not check IP address as VPN will mask the real IP
+Greg Neils: Using query to find a record, selecting the record then pressing Back button kept the old member value.  JavaScript now resets the member value based on where clicked.
+Greg Neils: Run initialization and the CSS goes to wrong place.  FIX: Remapped and created virtual directories
+Greg Neils: Add case with no records report.  FIX: N Cases by N Recs report will show it.
+Greg Neils: Cases and Records Table the CaseID should not be a button.  it should be text and a hyperlink  FIX: It actually looks ok. Leave  it.
+Greg Neils: Search code book results for 1 and the results are not correct.  FIX: Used nglobal for better min and max results.  Guess it wont work with strings through.
+Greg Neils: Variable Usage, the frequency button should perform the frequency in addition to taking the user to the Frequency page.  FIX: Added missing global submit value
+Greg Neils: Disable save button after user pushes it.  This way user can not submit the form more than once.  FIX: Cannot disable because it is not submitted.  Hide it instead.
+Greg Neils: If a user can only see schema they should NOT see the column Var Usage.  FIX: If user can see generic reports than they can see Var Usage
+Greg Neils: In the header where it says "CASE" change to saying the variable name or variable label instead.  FIX: Changed as needed.
+Greg Neils: CT date and time do not work in NeuSTARTII for keys: UNABLE TO REPRODUCE
+Greg Neils: FREQ add padding left.  FIX: Added.
+Greg Neils: Select rec is not working.  Problem is due to adding "VIEW" choice.  Fixed.  Must add userpick to almost everything.  will be problematic inthe future.  Re work.
+Greg Neils: Record was saved does not show the record row ie the data that was saved.  Fixed:  Had to use GRECNAV again and add userpick as hidden variable.
+Greg Neils: Variable Usage- combine min,max also M1,M2,M3 FIXED: combined as thought.  looks better
+Greg Neils: Variable labels were truncated.  Fixed: Max len increased from 72 to 250 to handle HTML character substitutions.
+Greg Neils: Table Row color changes on roll over.  Does not work in IE, but that is OK with me.  Maybe it will work in later version of IE.
+ANIGE: Disable log on button using JavaScript if cookies are not allowed.  Show error message about cookies too.
+ANGIE: Be able to turn on and off delete recs and delete cases based on user.  FIX: added ability.
+Greg Neils: Data Entry Screen still see the double hearder.  Check the value of TEMPLATE.  Fixed.  Reworked entire flow.
+Greg Neils: Should be able to switch from EDIT to VIEW and back in the data entry screen.  Added.  Cool.
+Greg Neils: Nestat -?  try that to see if the connection to the server stops.  Angie says it is always there as long as the browser is open, even if it is a static page.
+Greg Neils: Case nav is too bottom heavy visually
+Greg Neils: For case structured databases make key1 key1 etc.   It will make more sense if I can do that.
+Greg Neils: Rec Edit page show "FIRST" button is not working properly.  It might be showing the second record for some reason.
+Greg Neils: While using Company Database tried to change the name of James A.  When I saved and the salary was blank I got this message: "error in var put!* :{SALARY} :* Type: 5 Len: *" "Saved, but please correct the highlighted data:1 Errors" Nothing w
+Ming: Enter 08 08 2011 JavaScript NO, SIR OK.  I like dates with slashes, keeping hte JavaScript error message.
+Greg Neils: clean up codebook html
+Greg Neils: Move Record Label to top of page just under Home, Reports, Etc.  Move Save, New, Next, Prev, under that.
+Greg Neils: view program is broken.  Had to update the js file.
+Greg Neils: When someone has been timed out, it should not say "choose a database" at the top of the time out screen.  That is the manager db vardoc.
+*
+*
+*
+*
+*
+Greg Neils: Last Selection in Easy Report is not working.  This is shown after the first report is generated.
+Greg Neils: Last Selection in Easy Report is not working.  This is shown after the first report is generated.
+*
+*
+END PROCEDURE

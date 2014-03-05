@@ -1,22 +1,29 @@
-PROCEDURE      SYSTEM.CUSTOM_ATTS:T  (157554,55608)  |Last amended Feb 25, 2014,15:26:48
-C CREATED BY THE WEB INSTALLER ON Feb. 12, 2014
+PROCEDURE      SYSTEM.CUSTOM_ATTS:T  (157561,40527)  |Last amended Mar 04, 2014,11:15:27
+C CREATED BY THE WEB INSTALLER ON Mar. 04, 2014
 
 C WPF ATTRIBUTE IS A COPY.  GOLD STANDARD IS IN THE FILE DEFAULT.PQL!!!
+global pf_version = "LIVE"
 global mycgi = "/pql/sirweb.cgi"
-ATTRIBUTE WEBPROC_FOLDER = "C:\SIR XS\web\"
-ATTRIBUTE WPF = "C:\SIR XS\web\wp.srp" | 02120957
-ATTRIBUTE WEB_ROOT = "C:\apache-fake\htdocs\"
-attribute customcss = "C:\apache-fake\htdocs\css\custom.css"
-attribute globaljs = "C:\apache-fake\htdocs\js\global.js"
-attribute index = "C:\apache-fake\htdocs\index.html"
-attribute logout = "C:\apache-fake\htdocs\logout.html"
-attribute js_req = "C:\apache-fake\htdocs\javascript_required.html"
-attribute casenav = "C:\apache-fake\htdocs\js\casenav.js"
-attribute dblock = "C:\apache-fake\htdocs\dblock\dblocks.txt"
-attribute err403 = "C:\apache-fake\htdocs\err403.html"
-attribute err404 = "C:\apache-fake\htdocs\err404.html"
-attribute badlogins = "C:\apache-fake\htdocs\login\badLogins.txt"
-ATTRIBUTE MANAGER_FOLDER = "C:\SIR XS\web\dbs\manager\"
-GLOBAL GMST_IP = Greg-PC
-GLOBAL GMST_PORT = 3000
+global GWEBSITE_TITLE =
+global GFULL_URL =
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+GLOBAL GMST_IP =
+GLOBAL GMST_PORT =
 END PROCEDURE

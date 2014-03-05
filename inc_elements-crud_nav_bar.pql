@@ -1,4 +1,4 @@
-PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157549,44201)  |Last amended Feb 20, 2014,12:16:41
+PROCEDURE      INC_ELEMENTS.CRUD_NAV_BAR:T  (157556,41733)  |Last amended Feb 27, 2014,11:35:33
 REC_TYPE_NUMBER  = 0<GDB_REC>
 
 write(cgi) '  <form name="dataentry" action="<mycgi>"  method="post" onKeyPress="return disableEnterKey(event)">'
@@ -12,7 +12,7 @@ write(cgi) '<div class="md-col-12">'
 write(cgi) '<span id="entryleft">'
 c SAVE if permission is OK
 STR$1 = '&nbsp;'
-ifthen (0<GWRITE_SECURITY> ne 0)
+ifthen (0<GUPDATE_RECS> EQ 1)
 . ifthen (0<GREC_STAT> le 4)
 .   STR$1 ='<input type="submit" id="b_saverec" name="upick" value="Save" class="btn btn-primary" title="Save" onclick="return beforeSave();pressedSave();serverRequest(''Saving'')">'
 . endif
@@ -20,7 +20,7 @@ endif
 write(cgi) STR$1
 
 STR$1 = '&nbsp;'
-ifthen (0<GWRITE_SECURITY> ne 0)
+ifthen (0<GCREATE_RECS> EQ 1)
 . ifthen (0<GREC_STAT> le 4)
 .   cif nb <GCASE_IS>
 .     CASE IS <GCASE_IS>
@@ -34,13 +34,11 @@ endif
 write(cgi) STR$1
 
 STR$1 = '&nbsp;'
-ifthen (0<GWRITE_SECURITY> ne 0)
 . ifthen (0<GREC_STAT> le 4)
 .   ifthen (0<GDELETE_RECS> eq 1)
 .     STR$1 = '<input type="submit" id="b_deleterec" name="upick" value="Delete" class="btn btn-primary" title="Delete this record" onclick="return confirmDelRec()">'
 .   endif
 . endif
-endif
 write(cgi) STR$1
 
 CIF EQ 0<GCASED>, 1

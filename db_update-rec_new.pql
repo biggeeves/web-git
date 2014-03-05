@@ -1,4 +1,4 @@
-PROCEDURE      DB_UPDATE.REC_NEW:T  (157548,41497)  |Last amended Feb 19, 2014,11:31:37
+PROCEDURE      DB_UPDATE.REC_NEW:T  (157561,46310)  |Last amended Mar 04, 2014,12:51:50
 c create a new record and double check
 
 global GOON__4 = '0'
@@ -33,8 +33,8 @@ c double check that it was created.  Sometimes Retrieval UPDATEs can not run, do
 program
 . ifNOTthen (nglobal('GOON__4') eq 1)
 .   ANY_NUM__4 = globals( 'GSOME_MESS', 'New record was NOT created.  Please try again later.')
-.   ANY_NUM__4 = globals('GMEM_STOP', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
-.   EXECUTE DBMS 'CALL WPF.CONTROLLER.STOP_PAGE'
+.   ANY_NUM__4 = globals('GCONTINUE','0') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+.   ANY_NUM__4 = globals('GMEM_REDIRECT','WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
 . else
 .   ANY_NUM__4 = globals( 'GSOME_MESS', '')
 .   ANY_NUM__4 = globaln('GREC_STAT', 2)  | It will be an old rec by the time this comes into play
@@ -42,4 +42,7 @@ program
 . endif
 end program
 
+CIF EQ '<GCONTINUE>', '0'
+CALL WPF.CONTROLLER.SHOW_PAGE
+CIF END
 END PROCEDURE

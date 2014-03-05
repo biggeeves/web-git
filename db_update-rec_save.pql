@@ -1,4 +1,4 @@
-PROCEDURE      DB_UPDATE.REC_SAVE:T  (157549,49825)  |Last amended Feb 20, 2014,13:50:25
+PROCEDURE      DB_UPDATE.REC_SAVE:T  (157561,43706)  |Last amended Mar 04, 2014,12:08:26
 c Saves data to a record.
 GLOBAL GERR__4 = 999  | SET TO ONE ERROR AND IF THE RETRIEVAL UPDATE DOESN'T WORK IT WILL GET REPORTED BACK TO THE USER
 
@@ -105,7 +105,7 @@ ifthen ( 0<GERR__4> eq 0 )
 .   ANY_NUM__4 = globals( 'GU_PICK', 'Edit' )
 .   EXECUTE DBMS 'call WPF.CONTROLLER.DATA_ENTRY'
 . else
-.   ANY_NUM__4 = globals( 'GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_NAV' )
+.   ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.REC_NAV' )
 . endif
 elseif (0<GERR__4> eq 999)
 . ANY_NUM__4 = globals( 'GU_PICK', 'Edit' )

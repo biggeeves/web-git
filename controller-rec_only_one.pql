@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.REC_ONLY_ONE:T  (157548,41290)  |Last amended Feb 19, 2014,11:28:10
+PROCEDURE      CONTROLLER.REC_ONLY_ONE:T  (157561,43685)  |Last amended Mar 04, 2014,12:08:05
 c test if user can go to record directly or needs to pick keys first.
 c
 retrieval progress CRWARN
@@ -19,7 +19,7 @@ CIF END
 .     EXECUTE DBMS "CALL WPF.CONTROLLER.REC_CHANGE_KEYS"
 .   endif
 . else
-.   ANY_NUM__4 = globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.   ANY_NUM__4 = globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
 . endif
 end retrieval
 END PROCEDURE

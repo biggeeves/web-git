@@ -1,0 +1,52 @@
+PROCEDURE      INSTALLER.MAKE_DEMO2_INFO:T  (157556,39313)  |Last amended Feb 27, 2014,10:55:13
+C Create a dummy case, 'FAKID' and a couple of dummy records in the DEMO2 database
+
+RETRIEVAL UPDATE
+DATABASE IS DEMO2
+. CASE IS 'FAKEID'
+.   REC IS PTRACK
+.     SLNAME = 'Mylastname'
+.     ASITE = 1
+.     ALOCATN = 1
+.     ADATE = TODAY(0)
+.     GEN   = 1
+.     DOB = TODAY(0) - 20*365
+.     SSTREET = 'Hendrick Ave.'
+.     SCITY = 'SPOKANE'
+.     SSTATE = 'WA'
+.     SZIP = '99037'
+.     SHPHONE = '509-555-1212'
+.   END REC IS
+.   REC IS PI VIA (1)
+.     FORMDATE = TODAY(0)
+.     RATER = 'ME'
+.     PI1 = 1
+.     PI2A = 1
+.     PI2B = 1
+.     PI3A = 1
+.     PI3B = 1
+.     PI4A = 1
+.     PI4B = 1
+.     PI5A = 1
+.     PI5B = 1
+.     PI6A = 1
+.     PI6B = 1
+.     PI7A = 1
+.     PI7B = 1
+.     PI8A = 1
+.     PI8B = 1
+.     PI9A = 1
+.     PI9B = 1
+.     PI10A = 1
+.     PI10B = 1
+.     PI11A = 1
+.     PI11B = 1
+.     PI12A = 1
+.     PI12B = 1
+.     PI13A = 1
+.     PI13B = 1
+.   END REC IS
+. END CASE IS
+END DATABASE IS
+END RETRIEVAL
+END PROCEDURE

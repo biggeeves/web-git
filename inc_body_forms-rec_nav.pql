@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.REC_NAV:T  (157550,42899)  |Last amended Feb 21, 2014,11:54:59
+PROCEDURE      INC_BODY_FORMS.REC_NAV:T  (157556,41714)  |Last amended Feb 27, 2014,11:35:14
 C list the record types.  CASE id is used if available.
 
 retrieval crwarn
@@ -28,30 +28,30 @@ CIF END
 . write(cgi) '</tr>'
 
 for EACH_RECORD_NUMBER = 1, nrecs(0)
-. IFNOT (LEN(RECNAME(EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-. REC_CNT__4  = REC_CNT__4  + count(EACH_RECORD_NUMBER)
+. IFNOT ( LEN( RECNAME( EACH_RECORD_NUMBER ) ) gt 0) NEXT FOR
+. REC_CNT__4  = REC_CNT__4  + count( EACH_RECORD_NUMBER )
 
 . write(cgi) '<tr>'
-. STR$1 = '<td><label class ="label_rec" title="' + format(EACH_RECORD_NUMBER)  + ' ' + trimlr(recname(EACH_RECORD_NUMBER)) +  '">'
+. STR$1 = '<td><label class ="label_rec" title="' + format( EACH_RECORD_NUMBER )  + ' ' + trimlr( recname( EACH_RECORD_NUMBER ) ) +  '">'
 . write(cgi) 4T STR$1
-. ifthen (len(recdoc(EACH_RECORD_NUMBER, 0)) gt 0)
-.   REC_LABEL__4 = pack(recdoc(EACH_RECORD_NUMBER, 0))
-. elseif (len(recdoc(EACH_RECORD_NUMBER, 1)) gt 0)
-.   REC_LABEL__4 = pack(recdoc(EACH_RECORD_NUMBER, 1))
+. ifthen ( len( recdoc( EACH_RECORD_NUMBER, 0 ) ) gt 0 )
+.   REC_LABEL__4 = pack( recdoc( EACH_RECORD_NUMBER, 0 ) )
+. elseif ( len( recdoc( EACH_RECORD_NUMBER, 1 ) ) gt 0 )
+.   REC_LABEL__4 = pack( recdoc( EACH_RECORD_NUMBER, 1 ) )
 . else
-.   REC_LABEL__4 = trimlr(recname(EACH_RECORD_NUMBER))
+.   REC_LABEL__4 = trimlr( recname( EACH_RECORD_NUMBER ) )
 . endif
 . write(cgi) 4T REC_LABEL__4
 . write(cgi) 4T '</label></td>'
-. ifthen (count(EACH_RECORD_NUMBER) eq 0)
-.   ifthen (0<GWRITE_SECURITY> ne 0)
+. ifthen ( count( EACH_RECORD_NUMBER ) eq 0 )
+.   ifthen ( 0<GUPDATE_RECS> EQ 1 )
 .     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=New&amp;caseis=<GCASE_IS_NQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'New</a></td>'
 .   else
 .     write(cgi) '  <td>&nbsp;</td>'
 .   endif
 .   write(cgi) '  <td>&nbsp;</td>'
-. elseif (count(EACH_RECORD_NUMBER) eq maxrecs(EACH_RECORD_NUMBER) )
+. elseif ( count( EACH_RECORD_NUMBER ) eq maxrecs( EACH_RECORD_NUMBER ) )
 .     write(cgi) '  <td>&nbsp;</td>' | empty new rec cell
 .     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=View&amp;caseis=<GCASE_IS_NQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'View</a> &#124;'
@@ -60,13 +60,13 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 .     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Table&amp;caseis=<GCASE_IS_NQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi)  STR$1 'Table</a></td>'
 . else
-.   ifthen (0<GWRITE_SECURITY> ne 0)
+.   ifthen ( 0<GUPDATE_RECS> EQ 1 )
 .     STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=New&amp;caseis=<GCASE_IS_NQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .     write(cgi) '<td>' STR$1 'New</a></td>'
 .   else
 .     write(cgi) '  <td>&nbsp;</td>'
 .   endif
-.     ifthen (count(EACH_RECORD_NUMBER) gt 1)
+.     ifthen ( count( EACH_RECORD_NUMBER ) gt 1 )
 .       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Select&amp;caseis=<GCASE_IS_NQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
 .       write(cgi) '<td>' STR$1 'Select</a>  &#124;'
 .       STR$1 = '<a class="bluetext" href="<mycgi>?member=WPF.CONTROLLER.REC_NAV&amp;upick=Table&amp;caseis=<GCASE_IS_NQ>&amp;gdbrec=' + format(EACH_RECORD_NUMBER) + '">'
@@ -80,7 +80,7 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 .       write(cgi)  STR$1 'Table</a></td>'
 .     endif
 . endif
-. write(cgi) 4T '<td>' [count(EACH_RECORD_NUMBER)] '</td>'
+. write(cgi) 4T '<td>' [ count( EACH_RECORD_NUMBER ) ] '</td>'
 . write(cgi) '</tr>'
 end for
 

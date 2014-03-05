@@ -1,0 +1,4 @@
+PROCEDURE      CGI.IIS_CONFIG:T  (157562,36457)  |Last amended Mar 05, 2014,10:07:37
+c configuration file for IIS.  Atleast it worked for me.  You'll have to customize it for your set up.
+
+END PROCEDURE

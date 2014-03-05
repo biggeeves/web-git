@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.PW_RESET:T  (157554,55285)  |Last amended Feb 25, 2014,15:21:25
+PROCEDURE      CONTROLLER.PW_RESET:T  (157561,46866)  |Last amended Mar 04, 2014,13:01:06
 c What to do when user comes from the Sign in page
 
 c comments are inserted because blank lines do NOT let the global values get set intime for the CIFs
@@ -38,7 +38,8 @@ C FIRST CHECK TO SEE IF PASSWORD RESET IS OK.  SHOULD STOP LINKS FROM BEING FORE
 . CIF EQ <GOON__4>, 1
 .   CALL WPF.INC_BODY_FORMS.PW_RESET
 . CIF FALSE
-.   CALL WPF.CONTROLLER.STOP_PAGE
+.   global 'GMEM_REDIRECT' 'WPF.INC_BODY_FORMS.UNK_ERR'
+.   CALL WPF.CONTROLLER.SHOW_PAGE
 . CIF END
 CIF END
 
@@ -69,7 +70,7 @@ CIF EQ '<GMEM_IN>', 'WPF.CONTROLLER.PW_RESET2'
 . CIF END
 
 . CIF EQ <GOON__4>, 1
-.   GLOBAL GREDIRECT = 'http://piweb.nyspi.org/index.html'
+.   GLOBAL GURL_REDIRECT = '<GFULL_URL>'
 .   CALL WPF.INC_BODY_FORMS.REDIRECT
 . CIF FALSE
 .   CALL WPF.INC_BODY_FORMS.PW_RESET

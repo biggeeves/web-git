@@ -1,10 +1,13 @@
-PROCEDURE      INC_ELEMENTS.FOOTER:T  (157549,47841)  |Last amended Feb 20, 2014,13:17:21
+PROCEDURE      INC_ELEMENTS.FOOTER:T  (157562,36309)  |Last amended Mar 05, 2014,10:05:09
 c footer for every page
 
 write(cgi) '<div class="row top-buffer">'
-write(cgi) '  <h6 class="col-md-12 text-center" title="Administrator: Greg Neils: <GMEM_IN><GMEM_OUT>">'
-write(cgi) '  Designed by the Data Coordinating Center At Columbia University in New York. V2.01'
-write(cgi) '  </h6>'
+write(cgi) '  <div class="col-md-6 text-left" title="Administrator: Greg Neils">'
+write(cgi) '  <h6>Designed by the Data Coordinating Center At Columbia University in New York.<h6>'
+write(cgi) '  </div>'
+write(cgi) '  <div class="col-md-6 text-right">'
+write(cgi) '  <h6>Version 030514<h6>'
+write(cgi) '  </div>'
 write(cgi) '</div>'
 write(cgi) '</div>' | close container
 write(cgi) '<script src="<GFULL_URL>js/jquery.js"></script>'

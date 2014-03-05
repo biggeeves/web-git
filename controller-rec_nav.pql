@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.REC_NAV:T  (157548,46407)  |Last amended Feb 19, 2014,12:53:27
+PROCEDURE      CONTROLLER.REC_NAV:T  (157561,55131)  |Last amended Mar 04, 2014,15:18:51
 c hub for record navigation.  All trafic to and from a record should go here.
 
 CALL WPF.DB_CHECKS.VALID_REC
@@ -19,12 +19,12 @@ ifthen (UPICK__4 = 'New')
 .   EXECUTE DBMS 'CALL WPF.DB_UPDATE.REC_NEW'
 . else
 .   ANY_NUM__4 =  globaln('GREC_STAT', 1)
-.   ANY_NUM__4 =  globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
+.   ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
 . endif
 
 elseif (UPICK__4 = 'View')
 . ANY_NUM__4 =  globaln('GREC_STAT', 2)
-. ANY_NUM__4 =  globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_READONLY')
+. ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.REC_READONLY')
 
 
 elseif (UPICK__4 = 'Edit')
@@ -35,17 +35,17 @@ elseif (UPICK__4 = 'Edit')
 . EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_REC_EXISTS'
 . ANY_NUM__4 =  globaln('GREC_STAT', 2)
 . ifthen (meminfo('SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)) + ':T', 1) = 1)
-.   ANY_NUM__4 =  globals('GMEM_OUT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
+.   ANY_NUM__4 =  globals('GMEM_REDIRECT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 . else
-.   ANY_NUM__4 =  globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_EDIT')
+.   ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.REC_EDIT')
 . endif
 
 elseif (UPICK__4 = 'Select') | Multiple Records to choose.
 . ifthen (dbtype(0) = nkeys(REC_TYPE_NUMBER) +  dbtype(0)) | Keys
 .   ANY_NUM__4 =  globaln('GREC_STAT', 2)
 .   ifthen (meminfo('SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)) + ':T', 1) = 1)
-.     ANY_NUM__4 =  globals('GMEM_OUT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
+.     ANY_NUM__4 =  globals('GMEM_REDIRECT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
 .     EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
 .   else
 .     EXECUTE DBMS 'CALL WPF.CONTROLLER.DATA_ENTRY'
@@ -64,7 +64,7 @@ elseif(UPICK__4 eq 'Save')
 
 elseif (UPICK__4 = 'Table')
 . ANY_NUM__4 =  globaln('GREC_STAT', 1)
-. ANY_NUM__4 =  globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.REC_TABLE')
+. ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.REC_TABLE')
 elseif (UPICK__4 eq 'First' or 'Previous' or 'Next' or 'Last' )
 . ANY_NUM__4 =  globaln('GREC_STAT', 2)
 . EXECUTE DBMS 'CALL WPF.CONTROLLER.REC_CHANGE_KEYS'
@@ -78,7 +78,7 @@ elseif (UPICK__4 eq 'Delete')
 
 else
 . ANY_NUM__4 =  globals( 'GSOME_MESS', 'un-specified choice:' + UPICK__4)
-. ANY_NUM__4 =  globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
 endif
 
 GOON__4  = 0 | May the record type got deleted and the user has old information.  doubtful, but still not nice.
@@ -87,9 +87,14 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4  = 1
 end for
 ifthen (GOON__4  = 0)
-. ANY_NUM__4  =  globals( 'GSOME_MESS', 'The table number <GDB_REC> was not found')
-. ANY_NUM__4 =  globals('GMEM_OUT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 =  globals( 'GSOME_MESS', 'The table number <GDB_REC> was not found')
+. ANY_NUM__4 =  globals('GCONTINUE', '0')
+. ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
 endif
 
 end PROGRAM
+
+CIF EQ '<GCONTINUE>', '0'
+CALL WPF.CONTROLLER.SHOW_PAGE
+CIF END
 END PROCEDURE

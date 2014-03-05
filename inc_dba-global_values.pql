@@ -1,4 +1,4 @@
-PROCEDURE      INC_DBA.GLOBAL_VALUES:T  (157543,55470)  |Last amended Feb 14, 2014,15:24:30
+PROCEDURE      INC_DBA.GLOBAL_VALUES:T  (157561,40436)  |Last amended Mar 04, 2014,11:13:56
 c CALL this program when you need to see the global values that are set.
 
 program CRWARN
@@ -8,6 +8,7 @@ string  *   600   HTML_TEXT                   | HTML after it has been cleaned
 integer *     4   RET_CODE__4                 | Return code for other things
 
 write(cgi)'<table class="table table-striped table-hover">'
+write(cgi) '<caption>WPF DEFINED GLOBALS</caption>'
 
 for EACH_GLOBAL = 1, SYSTEM(53)
 . VNAME$ = globname(EACH_GLOBAL)
@@ -26,5 +27,15 @@ for EACH_GLOBAL = 1, SYSTEM(53)
 end for
 
 write(cgi) '</table>'
+
+write(cgi) '<hr>'
+write(cgi) '<table class="table table-striped table-hover">'
+write(cgi) '<caption>SIR GLOBALS</caption>'
+write(cgi) '<tr><td>GERROR</td><td><GERROR></td></tr>'
+write(cgi) '<tr><td>GWARNING</td><td><GWARNING></td></tr>'
+write(cgi) '<tr><td>TERROR</td><td><TERROR></td></tr>'
+write(cgi) '<tr><td>TWARNING</td><td><TWARNING></td></tr>'
+write(cgi) '</table>'
+
 end program
 END PROCEDURE

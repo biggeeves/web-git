@@ -1,15 +1,17 @@
-PROCEDURE      INC_ELEMENTS.DEBUG_INFO:T  (157555,44784)  |Last amended Feb 26, 2014,12:26:24
+PROCEDURE      INC_ELEMENTS.DEBUG_INFO:T  (157556,44895)  |Last amended Feb 27, 2014,12:28:15
 c debug info display in html page at the bottom
 
-cif eq '<GDEBUG>', '1'
-write(cgi) '<div class="row top-buffer panel panel-default">'
-write(cgi) '  <div class="md-col-12">'
-write(cgi) '  <p>Session Errors: ' [ system(11) ] '</p>'
-write(cgi) '  <p>Task Errors: '    [ system(12) ] '</p>'
-write(cgi) '  <p>Task Warnings: '  [ system(13) ] '</p>'
-write(cgi) '  </div>'
-write(cgi) '</div>'
-write(cgi) '</div>' | close container
-execute dbms "call WPF.INC_DBA.GLOBAL_VALUES"
-cif END
+ifthen ( nglobal( 'GDEBUG' ) EQ 1 )
+. ifthen ( nglobal( 'GSECURITY_LEVEL'  ) EQ 30 )
+.   write(cgi) '<div class="row top-buffer panel panel-default">'
+.   write(cgi) '  <div class="md-col-12">'
+.   write(cgi) '  <p>Session Errors: ' [ system(11) ] '</p>'
+.   write(cgi) '  <p>Task Errors: '    [ system(12) ] '</p>'
+.   write(cgi) '  <p>Task Warnings: '  [ system(13) ] '</p>'
+.   write(cgi) '  </div>'
+.   write(cgi) '</div>'
+.   write(cgi) '</div>' | close container
+.   execute dbms "call WPF.INC_DBA.GLOBAL_VALUES"
+. ENDIF
+ENDIF
 END PROCEDURE

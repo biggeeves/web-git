@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157554,57908)  |Last amended Feb 25, 2014,16:05:08
+PROCEDURE      P_SECURITY.CHECK_MANAGER:T  (157561,46386)  |Last amended Mar 04, 2014,12:53:06
 | set security globals to lowest level by default
 global GSECURITY_LEVEL   = 0
 global GWRITE_SECURITY   = 0
@@ -9,10 +9,18 @@ global GVIEW_DBA         = 0
 global GVIEW_SCHEMA      = 0
 global GVIEW_IDS         = 0
 global GVIEW_RECS        = 0
+C RECORD TYPE C.R.U.D.
+global GCREATE_RECS      = 0
+global GREAD_RECS        = 0
+global GUPDATE_RECS      = 0
 global GDELETE_RECS      = 0
+global GLOCK_RECORDS     = 0
+C CASES C.R.U.D.
+global GCREATE_CASES     = 0
+global GREAD_CASES       = 0
+global GUPDATE_CASES     = 0
 global GDELETE_CASES     = 0
 global GLOCK_CASES       = 0
-global GLOCK_RECORDS     = 0
 
 
 retrieval UPDATE CRWARN
@@ -62,6 +70,14 @@ C   CHECK cookie value, start time and
 . end rec
 . process rec DB_USERS VIA ( DB_NAME__4   USER_NAME__4 )
 .   GOON__4  = 2
+.   DO REPEAT EACH_SETTING = SECURITY_LEVEL WRITE_SECURITY READ_SECURITY
+                             REPORTS_GENERAL REPORTS_SPECIAL
+                             VIEW_DBA VIEW_SCHEMA VIEW_IDS VIEW_RECS
+                             CREATE_RECS READ_RECS UPDATE_RECS DELETE_RECS LOCK_RECORDS
+                             CREATE_CASES READ_CASES UPDATE_CASES DELETE_CASES LOCK_CASES
+.     if ( exists( EACH_SETTING) eq 1)   ANY_NUM__4 = globaln('G!EACH_SETTING', EACH_SETTING)     | PERSONAL USER PERMISSIONS
+.   END REPEAT
+C   DELETE THIS BELOW.  THE ABOVE IS MUCH EASIER TO MAINTAIN
 .   if ( exists( SECURITY_LEVEL ) eq 1)   ANY_NUM__4 = globaln('GSECURITY_LEVEL', SECURITY_LEVEL)     | Global security level
 .   if ( exists( WRITE_SECURITY ) eq 1 )  ANY_NUM__4 = globaln('GWRITE_SECURITY', WRITE_SECURITY)                 | Write Security
 .   if ( exists( READ_SECURITY ) eq 1 )   ANY_NUM__4 = globaln('GREAD_SECURITY', READ_SECURITY)                 | Read Security
@@ -71,34 +87,26 @@ C   CHECK cookie value, start time and
 .   if ( exists( VIEW_SCHEMA ) eq 1 )     ANY_NUM__4 = globaln('GVIEW_SCHEMA', VIEW_SCHEMA) | View Schema
 .   if ( exists( VIEW_IDS ) eq 1 )        ANY_NUM__4 = globaln('GVIEW_IDS',    VIEW_IDS)    | See Cases and keys
 .   if ( exists( VIEW_RECS ) eq 1 )       ANY_NUM__4 = globaln('GVIEW_RECS',   VIEW_RECS)   | See Forms
-.   if ( exists( DELETE_RECS ) eq 1 )     ANY_NUM__4 = globaln('GDELETE_RECS',     DELETE_RECS)     | Delete Record
-.   if ( exists( DELETE_CASES ) eq 1 )    ANY_NUM__4 = globaln('GDELETE_CASES',    DELETE_CASES)    | Delete Case
-.   if ( exists( LOCK_CASES ) eq 1 )      ANY_NUM__4 = globaln('GLOCK_CASES',  LOCK_CASES)   | Lock Specific Cases
 .   if ( exists( LOCK_RECORDS ) eq 1 )    ANY_NUM__4 = globaln('GLOCK_RECORDS',LOCK_RECORDS) | Lock Specific Records
+C   RECORD TYPE C.R.U.D.
+.   if ( exists( CREATE_RECS ) eq 1 )     ANY_NUM__4 = globaln('GCREATE_RECS',     CREATE_RECS)     | CREATE Record
+.   if ( exists( READ_RECS ) eq 1 )       ANY_NUM__4 = globaln('GREAD_RECS',       READ_RECS)     | READ Record
+.   if ( exists( UPDATE_RECS ) eq 1 )     ANY_NUM__4 = globaln('GUPDATE_RECS',     UPDATE_RECS)     | UPDATE Record
+.   if ( exists( DELETE_RECS ) eq 1 )     ANY_NUM__4 = globaln('GDELETE_RECS',     DELETE_RECS)     | Delete Record
+.   if ( exists( LOCK_CASES ) eq 1 )      ANY_NUM__4 = globaln('GLOCK_CASES',  LOCK_CASES)   | Lock Specific Cases
+C   CASES C.R.U.D.
+.   if ( exists( CREATE_CASES ) eq 1 )    ANY_NUM__4 = globaln('GCREATE_CASES',    CREATE_CASES)    | Delete Case
+.   if ( exists( READ_CASES ) eq 1 )    ANY_NUM__4 = globaln('GREAD_CASES',    READ_CASES)    | Delete Case
+.   if ( exists( UPDATE_CASES ) eq 1 )    ANY_NUM__4 = globaln('GUPDATE_CASES',    UPDATE_CASES)    | UPDATE Case
+.   if ( exists( DELETE_CASES ) eq 1 )    ANY_NUM__4 = globaln('GDELETE_CASES',    DELETE_CASES)    | Delete Case
 . end rec
-. ifthen (USER_NAME__4 eq 'Greg Neils')
-.   GOON__4  = 2
-.   ANY_NUM__4 =  globaln('GSECURITY_LEVEL', 30)  | Global security level
-.   ANY_NUM__4 =  globaln('GWRITE_SECURITY', 30)        | Write Security
-.   ANY_NUM__4 =  globaln('GREAD_SECURITY', 30)        | Read Security
-.   ANY_NUM__4 =  globaln('GREPORTS_GENERAL', 1)     | Run General reports
-.   ANY_NUM__4 =  globaln('GREPORTS_SPECIAL', 1)    | Run Reports Specific
-.   ANY_NUM__4 =  globaln('GVIEW_DBA', 1)    | View DBA Drop Down
-.   ANY_NUM__4 =  globaln('GVIEW_SCHEMA', 1) | View Schema
-.   ANY_NUM__4 =  globaln('GVIEW_IDS', 1)    | See Cases and keys
-.   ANY_NUM__4 =  globaln('GVIEW_RECS', 1)   | See Forms
-.   ANY_NUM__4 =  globaln('GDELETE_RECS', 1)     | Delete Records
-.   ANY_NUM__4 =  globaln('GDELETE_CASES', 1)    | Delete Cases
-.   ANY_NUM__4 =  globaln('GLOCK_CASES', 1)  | Lock Cases
-.   ANY_NUM__4 =  globaln('GLOCK_RECORDS', 1)| Lock Records
-. endif
 . ifnotthen (GOON__4 eq 2)
 .   ANY_NUM__4 = globals( 'GSOME_MESS', 'Contact your DBA about permissions to the database <GDB>, code:' + SGLOBAL('GSTOP__4'))
 . endif
 end retrieval
 
 CIF NB <GSTOP__4>
-. GLOBAL GMEM_STOP = 'WPF.INC_BODY_FORMS.UNK_ERR'
-. CALL WPF.CONTROLLER.STOP_PAGE
+. GLOBAL GMEM_REDIRECT = 'WPF.INC_BODY_FORMS.UNK_ERR'
+. CALL WPF.CONTROLLER.SHOW_PAGE
 CIF END
 END PROCEDURE
