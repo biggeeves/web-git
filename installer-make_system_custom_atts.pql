@@ -1,4 +1,4 @@
-PROCEDURE      INSTALLER.MAKE_SYSTEM_CUSTOM_ATTS:T  (157554,56259)  |Last amended Feb 25, 2014,15:37:39
+PROCEDURE      INSTALLER.MAKE_SYSTEM_CUSTOM_ATTS:T  (157562,37157)  |Last amended Mar 05, 2014,10:19:17
 program
 . string * 4000 STR$1
 . STRING * 100 PATH$
@@ -15,10 +15,10 @@ c   create a development proc file.  Give Developer a sand box area.
 .   STR$1 = 'global mycgi = "/pql/sirweb.cgi"'
 .   WRITE (CATTS) STR$1
 
-.   STR$1 = 'global GWEBSITE_TITLE = <GWEBSITE_TITLE>'
+.   STR$1 = 'global GWEBSITE_TITLE = "<GWEBSITE_TITLE>"'
 .   WRITE (CATTS) STR$1
 
-.   STR$1 = 'global GFULL_URL = <GFULL_URL>'
+.   STR$1 = 'global GFULL_URL = "<GFULL_URL>"'
 .   WRITE (CATTS) STR$1
 
 .   STR$1 = 'ATTRIBUTE WEBPROC_FOLDER = "' + DSN('WEBPROC_FOLDER') + '"'
@@ -77,9 +77,9 @@ c   create a development proc file.  Give Developer a sand box area.
 
 
 c   create global values for master.  will use these for the login and manager database
-.   STR$1 = 'GLOBAL GMST_IP = <GMST_IP>'
+.   STR$1 = 'GLOBAL GMST_IP = "<GMST_IP>"'
 .   WRITE (CATTS) STR$1
-.   STR$1 = 'GLOBAL GMST_PORT = <GMST_PORT> '
+.   STR$1 = 'GLOBAL GMST_PORT = "<GMST_PORT>"'
 .   WRITE (CATTS) STR$1
 . close CATTS
 end program
