@@ -1,5 +1,6 @@
-PROCEDURE      SYSTEM.MAKE_DB_FILES:T  (157561,44434)  |Last amended Mar 04, 2014,12:20:34
+PROCEDURE      SYSTEM.MAKE_DB_FILES:T  (157576,52278)  |Last amended Mar 19, 2014,14:31:18
 c create the necessary JS files, hopefully just at the beginning of the session and hopefully only by DBAs
+
 . program
 .   ifthen (system(39) gt 0)
 .     ifthen(sglobal('GMEM_IN') eq 'WPF.CONTROLLER.FIRST_PAGE' OR 'WPF.INC_DBA.UPDATE_DB_FILES')

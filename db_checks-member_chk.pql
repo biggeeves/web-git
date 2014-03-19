@@ -1,14 +1,19 @@
-PROCEDURE      DB_CHECKS.MEMBER_CHK:T  (157548,46415)  |Last amended Feb 19, 2014,12:53:35
+PROCEDURE      DB_CHECKS.MEMBER_CHK:T  (157576,50553)  |Last amended Mar 19, 2014,14:02:33
+C CHECK MEMBER NAMES, MAKE SURE THE PROGRAM KNOWS WHAT TO DO.
+C
 program
-ifthen ('<GMEM_IN>' eq '')
+INTEGER * 1 ANY_NUM__4
+ifthen ( '<GMEM_IN>' eq '' )
+. ANY_NUM__4 = globals( 'GCONTINUE', '0')
 . ANY_NUM__4 = globals( 'GSOME_MESS', 'Sorry, I do not know what to do.')
-. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+. ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
 
-elseif (exists(meminfo('<GMEM_IN>:T',1)) eq 0)
+elseif ( exists( meminfo( '<GMEM_IN>:T', 1) ) eq 0 )
+. ANY_NUM__4 = globals( 'GCONTINUE', '0')
 . ANY_NUM__4 = globals( 'GSOME_MESS', 'Sorry, I could not find what you wanted.')
-. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+. ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
 endif
 end program
+
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

@@ -1,13 +1,17 @@
-PROCEDURE      P_SECURITY.CHECK_QUERY:T  (157548,46314)  |Last amended Feb 19, 2014,12:51:54
+PROCEDURE      P_SECURITY.CHECK_QUERY:T  (157576,52093)  |Last amended Mar 19, 2014,14:28:13
+c at this time, SIR truncates the value if the character # is in the link.  This is not good.
+
 program
+integer * 1 ANY_NUM__4
 ifthen(exists(cgivarsv('QUERY_STRING')) eq 0)
 . | no query string
 . | this should allow someone to pass a link to a specific page.
-elseif (pattern(cgivarsv('QUERY_STRING'), "@#@") eq 1)
-| at this time, SIR truncates the value if the character # is in the link.  This is not good.
-. ANY_NUM__4 =  globals('GSOME_MESS', 'That link needs to be fixed.')
-. ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+elseif ( pattern( cgivarsv( 'QUERY_STRING' ), "@#@") eq 1 )
+. ANY_NUM__4 = globals( 'GCONTINUE', '0' )
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'That link needs to be fixed.' )
+. ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR' )
 endif
 end program
+
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

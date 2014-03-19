@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_NEW:T  (157556,41337)  |Last amended Feb 27, 2014,11:28:57
+PROCEDURE      INC_BODY_FORMS.CASE_NEW:T  (157576,42568)  |Last amended Mar 19, 2014,11:49:28
 C Create a new case section
 
 PROGRAM
@@ -7,7 +7,7 @@ CALL WPF.SYSTEM.INI_VARS
 write(cgi) '<h4>Create a new ' CASE_LABEL '</h4>'
 ifthen (0<GCREATE_CASES> EQ 1)
 . write(cgi) '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)">'
-. write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'
+. write(cgi) '  <input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_NAV">'
 . write(cgi) '  <input type="hidden" name="case_option" id="case_option" value="new">'
 . write(cgi) '  <br><p><div id="caseidlabel" class ="indent">' CASE_LABEL '</div>'
 . write(cgi) '  <input type="text" id="caseis" class="input_medium" name="caseis">'

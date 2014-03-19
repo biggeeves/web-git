@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.CASE_NAV:T  (157556,42853)  |Last amended Feb 27, 2014,11:54:13
+PROCEDURE      INC_BODY_FORMS.CASE_NAV:T  (157576,42563)  |Last amended Mar 19, 2014,11:49:23
 C Case Navigation Page.  Main Case Page
 C NOTE THAT THIS PAGE IS ONLY SEEN BY CASE STRUCTURED DATABASES
 
@@ -41,7 +41,7 @@ write(cgi) 4t '<div class="col-md-8 col-md-offset-1 text-center panel panel-defa
 write(cgi) 6t '<h3>Navigate IDs</h3>'
 write(cgi) 6t '<h4>' CASE_LABEL '</h4>'
 write(cgi) 6t '<form action="<mycgi>" method="post" onsubmit="return caseRequired(this)" class="bottom-buffer">'
-write(cgi) 8t '<input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_CONTROL">'
+write(cgi) 8t '<input type="hidden" name="member" id="member" value="WPF.CONTROLLER.CASE_NAV">'
 write(cgi) 8t '<input type="text" id="caseis" style="margin-bottom:0;" name="caseis" ' STR$1 '>'
 write(cgi) 8t '<input type="submit" value="View forms" class="btn btn-success"><br><br>'
 write(cgi) 8t '<input type="button" value="First"    class="btn btn-primary" onclick="forwardCase(0);">'

@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.SHOW_PAGE:T  (157561,45169)  |Last amended Mar 04, 2014,12:32:49
+PROCEDURE      CONTROLLER.SHOW_PAGE:T  (157576,51125)  |Last amended Mar 19, 2014,14:12:05
 c this is the very last thing to call.   It will figure out if it is a generic or customized screen that needs to be returned.
 
 program
@@ -17,8 +17,6 @@ program
 . CALL WPF.INC_ELEMENTS.BODY_HEADER
 . CALL WPF.INC_ELEMENTS.STATUS_BLOCK
 . CALL WPF.INC_ELEMENTS.SOME_MESSAGE
-WRITE '<HR>DEBUG CALL THIS: <GMEM_REDIRECT>'
-WRITE '<HR>DEBUG CALL THIS: <GMEM_IN>'
 
 end program
 
@@ -34,7 +32,4 @@ program
 . CALL WPF.INC_ELEMENTS.DEBUG_INFO
 . CALL WPF.INC_ELEMENTS.FOOTER
 end program
-
-
-CALL WPF.CONNECTIONS.FULL_EXIT
 END PROCEDURE

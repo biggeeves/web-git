@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.PW_RESET:T  (157561,46866)  |Last amended Mar 04, 2014,13:01:06
+PROCEDURE      CONTROLLER.PW_RESET:T  (157576,42123)  |Last amended Mar 19, 2014,11:42:03
 c What to do when user comes from the Sign in page
 
 c comments are inserted because blank lines do NOT let the global values get set intime for the CIFs
@@ -76,6 +76,4 @@ CIF EQ '<GMEM_IN>', 'WPF.CONTROLLER.PW_RESET2'
 .   CALL WPF.INC_BODY_FORMS.PW_RESET
 . CIF END
 CIF END
-
-CALL WPF.CONNECTIONS.FULL_EXIT
 END PROCEDURE

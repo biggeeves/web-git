@@ -1,4 +1,4 @@
-PROCEDURE      DB_UPDATE.REC_NEW:T  (157561,46310)  |Last amended Mar 04, 2014,12:51:50
+PROCEDURE      DB_UPDATE.REC_NEW:T  (157576,51412)  |Last amended Mar 19, 2014,14:16:52
 c create a new record and double check
 
 global GOON__4 = '0'
@@ -7,11 +7,9 @@ CALL WPF.DB_CHECKS.VALID_KEYS   | validate Key Fields
 
 CALL WPF.DB_CHECKS.VALID_VIA    | Validate Via
 
-
 c create the record and make sure it was created.
 
 GLOBAL GOON__4 = 0
-
 
 RETRIEVAL UPDATE CRWARN NOAUTOCASE
 CALL WPF.SYSTEM.DEFINE_VARS
@@ -31,18 +29,17 @@ end retrieval
 
 c double check that it was created.  Sometimes Retrieval UPDATEs can not run, double check that the retrieval actually ran
 program
-. ifNOTthen (nglobal('GOON__4') eq 1)
+. ifNOTthen ( nglobal( 'GOON__4' ) eq 1)
+.   ANY_NUM__4 = globals('GCONTINUE', '0') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
 .   ANY_NUM__4 = globals( 'GSOME_MESS', 'New record was NOT created.  Please try again later.')
-.   ANY_NUM__4 = globals('GCONTINUE','0') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
-.   ANY_NUM__4 = globals('GMEM_REDIRECT','WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
+.   ANY_NUM__4 = globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.PICK_NEW_KEYS')
 . else
 .   ANY_NUM__4 = globals( 'GSOME_MESS', '')
-.   ANY_NUM__4 = globaln('GREC_STAT', 2)  | It will be an old rec by the time this comes into play
+.   ANY_NUM__4 = globaln( 'GREC_STAT', 2)  | It will be an old rec by the time this comes into play
 .   EXECUTE DBMS 'CALL WPF.CONTROLLER.DATA_ENTRY'
 . endif
 end program
 
-CIF EQ '<GCONTINUE>', '0'
-CALL WPF.CONTROLLER.SHOW_PAGE
-CIF END
+
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

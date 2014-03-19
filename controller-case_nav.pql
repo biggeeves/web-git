@@ -1,24 +1,25 @@
-PROCEDURE      CONTROLLER.CASE_CONTROL:T  (157561,45835)  |Last amended Mar 04, 2014,12:43:55
+PROCEDURE      CONTROLLER.CASE_NAV:T  (157576,44883)  |Last amended Mar 19, 2014,12:28:03
+C CASE NAVIGATION.  TRICKY ISSUE, BE CAREFUL WITH THIS FILE
+
 CALL WPF.DB_CHECKS.VALID_CASE
 
 c create a new case if that was selected
 CIF EQ 'new', '<GCASE_OPTION>'
-CALL WPF.DB_CHECKS.VALID_CASE
-CALL WPF.DB_UPDATE.CASE_NEW
+. CALL WPF.DB_UPDATE.CASE_NEW
 CIF END
 
-
+C DOUBLE CHECK THINGS AND FIGURE OUT WHERE TO GO BASED ON THE CHECK.
 retrieval crwarn noautocase
-integer *     1   FIRST_CASE__4                | Case already exists
+integer *     1   EXISTS_CASE__4                | Case already exists
 integer *     1   ANY_NUM__4                    | Use any time you want
 
-. set FIRST_CASE__4  (0)
+. set EXISTS_CASE__4  (0)
 . OLD case is <GCASE_IS>
-.   compute FIRST_CASE__4 = 1
+.   compute EXISTS_CASE__4 = 1
 . end case is
-. ifthen (FIRST_CASE__4 eq 0)
+. ifthen (EXISTS_CASE__4 eq 0)
 .   ANY_NUM__4 = globals( 'GCONTINUE', '0')
-.   ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.REC_NAV')
+.   ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.CASE_NAV')
 .   ifthen ('new' = '<GCASE_OPTION>')
 .     ANY_NUM__4 =  globals( 'GSOME_MESS', 'WARNING! <GCASE_IS_NQ> was not created!')
 .   else
@@ -34,7 +35,5 @@ integer *     1   ANY_NUM__4                    | Use any time you want
 . endif
 end retrieval
 
-CIF EQ '<GCONTINUE>', '0'
-CALL WPF.CONTROLLER.SHOW_PAGE
-CIF END
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

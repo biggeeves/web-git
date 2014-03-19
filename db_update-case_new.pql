@@ -1,16 +1,18 @@
-PROCEDURE      DB_UPDATE.CASE_NEW:T  (157542,65309)  |Last amended Feb 13, 2014,18:08:29
-retrieval crwarn noautocase UPDATE
-integer *     1   FIRST_CASE__4                | Case already exists
+PROCEDURE      DB_UPDATE.CASE_NEW:T  (157576,44451)  |Last amended Mar 19, 2014,12:20:51
+C CREATE A NEW ID
 
-. set FIRST_CASE__4  (0)
-. OLD case is <GCASE_IS>
-.   compute FIRST_CASE__4 = 1
-. end case is
-. ifthen(FIRST_CASE__4 = 0)  | CASE already existsed don't try to create a new one
+retrieval crwarn noautocase UPDATE
+C integer *     1   FIRST_CASE__4                | Case already exists
+
+C . set FIRST_CASE__4  (0)
+C . OLD case is <GCASE_IS>
+C .   compute FIRST_CASE__4 = 1
+C . end case is
+C . ifthen(FIRST_CASE__4 = 0)  | CASE already existsed don't try to create a new one
 .   ifthen ('new' = '<GCASE_OPTION>')
 .     new case is <GCASE_IS>
 .     end case is
 .   endif
-. endif
+C . endif
 end retrieval
 END PROCEDURE

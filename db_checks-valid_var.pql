@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_VAR:T  (157548,41412)  |Last amended Feb 19, 2014,11:30:12
+PROCEDURE      DB_CHECKS.VALID_VAR:T  (157576,51315)  |Last amended Mar 19, 2014,14:15:15
 C VALIDATE THE SEARCH
 
 program
@@ -25,7 +25,9 @@ ifthen (VALID_RESULT eq 1 OR 2 OR 7) | NOT VALID
 . ifthen(sglobal('GNEXT_MEMBER') ne '')
 .   EXECUTE DBMS "call WPF.INC_REPORTS.SIMPLEQ_GUI"
 . else
-.   EXECUTE DBMS "call WPF.INC_BODY_FORMS.NONVALID"
+.   ANY_NUM__4 = globals( 'GSOME_MESS', '<GCASE_IS_NQ> is not a valid ID.' )
+.   ANY_NUM__4 = globals( 'GCONTINUE', '0')
+.   ANY_NUM__4 = globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.NONVALID' )
 . endif
 endif
 

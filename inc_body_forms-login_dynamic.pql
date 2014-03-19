@@ -1,10 +1,9 @@
-PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157550,54139)  |Last amended Feb 21, 2014,15:02:19
+PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157576,51689)  |Last amended Mar 19, 2014,14:21:29
 
 
 program crwarn
 string  * 600   STR$1            | General String use at any time
 integer *   1   IOSTAT__4        | Return code of IOSTAT
-INTEGER *   1   GOON__4          | CONTROL FLOW
 integer *   1   ANY_NUM__4
 
 
@@ -15,18 +14,15 @@ c note!  This does not write out to CGI
 
 open (index) read lrecl = 600 iostat = IOSTAT__4
 . ifthen (iostat__4 ne 0)
-.   ANY_NUM__4 = globals('GSOME_MESS', 'The sign in page was unavailable.')
-.   ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
-.   exit program
-. endif
-. open (index) read iostat = IOSTAT__4 lrecl = 300
-.   GOON__4 = 0
+.   ANY_NUM__4 = globals( 'GCONTINUE', '0')
+.   ANY_NUM__4 = globals( 'GSOME_MESS', 'The sign in page was unavailable.')
+.   ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. else
 .   LOOP
-.     read(index, END = DONE) STR$1 (A300)
+.     read (index, END = DONE) STR$1 (A300)
 .     STR$1 = trimlr(STR$1)
 .     write(cgi) STR$1
-.     ifthen (pattern(STR$1, "@loginmessage@") eq 1)
+.     ifthen ( pattern( STR$1, "@loginmessage@") eq 1 )
 .       write(cgi) '<script type="text/javascript">'
 .       write(cgi)  ' document.getElementById(''redirect'').value=window.location.href'
 .       write(cgi) '</script>'
@@ -38,7 +34,7 @@ open (index) read lrecl = 600 iostat = IOSTAT__4
 
 end program
 
-program
-EXECUTE DBMS "call WPF.CONNECTIONS.FULL_EXIT"
-end program
+CALL WPF.CONTROLLER.CHECK_STOP
+
+call WPF.CONNECTIONS.FULL_EXIT
 END PROCEDURE

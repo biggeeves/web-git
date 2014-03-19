@@ -1,5 +1,6 @@
-PROCEDURE      DB_CHECKS.VALID_VIA:T  (157548,41428)  |Last amended Feb 19, 2014,11:30:28
+PROCEDURE      DB_CHECKS.VALID_VIA:T  (157576,50718)  |Last amended Mar 19, 2014,14:05:18
 c check the via and see if it access a record
+C COMPARE GLOBAL ERROR VALUES BEFORE AND AFTER
 
 ERROR LIMIT NONE
 PROGRAM
@@ -12,7 +13,7 @@ process cases
 | old case is <GCASE_IS>
 CIF END
 
-. process rec <GDB_REC> | <GVIA#>
+. process rec <GDB_REC>  <GVIA#>
 . end rec
 
 CIF EQ 1, 0<GCASED>
@@ -22,10 +23,14 @@ end retrieval
 
 program
 . ifthen ( nglobal('GERROR_CHECK') LT nglobal('GERROR'))
+.   ANY_NUM__4 = globals( 'GCONTINUE', '0')
 .   ANY_NUM__4 = globals( 'GSOME_MESS', 'Via did not work')
-.   EXECUTE DBMS 'CALL WPF.INC_BODY_FORMS.UNK_ERR'
+.   ANY_NUM__4 = globals('GMEM_REDIRECT','WPF.INC_BODY_FORMS.UNK_ERR' )
 . endif
 end program
+
+CALL WPF.CONTROLLER.CHECK_STOP
+
 
 ERROR LIMIT 99
 

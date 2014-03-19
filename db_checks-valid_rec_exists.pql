@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_REC_EXISTS:T  (157548,41362)  |Last amended Feb 19, 2014,11:29:22
+PROCEDURE      DB_CHECKS.VALID_REC_EXISTS:T  (157576,50338)  |Last amended Mar 19, 2014,13:58:58
 c Check if the record actually exists.  If not send them to PICKOLDKEYS
 
 retrieval
@@ -14,8 +14,9 @@ CIF END
 . end rec
 
 . ifthen(sglobal('GU_PICK') eq 'Select')
+.   ANY_NUM__4 = globals( 'GCONTINUE', '0')
 .   ANY_NUM__4 = globals( 'GSOME_MESS', 'Please choose existing keys. Use "New" to create a new record.')
-.   ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
+.   ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.PICK_OLD_KEYS')
 . endif
 
 
@@ -24,4 +25,6 @@ end case is
 CIF END
 
 end retrieval
+
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

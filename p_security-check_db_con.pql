@@ -1,10 +1,12 @@
-PROCEDURE      P_SECURITY.CHECK_DB_CON:T  (157548,46520)  |Last amended Feb 19, 2014,12:55:20
+PROCEDURE      P_SECURITY.CHECK_DB_CON:T  (157576,51957)  |Last amended Mar 19, 2014,14:25:57
 program
 integer *     4   ANY_NUM__4                    | Use any time you want
 . ifthen (system(39) eq 0) | no database connected
-.   compute ANY_NUM__4 = globals('GSOME_MESS', '<DB> Database failed to connect')
-.   ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+.   ANY_NUM__4 = globals( 'GCONTINUE', '0')
+.   ANY_NUM__4 = globals( 'GSOME_MESS', '<DB> Database failed to connect' )
+.   ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR' )
 . endif
 end program
+
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

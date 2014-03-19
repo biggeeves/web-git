@@ -1,23 +1,21 @@
-PROCEDURE      INC_BODY_FORMS.LOGOUT_DYNAMIC:T  (157548,46643)  |Last amended Feb 19, 2014,12:57:23
+PROCEDURE      INC_BODY_FORMS.LOGOUT_DYNAMIC:T  (157576,51836)  |Last amended Mar 19, 2014,14:23:56
+c dynamic logout page if possible.
+c Basically reads the static log out file and outputs to server
+
 program crwarn
 string  * 600   STR$1            | General String use at any time
 integer *   1   IOSTAT__4        | Return code of IOSTAT
-INTEGER *   1   GOON__4          | CONTROL FLOW
 integer *   1   ANY_NUM__4
 
-c This outputs to cgi.  It outputs the logout HTML source from the WPF
 
 open (logout) read lrecl = 600 iostat = IOSTAT__4
 . ifthen (iostat__4 ne 0)
-.   ANY_NUM__4 = globals('GSOME_MESS', 'The usual sign out page was unavailable.')
-.   ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-.   EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
-.   exit program
-. endif
-. open (logout) read iostat = IOSTAT__4 lrecl = 300
-.   GOON__4 = 0
+.   ANY_NUM__4 = globals( 'GCONTINUE', '0')
+.   ANY_NUM__4 = globals( 'GSOME_MESS', 'The usual sign out page was unavailable.')
+.   ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. else
 .   LOOP
-.     read(logout, END = DONE) STR$1 (A300)
+.     read( logout, END = DONE ) STR$1 (A300)
 .     STR$1 = trimlr(STR$1)
 .     write(cgi) STR$1
 .   END LOOP
@@ -25,7 +23,7 @@ open (logout) read lrecl = 600 iostat = IOSTAT__4
 . close (logout)
 end program
 
-program
-EXECUTE DBMS "call WPF.CONNECTIONS.FULL_EXIT"
-end program
+CALL WPF.CONTROLLER.CHECK_STOP
+
+call WPF.CONNECTIONS.FULL_EXIT
 END PROCEDURE

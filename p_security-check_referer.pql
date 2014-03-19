@@ -1,15 +1,20 @@
-PROCEDURE      P_SECURITY.CHECK_REFERER:T  (157548,46321)  |Last amended Feb 19, 2014,12:52:01
+PROCEDURE      P_SECURITY.CHECK_REFERER:T  (157576,52216)  |Last amended Mar 19, 2014,14:30:16
+c check the http_referer for valid
+c this could be use the global value now
 program
+integer * 1 ANY_NUM__4
 ifthen(exists(cgivarsv('HTTP_REFERER')) eq 0)
 . | no reference
 . | this should allow someone to pass a link to a specific page.
 elseif (pattern(cgivarsv('HTTP_REFERER'), "@localhost@") eq 1)
 . | for local debuging
 
-elseifNOT (pattern(cgivarsv('HTTP_REFERER'), "@piweb.nyspi.org@") eq 1)
-. ANY_NUM__4 =  globals('GSOME_MESS', 'That form of entry is not allowed.')
-. ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+elseifNOT (pattern(cgivarsv('HTTP_REFERER'), "@<GFULL_URL>@") eq 1)
+. ANY_NUM__4 = globals( 'GCONTINUE', '0')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'That form of entry is not allowed.' )
+. ANY_NUM__4 = globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR' )
 endif
 end program
+
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

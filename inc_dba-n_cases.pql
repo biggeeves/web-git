@@ -1,4 +1,4 @@
-PROCEDURE      INC_DBA.N_CASES:T  (157548,47232)  |Last amended Feb 19, 2014,13:07:12
+PROCEDURE      INC_DBA.N_CASES:T  (157576,42583)  |Last amended Mar 19, 2014,11:49:43
 retrieval | CRWARN
 CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
@@ -69,7 +69,7 @@ c show the case id
 . VNAME$CB = stdname(KEYVNAME__4)
 . CASE_STR = varget(VNAME$CB)
 
-. LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.CASE_CONTROL&caseis=' + CASE_STR + '"'
+. LINK__4 = '"<mycgi>?member=WPF.CONTROLLER.CASE_NAV&caseis=' + CASE_STR + '"'
 . write(cgi) 6T '<td><a href=' LINK__4 '>' CASE_STR '</a></td>'
 . write(cgi) 6T '<td>' REC_CNT__4 '</td></tr>'
 end subprocedure

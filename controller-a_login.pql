@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.A_LOGIN:T  (157555,45119)  |Last amended Feb 26, 2014,12:31:59
+PROCEDURE      CONTROLLER.A_LOGIN:T  (157576,44656)  |Last amended Mar 19, 2014,12:24:16
 c What to do when user comes from the Sign in page
 c comments are inserted because blank lines do NOT let the global values get set intime for the CIFs
 

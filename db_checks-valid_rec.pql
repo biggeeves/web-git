@@ -1,4 +1,4 @@
-PROCEDURE      DB_CHECKS.VALID_REC:T  (157548,41349)  |Last amended Feb 19, 2014,11:29:09
+PROCEDURE      DB_CHECKS.VALID_REC:T  (157576,50248)  |Last amended Mar 19, 2014,13:57:28
 c check that a record type exists
 c
 program
@@ -6,25 +6,27 @@ CALL WPF.SYSTEM.DEFINE_VARS
 CALL WPF.SYSTEM.INI_VARS
 
 ifthen (REC_TYPE_NUMBER EQ 9999)
-. ANY_NUM__4 = globals('GSOME_MESS', 'Record number not specified')
-. ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+. ANY_NUM__4 = globals( 'GCONTINUE', '0')
+. ANY_NUM__4 = globals( 'GSOME_MESS', 'Record number not specified.' )
+. ANY_NUM__4 = globals( 'GMEM_REDIRECT','WPF.INC_BODY_FORMS.UNK_ERR' )
 elseif (exists(REC_TYPE_NUMBER) eq 0)
+. ANY_NUM__4 = globals( 'GCONTINUE', '0')
 . ANY_NUM__4 = globals('GSOME_MESS', 'Record number is missing')
-. ANY_NUM__4 = globals('GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+. ANY_NUM__4 = globals( 'GMEM_REDIRECT','WPF.INC_BODY_FORMS.UNK_ERR' )
 end if
 
 GOON__4 = 0 | maybe the record type got deleted and the user has old information.  doubtful, but still not nice.
 for EACH_RECORD_NUMBER = 1, nrecs(0)
 . IFNOT (LEN( RECNAME( EACH_RECORD_NUMBER)) gt 0) NEXT FOR
-. if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4 = 1
+. if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4 = 1; EXIT FOR
 end for
 ifthen (GOON__4 = 0)
+. ANY_NUM__4 = globals( 'GCONTINUE', '0')
 . ANY_NUM__4 = globals( 'GSOME_MESS', 'The table number <GDB_REC> was not found')
-. ANY_NUM__4 = globals( 'GMEM_IN', 'WPF.INC_BODY_FORMS.UNK_ERR')
-. EXECUTE DBMS 'CALL WPF.CONTROLLER.SHOW_PAGE'
+. ANY_NUM__4 = globals( 'GMEM_REDIRECT','WPF.INC_BODY_FORMS.UNK_ERR' )
 endif
 
 end program
+
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

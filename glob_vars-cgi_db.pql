@@ -1,4 +1,4 @@
-PROCEDURE      GLOB_VARS.CGI_DB:T  (157550,49602)  |Last amended Feb 21, 2014,13:46:42
+PROCEDURE      GLOB_VARS.CGI_DB:T  (157576,43466)  |Last amended Mar 19, 2014,12:04:26
 c Create global values from CGI Vars
 C Only values that can be obtained once through security
 PROGRAM

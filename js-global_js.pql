@@ -1,4 +1,4 @@
-PROCEDURE      JS.GLOBAL_JS:T  (157561,40784)  |Last amended Mar 04, 2014,11:19:44
+PROCEDURE      JS.GLOBAL_JS:T  (157576,42591)  |Last amended Mar 19, 2014,11:49:51
 program
 . open globaljs /write lrecl = 600 IOSTAT =  IOSTAT__4
 . ifNOTthen (IOSTAT__4 eq 0)
@@ -115,7 +115,7 @@ write(globaljs) '}'/
 
 
 write(globaljs) 'function caseRequired() {'
-write(globaljs) '    if (document.getElementById(''member'').value === "WPF.CONTROLLER.CASE_CONTROL") {'
+write(globaljs) '    if (document.getElementById(''member'').value === "WPF.CONTROLLER.CASE_NAV") {'
 write(globaljs) '         if (testNotBlank(caseis, "Please enter a CASE ID!") === false) {'
 write(globaljs) '             document.getElementById(''caseis'').focus();'
 write(globaljs) '             return false;'
