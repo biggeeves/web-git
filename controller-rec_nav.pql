@@ -1,4 +1,4 @@
-PROCEDURE      CONTROLLER.REC_NAV:T  (157561,55131)  |Last amended Mar 04, 2014,15:18:51
+PROCEDURE      CONTROLLER.REC_NAV:T  (157576,55781)  |Last amended Mar 19, 2014,15:29:41
 c hub for record navigation.  All trafic to and from a record should go here.
 
 CALL WPF.DB_CHECKS.VALID_REC
@@ -33,6 +33,7 @@ elseif (UPICK__4 = 'Edit')
 . EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_VIA'
 
 . EXECUTE DBMS 'CALL WPF.DB_CHECKS.VALID_REC_EXISTS'
+
 . ANY_NUM__4 =  globaln('GREC_STAT', 2)
 . ifthen (meminfo('SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)) + ':T', 1) = 1)
 .   ANY_NUM__4 =  globals('GMEM_REDIRECT', 'SIR014.H_SCREENS.' + TRIMLR(RECNAME(REC_TYPE_NUMBER)))
@@ -78,7 +79,7 @@ elseif (UPICK__4 eq 'Delete')
 
 else
 . ANY_NUM__4 =  globals( 'GSOME_MESS', 'un-specified choice:' + UPICK__4)
-. ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 =  globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
 endif
 
 GOON__4  = 0 | May the record type got deleted and the user has old information.  doubtful, but still not nice.
@@ -87,14 +88,12 @@ for EACH_RECORD_NUMBER = 1, nrecs(0)
 . if(EACH_RECORD_NUMBER eq REC_TYPE_NUMBER) GOON__4  = 1
 end for
 ifthen (GOON__4  = 0)
-. ANY_NUM__4 =  globals( 'GSOME_MESS', 'The table number <GDB_REC> was not found')
-. ANY_NUM__4 =  globals('GCONTINUE', '0')
-. ANY_NUM__4 =  globals('GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR')
+. ANY_NUM__4 =  globals( 'GSOME_MESS', 'The table number <GDB_REC> was not found' )
+. ANY_NUM__4 =  globals( 'GCONTINUE', '0' )
+. ANY_NUM__4 =  globals( 'GMEM_REDIRECT', 'WPF.INC_BODY_FORMS.UNK_ERR' )
 endif
 
 end PROGRAM
 
-CIF EQ '<GCONTINUE>', '0'
-CALL WPF.CONTROLLER.SHOW_PAGE
-CIF END
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

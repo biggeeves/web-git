@@ -1,4 +1,4 @@
-PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157561,46579)  |Last amended Mar 04, 2014,12:56:19
+PROCEDURE      P_SECURITY.PUT_SESSION_IDS:T  (157576,55630)  |Last amended Mar 19, 2014,15:27:10
 C UPDATE MANAGER WITH USER_NAME, REMOTE ADDRESS START DATE AND TIME
 
 retrieval UPDATE CRWARN
@@ -14,19 +14,17 @@ ifthen ( '<GUSER_ID>' NE '')
 .     REMOTE_ADDRESS =  cgivarsv('REMOTE_ADDRESS')
 .   end rec
 . ELSE
-.   ANY_NUM__4 = globals('GSOME_MESS', 'Sorry.  Please contact the D.C.C. Error Location: Paris')
 .   ANY_NUM__4 = globals('GCONTINUE','0') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+.   ANY_NUM__4 = globals('GSOME_MESS', 'Sorry.  Please contact the D.C.C. Error Location: Paris')
 .   ANY_NUM__4 = globals('GMEM_REDIRECT','WPF.INC_BODY_FORMS.UNK_ERR')
 . endif
 ELSE
-. ANY_NUM__4 = globals('GSOME_MESS', 'Sorry.  Please contact the D.C.C. Error Location: Madrid')
 . ANY_NUM__4 = globals('GCONTINUE','0') | NEXT MEMBER TO CALL IF SOMETHING GOES WRONG
+. ANY_NUM__4 = globals('GSOME_MESS', 'Sorry.  Please contact the D.C.C. Error Location: Madrid')
 . ANY_NUM__4 = globals('GMEM_REDIRECT','WPF.INC_BODY_FORMS.UNK_ERR')
 endif
 
 end retrieval
 
-CIF EQ '<GCONTINUE>', '0'
-CALL WPF.CONTROLLER.SHOW_PAGE
-CIF END
+CALL WPF.CONTROLLER.CHECK_STOP
 END PROCEDURE

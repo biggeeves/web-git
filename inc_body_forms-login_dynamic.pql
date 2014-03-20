@@ -1,4 +1,4 @@
-PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157576,51689)  |Last amended Mar 19, 2014,14:21:29
+PROCEDURE      INC_BODY_FORMS.LOGIN_DYNAMIC:T  (157576,56177)  |Last amended Mar 19, 2014,15:36:17
 
 
 program crwarn
@@ -31,6 +31,7 @@ open (index) read lrecl = 600 iostat = IOSTAT__4
 .   END LOOP
 .   DONE:
 . close (index)
+. endif
 
 end program
 
