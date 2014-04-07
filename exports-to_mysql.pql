@@ -1,0 +1,318 @@
+PROCEDURE      EXPORTS.TO_MYSQL:T  (157595,41337)  |Last amended Apr 07, 2014,11:28:57
+c Export Schema and Data to MySQL
+c original Code: David Daulton.  Re-coded by Greg Neils
+
+
+GLOBAL username = dcd
+GLOBAL password = dcd
+GLOBAL new = no
+
+retrieval noautocase crwarn
+string  *  300   REC_NAME__4, VNAME$, Z_SQLFN, Z_DATFN, Z_DB, Z_DATA Z_CONSTR Z_COMM
+string  *  3000   Z_LINE
+string  *  300   BASE_DIR
+string  *  250   PATH$ DIR$
+string  *  250   FILE_PATH FILE_NAME
+STRING  *  300   Z_VAR_TABLES Z_VAR_DATA
+STRING  *    6   FILE_EXT
+INTEGER *    2   EACH_CHAR
+INTEGER *    1   PASSFAIL
+real    *    8   Z_DUMMY
+integer *    1   SIR_VARTYPE
+integer *    4   EACH_RECORD_NUMBER   EACH_VARIABLE    Z_L   Z_VL   EACH_KEY
+
+integer *     2   EACH_LABEL             | cycle through value labels
+integer *     1   EACH_MISSING_VALUE     | cylce thru missing values
+integer *     1   COUNT_MISSING_VALUE    | cylce thru missing values
+integer *     4   COUNT_LABELS           | cylce thru missing values
+
+string  *   254   VAR_LABEL              | Variable Label  | bigger than normal as HTML character codes must be used (&gt; instead of>)
+string  *    32   VAR_MAX_STR            | Variable Max
+string  *    32   VAR_MIN_STR            | Variable Min
+integer *     4   VAL_LAB_POS            | Value label nth position of the for a given value
+string  *   100   VAL_LAB_VALUE          | Value Label value
+string  *   100   VALID_VALUE            | Valid value
+
+STRING  *   100  STR$1
+
+STRING  *  300   Z_KVT
+INTEGER *    4   Z_CNT  Z_CNT2
+STRING  *   32   Z_OTYPE
+STRING  *  300   Z_STC
+STRING  *  100   Z_VTERM
+INTEGER *    2   Z_INDS
+INTEGER *    4   Z_IVARS
+
+
+BASE_DIR = dsn('prefix')  +  'to_mysql\'
+PATH$ = BASE_DIR; EXECUTE SUBPROCEDURE MAKE_DIRS
+
+
+compute Z_DB          =  BASE_DIR +  trim('<DBNAME>') + "_create_db_schema.sql"
+compute Z_VAR_TABLES  =  BASE_DIR +  trim('<DBNAME>') + "_create_db_variable_tables.sql"
+compute Z_DATA        =  BASE_DIR +  trim('<DBNAME>') + "_data.pql"
+compute Z_COMM        =  BASE_DIR +  trim('<DBNAME>') + "_loadit"
+compute Z_CONSTR      =  BASE_DIR +  trim('<DBNAME>') + "_create_db_constraints.sql"
+compute Z_DUMMY       =  globals("DATAPROG",  Z_DATA)
+compute Z_DUMMY       =  globals("LOADIT",  Z_COMM)
+open f_constr / dsnvar = Z_CONSTR  /write iostat = someit
+open f_loadit / dsnvar = Z_COMM    /write
+open f_db     / dsnvar = Z_DB  /write
+open f_vars_schema   / dsnvar = Z_VAR_TABLES  /write
+open f_data   / dsnvar = Z_DATA    /write
+write (f_db) 'CREATE DATABASE <DBNAME> ;'
+write (f_db) 'USE <DBNAME> ;'
+write (f_loadit) "#!/bin/sh"
+ifthen('<NEW>' = 'no')
+.   write (f_loadit)["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'drop database <DBNAME>'"]
+endif
+.   write (f_loadit)["mysql --local-infile = 1 --password = <password> --user = <username> --execute = 'source " + Z_DB + "'"]
+.   write (f_loadit)["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'source " + Z_CONSTR + "'"]
+
+write (f_data)'retrieval'
+for EACH_RECORD_NUMBER = 1, nrecs(0)
+. compute REC_NAME__4 = trim(lower(recname(EACH_RECORD_NUMBER)))
+. ifthen(exists(REC_NAME__4))
+.   compute Z_SQLFN = BASE_DIR +  trim('<DBNAME>') + '_rec_' + REC_NAME__4 + '.sql'
+.   compute Z_DATFN = BASE_DIR +  trim('<DBNAME>') + '_rec_' + REC_NAME__4 + '.csv'
+.   compute Z_VAR_DATA = BASE_DIR +  trim('<DBNAME>') + '_rec_' + REC_NAME__4 +'_vars.sql'
+.   for EACH_KEY = 1, nkeys(EACH_RECORD_NUMBER) + dbtype(0)
+.     write (f_constr)'alter table ' REC_NAME__4
+.     compute Z_LINE = 'change' + ' ' + trim(keyname(EACH_RECORD_NUMBER, EACH_KEY)) + ' ' + trim(keyname(EACH_RECORD_NUMBER, EACH_KEY))
+.     compute SIR_VARTYPE = vtype(EACH_RECORD_NUMBER, keyname(EACH_RECORD_NUMBER, EACH_KEY))
+.     compute Z_L = len(keyname(EACH_RECORD_NUMBER, EACH_KEY))
+.     compute Z_VL = varleng(EACH_RECORD_NUMBER, keyname(EACH_RECORD_NUMBER, EACH_KEY))
+
+.     recode Z_OTYPE = SIR_VARTYPE(1 = 'VARCHAR')(2 = 'VARCHAR')(3 = 'DATE')(4 = 'TIME')(5 = 'INTEGER')
+      (6 = 'FLOAT')(7 = 'DOUBLE PRECISION')(8 = 'BIGINT')
+.     compute Z_LINE = Z_LINE + " " + Z_OTYPE
+.     ifthen(Z_OTYPE = 'VARCHAR')
+.       compute Z_LINE = Z_LINE +  '(' + format(Z_VL) + ')'
+.     endif
+.     compute Z_LINE = Z_LINE + ' NOT NULL;'
+.     write (f_constr)Z_LINE
+.   end for
+.   write (f_constr)'alter table ' REC_NAME__4
+.   compute Z_LINE = 'add constraint ' + REC_NAME__4
+.   for EACH_KEY = 1, nkeys(EACH_RECORD_NUMBER) + 1
+.     compute Z_LINE = Z_LINE + '_' + trim(keyname(EACH_RECORD_NUMBER, EACH_KEY))
+.   end for
+.   compute Z_LINE = Z_LINE + '_pk primary key ('
+.   compute Z_KVT = ''
+.   for EACH_KEY = 1, nkeys(EACH_RECORD_NUMBER) + dbtype(0)
+.     compute Z_LINE = Z_LINE + Z_KVT + trim(keyname(EACH_RECORD_NUMBER, EACH_KEY))
+.     compute Z_KVT = ', '
+.   end for
+.   compute Z_LINE = Z_LINE + ')'
+.   write (f_constr) Z_LINE ';'
+.   write (f_loadit)["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'source " + Z_SQLFN + "'"]
+
+.   open f_zsqlfn / dsnvar = Z_SQLFN/ write
+.   write (f_db) 'CREATE TABLE ' REC_NAME__4 '('
+.   compute Z_LINE = 'CREATE TABLE ' + REC_NAME__4 + '_vars ('
+.   write (f_vars_schema) Z_LINE
+.   write (f_vars_schema) 2t 'record_number    INTEGER , ' /
+                             'variable_name    VARCHAR (32), ' /
+                             'variable_label   VARCHAR (72), ' /
+                             'variable_doc     VARCHAR (72), ' /
+                             'missing_values   VARCHAR (72), ' /
+                             'variable_min     VARCHAR (100),' /
+                             'variable_max     VARCHAR (100),' /
+                             'value_labels     VARCHAR (10000),' /
+                             'valid_values     VARCHAR (10000)'
+.   write (f_vars_schema) ') ;'
+
+.   write (f_data) 'compute tab = char(9)'
+.   write (f_data) ['open f_db/dsn = "' + Z_DATFN + '"/write/lrecl = 4000']
+c   case structure database
+.   if ( dbtype(0) eq 1 ) write (f_data) 'process cases'
+
+.   write (f_data) 'process rec ' REC_NAME__4
+.   write (f_zsqlfn) "LOAD DATA LOCAL "
+.   write (f_zsqlfn) ["INFILE '" + Z_DATFN + "'"]
+.   write (f_zsqlfn) " INTO TABLE " REC_NAME__4
+.   write (f_zsqlfn) ";"
+.   open z_var_data / dsnvar = Z_VAR_DATA / write lrecl=3000
+.   for EACH_VARIABLE = 1, nvarsc(EACH_RECORD_NUMBER)
+.     ifthen( EACH_VARIABLE ne nvarsc(EACH_RECORD_NUMBER))
+.       compute Z_VTERM = ' + tab]'
+.     else
+.       compute Z_VTERM = ' + ""]'
+.     endif
+.     compute VNAME$ = lower(trim(varnamec(EACH_RECORD_NUMBER, EACH_VARIABLE)))
+.     compute SIR_VARTYPE = vtype(EACH_RECORD_NUMBER, VNAME$)
+.     compute Z_L = len(VNAME$)
+.     compute Z_VL = varleng(EACH_RECORD_NUMBER, VNAME$)
+
+.     recode Z_OTYPE = SIR_VARTYPE(1 = 'VARCHAR')(2 = 'VARCHAR')(3 = 'DATE')(4 = 'TIME')(5 = 'INTEGER')
+      (6 = 'FLOAT')(7 = 'DOUBLE PRECISION')(8 = 'BIGINT')
+.     write (f_db/noeol) '  ' VNAME$ Z_OTYPE
+.     write (f_data)'get vars ' VNAME$
+.     write (f_data)'ifthen(exists(' VNAME$ '))'
+.     ifthen(Z_OTYPE  = 'VARCHAR')
+.       write (f_data) ['write (f_db/noeol)[' + VNAME$ + Z_VTERM]
+.     elseif(Z_OTYPE = 'INTEGER' or 'FLOAT' or 'DOUBLE PRECISION' or 'BIGINT')
+.       write (f_data) ['write (f_db/noeol)[format(' + VNAME$ + ')' + Z_VTERM]
+.     else
+.       ifthen(SIR_VARTYPE = 3)
+.           write (f_data) ['write (f_db/noeol)' + "[ + datec(" + VNAME$ + ", 'yyyy-mm-dd')" + Z_VTERM]
+
+.         else
+.           write (f_data) ['write (f_db/noeol)' + "[ + timec(" + VNAME$ + ", 'hh:mm:ss')" + Z_VTERM]
+.       endif
+.     endif
+.     write (f_data)'else'
+.     write (f_data)['write (f_db/noeol)[' + '"\N"' + Z_VTERM]
+.     write (f_data)'endif'
+.     ifthen(Z_OTYPE = 'VARCHAR')
+.       write (f_db/noeol) '(' Z_VL ')'
+.     endif
+.     ifthen( EACH_VARIABLE ne nvarsc(EACH_RECORD_NUMBER))
+.       write (f_db) ', '
+.     else
+.       write (f_db) / ') ;'
+.       write (f_data) 'write (f_db)'
+.       write (f_data) 'end process rec'
+.       if ( dbtype(0) eq 1 ) write (f_data) 'end process cases'
+.       write (f_data) 'close(f_db)'
+.       close(f_zsqlfn)
+.     end if
+
+c   grab the schema defition and move it to Rec_Var Table
+.     Z_LINE = 'INSERT INTO ' + REC_NAME__4 + '_vars'
+             + ' (record_number, '
+             + 'variable_name, '
+             + 'variable_label, '
+             + 'variable_doc, '
+             + 'missing_values, '
+             + 'variable_min, '
+             + 'variable_max, '
+             + 'value_labels, '
+             + 'valid_values)'
+             + ' VALUES (' + format(EACH_RECORD_NUMBER) + ', '
+             + "'" + VNAME$ + "', "
+c     variable label
+.     Z_LINE = Z_LINE + "'"
+.     ifthen (exists(VARLABSC ( EACH_RECORD_NUMBER, VNAME$ ) ) eq 1)
+.       Z_LINE = Z_LINE  + replace( VARLABSC ( EACH_RECORD_NUMBER, VNAME$ ), "'", "\'", 0, 1, 72)
+.     endif
+.     Z_LINE = Z_LINE + "',"
+
+c     variable doc
+.     Z_LINE = Z_LINE + "'"
+.     ifthen (exists(VARDOCSN ( EACH_RECORD_NUMBER, VNAME$, 1 ) ) eq 1)
+        Z_LINE = Z_LINE + replace( VARDOCSN ( EACH_RECORD_NUMBER, VNAME$, 1 ), "'", "\'", 0, 1, 72)
+.     endif
+.     Z_LINE = Z_LINE + "',"
+
+C     MISSING VALUES
+.     Z_LINE = Z_LINE + "'"
+.     COUNT_MISSING_VALUE = 0
+.     for EACH_MISSING_VALUE = 1, 3
+.       ifthen (exists( miss(EACH_RECORD_NUMBER, VNAME$, EACH_MISSING_VALUE) ) eq 1)
+.         Z_LINE  = Z_LINE + miss(EACH_RECORD_NUMBER, VNAME$, EACH_MISSING_VALUE)
+.         if (exists( miss(EACH_RECORD_NUMBER, VNAME$, EACH_MISSING_VALUE + 1) ) eq 1) Z_LINE  = Z_LINE + "|"   | potential small bug if Miss1 and Miss3 are defined but not Miss2
+.       endif
+.     end for
+.     Z_LINE = Z_LINE + "',"
+
+C     MIN AND MAX VALUES
+.     VAR_MIN_STR = fst( smin( EACH_RECORD_NUMBER, VNAME$ ), format( nmin( EACH_RECORD_NUMBER, VNAME$ ) ) )
+.     VAR_MAX_STR = fst( smax( EACH_RECORD_NUMBER, VNAME$ ), format( nmax( EACH_RECORD_NUMBER, VNAME$ ) ) )
+.     ifthen (SIR_VARTYPE eq 3 )
+.       VAR_MIN_STR = datec(numbr(VAR_MIN_STR), 'yyyy/dd/mm')
+.       VAR_MAX_STR = datec(numbr(VAR_MAX_STR), 'yyyy/dd/mm')
+.     elseif (SIR_VARTYPE eq 4 )
+.       VAR_MIN_STR = timec(numbr(VAR_MIN_STR), 'HH:MM:SS')
+.       VAR_MAX_STR = timec(numbr(VAR_MAX_STR), 'HH:MM:SS')
+.     endif
+c        min
+.     Z_LINE = Z_LINE + "'"
+.     IF (EXISTS(VAR_MIN_STR) EQ 1) Z_LINE = Z_LINE + VAR_MIN_STR
+.     Z_LINE = Z_LINE + "',"
+c        max
+.     Z_LINE = Z_LINE + "'"
+.     IF (EXISTS(VAR_MAX_STR) EQ 1) Z_LINE = Z_LINE + VAR_MAX_STR
+.     Z_LINE = Z_LINE + "',"
+
+C     ADD VALUE LABELS
+.     Z_LINE = Z_LINE + "'"
+.     for EACH_LABEL = 1, nvallab(EACH_RECORD_NUMBER, VNAME$)
+.       STR$1 = trimlr( vallabsn( EACH_RECORD_NUMBER, VNAME$, EACH_LABEL ) )
+.       VAL_LAB_VALUE = trimlr( vallabsv( EACH_RECORD_NUMBER, VNAME$, EACH_LABEL ) )
+.       Z_LINE = Z_LINE  + VAL_LAB_VALUE + '=' + STR$1
+.       ifthen ( EACH_LABEL lt nvallab(EACH_RECORD_NUMBER, VNAME$) )
+.         Z_LINE = Z_LINE + '|'
+.       endif
+.     end for
+.     Z_LINE = Z_LINE + "',"
+
+
+C     ADD VALID VALUES
+.     Z_LINE = Z_LINE + "'"
+.     for EACH_LABEL = 1, nvalid(EACH_RECORD_NUMBER, VNAME$)
+.       VALID_VALUE = fst ( svval ( EACH_RECORD_NUMBER, VNAME$, EACH_LABEL ), format(nvval ( EACH_RECORD_NUMBER, VNAME$, EACH_LABEL ) )  )
+.       VALID_VALUE = TRIM(VALID_VALUE)
+.       Z_LINE = Z_LINE  + VALID_VALUE
+.       ifthen ( EACH_LABEL lt nvalid(EACH_RECORD_NUMBER, VNAME$) )
+.         Z_LINE = Z_LINE + '|'
+.       endif
+.     end for
+.     Z_LINE = Z_LINE + "'"
+
+.     Z_LINE = Z_LINE + ');'
+
+.     WRITE (z_var_data) Z_LINE
+
+
+
+.   end for
+.   close z_var_data
+. end if
+end for
+write (f_data)'end retrieval'
+close f_data
+close(f_vars_schema)
+close(f_db)
+close loadit
+compute Z_INDS = dbinds(0)
+for Z_CNT = 1, Z_INDS
+compute Z_IVARS = dbindv(z_cnt)
+write (f_constr/noeol)['create index ' + dbindn(z_cnt) + ' on ' + lower(recname(dbindr(z_cnt)))]
+compute Z_STC = '('
+for Z_CNT2 = 1, Z_IVARS
+write (f_constr/noeol) [Z_STC + dbindt(z_cnt, Z_CNT2)]
+compute Z_STC = ', '
+end for
+write (f_constr) ');'
+end for
+close f_constr
+
+subprocedure MAKE_DIRS
+
+PASSFAIL = -1 | DEFAULT TO NOT CREATED
+
+execute SUBROUTINE SYSPROC.TOOLS.FILENAME (PATH$) RETURNING (FILE_PATH, FILE_NAME, FILE_EXT)
+
+. for EACH_CHAR = 1, len( FILE_PATH )
+.   IF ( sbst( FILE_PATH , EACH_CHAR, 2) = ':') NEXT FOR  | EXCEPTION FOR c:\
+.   IF ( FILEIS( SBST( FILE_PATH, 1, EACH_CHAR) ) EQ -1) NEXT FOR | FOLDER ALREADY EXISTS
+.   IFTHEN ( sbst(FILE_PATH , EACH_CHAR, 1) EQ "\" )
+.     DIR$ = SBST(FILE_PATH, 1, EACH_CHAR)
+.     PASSFAIL = makedir(DIR$)
+.     IF (PASSFAIL EQ -1 ) exit subprocedure
+.   ENDIF
+. end for
+
+IF (FILEIS(FILE_PATH ) EQ -1 ) PASSFAIL = 1
+end subprocedure
+
+end retrieval
+
+include file "<DATAPROG>"
+
+c program
+c pql escape "chmod 755 <LOADIT>"
+c pql escape "<LOADIT>"
+c end program
+END PROCEDURE
