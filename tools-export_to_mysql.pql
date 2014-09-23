@@ -1,5 +1,6 @@
-PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157752,42361)  |Last amended Sep 11, 2014,11:46:01
+PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157757,54042)  |Last amended Sep 16, 2014,15:00:42
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
+
 
 PROGRAM |CREATE A GLOBAL SEED NUMBER
 T = GLOBALN ( 'CASE_SEEDER', NOW(0) )
@@ -8,7 +9,8 @@ END PROGRAM
 GLOBAL username = dcd
 GLOBAL password = dcd
 GLOBAL new = no
-GLOBAL SAMPLE_SIZE = .01  | sample data size from 0 to 1.
+global CASE_RESTRICTION = '| COUNT = 25'
+| global CASE_RESTRICTION = 'SAMPLE_SIZE = 1'
 GLOBAL G_CONTINUE = 0  | 0=Do Not Continue   1=Continue
 
 Program
@@ -17,7 +19,8 @@ write 'Your settings are' /
       5t 'SAMPLE SIZE = <SAMPLE_SIZE>'  /
       5t 'USERNAME = <USERNAME>' /
       5t 'PASSWORD = <PASSWORD>' /
-      5t 'NEW = <NEW> '
+      5t 'NEW = <NEW> ' /
+      5t 'CASE_RESTRICTION = <CASE_RESTRICTION>' /
 
 end program
 
@@ -33,7 +36,7 @@ STRING  *  300   Z_CONSTR  Z_LOADIT Z_DB_CREATE
 STRING  *  300   Z_SCHEMA_VAR  Z_SCHEMA_VAR_DATA
 STRING  *  300   Z_VALUE_LABELS  Z_VALUE_LABEL_DATA
 STRING  *  300   Z_DATA
-string  *  3000   Z_LINE
+string  *  3000  Z_LINE
 string  *  300   BASE_DIR
 string  *  250   PATH$ DIR$
 string  *  250   FILE_PATH FILE_NAME
@@ -54,10 +57,13 @@ INTEGER *    4   IO_FEEDBACK
 INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
 STRING  *  200   MYSQL_FILENAME   | JUST INCASE THE FILE NAME FOR DATA IMPORT NEEDS TO BE MANIPULATED BASED ON THE SYSTEM
 STRING  *  300   CHECK_WORD  CHECK_FILE
+STRING  *  300   CLEAN_WORD
 STRING  *  300   CSV_VALUE
 STRING  *  3000  CSV_LINE
 STRING  *    6   LINE_TERMINATOR
 INTEGER *    1   WINDOWS_MACHINE | BOOLEAN.  SET TO ONE IF YOU ARE ON A WINDOWS MACHINE.  IMPORTANT FOR FILE PATHS.
+integer *    4   STOP_REC        | What record number should this stop at.  Used for sampling and testing.
+
 LINE_TERMINATOR = '\n'
 WINDOWS_MACHINE = 1
 IFTHEN  ( WINDOWS_MACHINE EQ 1 )
@@ -65,18 +71,23 @@ IFTHEN  ( WINDOWS_MACHINE EQ 1 )
 . WRITE 'PATHS TO WINDOWS FILE WILL BE HAVE THE BACKSLASH (SQL KEYWORD) ESCAPED.  LOOK FOR DOUBLE BACKSLASHES '/
 ENDIF
 
+STOP_REC = 3  | COMMENT OUT TO RUN ALL RECORED TYPES
+
+if( exists( STOP_REC ) eq 0 )  STOP_REC =  nrecs(0)
+
+
 BASE_DIR = dsn( 'prefix' )  +  'to_mysql\'
 PATH$ = BASE_DIR; EXECUTE SUBPROCEDURE MAKE_DIRS
 
 
-compute Z_DB_CREATE   =  BASE_DIR +  trim( '<DBNAME>' ) + "_db_create.sql"
-compute Z_SCHEMA_VAR      =  BASE_DIR +  trim( '<DBNAME>' ) + "_schema_var.sql"
-compute Z_SCHEMA_VAR_DATA      =  BASE_DIR +  trim( '<DBNAME>' ) + "_data_var.csv"
-compute Z_VALUE_LABELS      =  BASE_DIR +  trim( '<DBNAME>' ) + "_schema_value_labels.sql"
-compute Z_VALUE_LABEL_DATA  =  BASE_DIR +  trim( '<DBNAME>' ) + "_data_value_label.csv"
+compute Z_DB_CREATE   =  BASE_DIR +  '01_' + trim( '<DBNAME>' ) + "_db_create.sql"
+compute Z_SCHEMA_VAR      =  BASE_DIR +  '02_' + trim( '<DBNAME>' ) + "_schema_var.sql"
+compute Z_SCHEMA_VAR_DATA      =  BASE_DIR +  '03_' + trim( '<DBNAME>' ) + "_data_var.csv"
+compute Z_VALUE_LABELS      =  BASE_DIR +  '04_' + trim( '<DBNAME>' ) + "_schema_value_labels.sql"
+compute Z_VALUE_LABEL_DATA  =  BASE_DIR +  '05_' + trim( '<DBNAME>' ) + "_data_value_label.csv"
+compute Z_CONSTR  =  BASE_DIR +  '06_' + trim( '<DBNAME>' ) + "_constr.sql"
 compute Z_DATA    =  BASE_DIR +  trim( '<DBNAME>' ) + "_data.pql"
-compute Z_LOADIT  =  BASE_DIR +  trim( '<DBNAME>' ) + "_loadit"
-compute Z_CONSTR  =  BASE_DIR +  trim( '<DBNAME>' ) + "_constr.sql"
+compute Z_LOADIT  =  BASE_DIR +  '07_' + trim( '<DBNAME>' ) + "_loadit"
 compute Z_DUMMY   =  globals( "DATAPROG",  Z_DATA )
 compute Z_DUMMY   =  globals( "LOADIT",  Z_LOADIT )
 compute Z_DUMMY   =  globalN( "G_CONTINUE",  1) | RETRIEVAL EXECUTED.
@@ -89,6 +100,13 @@ DO REPEAT EACH_FILENAME = F_CONSTR  F_LOADIT  F_DB_CREATE   F_SCHEMA_VAR  F_SCHE
 . CHECK_FILE = Z_CONSTR
 . execute subprocedure CHECK_IO
 end repeat
+
+
+WRITE ( F_SCHEMA_VAR_DATA ) '"ID,TABLE_NAME","VARIABLE_NAME","VARIABLE_LABEL","VARIABLE_DOCUMENT",'
+                            '"VARIABLE_READ_SECURITY","VARIABLE_WRITE_SECURITY",'
+                            '"VARIABLE_STATTYPE","VARIABLE_TYPE","VARIABLE_LENGTH","VARIABLE_SCALE",'
+                            '"VARIABLE_MISSING1","VARIABLE_MISSING2","VARIABLE_MISSING3",'
+                            '"VARIABLE_RANGE_MIN","VARIABLE_RANGE_MAX","VARIABLE_VALID_VALUE"'
 
 write 'Files created ' / 'f_constr: '           [ dsn( 'f_constr' ) ] /
                          'f_loadit: '           [ dsn( 'f_loadit' ) ] /
@@ -125,7 +143,7 @@ write( F_SCHEMA_VAR ) 'CREATE TABLE SCHEMA_VARIABLE (' /
                      'PRIMARY KEY (ID)' /
                      ');' /
 
-MYSQL_FILENAME = Z_SCHEMA_VAR
+MYSQL_FILENAME = Z_SCHEMA_VAR_DATA
 EXECUTE SUBPROCEDURE ESCAPE_SLASHES
 write ( f_schema_var ) 'LOAD DATA LOCAL ' /
                           ["INFILE '" + MYSQL_FILENAME  + "'" ] /
@@ -134,7 +152,7 @@ write ( f_schema_var ) 'LOAD DATA LOCAL ' /
 			  "OPTIONALLY ENCLOSED BY '""'"/
 			  "ESCAPED BY '""'"/
 			  [ "LINES TERMINATED BY '" + LINE_TERMINATOR + "'" ] /
-                          "IGNORE 0 LINES;"/
+                          "IGNORE 1 LINES;"/
 
 c value labels table
 write( f_value_labels ) 'CREATE TABLE SCHEMA_VALUE_LABELS ('
@@ -164,24 +182,30 @@ endif
 .   write( f_loadit )["mysql --local-infile = 1 --password = <password> --user = <username> --execute = 'source " + Z_DB_CREATE + "'"]
 .   write( f_loadit )["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'source " + Z_CONSTR + "'"]
 
-for EACH_REC = 1, 3| nrecs( 0 )
+for EACH_REC = 1, STOP_REC
 . compute Z_REC_NAME = trim( lower( recname( EACH_REC ) ) )
 . if( exists( Z_REC_NAME ) eq 0 ) next for
 . compute Z_SQLFN = BASE_DIR +  trim( '<DBNAME>' ) + '_rec_' + Z_REC_NAME + '.sql'
-. compute Z_DATFN = BASE_DIR +  trim( '<DBNAME>' ) + '_rec_' + Z_REC_NAME + '.csv'
+. compute Z_DATFN = BASE_DIR +  trim( '<DBNAME>' ) + '_rec_' + Z_REC_NAME + '.tab'
 . write( f_data ) // 'remark "Creating Rec# ' EACH_REC ': ' Z_REC_NAME '"'
 . write( f_data ) // 'remark "' Z_SQLFN  '"'
 . write( f_data ) // 'remark "' Z_DATFN  '"'
 . write( f_data ) // 'RETRIEVAL SEED = <CASE_SEEDER> |' EACH_REC ': ' Z_REC_NAME
 . for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
-.   write( f_constr ) // 'alter table ' Z_REC_NAME
-.   compute Z_LINE = 'change' + ' ' + trim( keyname( EACH_REC, EACH_KEY ) ) + ' ' + trim( keyname( EACH_REC, EACH_KEY ) )
+.   CHECK_WORD = Z_REC_NAME
+.   execute SUBPROCEDURE CHECK_RESERVED_WORDS
+.   write( f_constr ) // 'alter table ' CLEAN_WORD
+
+.   CHECK_WORD = trim( keyname( EACH_REC, EACH_KEY ) )
+.   execute SUBPROCEDURE CHECK_RESERVED_WORDS
+.   Z_LINE = "change " + CLEAN_WORD + " " + CLEAN_WORD
+
 .   compute Z_VTYPE = vtype( EACH_REC, keyname( EACH_REC, EACH_KEY ) )
 .   compute Z_L = len( keyname( EACH_REC, EACH_KEY ) )
 .   compute Z_VL = varleng( EACH_REC, keyname( EACH_REC, EACH_KEY ) )
 
 .   recode Z_OTYPE = Z_VTYPE( 1 = 'VARCHAR' ) ( 2 = 'VARCHAR' ) ( 3 = 'DATE' ) ( 4 = 'TIME' ) ( 5 = 'INTEGER' )
-    ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' ) ( 8 = 'BIGINT' )
+                     ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' ) ( 8 = 'BIGINT' )
 .   compute Z_LINE = Z_LINE + " " + Z_OTYPE
 .   ifthen( Z_OTYPE = 'VARCHAR' )
 .     compute Z_LINE = Z_LINE +  '( ' + format( Z_VL ) + ' )'
@@ -189,7 +213,10 @@ for EACH_REC = 1, 3| nrecs( 0 )
 .   compute Z_LINE = Z_LINE + ' NOT NULL;'
 .   write( f_constr ) Z_LINE
 . end for
-. write( f_constr ) 'alter table ' Z_REC_NAME
+. CHECK_WORD = Z_REC_NAME
+. execute SUBPROCEDURE CHECK_RESERVED_WORDS
+. write( f_constr ) // 'alter table ' CLEAN_WORD
+
 . compute Z_LINE = 'add constraint ' + Z_REC_NAME
 . for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
 .   compute Z_LINE = Z_LINE + '_' + trim( keyname( EACH_REC, EACH_KEY ) )
@@ -197,7 +224,9 @@ for EACH_REC = 1, 3| nrecs( 0 )
 . compute Z_LINE = Z_LINE + '_pk primary key ( '
 . compute Z_KVT = ''
 . for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
-.   compute Z_LINE = Z_LINE + Z_KVT + trim( keyname( EACH_REC, EACH_KEY ) )
+.   CHECK_WORD = trim( keyname( EACH_REC, EACH_KEY ) )
+.   execute SUBPROCEDURE CHECK_RESERVED_WORDS
+.   compute Z_LINE = Z_LINE + Z_KVT + CLEAN_WORD
 .   compute Z_KVT = ', '
 . end for
 . compute Z_LINE = Z_LINE + ' )'
@@ -205,33 +234,49 @@ for EACH_REC = 1, 3| nrecs( 0 )
 . write( f_loadit )["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'source " + Z_SQLFN + "'"]
 . open f_zsqlfn / dsnvar = Z_SQLFN / write
 . CHECK_WORD = Z_REC_NAME
-. EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
-. Z_LINE = 'CREATE TABLE '
-. IFTHEN ( MYSQL_RESERVED EQ 1 )
-.   Z_LINE = Z_LINE + '`' + Z_REC_NAME + '`'
-. ELSE
-.   Z_LINE = Z_LINE + Z_REC_NAME
-. ENDIF
-. Z_LINE = Z_LINE + ' ('
+. EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS  | CHECK TABLE NAME FOR RESERVERED WORDS
+. Z_LINE = 'CREATE TABLE ' + CLEAN_WORD + ' ('
 . write( f_db_create ) Z_LINE
+
 . write( f_data ) 'compute tab = char( 9 )'
 . write( f_data ) ['open f_db_create / dsn = "' + Z_DATFN + '"/write/lrecl = 4000']
-. write( f_data ) 'process cases sample = <SAMPLE_SIZE> '
+
+c include column headers
+. write( f_data/noeol) 'write( f_db_create/noeol ) '
+. for EACH_VAR = 1, nvarsc( EACH_REC )
+.   compute Z_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.   write( f_data) 5t ['"' + Z_VAR_NAME + '"' + ' tab ' ]
+. end for
+
+. write( f_data ) 'process cases <CASE_RESTRICTION> '
 . write( f_data ) 'process rec ' Z_REC_NAME
+. write( f_data ) 'get vars all'
+
+
 . write( f_zsqlfn ) "LOAD DATA LOCAL "
+
+c create the record type data file
 . MYSQL_FILENAME = Z_DATFN
 . EXECUTE SUBPROCEDURE ESCAPE_SLASHES
-. write( f_zsqlfn ) ["INFILE '" + MYSQL_FILENAME + "'"]
-. write( f_zsqlfn ) " INTO TABLE " Z_REC_NAME
-. write( f_zsqlfn ) ";"
+. write( f_zsqlfn ) ["INFILE '" + MYSQL_FILENAME + "'"] /
+                    " INTO TABLE " Z_REC_NAME /
+                    " COLUMNS TERMINATED BY '\t'" /
+                    " OPTIONALLY ENCLOSED BY '""'"/
+                    " ESCAPED BY '""'"/
+                    [ " LINES TERMINATED BY '" + LINE_TERMINATOR + "'" ] /
+                    " IGNORE 1 LINES;"/
+
+
+
+
 . for EACH_VAR = 1, nvarsc( EACH_REC )
 .   ifthen(  EACH_VAR ne nvarsc( EACH_REC ) )
+|.     compute Z_VTERM = ' + ","]'
 .     compute Z_VTERM = ' + tab]'
 .   else
 .     compute Z_VTERM = ' + ""]'
 .   endif
 .   compute Z_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
-.   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
 .   compute Z_VTYPE = vtype( EACH_REC, Z_VAR_NAME )
 .   compute Z_L = len( Z_VAR_NAME )
 .   compute Z_VL = varleng( EACH_REC, Z_VAR_NAME )
@@ -240,11 +285,7 @@ for EACH_REC = 1, 3| nrecs( 0 )
     ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' )( 8 = 'BIGINT' )
 .   CHECK_WORD = Z_VAR_NAME
 .   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
-.   IFTHEN ( MYSQL_RESERVED EQ 1 )
-.     write( f_db_create/noeol ) ['  `' + Z_VAR_NAME + '`']
-.   ELSE
-.     write( f_db_create/noeol ) Z_VAR_NAME
-.   ENDIF
+.   write( f_db_create/noeol ) CLEAN_WORD
 
 c   variable schema
 .   CSV_LINE = "0,"
@@ -328,28 +369,33 @@ C   VALUE LABELS
 
 
 .   write( f_db_create/noeol ) '  ' Z_OTYPE
-.   write( f_data )'get vars ' Z_VAR_NAME
-.   write( f_data )'ifthen( exists( ' Z_VAR_NAME ' ) )'
+.   write( f_data )'ifthen( exists( fst( ' Z_VAR_NAME ', missing(' Z_VAR_NAME ' ) ) ) )'
 .   ifthen( Z_OTYPE  = 'VARCHAR' )
-.     write( f_data )['write( f_db_create/noeol )[' + Z_VAR_NAME + Z_VTERM]
+.     write( f_data )[ 'write( f_db_create/noeol )[ fst(' + Z_VAR_NAME + ', missing(' + Z_VAR_NAME + ') )' + Z_VTERM ]
 .   elseif( Z_OTYPE = 'INTEGER' or 'FLOAT' or 'DOUBLE PRECISION' or 'BIGINT' )
-.     write( f_data )['write( f_db_create/noeol )[format( ' + Z_VAR_NAME + ' )' + Z_VTERM]
+.     write( f_data )[ 'write( f_db_create/noeol )[format( fst(' + Z_VAR_NAME + ',missing(' + Z_VAR_NAME + ' ) ) )' + Z_VTERM ]
 .   else
 .     ifthen( Z_VTYPE = 3 )
-.         write( f_data )['write( f_db_create/noeol )' + "[ + datec( " + Z_VAR_NAME + ", 'yyyy-mm-dd' )" + Z_VTERM]
-
-.       else
-.         write( f_data )['write( f_db_create/noeol )' + "[ + timec( " + Z_VAR_NAME + ", 'hh:mm:ss' )" + Z_VTERM]
-
+.       write( f_data )['write( f_db_create/noeol )' + "[ + datec( " + Z_VAR_NAME + ", 'yyyy-mm-dd' )" + Z_VTERM]
+.     else
+.       write( f_data )['write( f_db_create/noeol )' + "[ + timec( " + Z_VAR_NAME + ", 'hh:mm:ss' )" + Z_VTERM]
 .     endif
 .   endif
 .   write( f_data )'else'
-.   write( f_data )['write( f_db_create/noeol )[' + '"\N"' + Z_VTERM]
+
+
+
+
+.   write( f_data )[ 'write( f_db_create/noeol ) ["NULL" ' + Z_VTERM ]
 .   write( f_data )'endif'
+
+
+
 .   ifthen( Z_OTYPE = 'VARCHAR' )
 .     write( f_db_create/noeol ) '( ' Z_VL ' )'
 .   endif
-.   ifthen(  EACH_VAR ne nvarsc( EACH_REC ) )
+|   close the create table sql statement
+.   ifthen(  EACH_VAR lt nvarsc( EACH_REC ) )
 .     write ( f_db_create ) ', '
 .   else
 .     write( f_db_create ) / ' ) ;'
@@ -362,9 +408,9 @@ C   VALUE LABELS
 .   end if
 . end for
 c create indexes using sir's defined keys
-. write( f_db_create ) Z_LINE
-
+C . write( f_db_create ) Z_LINE
 end for
+
 close ( f_data )
 close ( f_db_create )
 close ( loadit )
@@ -408,6 +454,8 @@ SUBPROCEDURE CHECK_RESERVED_WORDS
 C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
 . MYSQL_RESERVED = 0
 . CHECK_WORD = TRIM(UPPER(CHECK_WORD))
+. CLEAN_WORD = CHECK_WORD
+
 . DO REPEAT RESERVED_WORD =
     ACCESSIBLE ADD ALL ALTER ANALYZE AND
     AS ASC ASENSITIVE BEFORE BETWEEN BIGINT
@@ -447,7 +495,10 @@ C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
     USAGE USE USING UTC_DATE UTC_TIME UTC_TIMESTAMP
     VALUES VARBINARY VARCHAR VARCHARACTER VARYING WHEN
     WHERE WHILE WITH WRITE XOR YEAR_MONTH ZEROFILL
-. IF ( CHECK_WORD EQ 'RESERVED_WORD' ) MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
+. IFTHEN ( CHECK_WORD EQ 'RESERVED_WORD' )
+.   CLEAN_WORD = "`" + CLEAN_WORD + "`"
+.   MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
+. ENDIF
 . END REPEAT
 END SUBPROCEDURE
 
@@ -461,15 +512,25 @@ END SUBPROCEDURE
 subprocedure MAKE_CSV_LINE
 C CREATE A LINE THAT CAN BE READ IN BY MYSQL
 . IF ( EXISTS( CSV_LINE ) EQ 0 ) CSV_LINE = ""
-. CSV_VALUE =  replace( CSV_VALUE, '"', '\"', 99, 2, 0 )
-. CSV_VALUE =  '"' + TRIMR( CSV_VALUE) + '",'  | ADD QOUTES AND GET RID OF TRAILING SPACES
-. IF ( EXISTS( CSV_VALUE ) EQ 0) CSV_VALUE = '"",'
+. CSV_VALUE =  replace( CSV_VALUE, '"', '""', 99, 2, 0 ) | 2 double qoutes when imported turn into 1 double qoute
+. CSV_VALUE =  replace( CSV_VALUE, "’", "'", 99, 2, 0 )  | There is an issue with the back qoutes and importing into MySQL`
+
+. IFTHEN ( EXISTS( CSV_VALUE ) EQ 0)
+.   CSV_VALUE = 'NULL,'
+. ELSEIF ( pack( trimlr( CSV_VALUE ) ) EQ '' )
+.   CSV_VALUE = 'NULL,'
+. ELSEIF ( CSV_VALUE EQ 'NULL' )
+.   CSV_VALUE = 'NULL,'
+. ELSE
+.   CSV_VALUE =  '"' + TRIMR( CSV_VALUE) + '",'       | ADD QOUTES AND GET RID OF TRAILING SPACES
+. ENDIF
+
 . CSV_LINE = CSV_LINE + CSV_VALUE
 end subprocedure
 
 SUBPROCEDURE TRIM_LAST_COMMA
 . CSV_LINE = TRIMR( CSV_LINE )
-. IF ( SUBSTR( CSV_LINE, LEN( CSV_LINE ), 1 ) EQ ',' ) CSV_LINE = SUBSTR( CSV_LINE, 1, LEN( CSV_LINE )  -1)
+C . IF ( SUBSTR( CSV_LINE, LEN( CSV_LINE ), 1 ) EQ ',' ) CSV_LINE = SUBSTR( CSV_LINE, 1, LEN( CSV_LINE )  -1)
 END SUBPROCEDURE
 
 SUBPROCEDURE ESCAPE_SLASHES
