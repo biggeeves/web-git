@@ -1,19 +1,23 @@
-PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157780,52651)  |Last amended Oct 09, 2014,14:37:31
+PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157836,44324)  |Last amended Dec 04, 2014,12:18:44
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
 
-GLOBAL username   = dcd
-GLOBAL password   = dcd
-global redcap     = yes
-GLOBAL new        = no
-GLOBAL STOP_REC   = 1 | DON'T SET THIS TO GET ALL RECORD TYPES
-global NULL_VALUE = '' | NULL
+PRINT BACK OFF
+C PRINT BACK REMARKS
+
+GLOBAL username    = dcd
+GLOBAL password    = dcd
+global redcap      = yes
+GLOBAL new         = no
+GLOBAL STOP_REC    = 3 | DON'T SET THIS TO GET ALL RECORD TYPES
+global NULL_VALUE  = '' | NULL
 global date_format = 'mm/dd/yyyy'  |  'yyyy-mm-dd'
 global time_format = 'hh:mm'    |  'hh:mm:ss'
-GLOBAL G_CONTINUE = 0  | 0=Do Not Continue   1=Continue
-global CASE_RESTRICTION = ' COUNT = 25'
+GLOBAL G_CONTINUE  = 0  | 0=Do Not Continue   1=Continue
+global CASE_RESTRICTION   = ' COUNT = 25'
 | global CASE_RESTRICTION = 'SAMPLE_SIZE = 1'
 global WINDOWS_MACHINE = 1
 global LINE_TERMINATOR = '\n'
+global TABLE_PREFIX = 'crf_'
 
 C -------------------------------------------------------------------------------------------------------------
 C -------------------------------------------------------------------------------------------------------------
@@ -33,7 +37,7 @@ program
 . integer * 1 T
 
 | set the file ending and everything else will be set.  |add new options when needed.
-. FILE_ENDING = "csv"
+. FILE_ENDING = lower( "csv" )
 .
 . IFTHEN  ( lower( FILE_ENDING ) EQ 'tab' )
 .   T = globals ( 'FILE_ENDING', 'tab' )
@@ -55,22 +59,24 @@ end program
 C -------------------------------------------------------------------------------------------------------------
 C -------------------------------------------------------------------------------------------------------------
 Program
-write 'Your settings are' /
+write 'YOUR SETTINGS ARE' /
       5t 'SEED = <CASE_SEEDER>' /
       5t 'SAMPLE SIZE = <SAMPLE_SIZE>'  /
       5t 'USERNAME = <USERNAME>' /
       5t 'PASSWORD = <PASSWORD>' /
       5t 'NEW = <NEW> ' /
       5t 'CASE_RESTRICTION = <CASE_RESTRICTION>' /
-      5t 'WINDOWS MACHINE= <WINDOWS_MACHINE>' /
-      5t 'LINE TERMINATOR= <LINE_TERMINATOR>' /
-      5t 'redcap= <redcap>' /
+      5t 'WINDOWS MACHINE  = <WINDOWS_MACHINE>' /
+      5t 'LINE TERMINATOR  = <LINE_TERMINATOR>' /
+      5T 'FILE_ENDING= <FILE_ENDING>' /
+      5T 'DELIMINATOR= <DELIMINATOR>' /
+      5T 'SQL_DELIMINATOR = <SQL_DELIMINATOR>' /
+      5T 'PQL_DELIMINATOR = <PQL_DELIMINATOR>' /
+      5t 'redcap= <redcap>' / /
 
 end program
 
 
-PRINT BACK OFF
-PRINT BACK REMARKS
 
 
 C -------------------------------------------------------------------------------------------------------------
@@ -127,8 +133,11 @@ program
 . STRING  *   32   THIS_VAR_SQL_TYPE
 . STRING  *   32   THIS_VAR_REDCAP_TYPE
 . string  *   32   THIS_VARMIN THIS_VARMAX
+. string  *   32   THIS_SIR_REC_NAME
+. string  *   32   THIS_SQL_REC_NAME
 . integer *    4   THIS_VARLENG
 . STRING  *  300   THIS_LINE
+. STRING  *  300   FEEDBACK_LINE
 . integer *    4   EACH_REC   EACH_VAR  EACH_KEY
 . INTEGER *    2   Z_INDS
 . INTEGER *    4   EACH_INDEX  EACH_INDEX_VAR
@@ -155,33 +164,33 @@ program
 . write( f_db_create ) '#################################'
 . write( f_db_create ) '## Database Settings-> dbmeta  ##' //
 . write( f_db_create ) 'CREATE TABLE db_config ('
-                       'db_name VARCHAR( 30 )  NOT NULL,'
-                       'db_label VARCHAR ( 100 ),'
-                       'db_type INTEGER ,'
-. write( f_db_create ) ')' |end db_config
+                       ' db_name VARCHAR( 30 )  NOT NULL,'
+                       ' db_label VARCHAR ( 100 ),'
+                       ' db_type INTEGER '
+. write( f_db_create ) ');' |end db_config
 
 | system config
 . write( f_db_create ) 'CREATE TABLE system_config ('
-                       'system_offline INTEGER NOT NULL,'
-                       'system_version VARCHAR ( 100 ),'
-. write( f_db_create ) ')' |end system_config
+                       ' system_offline INTEGER NOT NULL,'
+                       ' system_version VARCHAR ( 100 )'
+. write( f_db_create ) ');' |end system_config
 
 
 c??  should user informaiton be "usermeta" instead and be structured Umeta_id (key), user_id, meta_key, meta_value?????
 | user information
 . write( f_db_create ) 'CREATE TABLE user_information ('
-                       'user_id INTEGER NOT NULL,'
-                       'user_login VARCHAR ( 100 ),'
-                       'user_password VARCHAR ( 100 ),'
-                       'remember_token VARCHAR ( 100 ),'
-                       'user_email VARCHAR ( 100 ),'
-                       'user_first_name VARCHAR ( 100 ),'
-                       'user_last_name VARCHAR ( 100 ),'
-                       'user_registered DATE,'
-                       'user_status INTEGER,'
-                       'user_first_active DATE,'
-                       'user_last_active DATE,'
-. write( f_db_create ) ')' |end user information
+                       ' user_id INTEGER NOT NULL,'
+                       ' user_login VARCHAR ( 100 ),'
+                       ' user_password VARCHAR ( 100 ),'
+                       ' remember_token VARCHAR ( 100 ),'
+                       ' user_email VARCHAR ( 100 ),'
+                       ' user_first_name VARCHAR ( 100 ),'
+                       ' user_last_name VARCHAR ( 100 ),'
+                       ' user_registered DATE,'
+                       ' user_status INTEGER,'
+                       ' user_first_active DATE,'
+                       ' user_last_active DATE'
+. write( f_db_create ) ');' |end user information
 
 
 
@@ -192,23 +201,24 @@ c??  should user informaiton be "usermeta" instead and be structured Umeta_id (k
 
 
 . for EACH_REC = 1, STOP_REC
-.   compute THIS_REC_NAME = trim( lower( recname( EACH_REC ) ) )
-.   CHECK_WORD = THIS_REC_NAME
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   CHECK_WORD = THIS_SIR_REC_NAME
 .   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS  | CHECK TABLE NAME FOR RESERVERED WORDS
-.   THIS_LINE = 'CREATE TABLE ' + CLEAN_WORD + ' ('
+.   THIS_SIR_REC_NAME = CLEAN_WORD
+.   THIS_SQL_REC_NAME = sglobal('table_prefix') + THIS_SIR_REC_NAME
+.   THIS_LINE = 'CREATE TABLE ' + THIS_SQL_REC_NAME + ' ('
 .   write ( f_db_create ) THIS_LINE
 .   for EACH_VAR = 1, nvarsc( EACH_REC )
 .     compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
-
 .     CHECK_WORD = THIS_VAR_NAME
 .     EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS  | CHECK TABLE NAME FOR RESERVERED WORDS
+.     THIS_VAR_NAME = CLEAN_WORD
 .     compute THIS_VTYPE = vtype( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
 .     compute THIS_VARLENG = varleng( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
 
 .     recode THIS_VAR_SQL_TYPE = THIS_VTYPE( 1 = 'VARCHAR' ) ( 2 = 'VARCHAR' ) ( 3 = 'DATE' ) ( 4 = 'TIME' ) ( 5 = 'INTEGER' )
                      ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' ) ( 8 = 'BIGINT' )
-.     THIS_LINE = CLEAN_WORD + '  ' + THIS_VAR_SQL_TYPE
-
+.     THIS_LINE = THIS_VAR_NAME + '  ' + THIS_VAR_SQL_TYPE
 
 .     ifthen( THIS_VAR_SQL_TYPE = 'VARCHAR' )
 .       THIS_LINE = THIS_LINE  + '( ' + format( THIS_VARLENG ) + ' )'
@@ -230,7 +240,7 @@ c??  should user informaiton be "usermeta" instead and be structured Umeta_id (k
 
 
 c variable constraints
-. compute CREATE_CONSTRAINT_FILE   =  DSN('OUTPUT_DIR') +  '01_' + trim( '<DBNAME>' ) + "_db_constraints.sql"
+. compute CREATE_CONSTRAINT_FILE   =  DSN('OUTPUT_DIR') +  '02_' + trim( '<DBNAME>' ) + "_db_constraints.sql"
 . open f_constr / dsnvar = CREATE_CONSTRAINT_FILE  /write iostat = IO_FEEDBACK lrecl=3000
 . IFNOTTHEN ( IO_FEEDBACK EQ 0 )
 .   WRITE 'ERRORS WITH NECESSARY FILE: ' CREATE_CONSTRAINT_FILE ' ERROR: ' IO_FEEDBACK
@@ -243,18 +253,19 @@ c variable constraints
 . write( f_constr ) '###############################'
 . write( f_constr ) '## add primary keys          ##' /
 . for EACH_REC = 1, STOP_REC
-.   compute THIS_REC_NAME = trim( lower( recname( EACH_REC ) ) )
-.   CHECK_WORD = THIS_REC_NAME
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   CHECK_WORD = THIS_SIR_REC_NAME
 .   execute SUBPROCEDURE CHECK_RESERVED_WORDS
-.   write( f_constr ) // 'alter table ' CLEAN_WORD
+.   THIS_SQL_REC_NAME = sglobal( 'table_prefix' ) + lower( CLEAN_WORD )
+.   write( f_constr ) // 'alter table ' THIS_SQL_REC_NAME
 
-.   compute THIS_LINE = 'add constraint ' + THIS_REC_NAME
+.   compute THIS_LINE = 'add constraint ' + THIS_SQL_REC_NAME
 .   for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
-.     compute THIS_LINE = THIS_LINE + '_' + trim( keyname( EACH_REC, EACH_KEY ) )
+.     compute THIS_LINE = THIS_LINE + '_' + lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
 .   end for
 .   compute THIS_LINE = THIS_LINE + '_pk primary key ( '
 .   for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
-.     CHECK_WORD = trim( keyname( EACH_REC, EACH_KEY ) )
+.     CHECK_WORD = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
 .     execute SUBPROCEDURE CHECK_RESERVED_WORDS
 .     compute THIS_LINE = THIS_LINE + CLEAN_WORD
 .     if (EACH_KEY lt nkeys( EACH_REC ) + DBTYPE(0) ) compute THIS_LINE = THIS_LINE + ', '
@@ -267,10 +278,10 @@ c variable constraints
 
 . for EACH_INDEX = 1, Z_INDS
 .   compute MAX_INDEX_VAR = dbindv( EACH_INDEX )
-.   compute THIS_LINE = 'create index ' + dbindn( EACH_INDEX ) + ' on ' +
+.   compute THIS_LINE = 'create index ' + lower( dbindn( EACH_INDEX ) ) + ' on ' + sglobal( 'table_prefix' ) +
                         trimr( lower( recname( dbindr( EACH_INDEX ) ) ) ) + '( '
 .   for EACH_INDEX_VAR = 1, MAX_INDEX_VAR
-.     CHECK_WORD = pack( dbindt( EACH_INDEX, EACH_INDEX_VAR ) )
+.     CHECK_WORD = lower( pack( dbindt( EACH_INDEX, EACH_INDEX_VAR ) ) )
 .     EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS  | CHECK TABLE NAME FOR RESERVERED WORDS
 .     THIS_LINE = THIS_LINE + CLEAN_WORD
 .     IF (EACH_INDEX_VAR LT MAX_INDEX_VAR ) THIS_LINE = THIS_LINE + ', '
@@ -284,7 +295,7 @@ c variable constraints
 
 c   EXPORT TO REDCAP SECTION
 cif eq '<redcap>', 'yes'
-. compute REDCAP_FILE   =  DSN('OUTPUT_DIR') +  '01_' + trim( '<DBNAME>' ) + "_redcap.csv"
+. compute REDCAP_FILE   =  DSN('OUTPUT_DIR') +  '03_' + trim( '<DBNAME>' ) + "_redcap.csv"
 . open redcap / dsnvar = REDCAP_FILE /write iostat = IO_FEEDBACK lrecl=3000
 . IFNOTTHEN ( IO_FEEDBACK EQ 0 )
 .   WRITE 'ERRORS WITH NECESSARY FILE: ' REDCAP_FILE ' ERROR: ' IO_FEEDBACK
@@ -300,7 +311,8 @@ cif eq '<redcap>', 'yes'
                'Identifier?,Branching Logic'
 . write( redcap )
 . for EACH_REC = 1, STOP_REC
-.   compute THIS_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   THIS_SQL_REC_NAME = sglobal( 'TABLE_PREFIX' ) + THIS_SIR_REC_NAME
 .   for EACH_VAR = 1, nvarsc( EACH_REC )
 .     compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
 .     compute THIS_VTYPE    = vtype( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
@@ -352,7 +364,7 @@ cif eq '<redcap>', 'yes'
 
 
 .     REDCAP_CSV_LINE = THIS_VAR_NAME + ',' +
-                    THIS_REC_NAME + ',' +
+                    THIS_SQL_REC_NAME + ',' +
                     ',' +
                     THIS_FIELD_TYPE + ',' +
                     THIS_VARLAB + ',' +
@@ -369,12 +381,11 @@ cif eq '<redcap>', 'yes'
 .   end for
 . end for
 CLOSE (REDCAP)
-cif end
+cif end | end redcap cif
 
 SUBPROCEDURE CHECK_RESERVED_WORDS
 C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
 . MYSQL_RESERVED = 0
-. CHECK_WORD = trim( upper( CHECK_WORD ) )
 . CLEAN_WORD = CHECK_WORD
 . DO REPEAT RESERVED_WORD =
     ACCESSIBLE ADD ALL ALTER ANALYZE AND AS ASC ASENSITIVE
@@ -402,7 +413,7 @@ C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
     UNDO UNION UNIQUE UNLOCK UNSIGNED UPDATE USAGE USE USING UTC_DATE UTC_TIME UTC_TIMESTAMP
     VALUES VARBINARY VARCHAR VARCHARACTER VARYING WHEN
     WHERE WHILE WITH WRITE XOR YEAR_MONTH ZEROFILL
-.   IFTHEN ( CHECK_WORD EQ 'RESERVED_WORD' )
+.   IFTHEN ( trim( upper( CHECK_WORD ) ) EQ 'RESERVED_WORD' )
 .     CLEAN_WORD = "`" + CLEAN_WORD + "`"
 .     MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
 .   ENDIF
@@ -417,7 +428,7 @@ c create talbes to hold variable information that is held in SIR but is not stor
 program
 . STRING  *  300   Z_VAR_SCHEMA  Z_VAR_SCHEMA_DATA
 . STRING  *  300   Z_VALUE_LABELS  Z_VALUE_LABEL_DATA
-. string  *  300   THIS_REC_NAME   THIS_VAR_NAME
+. string  *  300   THIS_SIR_REC_NAME THIS_SQL_REC_NAME   THIS_VAR_NAME
 . integer *    1   THIS_VTYPE
 . integer *    4   EACH_REC   EACH_VAR    THIS_VARLENG   EACH_KEY
 . INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
@@ -433,10 +444,10 @@ program
 . STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
 . LINE_TERMINATOR = '<LINE_TERMINATOR>'
 
-compute Z_VAR_SCHEMA        =  DSN('OUTPUT_DIR') +  '02_' + trim( '<DBNAME>' ) + "_var_schema.sql"
-compute Z_VAR_SCHEMA_DATA   =  DSN('OUTPUT_DIR') +  '03_' + trim( '<DBNAME>' ) + "_var_schema_data.csv"
-compute Z_VALUE_LABELS      =  DSN('OUTPUT_DIR') +  '04_' + trim( '<DBNAME>' ) + "_value_label_schema.sql"
-compute Z_VALUE_LABEL_DATA  =  DSN('OUTPUT_DIR') +  '05_' + trim( '<DBNAME>' ) + "_value_label_data.csv"
+compute Z_VAR_SCHEMA        =  DSN('OUTPUT_DIR') +  '04_' + trim( '<DBNAME>' ) + "_var_schema.sql"
+compute Z_VAR_SCHEMA_DATA   =  DSN('OUTPUT_DIR') +  '05_' + trim( '<DBNAME>' ) + "_var_schema_data.csv"
+compute Z_VALUE_LABELS      =  DSN('OUTPUT_DIR') +  '06_' + trim( '<DBNAME>' ) + "_value_label_schema.sql"
+compute Z_VALUE_LABEL_DATA  =  DSN('OUTPUT_DIR') +  '07_' + trim( '<DBNAME>' ) + "_value_label_data.csv"
 
 
 DO REPEAT EACH_FILENAME = F_VAR_SCHEMA  F_VAR_SCHEMA_DATA  F_VALUE_LABELS   F_VALUE_LABEL_DATA  /
@@ -450,24 +461,24 @@ end repeat
 
 c variable details
 write( F_VAR_SCHEMA ) 'CREATE TABLE SCHEMA_VARIABLE (' /
-                     'ID int NOT NULL AUTO_INCREMENT,' /
-                     'TABLE_NAME varchar(255),' /
-                     'VARIABLE_NAME varchar(255),' /
-                     'VARIABLE_LABEL varchar(255),' /
-                     'VARIABLE_DOCUMENT varchar(255),' /
-                     'VARIABLE_READ_SECURITY varchar(255),' /
-                     'VARIABLE_WRITE_SECURITY varchar(255),' /
-                     'VARIABLE_STATTYPE varchar(255),' /
-                     'VARIABLE_TYPE varchar(255),' /
-                     'VARIABLE_LENGTH varchar(255),' /
-                     'VARIABLE_SCALE varchar(255),' /
-                     'VARIABLE_MISSING1 varchar(255),' /
-                     'VARIABLE_MISSING2 varchar(255),' /
-                     'VARIABLE_MISSING3 varchar(255),' /
-                     'VARIABLE_RANGE_MIN varchar(255),' /
-                     'VARIABLE_RANGE_MAX varchar(255),' /
-                     'VARIABLE_VALID_VALUE varchar(255),' /
-                     'PRIMARY KEY (ID)' /
+                     'id int NOT NULL AUTO_INCREMENT,' /
+                     'table_name varchar(255),' /
+                     'variable_name varchar(255),' /
+                     'variable_label varchar(255),' /
+                     'variable_document varchar(255),' /
+                     'variable_read_security varchar(255),' /
+                     'variable_write_security varchar(255),' /
+                     'variable_stattype varchar(255),' /
+                     'variable_type varchar(255),' /
+                     'variable_length varchar(255),' /
+                     'variable_scale varchar(255),' /
+                     'variable_missing1 varchar(255),' /
+                     'variable_missing2 varchar(255),' /
+                     'variable_missing3 varchar(255),' /
+                     'variable_range_min varchar(255),' /
+                     'variable_range_max varchar(255),' /
+                     'variable_valid_value varchar(255),' /
+                     'PRIMARY KEY (id)' /
                      ');' /
 
 MYSQL_FILENAME = Z_VAR_SCHEMA_DATA
@@ -483,12 +494,12 @@ write ( f_VAR_SCHEMA ) 'LOAD DATA LOCAL ' /
 
 c value labels table
 write( f_value_labels ) 'CREATE TABLE SCHEMA_VALUE_LABELS ('
-                     'ID int NOT NULL AUTO_INCREMENT,'
-                     'TABLE_NAME varchar(255),'
-                     'VARIABLE_NAME varchar(255),'
-                     'VALUE varchar(255),'
-                     'VALUE_LABEL varchar(255),'
-                     'PRIMARY KEY (ID)'
+                     'id int NOT NULL AUTO_INCREMENT,'
+                     'table_name varchar(255),'
+                     'variable_name varchar(255),'
+                     'value varchar(255),'
+                     'value_label varchar(255),'
+                     'PRIMARY KEY (id)'
                      ');'
 MYSQL_FILENAME = Z_value_label_data
 EXECUTE SUBPROCEDURE ESCAPE_SLASHES
@@ -503,11 +514,11 @@ write ( f_value_labels ) 'LOAD DATA LOCAL ' /
 
 
 
-WRITE ( F_VAR_SCHEMA_DATA ) '"ID,TABLE_NAME","VARIABLE_NAME","VARIABLE_LABEL","VARIABLE_DOCUMENT",'
-                            '"VARIABLE_READ_SECURITY","VARIABLE_WRITE_SECURITY",'
-                            '"VARIABLE_STATTYPE","VARIABLE_TYPE","VARIABLE_LENGTH","VARIABLE_SCALE",'
-                            '"VARIABLE_MISSING1","VARIABLE_MISSING2","VARIABLE_MISSING3",'
-                            '"VARIABLE_RANGE_MIN","VARIABLE_RANGE_MAX","VARIABLE_VALID_VALUE"'
+WRITE ( F_VAR_SCHEMA_DATA ) '"id,table_name","variable_name","variable_label","variable_document",'
+                            '"variable_read_security","variable_write_security",'
+                            '"variable_stattype","variable_type","variable_length","variable_scale",'
+                            '"variable_missing1","variable_missing2","variable_missing3",'
+                            '"variable_range_min","variable_range_max","variable_valid_value"'
 
 
 write 'Files created ' / 'f_VAR_SCHEMA: '       [ dsn( 'f_VAR_SCHEMA' ) ] /
@@ -516,8 +527,8 @@ write 'Files created ' / 'f_VAR_SCHEMA: '       [ dsn( 'f_VAR_SCHEMA' ) ] /
                          'f_value_label_data: ' [ dsn( 'f_value_label_data' ) ] /
 
 for EACH_REC = 1, STOP_REC
-. compute THIS_REC_NAME = trim( lower( recname( EACH_REC ) ) )
-. if( exists( THIS_REC_NAME ) eq 0 ) next for
+. compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+. if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
 . for EACH_VAR = 1, nvarsc( EACH_REC )
 .   compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
 .   compute THIS_VTYPE    = vtype( EACH_REC, THIS_VAR_NAME )
@@ -528,9 +539,10 @@ for EACH_REC = 1, STOP_REC
 
 c   variable schema
 .   CSV_LINE = "0,"
-.   CHECK_WORD = THIS_REC_NAME
+.   CHECK_WORD = THIS_SIR_REC_NAME
 .   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
-.   CSV_LINE = CSV_LINE + '"' + CLEAN_WORD + '",'  |table name
+.   THIS_SQL_REC_NAME = sglobal( 'table_prefix' ) + CLEAN_WORD
+.   CSV_LINE = CSV_LINE + '"' + THIS_SQL_REC_NAME + '",'  |table name
 
 .   CHECK_WORD = THIS_VAR_NAME
 .   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
@@ -593,6 +605,7 @@ C   - VARIABLE_RANGE_Max
 
 C  COME BACK ON WORK ON THIS.  SHOULD IT BE A COMMA SEPARATED LIST?  CHECK OUT HOW WORDPRESS AND JOOMLA HANDLE THINGS LIKE THIS
 C.   WRITE ( f_value_label_data/noeol ) VARIABLE_VALID_VALUE
+
 .   EXECUTE SUBPROCEDURE TRIM_LAST_COMMA
 .   WRITE ( f_VAR_SCHEMA_data ) CSV_LINE
 
@@ -600,8 +613,8 @@ C ------------------
 C -  VALUE LABELS  -
 .   CSV_LINE = ''
 .   for EACH_LABEL = 1, nvallab( EACH_REC,  THIS_VAR_NAME)
-.     CSV_LINE = '0,'
-.     CSV_VALUE = THIS_REC_NAME; EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+.     CSV_LINE = '0<DELIMINATOR>'
+.     CSV_VALUE = THIS_SQL_REC_NAME; EXECUTE SUBPROCEDURE MAKE_FILE_LINE
 .     CSV_VALUE = THIS_VAR_NAME; EXECUTE SUBPROCEDURE MAKE_FILE_LINE
 .     CSV_VALUE = VALLABSV ( EACH_REC, THIS_VAR_NAME, EACH_LABEL ); EXECUTE SUBPROCEDURE MAKE_FILE_LINE
 .     CSV_VALUE = VALLABSN( EACH_REC, THIS_VAR_NAME ,EACH_LABEL ) ; EXECUTE SUBPROCEDURE MAKE_FILE_LINE
@@ -660,7 +673,6 @@ END SUBPROCEDURE
 SUBPROCEDURE CHECK_RESERVED_WORDS
 C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
 . MYSQL_RESERVED = 0
-. CHECK_WORD = trim( upper( CHECK_WORD ) )
 . CLEAN_WORD = CHECK_WORD
 . DO REPEAT RESERVED_WORD =
     ACCESSIBLE ADD ALL ALTER ANALYZE AND AS ASC ASENSITIVE
@@ -688,7 +700,7 @@ C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
     UNDO UNION UNIQUE UNLOCK UNSIGNED UPDATE USAGE USE USING UTC_DATE UTC_TIME UTC_TIMESTAMP
     VALUES VARBINARY VARCHAR VARCHARACTER VARYING WHEN
     WHERE WHILE WITH WRITE XOR YEAR_MONTH ZEROFILL
-.   IFTHEN ( CHECK_WORD EQ 'RESERVED_WORD' )
+.   IFTHEN ( trim( upper( CHECK_WORD ) ) EQ 'RESERVED_WORD' )
 .     CLEAN_WORD = "`" + CLEAN_WORD + "`"
 .     MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
 .   ENDIF
@@ -699,11 +711,12 @@ end program
 
 
 C -------------------------------------------------------------------------------------------------------------
-C -------------------------------------------------------------------------------------------------------------
+C ------------------------------          EXPORT DATA          ------------------------------------------------
 
 
 program crwarn
-string  *  300   THIS_REC_NAME   THIS_VAR_NAME
+string  *   78   THIS_SIR_REC_NAME THIS_SQL_REC_NAME
+STRING  *   78   THIS_VAR_NAME
 STRING  *  300   Z_SQLFN  Z_DATFN
 STRING  *  300   Z_LOADIT
 STRING  *  300   Z_DATA
@@ -761,14 +774,15 @@ write 'Files created ' / 'f_loadit: '           [ dsn( 'f_loadit' ) ] /
 . write( f_loadit )["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'source " + DSN( 'f_constr' ) + "'"]
 
 for EACH_REC = 1, STOP_REC
-. compute THIS_REC_NAME = trim( lower( recname( EACH_REC ) ) )
-. if( exists( THIS_REC_NAME ) eq 0 ) next for
-. compute Z_SQLFN = BASE_DIR +  trim( '<DBNAME>' ) + '_rec_' + THIS_REC_NAME + '.sql'
-. compute Z_DATFN = BASE_DIR +  trim( '<DBNAME>' ) + '_rec_' + THIS_REC_NAME + '.<FILE_ENDING>'
-. write( f_data ) 'remark "Creating Rec# ' EACH_REC ': ' THIS_REC_NAME '"'
+. THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+. if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+. THIS_SQL_REC_NAME = sglobal( 'TABLE_PREFIX' ) + THIS_SIR_REC_NAME
+. compute Z_SQLFN = BASE_DIR +  THIS_SQL_REC_NAME + '.sql'
+. compute Z_DATFN = BASE_DIR +  THIS_SQL_REC_NAME + '.<FILE_ENDING>'
+. write( f_data ) 'remark "Creating Rec# ' EACH_REC ': ' THIS_SIR_REC_NAME '"'
 . write( f_data ) 'remark "' Z_SQLFN  '"'
 . write( f_data ) 'remark "' Z_DATFN  '"'
-. write( f_data ) // 'RETRIEVAL SEED = <CASE_SEEDER> |' EACH_REC ': ' THIS_REC_NAME
+. write( f_data ) // 'RETRIEVAL SEED = <CASE_SEEDER> |' EACH_REC ': ' THIS_SIR_REC_NAME
 . write( f_data ) 'string * 4094  DATA_LINE'
 . write( f_data ) 'string * 4094  DATA_VALUE'
 
@@ -779,7 +793,7 @@ for EACH_REC = 1, STOP_REC
 . EXECUTE SUBPROCEDURE ESCAPE_SLASHES
 . write( f_zsqlfn ) "LOAD DATA LOCAL "
 . write( f_zsqlfn ) ["INFILE '" + MYSQL_FILENAME + "'"] /
-                    " INTO TABLE " THIS_REC_NAME /
+                    " INTO TABLE " THIS_SQL_REC_NAME /
                     " COLUMNS TERMINATED BY '<SQL_DELIMINATOR>'" /
                     " OPTIONALLY ENCLOSED BY '""'"/
                     " ESCAPED BY '""'"/
@@ -793,6 +807,20 @@ for EACH_REC = 1, STOP_REC
 c include column headers
 . write( f_data/noeol) 'write( f_datafile) '
 . THIS_LINE = '"'
+
+c longitudinal records in redcap have a funny field called "redcap_event_name".  It is their version of a key field
+c KEY VALUES MUST BE CONVERTED TO SHIT LIKE THIS "1_arm_1" AND "2_arm_1" AND AND "1_arm_2" instead of their original values for data import!
+cif eq '<redcap>', 'yes'
+. ifthen ( nkeys ( EACH_REC) gt 0 ) | has a key field
+.   for EACH_KEY = 1, nkeys( EACH_REC )
+.     compute THIS_VAR_NAME = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
+.     THIS_LINE = THIS_LINE + THIS_VAR_NAME
+.     IF ( EACH_KEY LT nkeys( EACH_REC ) ) THIS_LINE = THIS_LINE + '_'
+.   end for
+.   THIS_LINE = THIS_LINE + 'redcap_event_name<DELIMINATOR>'
+.   write 'redcap_event_name for ' THIS_SIR_REC_NAME ' is a combination of variables: '
+. endif
+cif end
 . for EACH_VAR = 1, nvarsc( EACH_REC )
 .   compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
 .   THIS_LINE = THIS_LINE + THIS_VAR_NAME
@@ -805,7 +833,7 @@ c include column headers
 . end for
 
 . write( f_data ) 'process cases <CASE_RESTRICTION> '
-. write( f_data ) 'process rec ' THIS_REC_NAME
+. write( f_data ) 'process rec ' THIS_SIR_REC_NAME
 . write( f_data ) 'get vars all'
 . write( f_data ) 'DATA_LINE = ""'
 
@@ -851,6 +879,7 @@ c include column headers
 .     write( f_data ) 'end process cases'
 .     write( f_data ) 'close( f_datafile )'
 
+.     write( f_data ) //
 .     write( f_data ) 'SUBPROCEDURE ADD_VALUE_TO_LINE'
 .     write( f_data ) '. IFTHEN ( ( DATA_VALUE NE "" ) OR ( EXISTS( DATA_VALUE ) EQ 1 ) )'
 .     write( f_data ) '.   DATA_LINE = DATA_LINE + DATA_VALUE'
@@ -872,7 +901,6 @@ close ( loadit )
 SUBPROCEDURE CHECK_RESERVED_WORDS
 C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
 . MYSQL_RESERVED = 0
-. CHECK_WORD = trim( upper( CHECK_WORD ) )
 . CLEAN_WORD = CHECK_WORD
 . DO REPEAT RESERVED_WORD =
     ACCESSIBLE ADD ALL ALTER ANALYZE AND AS ASC ASENSITIVE
@@ -900,7 +928,7 @@ C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
     UNDO UNION UNIQUE UNLOCK UNSIGNED UPDATE USAGE USE USING UTC_DATE UTC_TIME UTC_TIMESTAMP
     VALUES VARBINARY VARCHAR VARCHARACTER VARYING WHEN
     WHERE WHILE WITH WRITE XOR YEAR_MONTH ZEROFILL
-.   IFTHEN ( CHECK_WORD EQ 'RESERVED_WORD' )
+.   IFTHEN ( trim( upper( CHECK_WORD ) ) EQ 'RESERVED_WORD' )
 .     CLEAN_WORD = "`" + CLEAN_WORD + "`"
 .     MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
 .   ENDIF
