@@ -1,4 +1,4 @@
-PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157836,44324)  |Last amended Dec 04, 2014,12:18:44
+PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157844,35628)  |Last amended Dec 12, 2014,09:53:48
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
 
 PRINT BACK OFF
@@ -8,7 +8,8 @@ GLOBAL username    = dcd
 GLOBAL password    = dcd
 global redcap      = yes
 GLOBAL new         = no
-GLOBAL STOP_REC    = 3 | DON'T SET THIS TO GET ALL RECORD TYPES
+GLOBAL STOP_REC    = 6 | DON'T SET THIS TO GET ALL RECORD TYPES
+GLOBAL laravel     = yes | add specif stuff for Laravel Framework
 global NULL_VALUE  = '' | NULL
 global date_format = 'mm/dd/yyyy'  |  'yyyy-mm-dd'
 global time_format = 'hh:mm'    |  'hh:mm:ss'
@@ -65,6 +66,7 @@ write 'YOUR SETTINGS ARE' /
       5t 'USERNAME = <USERNAME>' /
       5t 'PASSWORD = <PASSWORD>' /
       5t 'NEW = <NEW> ' /
+      5t 'Laravel= <laravel> ' /
       5t 'CASE_RESTRICTION = <CASE_RESTRICTION>' /
       5t 'WINDOWS MACHINE  = <WINDOWS_MACHINE>' /
       5t 'LINE TERMINATOR  = <LINE_TERMINATOR>' /
@@ -167,12 +169,16 @@ program
                        ' db_name VARCHAR( 30 )  NOT NULL,'
                        ' db_label VARCHAR ( 100 ),'
                        ' db_type INTEGER '
+. EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
+
 . write( f_db_create ) ');' |end db_config
 
 | system config
 . write( f_db_create ) 'CREATE TABLE system_config ('
                        ' system_offline INTEGER NOT NULL,'
                        ' system_version VARCHAR ( 100 )'
+. EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
+
 . write( f_db_create ) ');' |end system_config
 
 
@@ -190,6 +196,7 @@ c??  should user informaiton be "usermeta" instead and be structured Umeta_id (k
                        ' user_status INTEGER,'
                        ' user_first_active DATE,'
                        ' user_last_active DATE'
+. EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
 . write( f_db_create ) ');' |end user information
 
 
@@ -234,8 +241,17 @@ c??  should user informaiton be "usermeta" instead and be structured Umeta_id (k
 
 .     write ( f_db_create ) 2T THIS_LINE
 
-.     if (  EACH_VAR eq nvarsc( EACH_REC ) ) write( f_db_create ) ' ) ;'
 .   end for
+.   ifthen ( sglobal( 'laravel' ) eq 'yes' )
+.     Z_DUMMY = 1 | used as flag to catch columns that already contain laravel column names
+.     for EACH_VAR = 1, nvarsc( EACH_REC )
+.       compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.       if( THIS_VAR_NAME EQ 'created_at' or 'updated_at') Z_DUMMY = 0
+.     end for
+.     if ( Z_DUMMY EQ 1 ) EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS  | BUG: CURRENTLY ALL OR NOTHING BASED ON LOOP ABOVE, CONSIDER BREAKING OUT FOR EACH COLUMN
+.   endif
+.   write( f_db_create ) ' ) ;'
+
 . end for
 
 
@@ -420,6 +436,14 @@ C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
 . END REPEAT
 END SUBPROCEDURE
 
+SUBPROCEDURE ADD_LARAVEL_COLUMNS
+| SQL requires that the last column does not have a comma after it.  Thus these columns go at the end and assume to be the last columns
+.   ifthen ( sglobal( 'laravel' ) eq 'yes' )
+.     write( f_db_create ) ' , created_at DATE'
+                           ' , updated_at DATE'
+.   endif
+END SUBPROCEDURE
+
 end program
 
 C -------------------------------------------------------------------------------------------------------------
@@ -444,10 +468,10 @@ program
 . STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
 . LINE_TERMINATOR = '<LINE_TERMINATOR>'
 
-compute Z_VAR_SCHEMA        =  DSN('OUTPUT_DIR') +  '04_' + trim( '<DBNAME>' ) + "_var_schema.sql"
-compute Z_VAR_SCHEMA_DATA   =  DSN('OUTPUT_DIR') +  '05_' + trim( '<DBNAME>' ) + "_var_schema_data.csv"
-compute Z_VALUE_LABELS      =  DSN('OUTPUT_DIR') +  '06_' + trim( '<DBNAME>' ) + "_value_label_schema.sql"
-compute Z_VALUE_LABEL_DATA  =  DSN('OUTPUT_DIR') +  '07_' + trim( '<DBNAME>' ) + "_value_label_data.csv"
+compute Z_VAR_SCHEMA        =  DSN('OUTPUT_DIR') +  '04a_' + trim( '<DBNAME>' ) + "_var_schema.sql"
+compute Z_VAR_SCHEMA_DATA   =  DSN('OUTPUT_DIR') +  '04b_' + trim( '<DBNAME>' ) + "_var_schema_data.csv"
+compute Z_VALUE_LABELS      =  DSN('OUTPUT_DIR') +  '05a_' + trim( '<DBNAME>' ) + "_value_label_schema.sql"
+compute Z_VALUE_LABEL_DATA  =  DSN('OUTPUT_DIR') +  '05b_' + trim( '<DBNAME>' ) + "_value_label_data.csv"
 
 
 DO REPEAT EACH_FILENAME = F_VAR_SCHEMA  F_VAR_SCHEMA_DATA  F_VALUE_LABELS   F_VALUE_LABEL_DATA  /
@@ -706,6 +730,7 @@ C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
 .   ENDIF
 . END REPEAT
 END SUBPROCEDURE
+
 
 end program
 
