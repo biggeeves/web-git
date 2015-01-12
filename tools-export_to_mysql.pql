@@ -1,5 +1,8 @@
-PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157844,35628)  |Last amended Dec 12, 2014,09:53:48
+PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157871,55615)  |Last amended Jan 08, 2015,15:26:55
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
+
+C COMPILE NECESSARY TOOLS
+CALL TOOLS.CHECK_RESERVED_WORDS
 
 PRINT BACK OFF
 C PRINT BACK REMARKS
@@ -9,7 +12,7 @@ GLOBAL password    = dcd
 global redcap      = yes
 GLOBAL new         = no
 GLOBAL STOP_REC    = 6 | DON'T SET THIS TO GET ALL RECORD TYPES
-GLOBAL laravel     = yes | add specif stuff for Laravel Framework
+GLOBAL LARAVEL     = yes | add specif stuff for Laravel Framework
 global NULL_VALUE  = '' | NULL
 global date_format = 'mm/dd/yyyy'  |  'yyyy-mm-dd'
 global time_format = 'hh:mm'    |  'hh:mm:ss'
@@ -21,21 +24,16 @@ global LINE_TERMINATOR = '\n'
 global TABLE_PREFIX = 'crf_'
 
 C -------------------------------------------------------------------------------------------------------------
-C -------------------------------------------------------------------------------------------------------------
-C SET WINDOWS LINE TERMINATOR
+C ----LINE TERMINATOR and file endinds-------------------------------------------------------------------------
+C
 PROGRAM
 . integer * 1 T
+. string  * 4 FILE_ENDING  | "csv, tab"
 . T = globaln ( 'CASE_SEEDER', NOW(0) )
 . IFTHEN  ( 0<WINDOWS_MACHINE> EQ 1 )
 .   T = globals ( 'LINE_TERMINATOR', '\r\n' )  | WINDOWS END OF LINE.  change according to your system.
 .   WRITE 'PATHS TO WINDOWS FILE WILL BE HAVE THE BACKSLASH (SQL KEYWORD) ESCAPED.  LOOK FOR DOUBLE BACKSLASHES '/
 . ENDIF
-END PROGRAM
-
-c choose either tab deliminator or comma separator
-program
-. string  * 4 FILE_ENDING  | "csv, tab"
-. integer * 1 T
 
 | set the file ending and everything else will be set.  |add new options when needed.
 . FILE_ENDING = lower( "csv" )
@@ -58,7 +56,7 @@ end program
 
 
 C -------------------------------------------------------------------------------------------------------------
-C -------------------------------------------------------------------------------------------------------------
+C ---   report back settings ----------------------------------------------------------------------------------
 Program
 write 'YOUR SETTINGS ARE' /
       5t 'SEED = <CASE_SEEDER>' /
@@ -78,18 +76,16 @@ write 'YOUR SETTINGS ARE' /
 
 end program
 
-
-
-
 C -------------------------------------------------------------------------------------------------------------
-C -------------------------------------------------------------------------------------------------------------
-c create OUTPUT FOLDER
+C --- create OUTPUT FOLDER     --------------------------------------------------------------------------------
+c
 program CRWARN
 . string  *  250   OUTPUT_DIR DIR$
+. string  *  250   LARAVEL_DIR
 . string  *  250   FILE_PATH FILE_NAME
 . STRING  *    6   FILE_EXT
 . INTEGER *    2   EACH_CHAR
-. integer *    1   PASSFAIL
+. integer *    4   PASSFAIL
 . string  *  300   DBMS_LINE
 
 . OUTPUT_DIR = dsn( 'prefix' )  +  'to_mysql\'
@@ -101,7 +97,7 @@ program CRWARN
 .   IFTHEN (  sbst( FILE_PATH , EACH_CHAR, 1 ) EQ "\"  )
 .     DIR$ = SBST( FILE_PATH, 1, EACH_CHAR )
 .     PASSFAIL = makedir( DIR$ )
-.     if ( PASSFAIL  EQ 0 ) EXIT FOR
+C .     if ( PASSFAIL  EQ -1 ) EXIT FOR
 .   ENDIF
 . end for
 
@@ -114,11 +110,22 @@ C .   pql exit dbms
 . DBMS_LINE = 'set attribute output_dir = "' + OUTPUT_DIR + '"'
 . execute dbms DBMS_LINE
 
+. ifthen ( sglobal( 'LARAVEL' ) eq 'yes' )
+.   LARAVEL_DIR = OUTPUT_DIR + 'Laravel\'
+.   PASSFAIL = makedir( LARAVEL_DIR )
+.   PASSFAIL = makedir( LARAVEL_DIR + 'app\' )
+.   PASSFAIL = makedir( LARAVEL_DIR + 'app\models\' )
+.   PASSFAIL = makedir( LARAVEL_DIR + 'app\controllers\' )
+.   PASSFAIL = makedir( LARAVEL_DIR + 'app\views\' )
+C WRITE DOUBLE CHECK LATER
+C .   write / 'ERROR: FAILED TO MAKE LARAVEL DIRECTORY: ' LARAVEL_DIR PASSFAIL
+. endif
+
 end program
 
 C -------------------------------------------------------------------------------------------------------------
-C -------------------------------------------------------------------------------------------------------------
-c create database schema and keys constraints
+C ---  create database schema and keys constraints  -----------------------------------------------------------
+
 program
 . STRING  *  300   CREATE_DB_FILE
 . string  *  300   REDCAP_FILE
@@ -165,17 +172,17 @@ program
 . write( f_db_create ) 'USE <DBNAME> ;' /
 . write( f_db_create ) '#################################'
 . write( f_db_create ) '## Database Settings-> dbmeta  ##' //
-. write( f_db_create ) 'CREATE TABLE db_config ('
-                       ' db_name VARCHAR( 30 )  NOT NULL,'
-                       ' db_label VARCHAR ( 100 ),'
+. write( f_db_create ) 'CREATE TABLE db_config (' /
+                       ' db_name VARCHAR( 30 )  NOT NULL,' /
+                       ' db_label VARCHAR ( 100 ),' /
                        ' db_type INTEGER '
 . EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
 
 . write( f_db_create ) ');' |end db_config
 
 | system config
-. write( f_db_create ) 'CREATE TABLE system_config ('
-                       ' system_offline INTEGER NOT NULL,'
+. write( f_db_create ) 'CREATE TABLE system_config (' /
+                       ' system_offline INTEGER NOT NULL,' /
                        ' system_version VARCHAR ( 100 )'
 . EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
 
@@ -184,18 +191,18 @@ program
 
 c??  should user informaiton be "usermeta" instead and be structured Umeta_id (key), user_id, meta_key, meta_value?????
 | user information
-. write( f_db_create ) 'CREATE TABLE user_information ('
-                       ' user_id INTEGER NOT NULL,'
-                       ' user_login VARCHAR ( 100 ),'
-                       ' user_password VARCHAR ( 100 ),'
-                       ' remember_token VARCHAR ( 100 ),'
-                       ' user_email VARCHAR ( 100 ),'
-                       ' user_first_name VARCHAR ( 100 ),'
-                       ' user_last_name VARCHAR ( 100 ),'
-                       ' user_registered DATE,'
-                       ' user_status INTEGER,'
-                       ' user_first_active DATE,'
-                       ' user_last_active DATE'
+. write( f_db_create ) 'CREATE TABLE user_information (' /
+                       ' user_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                       ' user_login VARCHAR ( 64 ),' /
+                       ' user_password VARCHAR ( 64 ),' /
+                       ' remember_token VARCHAR ( 100 ),' /
+                       ' user_email VARCHAR ( 100 ),' /
+                       ' user_first_name VARCHAR ( 100 ),' /
+                       ' user_last_name VARCHAR ( 100 ),' /
+                       ' user_registered DATE,' /
+                       ' user_status INTEGER,' /
+                       ' user_first_active DATE,' /
+                       ' user_last_active DATE' /
 . EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
 . write( f_db_create ) ');' |end user information
 
@@ -209,16 +216,14 @@ c??  should user informaiton be "usermeta" instead and be structured Umeta_id (k
 
 . for EACH_REC = 1, STOP_REC
 .   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
-.   CHECK_WORD = THIS_SIR_REC_NAME
-.   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS  | CHECK TABLE NAME FOR RESERVERED WORDS
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .   THIS_SIR_REC_NAME = CLEAN_WORD
 .   THIS_SQL_REC_NAME = sglobal('table_prefix') + THIS_SIR_REC_NAME
 .   THIS_LINE = 'CREATE TABLE ' + THIS_SQL_REC_NAME + ' ('
 .   write ( f_db_create ) THIS_LINE
 .   for EACH_VAR = 1, nvarsc( EACH_REC )
 .     compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
-.     CHECK_WORD = THIS_VAR_NAME
-.     EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS  | CHECK TABLE NAME FOR RESERVERED WORDS
+.     EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_VAR_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .     THIS_VAR_NAME = CLEAN_WORD
 .     compute THIS_VTYPE = vtype( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
 .     compute THIS_VARLENG = varleng( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
@@ -242,7 +247,7 @@ c??  should user informaiton be "usermeta" instead and be structured Umeta_id (k
 .     write ( f_db_create ) 2T THIS_LINE
 
 .   end for
-.   ifthen ( sglobal( 'laravel' ) eq 'yes' )
+.   ifthen ( sglobal( 'LARAVEL' ) eq 'yes' )
 .     Z_DUMMY = 1 | used as flag to catch columns that already contain laravel column names
 .     for EACH_VAR = 1, nvarsc( EACH_REC )
 .       compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
@@ -263,15 +268,14 @@ c variable constraints
 .   Z_DUMMY = globals( "G_CONTINUE",  '0')
 .   EXIT PROGRAM
 . ELSE
-.   WRITE 'Awesome: made f_constr file : '  CREATE_CONSTRAINT_FILE /
+.   WRITE 'Awesome: made f_constr file : '  CREATE_CONSTRAINT_FILE
 . ENDIF
 
 . write( f_constr ) '###############################'
 . write( f_constr ) '## add primary keys          ##' /
 . for EACH_REC = 1, STOP_REC
 .   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
-.   CHECK_WORD = THIS_SIR_REC_NAME
-.   execute SUBPROCEDURE CHECK_RESERVED_WORDS
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .   THIS_SQL_REC_NAME = sglobal( 'table_prefix' ) + lower( CLEAN_WORD )
 .   write( f_constr ) // 'alter table ' THIS_SQL_REC_NAME
 
@@ -282,7 +286,7 @@ c variable constraints
 .   compute THIS_LINE = THIS_LINE + '_pk primary key ( '
 .   for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
 .     CHECK_WORD = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
-.     execute SUBPROCEDURE CHECK_RESERVED_WORDS
+.     EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (CHECK_WORD) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .     compute THIS_LINE = THIS_LINE + CLEAN_WORD
 .     if (EACH_KEY lt nkeys( EACH_REC ) + DBTYPE(0) ) compute THIS_LINE = THIS_LINE + ', '
 .   end for
@@ -298,7 +302,7 @@ c variable constraints
                         trimr( lower( recname( dbindr( EACH_INDEX ) ) ) ) + '( '
 .   for EACH_INDEX_VAR = 1, MAX_INDEX_VAR
 .     CHECK_WORD = lower( pack( dbindt( EACH_INDEX, EACH_INDEX_VAR ) ) )
-.     EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS  | CHECK TABLE NAME FOR RESERVERED WORDS
+.     EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (CHECK_WORD) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .     THIS_LINE = THIS_LINE + CLEAN_WORD
 .     IF (EACH_INDEX_VAR LT MAX_INDEX_VAR ) THIS_LINE = THIS_LINE + ', '
 .   end for
@@ -399,42 +403,6 @@ cif eq '<redcap>', 'yes'
 CLOSE (REDCAP)
 cif end | end redcap cif
 
-SUBPROCEDURE CHECK_RESERVED_WORDS
-C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
-. MYSQL_RESERVED = 0
-. CLEAN_WORD = CHECK_WORD
-. DO REPEAT RESERVED_WORD =
-    ACCESSIBLE ADD ALL ALTER ANALYZE AND AS ASC ASENSITIVE
-    BEFORE BETWEEN BIGINT BINARY BLOB BOTH BY
-    CALL CASCADE CASE CHANGE CHAR CHARACTER CHECK COLLATE COLUMN CONDITION CONSTRAINT CONTINUE CONVERT CREATE
-    CROSS CURRENT_DATE CURRENT_TIME CURRENT_TIMESTAMP CURRENT_USER CURSOR
-    DATABASE DATABASES DAY_HOUR DAY_MICROSECOND DAY_MINUTE DAY_SECOND DEC DECIMAL DECLARE DEFAULT DELAYED DELETE
-    DESC DESCRIBE DETERMINISTIC DISTINCT DISTINCTROW DIV DOUBLE DROP DUAL
-    EACH ELSE ELSEIF ENCLOSED ESCAPED EXISTS EXIT EXPLAIN
-    FALSE FETCH FLOAT FLOAT4 FLOAT8 FOR FORCE FOREIGN FROM FULLTEXT
-    GRANT GROUP HAVING HIGH_PRIORITY HOUR_MICROSECOND HOUR_MINUTE HOUR_SECOND
-    IF IGNORE IN INDEX INFILE INNER INOUT INSENSITIVE INSERT INT INT1 INT2 INT3 INT4 INT8 INTEGER INTERVAL INTO IS ITERATE
-    JOIN KEY KEYS KILL LEADING LEAVE LEFT LIKE LIMIT LINEAR LINES LOAD LOCALTIME
-    LOCALTIMESTAMP LOCK LONG LONGBLOB LONGTEXT LOOP LOW_PRIORITY
-    MASTER_SSL_VERIFY_SERVER_CERT MATCH MAXVALUE MEDIUMBLOB MEDIUMINT MEDIUMTEXT MIDDLEINT
-    MINUTE_MICROSECOND MINUTE_SECOND MOD MODIFIES
-    NATURAL NOT NO_WRITE_TO_BINLOG NULL NUMERIC ON OPTIMIZE OPTION OPTIONALLY OR ORDER OUT OUTER OUTFILE
-    PRECISION PRIMARY PROCEDURE PURGE
-    RANGE READ READS READ_WRITE REAL REFERENCES REGEXP RELEASE RENAME REPEAT
-    REPLACE REQUIRE RESIGNAL RESTRICT RETURN REVOKE RIGHT RLIKE
-    SCHEMA SCHEMAS SECOND_MICROSECOND SELECT SENSITIVE SEPARATOR SET SHOW
-    SIGNAL SMALLINT SPATIAL SPECIFIC SQL SQLEXCEPTION SQLSTATE SQLWARNING
-    SQL_BIG_RESULT SQL_CALC_FOUND_ROWS SQL_SMALL_RESULT SSL STARTING STRAIGHT_JOIN
-    TABLE TERMINATED THEN TINYBLOB TINYINT TINYTEXT $TO$ TRAILING TRIGGER TRUE
-    UNDO UNION UNIQUE UNLOCK UNSIGNED UPDATE USAGE USE USING UTC_DATE UTC_TIME UTC_TIMESTAMP
-    VALUES VARBINARY VARCHAR VARCHARACTER VARYING WHEN
-    WHERE WHILE WITH WRITE XOR YEAR_MONTH ZEROFILL
-.   IFTHEN ( trim( upper( CHECK_WORD ) ) EQ 'RESERVED_WORD' )
-.     CLEAN_WORD = "`" + CLEAN_WORD + "`"
-.     MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
-.   ENDIF
-. END REPEAT
-END SUBPROCEDURE
 
 SUBPROCEDURE ADD_LARAVEL_COLUMNS
 | SQL requires that the last column does not have a comma after it.  Thus these columns go at the end and assume to be the last columns
@@ -563,13 +531,11 @@ for EACH_REC = 1, STOP_REC
 
 c   variable schema
 .   CSV_LINE = "0,"
-.   CHECK_WORD = THIS_SIR_REC_NAME
-.   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .   THIS_SQL_REC_NAME = sglobal( 'table_prefix' ) + CLEAN_WORD
 .   CSV_LINE = CSV_LINE + '"' + THIS_SQL_REC_NAME + '",'  |table name
 
-.   CHECK_WORD = THIS_VAR_NAME
-.   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_VAR_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .   CSV_LINE = CSV_LINE + '"' + CLEAN_WORD + '",'  | variable name
 
 C   - VARIABLE LABEL
@@ -692,45 +658,6 @@ c for windows the "\" in the file path must be escaped as it is a SQL reserved k
 . IFNOT ( 0<WINDOWS_MACHINE> EQ 1 ) EXIT SUBPROCEDURE
 . MYSQL_FILENAME = replace( MYSQL_FILENAME , '\', '\\', 99, 2, 0 )
 END SUBPROCEDURE
-
-
-SUBPROCEDURE CHECK_RESERVED_WORDS
-C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
-. MYSQL_RESERVED = 0
-. CLEAN_WORD = CHECK_WORD
-. DO REPEAT RESERVED_WORD =
-    ACCESSIBLE ADD ALL ALTER ANALYZE AND AS ASC ASENSITIVE
-    BEFORE BETWEEN BIGINT BINARY BLOB BOTH BY
-    CALL CASCADE CASE CHANGE CHAR CHARACTER CHECK COLLATE COLUMN CONDITION CONSTRAINT CONTINUE CONVERT CREATE
-    CROSS CURRENT_DATE CURRENT_TIME CURRENT_TIMESTAMP CURRENT_USER CURSOR
-    DATABASE DATABASES DAY_HOUR DAY_MICROSECOND DAY_MINUTE DAY_SECOND DEC DECIMAL DECLARE DEFAULT DELAYED DELETE
-    DESC DESCRIBE DETERMINISTIC DISTINCT DISTINCTROW DIV DOUBLE DROP DUAL
-    EACH ELSE ELSEIF ENCLOSED ESCAPED EXISTS EXIT EXPLAIN
-    FALSE FETCH FLOAT FLOAT4 FLOAT8 FOR FORCE FOREIGN FROM FULLTEXT
-    GRANT GROUP HAVING HIGH_PRIORITY HOUR_MICROSECOND HOUR_MINUTE HOUR_SECOND
-    IF IGNORE IN INDEX INFILE INNER INOUT INSENSITIVE INSERT INT INT1 INT2 INT3 INT4 INT8 INTEGER INTERVAL INTO IS ITERATE
-    JOIN KEY KEYS KILL LEADING LEAVE LEFT LIKE LIMIT LINEAR LINES LOAD LOCALTIME
-    LOCALTIMESTAMP LOCK LONG LONGBLOB LONGTEXT LOOP LOW_PRIORITY
-    MASTER_SSL_VERIFY_SERVER_CERT MATCH MAXVALUE MEDIUMBLOB MEDIUMINT MEDIUMTEXT MIDDLEINT
-    MINUTE_MICROSECOND MINUTE_SECOND MOD MODIFIES
-    NATURAL NOT NO_WRITE_TO_BINLOG NULL NUMERIC ON OPTIMIZE OPTION OPTIONALLY OR ORDER OUT OUTER OUTFILE
-    PRECISION PRIMARY PROCEDURE PURGE
-    RANGE READ READS READ_WRITE REAL REFERENCES REGEXP RELEASE RENAME REPEAT
-    REPLACE REQUIRE RESIGNAL RESTRICT RETURN REVOKE RIGHT RLIKE
-    SCHEMA SCHEMAS SECOND_MICROSECOND SELECT SENSITIVE SEPARATOR SET SHOW
-    SIGNAL SMALLINT SPATIAL SPECIFIC SQL SQLEXCEPTION SQLSTATE SQLWARNING
-    SQL_BIG_RESULT SQL_CALC_FOUND_ROWS SQL_SMALL_RESULT SSL STARTING STRAIGHT_JOIN
-    TABLE TERMINATED THEN TINYBLOB TINYINT TINYTEXT $TO$ TRAILING TRIGGER TRUE
-    UNDO UNION UNIQUE UNLOCK UNSIGNED UPDATE USAGE USE USING UTC_DATE UTC_TIME UTC_TIMESTAMP
-    VALUES VARBINARY VARCHAR VARCHARACTER VARYING WHEN
-    WHERE WHILE WITH WRITE XOR YEAR_MONTH ZEROFILL
-.   IFTHEN ( trim( upper( CHECK_WORD ) ) EQ 'RESERVED_WORD' )
-.     CLEAN_WORD = "`" + CLEAN_WORD + "`"
-.     MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
-.   ENDIF
-. END REPEAT
-END SUBPROCEDURE
-
 
 end program
 
@@ -874,8 +801,7 @@ cif end
 
 .   recode THIS_VAR_SQL_TYPE = THIS_VTYPE( 1 = 'VARCHAR' )( 2 = 'VARCHAR' )( 3 = 'DATE' )( 4 = 'TIME' )( 5 = 'INTEGER' )
     ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' )( 8 = 'BIGINT' )
-.   CHECK_WORD = THIS_VAR_NAME
-.   EXECUTE SUBPROCEDURE CHECK_RESERVED_WORDS
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_VAR_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .   write( f_datafile/noeol ) CLEAN_WORD
 
 .   THIS_LINE = ''
@@ -922,43 +848,6 @@ end for
 
 close ( f_data )
 close ( loadit )
-
-SUBPROCEDURE CHECK_RESERVED_WORDS
-C CHECK TO SEE IF A VARIABLE IS A RESERVED WORD IN MYSQL
-. MYSQL_RESERVED = 0
-. CLEAN_WORD = CHECK_WORD
-. DO REPEAT RESERVED_WORD =
-    ACCESSIBLE ADD ALL ALTER ANALYZE AND AS ASC ASENSITIVE
-    BEFORE BETWEEN BIGINT BINARY BLOB BOTH BY
-    CALL CASCADE CASE CHANGE CHAR CHARACTER CHECK COLLATE COLUMN CONDITION CONSTRAINT CONTINUE CONVERT CREATE
-    CROSS CURRENT_DATE CURRENT_TIME CURRENT_TIMESTAMP CURRENT_USER CURSOR
-    DATABASE DATABASES DAY_HOUR DAY_MICROSECOND DAY_MINUTE DAY_SECOND DEC DECIMAL DECLARE DEFAULT DELAYED DELETE
-    DESC DESCRIBE DETERMINISTIC DISTINCT DISTINCTROW DIV DOUBLE DROP DUAL
-    EACH ELSE ELSEIF ENCLOSED ESCAPED EXISTS EXIT EXPLAIN
-    FALSE FETCH FLOAT FLOAT4 FLOAT8 FOR FORCE FOREIGN FROM FULLTEXT
-    GRANT GROUP HAVING HIGH_PRIORITY HOUR_MICROSECOND HOUR_MINUTE HOUR_SECOND
-    IF IGNORE IN INDEX INFILE INNER INOUT INSENSITIVE INSERT INT INT1 INT2 INT3 INT4 INT8 INTEGER INTERVAL INTO IS ITERATE
-    JOIN KEY KEYS KILL LEADING LEAVE LEFT LIKE LIMIT LINEAR LINES LOAD LOCALTIME
-    LOCALTIMESTAMP LOCK LONG LONGBLOB LONGTEXT LOOP LOW_PRIORITY
-    MASTER_SSL_VERIFY_SERVER_CERT MATCH MAXVALUE MEDIUMBLOB MEDIUMINT MEDIUMTEXT MIDDLEINT
-    MINUTE_MICROSECOND MINUTE_SECOND MOD MODIFIES
-    NATURAL NOT NO_WRITE_TO_BINLOG NULL NUMERIC ON OPTIMIZE OPTION OPTIONALLY OR ORDER OUT OUTER OUTFILE
-    PRECISION PRIMARY PROCEDURE PURGE
-    RANGE READ READS READ_WRITE REAL REFERENCES REGEXP RELEASE RENAME REPEAT
-    REPLACE REQUIRE RESIGNAL RESTRICT RETURN REVOKE RIGHT RLIKE
-    SCHEMA SCHEMAS SECOND_MICROSECOND SELECT SENSITIVE SEPARATOR SET SHOW
-    SIGNAL SMALLINT SPATIAL SPECIFIC SQL SQLEXCEPTION SQLSTATE SQLWARNING
-    SQL_BIG_RESULT SQL_CALC_FOUND_ROWS SQL_SMALL_RESULT SSL STARTING STRAIGHT_JOIN
-    TABLE TERMINATED THEN TINYBLOB TINYINT TINYTEXT $TO$ TRAILING TRIGGER TRUE
-    UNDO UNION UNIQUE UNLOCK UNSIGNED UPDATE USAGE USE USING UTC_DATE UTC_TIME UTC_TIMESTAMP
-    VALUES VARBINARY VARCHAR VARCHARACTER VARYING WHEN
-    WHERE WHILE WITH WRITE XOR YEAR_MONTH ZEROFILL
-.   IFTHEN ( trim( upper( CHECK_WORD ) ) EQ 'RESERVED_WORD' )
-.     CLEAN_WORD = "`" + CLEAN_WORD + "`"
-.     MYSQL_RESERVED = 1; write // 'WARNING!!! mysql reserved word in schema: RESERVED_WORD' //; EXIT SUBPROCEDURE
-.   ENDIF
-. END REPEAT
-END SUBPROCEDURE
 
 SUBPROCEDURE CHECK_IO
 . IFNOTTHEN ( IO_FEEDBACK EQ 0 )
@@ -1011,4 +900,70 @@ pql escape "chmod 755 <LOADIT>"
 pql escape "<LOADIT>"
 end program
 CIF END
+
+
+c create laravel files
+program
+. string  *  250   LARAVEL_DIR
+. string  *  250   LARAVEL_APP_DIR
+. string  *  250   LARAVEL_MODELS_DIR
+. string  *  250   LARAVEL_CONTROLLERS_DIR
+. string  *  250   LARAVEL_VIEWS_DIR
+. string  *  250   FILE_PATH FILE_NAME
+. STRING  *    6   FILE_EXT
+. STRING  *  250   EACH_PATH
+. INTEGER *    2   EACH_CHAR
+. integer *    4   PASSFAIL
+. string  *  300   DBMS_LINE
+. INTEGER *    4   STOP_REC
+. STRING  *  300   CHECK_WORD
+. STRING  *  300   CLEAN_WORD
+. INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
+. integer *    4   IO_FEEDBACK
+
+. ifNOT ( sglobal( 'LARAVEL' ) eq 'yes' ) exit program
+
+. LARAVEL_APP_DIR = dsn( 'prefix' )  +  'to_mysql\Laravel\app\'
+. LARAVEL_MODELS_DIR = LARAVEL_APP_DIR + 'models\'
+. LARAVEL_CONOTROLLERS_DIR = LARAVEL_APP_DIR + 'controllers\'
+. LARAVEL_VIEWS_DIR = LARAVEL_APP_DIR + 'views\'
+
+. STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
+. for EACH_REC = 1, STOP_REC
+.   if( exists( RECNAME( EACH_REC ) ) eq 0 ) next for
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   THIS_SIR_REC_NAME = CLEAN_WORD
+.   THIS_SQL_REC_NAME = sglobal('table_prefix') + THIS_SIR_REC_NAME
+.   EACH_PATH  = LARAVEL_MODELS_DIR + capital(THIS_SQL_REC_NAME ) + '.php'
+.   open EACH_FILENAME / dsnvar = EACH_PATH  /write iostat = IO_FEEDBACK lrecl=3000
+.     if ( IO_FEEDBACK <> 0 ) write 'Failed to open ' EACH_PATH LARAVEL_MODELS_DIR
+.     write (EACH_FILENAME) '<?php'
+.     write (EACH_FILENAME) ['class ' + capital(THIS_SQL_REC_NAME) + ' extends Eloquent {']
+.     write (EACH_FILENAME) ["protected $table = '" + THIS_SQL_REC_NAME + "';"]
+.     ifthen ( dbtype(0) eq 1 )
+.       write (EACH_FILENAME) ["protected $primaryKey = '" + lower( varname(0,1 ) )+ "';"]
+.     endif
+.     write (EACH_FILENAME) '}'
+.     write (EACH_FILENAME) '?>'
+.   close (EACH_FILENAME)
+. end for
+. FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_variable' + '.php'
+. open sch_var / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (sch_var) '<?php'
+.   write (sch_var) 'class Schema_variable  extends Eloquent {'
+.   write (sch_var) "protected $table = 'Schema_variable';"
+.   write (sch_var) '}'
+.   write (sch_var) '?>'
+. close sch_var
+
+. FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_value_labels' + '.php'
+. open val_labs / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (val_labs) '<?php'
+.   write (val_labs) 'class Schema_value_labels extends Eloquent {'
+.   write (val_labs) "protected $table = 'schema_value_labels';"
+.   write (val_labs) '}'
+.   write (val_labs) '?>'
+. close val_labs
+end program
 END PROCEDURE

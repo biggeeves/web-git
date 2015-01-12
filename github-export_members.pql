@@ -1,4 +1,4 @@
-PROCEDURE      GITHUB.EXPORT_MEMBERS:T  (157695,36771)  |Last amended Jul 16, 2014,10:12:51
+PROCEDURE      GITHUB.EXPORT_MEMBERS:T  (157875,46899)  |Last amended Jan 12, 2015,13:01:39
 C EXPORTS ALL MEMBERS TO A SUBFOLDER
 C EACH FILE IS NAMED "SYSTEM-MEMBER.PQL" AND IS PWRITTEN FOR EASY IMPORT BACK IN
 
@@ -16,6 +16,7 @@ integer *     4   MEM#C         | number of members in proc file
 string  *    45   MEMBER_NAME   | Member names
 string  *  2000   EACH_LINE    | The current line read in the text file
 integer *     2   RESVAR        | RESPONSE VARIABLE
+string  *   300   DBMS_STR
 
 
 c try the procfile folder as a default.
@@ -73,5 +74,12 @@ close (tmp)
 
 END_README:
 
+IFTHEN ( LEN(DBNAME(0) ) GT 0 )
+. DBMS_STR = ' WRITE SCHEMA FILENAME = "' + OUTPUT_FOLDER + DBNAME(0) + '.sch" /' +
+           'PASSWORD / SECURITY / CIR / STANDARD / DBDEF / RECTYPES=ALL / NOTO/'
+
+. EXECUTE DBMS DBMS_STR
+. WRITE 'SCHEMA WRITTEN TO ' DBMS_STR
+ENDIF
 end program
 END PROCEDURE
