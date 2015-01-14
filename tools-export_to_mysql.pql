@@ -1,4 +1,4 @@
-PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157876,42835)  |Last amended Jan 13, 2015,11:53:55
+PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157877,41740)  |Last amended Jan 14, 2015,11:35:40
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
 
 C COMPILE NECESSARY TOOLS
@@ -1061,12 +1061,16 @@ program
 .   close (EACH_FILENAME)
 . end for
 . FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_variable' + '.php'
+write FILE_PATH
 . open sch_var / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
-.   write (sch_var) '<?php'
-.   write (sch_var) 'class Schema_variable  extends Eloquent {'
-.   write (sch_var) "protected $table = 'Schema_variable';"
-.   write (sch_var) '}'
-.   write (sch_var) '?>'
+.   write (sch_var) '<?php' /
+                    'class Schema_variable  extends Eloquent {' /
+                    5t "protected $table = 'Schema_variable';" /
+                    5t "protected $guarded = array('_token');" /
+                    5t "protected $primaryKey = 'id';"/
+                    5t "public $timestamps = false;"/
+                    '}'/
+                    '?>'
 . close sch_var
 
 . FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_table' + '.php'
