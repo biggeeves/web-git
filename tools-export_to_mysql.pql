@@ -1,4 +1,4 @@
-PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157877,41740)  |Last amended Jan 14, 2015,11:35:40
+PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157877,61851)  |Last amended Jan 14, 2015,17:10:51
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
 
 C COMPILE NECESSARY TOOLS
@@ -173,9 +173,11 @@ program
 . write( f_db_create ) '#################################'
 . write( f_db_create ) '## Database Settings-> dbmeta  ##' //
 . write( f_db_create ) 'CREATE TABLE db_config (' /
+                       ' id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
                        ' db_name VARCHAR( 30 )  NOT NULL,' /
                        ' db_label VARCHAR ( 100 ),' /
-                       ' db_type INTEGER '
+                       ' db_type INTEGER, '/
+                       ' db_caseid VARCHAR (100)'
 . EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
 . write( f_db_create ) ');' |end db_config
 
@@ -423,6 +425,7 @@ C ------------------------------------------------------------------------------
 C -------------------------------------------------------------------------------------------------------------
 c create talbes to hold SIR schema information that is not stored in MySQL
 program
+. STRING  *  300   DB_SCHEMA  DB_SCHEMA_DATA
 . STRING  *  300   Z_TABLE_SCHEMA  Z_TABLE_SCHEMA_DATA
 . STRING  *  300   Z_VAR_SCHEMA    Z_VAR_SCHEMA_DATA
 . STRING  *  300   Z_VALUE_LABELS  Z_VALUE_LABEL_DATA
@@ -442,6 +445,8 @@ program
 . STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
 . LINE_TERMINATOR = '<LINE_TERMINATOR>'
 
+compute DB_SCHEMA      =  DSN('OUTPUT_DIR') +  '03a_' + trim( '<DBNAME>' ) + "_db_schema.sql"
+compute DB_SCHEMA_DATA =  DSN('OUTPUT_DIR') +  '03b_' + trim( '<DBNAME>' ) + "_db_schema_data.csv"
 compute Z_TABLE_SCHEMA      =  DSN('OUTPUT_DIR') +  '04a_' + trim( '<DBNAME>' ) + "_table_schema.sql"
 compute Z_TABLE_SCHEMA_DATA =  DSN('OUTPUT_DIR') +  '04b_' + trim( '<DBNAME>' ) + "_table_schema_data.csv"
 compute Z_VAR_SCHEMA        =  DSN('OUTPUT_DIR') +  '04c_' + trim( '<DBNAME>' ) + "_var_schema.sql"
@@ -450,15 +455,47 @@ compute Z_VALUE_LABELS      =  DSN('OUTPUT_DIR') +  '05a_' + trim( '<DBNAME>' ) 
 compute Z_VALUE_LABEL_DATA  =  DSN('OUTPUT_DIR') +  '05b_' + trim( '<DBNAME>' ) + "_value_label_data.csv"
 
 
-DO REPEAT EACH_FILENAME = F_TABLE_SCHEMA F_TABLE_SCHEMA_DATA  F_VAR_SCHEMA  F_VAR_SCHEMA_DATA  F_VALUE_LABELS   F_VALUE_LABEL_DATA  /
-          EACH_PATH =     Z_TABLE_SCHEMA Z_TABLE_SCHEMA_DATA  Z_VAR_SCHEMA  Z_VAR_SCHEMA_DATA  Z_VALUE_LABELS   Z_VALUE_LABEL_DATA
+DO REPEAT EACH_FILENAME = F_DB_SCHEMA      F_DB_SCHEMA_DATA
+                          F_TABLE_SCHEMA   F_TABLE_SCHEMA_DATA
+                          F_VAR_SCHEMA     F_VAR_SCHEMA_DATA
+                          F_VALUE_LABELS   F_VALUE_LABEL_DATA  /
+          EACH_PATH =     DB_SCHEMA        DB_SCHEMA_DATA
+                          Z_TABLE_SCHEMA   Z_TABLE_SCHEMA_DATA
+                          Z_VAR_SCHEMA     Z_VAR_SCHEMA_DATA
+                          Z_VALUE_LABELS   Z_VALUE_LABEL_DATA
 
 . open EACH_FILENAME / dsnvar = EACH_PATH  /write iostat = IO_FEEDBACK lrecl=3000
 . CHECK_FILE = EACH_PATH
 . execute subprocedure CHECK_IO
 end repeat
 
+C ------------------
+C DATABASE META
+MYSQL_FILENAME = DB_SCHEMA_DATA
+EXECUTE SUBPROCEDURE ESCAPE_SLASHES
+write ( F_DB_SCHEMA ) 'LOAD DATA LOCAL ' /
+                          ["INFILE '" + MYSQL_FILENAME  + "'" ] /
+                          'INTO TABLE DB_CONFIG' /
+                          "COLUMNS TERMINATED BY ','" /
+			  "OPTIONALLY ENCLOSED BY '""'"/
+			  "ESCAPED BY '""'"/
+			  "LINES TERMINATED BY '<LINE_TERMINATOR>'"  /
+                          "IGNORE 1 LINES;"/
 
+write( F_DB_SCHEMA_DATA ) '"id"<DELIMINATOR>'
+                          '"db_name"<DELIMINATOR>'
+                          '"db_label"<DELIMINATOR>'
+                          '"db_type"<DELIMINATOR>'
+                          '"db_caseid"<DELIMINATOR>'
+CSV_LINE = '0<DELIMINATOR>"' + dbname(0) + '"<DELIMINATOR>"' +
+           fst( recdoc(0,0), dbname(0) )  +  '"<DELIMINATOR>"' +
+           format(dbtype(0)) + '"<DELIMINATOR>"' +
+           fst(varname(0,1), '') + '"'
+WRITE csv_LINE
+write( F_DB_SCHEMA_DATA ) CSV_LINE
+
+
+C ------------------
 c variable details
 write( F_VAR_SCHEMA ) 'CREATE TABLE SCHEMA_VARIABLE (' /
                      'id int NOT NULL AUTO_INCREMENT,' /
@@ -543,7 +580,9 @@ WRITE ( F_VAR_SCHEMA_DATA ) '"id"<DELIMINATOR>"table_name"<DELIMINATOR>"variable
                             '"variable_range_min"<DELIMINATOR>"variable_range_max"<DELIMINATOR>"variable_valid_value"'
 
 
-write 'Files created ' / 'F_TABLE_SCHEMA: '      [ dsn( 'f_TABLE_SCHEMA' ) ] /
+write 'Files created ' / 'F_DB_SCHEMA: '         [ dsn( 'f_DB_SCHEMA' ) ] /
+                         'f_DB_SCHEMA_data: '    [ dsn( 'f_DB_SCHEMA_data' ) ] /
+                         'F_TABLE_SCHEMA: '      [ dsn( 'f_TABLE_SCHEMA' ) ] /
                          'f_TABLE_SCHEMA_data: ' [ dsn( 'f_TABLE_SCHEMA_data' ) ] /
                          'f_VAR_SCHEMA: '        [ dsn( 'f_VAR_SCHEMA' ) ] /
                          'f_VAR_SCHEMA_data: '   [ dsn( 'f_VAR_SCHEMA_data' ) ] /
@@ -727,6 +766,10 @@ WRITE ( F_VAR_SCHEMA_DATA ) '0<DELIMINATOR>"user_information"<DELIMINATOR>"user_
 
 
 
+close ( DB_SCHEMA )
+close ( DB_SCHEMA_data )
+close ( f_TABLE_SCHEMA )
+close ( f_TABLE_SCHEMA_data )
 close ( f_VAR_SCHEMA )
 close ( f_VAR_SCHEMA_data )
 close ( f_value_labels )
@@ -1060,8 +1103,19 @@ program
 .     write (EACH_FILENAME) '?>'
 .   close (EACH_FILENAME)
 . end for
+
+. FILE_PATH = LARAVEL_MODELS_DIR + 'Db_config' + '.php'
+. open db_config / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (db_config) '<?php' /
+                    'class Db_config extends Eloquent {' /
+                    5t "protected $table = 'db_config';" /
+                    5t "public $fillable= array('db_label','db_type','db_caseid');"/
+                    '}'/
+                    '?>'
+. close db_config
+
+
 . FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_variable' + '.php'
-write FILE_PATH
 . open sch_var / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
 .   write (sch_var) '<?php' /
                     'class Schema_variable  extends Eloquent {' /
