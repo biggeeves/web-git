@@ -1,4 +1,4 @@
-PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157877,61851)  |Last amended Jan 14, 2015,17:10:51
+PROCEDURE      TOOLS.EXPORT_TO_MYSQL:T  (157889,51982)  |Last amended Jan 26, 2015,14:26:22
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
 
 C COMPILE NECESSARY TOOLS
@@ -198,10 +198,10 @@ program
 
 c??  should user informaiton be "usermeta" instead and be structured Umeta_id (key), user_id, meta_key, meta_value?????
 | user information
-. write( f_db_create ) 'CREATE TABLE user_information (' /
-                       ' user_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
-                       ' user_login VARCHAR ( 64 ),' /
-                       ' user_password VARCHAR ( 64 ),' /
+. write( f_db_create ) 'CREATE TABLE users (' /
+                       ' id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                       ' username VARCHAR ( 64 ),' /
+                       ' password VARCHAR ( 64 ),' /
                        ' remember_token VARCHAR ( 100 ),' /
                        ' user_email VARCHAR ( 100 ),' /
                        ' user_first_name VARCHAR ( 100 ),' /
@@ -275,7 +275,7 @@ c variable constraints
 .   Z_DUMMY = globals( "G_CONTINUE",  '0')
 .   EXIT PROGRAM
 . ELSE
-.   WRITE 'Awesome: made f_constr file : '  CREATE_CONSTRAINT_FILE
+.   WRITE 'Made variable constratins (f_constr) file : '  CREATE_CONSTRAINT_FILE
 . ENDIF
 
 . write( f_constr ) '###############################'
@@ -491,31 +491,33 @@ CSV_LINE = '0<DELIMINATOR>"' + dbname(0) + '"<DELIMINATOR>"' +
            fst( recdoc(0,0), dbname(0) )  +  '"<DELIMINATOR>"' +
            format(dbtype(0)) + '"<DELIMINATOR>"' +
            fst(varname(0,1), '') + '"'
-WRITE csv_LINE
-write( F_DB_SCHEMA_DATA ) CSV_LINE
+. ifthen ( sglobal( 'LARAVEL' ) eq 'yes' )
+.  CSV_LINE = CSV_LINE + ',' + datec(today(0),'yyyymmdd') + ',' + datec(today(0),'yyyymmdd')
+. endif
+. write( F_DB_SCHEMA_DATA ) CSV_LINE
 
 
 C ------------------
 c variable details
 write( F_VAR_SCHEMA ) 'CREATE TABLE SCHEMA_VARIABLE (' /
-                     'id int NOT NULL AUTO_INCREMENT,' /
-                     'table_name varchar(255),' /
-                     'variable_name varchar(255),' /
-                     'variable_label varchar(255),' /
-                     'variable_document varchar(255),' /
-                     'variable_read_security varchar(255),' /
-                     'variable_write_security varchar(255),' /
-                     'variable_stattype varchar(255),' /
-                     'variable_type varchar(255),' /
-                     'variable_length varchar(255),' /
-                     'variable_scale varchar(255),' /
-                     'variable_missing1 varchar(255),' /
-                     'variable_missing2 varchar(255),' /
-                     'variable_missing3 varchar(255),' /
-                     'variable_range_min varchar(255),' /
-                     'variable_range_max varchar(255),' /
-                     'variable_valid_value varchar(255),' /
-                     'PRIMARY KEY (id)' /
+                     4T 'id int NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                     4T 'table_name varchar(255),' /
+                     4T 'variable_name varchar(255),' /
+                     4T 'variable_label varchar(255),' /
+                     4T 'variable_document varchar(255),' /
+                     4T 'variable_read_security varchar(255),' /
+                     4T 'variable_write_security varchar(255),' /
+                     4T 'variable_stattype varchar(255),' /
+                     4T 'variable_type varchar(255),' /
+                     4T 'variable_length varchar(255),' /
+                     4T 'variable_scale varchar(255),' /
+                     4T 'variable_missing1 varchar(255),' /
+                     4T 'variable_missing2 varchar(255),' /
+                     4T 'variable_missing3 varchar(255),' /
+                     4T 'variable_range_min varchar(255),' /
+                     4T 'variable_range_max varchar(255),' /
+                     4T 'variable_valid_value varchar(255),' /
+                     4T 'variable_required INTEGER' /
                      ');' /
 
 MYSQL_FILENAME = Z_VAR_SCHEMA_DATA
@@ -531,11 +533,11 @@ write ( f_VAR_SCHEMA ) 'LOAD DATA LOCAL ' /
 
 C ------------------
 C TABLE SCHEMA
-write( F_TABLE_SCHEMA ) 'CREATE TABLE schema_table('
-                       ' table_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
-                       ' table_name VARCHAR ( 200 ),' /
-                       ' table_label VARCHAR ( 200 ),' /
-                       ' table_document VARCHAR ( 20000 )' /
+write( F_TABLE_SCHEMA ) 'CREATE TABLE schema_table('/
+                       4T ' table_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                       4T ' table_name VARCHAR ( 200 ),' /
+                       4T ' table_label VARCHAR ( 200 ),' /
+                       4T ' table_document VARCHAR ( 20000 )' /
                        ');' /
 MYSQL_FILENAME = Z_TABLE_SCHEMA_DATA
 EXECUTE SUBPROCEDURE ESCAPE_SLASHES
@@ -550,13 +552,12 @@ write ( F_TABLE_SCHEMA ) 'LOAD DATA LOCAL ' /
 
 C ------------------
 C VALUE LABELS TABLE
-write( f_value_labels ) 'CREATE TABLE SCHEMA_VALUE_LABELS ('
-                     'id int NOT NULL AUTO_INCREMENT,'
-                     'table_name varchar(255),'
-                     'variable_name varchar(255),'
-                     'value varchar(255),'
-                     'value_label varchar(255),'
-                     'PRIMARY KEY (id)'
+write( f_value_labels ) 'CREATE TABLE SCHEMA_VALUE_LABELS ('/
+                     4T 'id int NOT NULL AUTO_INCREMENT PRIMARY KEY ,'/
+                     4T 'table_name varchar(255),'/
+                     4T 'variable_name varchar(255),'/
+                     4T 'value_value varchar(255),'/
+                     4T 'value_label varchar(255)'/
                      ');'
 MYSQL_FILENAME = Z_value_label_data
 EXECUTE SUBPROCEDURE ESCAPE_SLASHES
@@ -571,13 +572,24 @@ write ( f_value_labels ) 'LOAD DATA LOCAL ' /
 
 
 
-WRITE ( F_VAR_SCHEMA_DATA ) '"id"<DELIMINATOR>"table_name"<DELIMINATOR>"variable_name"<DELIMINATOR>'
-                            '"variable_label"<DELIMINATOR>"variable_document"<DELIMINATOR>'
-                            '"variable_read_security"<DELIMINATOR>"variable_write_security"<DELIMINATOR>'
-                            '"variable_stattype"<DELIMINATOR>"variable_type"<DELIMINATOR>'
-                            '"variable_length"<DELIMINATOR>"variable_scale"<DELIMINATOR>'
-                            '"variable_missing1"<DELIMINATOR>"variable_missing2"<DELIMINATOR>"variable_missing3"<DELIMINATOR>'
-                            '"variable_range_min"<DELIMINATOR>"variable_range_max"<DELIMINATOR>"variable_valid_value"'
+WRITE ( F_VAR_SCHEMA_DATA ) '"id"<DELIMINATOR>'
+                            '"table_name"<DELIMINATOR>'
+                            '"variable_name"<DELIMINATOR>'
+                            '"variable_label"<DELIMINATOR>'
+                            '"variable_document"<DELIMINATOR>'
+                            '"variable_read_security"<DELIMINATOR>'
+                            '"variable_write_security"<DELIMINATOR>'
+                            '"variable_stattype"<DELIMINATOR>'
+                            '"variable_type"<DELIMINATOR>'
+                            '"variable_length"<DELIMINATOR>'
+                            '"variable_scale"<DELIMINATOR>'
+                            '"variable_missing1"<DELIMINATOR>'
+                            '"variable_missing2"<DELIMINATOR>'
+                            '"variable_missing3"<DELIMINATOR>'
+                            '"variable_range_min"<DELIMINATOR>'
+                            '"variable_range_max"<DELIMINATOR>'
+                            '"variable_valid_value"<DELIMINATOR>'
+                            '"variable_required"<DELIMINATOR>'
 
 
 write 'Files created ' / 'F_DB_SCHEMA: '         [ dsn( 'f_DB_SCHEMA' ) ] /
@@ -710,8 +722,15 @@ C   - VARIABLE_RANGE_Max
 .   endif
 .   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
 
-C  COME BACK ON WORK ON THIS.  SHOULD IT BE A COMMA SEPARATED LIST?  CHECK OUT HOW WORDPRESS AND JOOMLA HANDLE THINGS LIKE THIS
-C.   WRITE ( f_value_label_data/noeol ) VARIABLE_VALID_VALUE
+c   Valid Values
+C   COME BACK ON WORK ON THIS.  SHOULD IT BE A COMMA SEPARATED LIST?  CHECK OUT HOW WORDPRESS AND JOOMLA HANDLE THINGS LIKE THIS
+C.  WRITE ( f_value_label_data/noeol ) VARIABLE_VALID_VALUE
+.   CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+c   Required  Note: SIR Does NOT have "required" in the variable schema
+.   CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
 
 .   EXECUTE SUBPROCEDURE TRIM_LAST_COMMA
 .   WRITE ( f_VAR_SCHEMA_data ) CSV_LINE
