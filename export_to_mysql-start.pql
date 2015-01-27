@@ -1,0 +1,331 @@
+PROCEDURE      EXPORT_TO_MYSQL.START:T  (157890,46964)  |Last amended Jan 27, 2015,13:02:44
+c TRANSFER SIR DATA TO A MYSQL DATABASE.
+
+C COMPILE NECESSARY TOOLS
+CALL TOOLS.CHECK_RESERVED_WORDS
+
+C SET GLOBAL VALUES
+CALL EXPORT_TO_MYSQL.SETTINGS
+
+C MAKE DIRECTORIES
+CALL EXPORT_TO_MYSQL.MAKE_DIRS
+
+
+C -------------------------------------------------------------------------------------------------------------
+C ---  create database schema and keys constraints  -----------------------------------------------------------
+
+program
+. STRING  *  300   CREATE_DB_FILE
+. string  *  300   REDCAP_FILE
+. string  * 2000   REDCAP_CSV_LINE
+. string  * 2000   REDCAP_VALLABS
+. STRING  *  300   CREATE_CONSTRAINT_FILE
+. INTEGER *    4   IO_FEEDBACK
+. INTEGER *    4   Z_DUMMY
+. INTEGER *    4   STOP_REC
+. STRING  *  300   CHECK_WORD
+. STRING  *  300   CLEAN_WORD
+. STRING  *  300   CHECK_FILE
+. integer *    1   THIS_VTYPE
+. STRING  *   32   THIS_VAR_SQL_TYPE
+. STRING  *   32   THIS_VAR_REDCAP_TYPE
+. string  *   32   THIS_VARMIN THIS_VARMAX
+. string  *   32   THIS_SIR_REC_NAME
+. string  *   32   THIS_SQL_REC_NAME
+. integer *    4   THIS_VARLENG
+. STRING  *  300   THIS_LINE
+. STRING  *  300   FEEDBACK_LINE
+. integer *    4   EACH_REC   EACH_VAR  EACH_KEY
+. INTEGER *    2   Z_INDS
+. INTEGER *    4   EACH_INDEX  EACH_INDEX_VAR
+. INTEGER *    4   MAX_INDEX_VAR
+. INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
+
+
+. Z_INDS = dbinds( 0 )
+
+. STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
+
+. compute CREATE_DB_FILE   =  DSN('OUTPUT_DIR') +  '01_' + trim( '<DBNAME>' ) + "_db_create.sql"
+. open f_db_create / dsnvar = CREATE_DB_FILE  /write iostat = IO_FEEDBACK lrecl=3000
+. IFNOTTHEN ( IO_FEEDBACK EQ 0 )
+.   WRITE 'ERRORS WITH NECESSARY FILE: ' CREATE_DB_FILE ' ERROR: ' IO_FEEDBACK
+.   Z_DUMMY = globals( "G_CONTINUE",  '0')
+.   EXIT PROGRAM
+. ELSE
+.   WRITE 'f_db_created: '  CREATE_DB_FILE /
+. ENDIF
+
+. write( f_db_create ) 'CREATE DATABASE <DBNAME> ;'
+. write( f_db_create ) 'USE <DBNAME> ;' /
+. write( f_db_create ) '#################################'
+. write( f_db_create ) '## Database Settings-> dbmeta  ##' //
+. write( f_db_create ) 'CREATE TABLE db_config (' /
+                       ' id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                       ' db_name VARCHAR( 30 )  NOT NULL,' /
+                       ' db_label VARCHAR ( 100 ),' /
+                       ' db_type INTEGER, '/
+                       ' db_caseid VARCHAR (100)'
+. EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
+. write( f_db_create ) ');' |end db_config
+
+| system config
+. write( f_db_create ) 'CREATE TABLE system_config (' /
+                       ' system_offline INTEGER NOT NULL,' /
+                       ' system_version VARCHAR ( 100 )'
+. EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
+. write( f_db_create ) ');' |end system_config
+
+. write( f_db_create ) 'CREATE TABLE schema_tables (' /
+                       ' table_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                       ' table_label VARCHAR ( 200 ),' /
+                       ' table_document VARCHAR ( 20000 )' /
+. EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
+. write( f_db_create ) ');' |end Table Schema
+
+
+c??  should user informaiton be "usermeta" instead and be structured Umeta_id (key), user_id, meta_key, meta_value?????
+| user information
+. write( f_db_create ) 'CREATE TABLE users (' /
+                       ' id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                       ' username VARCHAR ( 64 ),' /
+                       ' password VARCHAR ( 100 ),' /
+                       ' remember_token VARCHAR ( 100 ),' /
+                       ' user_email VARCHAR ( 100 ),' /
+                       ' user_first_name VARCHAR ( 100 ),' /
+                       ' user_last_name VARCHAR ( 100 ),' /
+                       ' user_registered DATE,' /
+                       ' user_status INTEGER,' /
+                       ' user_first_active DATE,' /
+                       ' user_last_active DATE' /
+. EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
+. write( f_db_create ) ');' |end user information
+
+
+
+. write( f_db_create ) '#################################'
+. write( f_db_create ) '## Record Types->Tables      ####' //
+
+
+
+
+. for EACH_REC = 1, STOP_REC
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   THIS_SIR_REC_NAME = CLEAN_WORD
+.   THIS_SQL_REC_NAME = sglobal('table_prefix') + THIS_SIR_REC_NAME
+.   THIS_LINE = 'CREATE TABLE ' + THIS_SQL_REC_NAME + ' ('
+.   write ( f_db_create ) THIS_LINE
+.   for EACH_VAR = 1, nvarsc( EACH_REC )
+.     compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.     EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_VAR_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.     THIS_VAR_NAME = CLEAN_WORD
+.     compute THIS_VTYPE = vtype( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
+.     compute THIS_VARLENG = varleng( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
+
+.     recode THIS_VAR_SQL_TYPE = THIS_VTYPE( 1 = 'VARCHAR' ) ( 2 = 'VARCHAR' ) ( 3 = 'DATE' ) ( 4 = 'TIME' ) ( 5 = 'INTEGER' )
+                     ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' ) ( 8 = 'BIGINT' )
+.     THIS_LINE = THIS_VAR_NAME + '  ' + THIS_VAR_SQL_TYPE
+
+.     ifthen( THIS_VAR_SQL_TYPE = 'VARCHAR' )
+.       THIS_LINE = THIS_LINE  + '( ' + format( THIS_VARLENG ) + ' )'
+.     endif
+
+.     for EACH_KEY = 1, nkeys( EACH_REC ) + dbtype(0)
+.       ifthen ( THIS_VAR_NAME EQ lower( trim( keyname( EACH_REC, EACH_KEY ) ) ) )
+.         THIS_LINE = THIS_LINE + '  NOT NULL'
+.       endif
+.     end for
+
+.     if (  EACH_VAR lt nvarsc( EACH_REC ) ) THIS_LINE = THIS_LINE  + ', '
+
+.     write ( f_db_create ) 2T THIS_LINE
+
+.   end for
+.   ifthen ( sglobal( 'LARAVEL' ) eq 'yes' )
+.     Z_DUMMY = 1 | used as flag to catch columns that already contain laravel column names
+.     for EACH_VAR = 1, nvarsc( EACH_REC )
+.       compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.       if( THIS_VAR_NAME EQ 'created_at' or 'updated_at') Z_DUMMY = 0
+.     end for
+.     if ( Z_DUMMY EQ 1 ) EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS  | BUG: CURRENTLY ALL OR NOTHING BASED ON LOOP ABOVE, CONSIDER BREAKING OUT FOR EACH COLUMN
+.   endif
+.   write( f_db_create ) ' ) ;'
+
+. end for
+
+
+c variable constraints
+. compute CREATE_CONSTRAINT_FILE   =  DSN('OUTPUT_DIR') +  '02_' + trim( '<DBNAME>' ) + "_db_constraints.sql"
+. open f_constr / dsnvar = CREATE_CONSTRAINT_FILE  /write iostat = IO_FEEDBACK lrecl=3000
+. IFNOTTHEN ( IO_FEEDBACK EQ 0 )
+.   WRITE 'ERRORS WITH NECESSARY FILE: ' CREATE_CONSTRAINT_FILE ' ERROR: ' IO_FEEDBACK
+.   Z_DUMMY = globals( "G_CONTINUE",  '0')
+.   EXIT PROGRAM
+. ELSE
+.   WRITE 'Made variable constratins (f_constr) file : '  CREATE_CONSTRAINT_FILE
+. ENDIF
+
+. write( f_constr ) '###############################'
+. write( f_constr ) '## add primary keys          ##' /
+. for EACH_REC = 1, STOP_REC
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   THIS_SQL_REC_NAME = sglobal( 'table_prefix' ) + lower( CLEAN_WORD )
+.   write( f_constr ) // 'alter table ' THIS_SQL_REC_NAME
+
+.   compute THIS_LINE = 'add constraint ' + THIS_SQL_REC_NAME
+.   for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
+.     compute THIS_LINE = THIS_LINE + '_' + lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
+.   end for
+.   compute THIS_LINE = THIS_LINE + '_pk primary key ( '
+.   for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
+.     CHECK_WORD = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
+.     EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (CHECK_WORD) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.     compute THIS_LINE = THIS_LINE + CLEAN_WORD
+.     if (EACH_KEY lt nkeys( EACH_REC ) + DBTYPE(0) ) compute THIS_LINE = THIS_LINE + ', '
+.   end for
+.   compute THIS_LINE = THIS_LINE + ' );'
+.   write( f_constr ) THIS_LINE  /
+. end for
+. write( f_constr ) '###############################'
+. write( f_constr ) '## Create secondary indexes; ##' //
+
+. for EACH_INDEX = 1, Z_INDS
+.   compute MAX_INDEX_VAR = dbindv( EACH_INDEX )
+.   compute THIS_LINE = 'create index ' + lower( dbindn( EACH_INDEX ) ) + ' on ' + sglobal( 'table_prefix' ) +
+                        trimr( lower( recname( dbindr( EACH_INDEX ) ) ) ) + '( '
+.   for EACH_INDEX_VAR = 1, MAX_INDEX_VAR
+.     CHECK_WORD = lower( pack( dbindt( EACH_INDEX, EACH_INDEX_VAR ) ) )
+.     EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (CHECK_WORD) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.     THIS_LINE = THIS_LINE + CLEAN_WORD
+.     IF (EACH_INDEX_VAR LT MAX_INDEX_VAR ) THIS_LINE = THIS_LINE + ', '
+.   end for
+.   THIS_LINE = THIS_LINE + ' );'
+.   write( f_constr ) THIS_LINE
+. end for
+. close ( f_db_create )
+. close ( f_constr )
+
+
+c   EXPORT TO REDCAP SECTION
+cif eq '<redcap>', 'yes'
+. compute REDCAP_FILE   =  DSN('OUTPUT_DIR') +  '03_' + trim( '<DBNAME>' ) + "_redcap.csv"
+. open redcap / dsnvar = REDCAP_FILE /write iostat = IO_FEEDBACK lrecl=3000
+. IFNOTTHEN ( IO_FEEDBACK EQ 0 )
+.   WRITE 'ERRORS WITH NECESSARY FILE: ' REDCAP_FILE ' ERROR: ' IO_FEEDBACK
+.   Z_DUMMY = globals( "G_CONTINUE",  '0')
+.   EXIT PROGRAM
+. ELSE
+.   WRITE 'redcap: '  REDCAP_FILE /
+. ENDIF
+| THE REDCAP HEADERS ARE NECCESSARY FOR IMPORT.  REDCAP AUTOMATICALLY IGNORES THE FIRST LINE OF THE FILE
+. THIS_LINE =  'Variable / Field Name,Form Name,Section Header,Field Type,Field Label,' +
+               '"Choices, Calculations, OR Slider Labels",Field Note,' +
+               'Text Validation Type OR Show Slider Number,Text Validation Min,Text Validation Max,' +
+               'Identifier?,Branching Logic'
+. write( redcap )
+. for EACH_REC = 1, STOP_REC
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+.   THIS_SQL_REC_NAME = sglobal( 'TABLE_PREFIX' ) + THIS_SIR_REC_NAME
+.   for EACH_VAR = 1, nvarsc( EACH_REC )
+.     compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.     compute THIS_VTYPE    = vtype( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
+.     compute THIS_VARLENG  = varleng( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
+.     compute THIS_VARLAB   = varlabsc ( EACH_REC, THIS_VAR_NAME )
+.     compute THIS_VARMIN   = FST( FORMAT( NMIN( EACH_REC, THIS_VAR_NAME) ), SMIN ( EACH_REC, THIS_VAR_NAME ), '' )
+.     compute THIS_VARMAX   = FST( FORMAT( NMAX( EACH_REC, THIS_VAR_NAME) ), SMAX ( EACH_REC, THIS_VAR_NAME ), '' )
+
+.     ifthen (THIS_VTYPE eq 3)
+.       if ( THIS_VARMIN EQ '1' ) THIS_VARMIN = ''
+.       if ( THIS_VARMIN EQ '3660000' ) THIS_VARMIN = ''
+.       if ( THIS_VARMAX EQ '1' ) THIS_VARMAX = ''
+.       if ( THIS_VARMAX EQ '3660000' ) THIS_VARMAX = ''
+.       THIS_VARMIN = fst( datec( numbr(THIS_VARMIN), '<date_format>'), '')
+.       THIS_VARMAX = fst( datec( numbr(THIS_VARMAX), '<date_format>'), '')
+.     elseif (THIS_VTYPE eq 4)
+.       THIS_VARMIN = TIMEC( numbr(THIS_VARMIN), '<time_format>')
+.       THIS_VARMAX = TIMEC( numbr(THIS_VARMAX), '<time_format>')
+.     endif
+
+.     recode  THIS_VAR_REDCAP_TYPE = THIS_VTYPE( 1 = '' ) ( 2 = '' ) ( 3 = 'date' ) ( 4 = 'time' ) ( 5 = 'integer' )
+                     ( 6 = 'number' )( 7 = 'number' ) ( 8 = 'number' )
+.     ifthen ( nvallab( EACH_REC,  THIS_VAR_NAME) lt 2)
+.       THIS_FIELD_TYPE = 'text'
+.     elseif ( nvallab( EACH_REC,  THIS_VAR_NAME) eq 2)
+.       THIS_FIELD_TYPE = 'radio'
+.     else
+.       THIS_FIELD_TYPE = 'dropdown'
+.     endif
+
+| crazy field min and maxs must be removed if it is a drop down or radio.  ONLY TEXT can have mins and maxs
+| for radios and dropdowns there is no field type either!
+.     ifthen ( THIS_FIELD_TYPE eq 'radio' or 'dropdown' )
+.       THIS_VARMIN = ''
+.       THIS_VARMAX = ''
+.       THIS_VAR_REDCAP_TYPE = ''
+.     endif
+
+
+|     value labels
+.     REDCAP_VALLABS = '"'
+.     for EACH_LABEL = 1, nvallab( EACH_REC,  THIS_VAR_NAME)
+.       REDCAP_VALLABS = REDCAP_VALLABS + trim( pack( VALLABSV( EACH_REC, THIS_VAR_NAME, EACH_LABEL ) ) )
+.       REDCAP_VALLABS = REDCAP_VALLABS + ', '
+.       REDCAP_VALLABS = REDCAP_VALLABS + trim( pack( VALLABSN( EACH_REC, THIS_VAR_NAME ,EACH_LABEL ) ) )
+.       if (EACH_LABEL lt  nvallab( EACH_REC,  THIS_VAR_NAME) ) REDCAP_VALLABS = REDCAP_VALLABS +  ' | '
+.     end for
+.     REDCAP_VALLABS = REDCAP_VALLABS + '"'
+
+
+.     REDCAP_CSV_LINE = THIS_VAR_NAME + ',' +
+                    THIS_SQL_REC_NAME + ',' +
+                    ',' +
+                    THIS_FIELD_TYPE + ',' +
+                    THIS_VARLAB + ',' +
+                    REDCAP_VALLABS + ',' +
+                    ',' +
+                    THIS_VAR_REDCAP_TYPE + ',' +
+                    THIS_VARMIN + ',' + THIS_VARMAX + ',' +
+                    ',' +
+                    ',' +
+                    ',' +
+                    ',' +
+                    ','
+.     write( redcap ) REDCAP_CSV_LINE
+.   end for
+. end for
+CLOSE (REDCAP)
+cif end | end redcap cif
+
+
+SUBPROCEDURE ADD_LARAVEL_COLUMNS
+| SQL requires that the last column does not have a comma after it.  Thus these columns go at the end and assume to be the last columns
+.   ifthen ( sglobal( 'laravel' ) eq 'yes' )
+.     write( f_db_create ) ' , created_at DATE'
+                           ' , updated_at DATE'
+.   endif
+END SUBPROCEDURE
+
+end program
+
+
+CALL EXPORT_TO_MYSQL.CONVERT_DB_SCHEMA_TO_MYSQL
+
+CALL EXPORT_TO_MYSQL.EXPORT_RECORD_DATA
+
+C EXPORT RECORD DATA
+REMARK 'CONTINUING TO CREATE DATABASE AND LOAD DATA: <LOADIT>'
+
+cif eq '<G_CONTINUE>', '1'
+program
+pql escape "chmod 755 <LOADIT>"
+pql escape "<LOADIT>"
+end program
+CIF END
+
+CALL EXPORT_TO_MYSQL.MAKE_LARAVEL_FILES
+END PROCEDURE

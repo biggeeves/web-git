@@ -1,0 +1,109 @@
+PROCEDURE      EXPORT_TO_MYSQL.MAKE_LARAVEL_FILES:T  (157890,37950)  |Last amended Jan 27, 2015,10:32:30
+c create laravel files
+program
+. string  *  250   LARAVEL_DIR
+. string  *  250   LARAVEL_APP_DIR
+. string  *  250   LARAVEL_MODELS_DIR
+. string  *  250   LARAVEL_CONTROLLERS_DIR
+. string  *  250   LARAVEL_VIEWS_DIR
+. string  *  250   FILE_PATH FILE_NAME
+. STRING  *    6   FILE_EXT
+. STRING  *  250   EACH_PATH
+. INTEGER *    2   EACH_CHAR
+. integer *    4   PASSFAIL
+. string  *  300   DBMS_LINE
+. INTEGER *    4   STOP_REC
+. STRING  *  300   CHECK_WORD
+. STRING  *  300   CLEAN_WORD
+. INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
+. integer *    4   IO_FEEDBACK
+
+. ifNOT ( sglobal( 'LARAVEL' ) eq 'yes' ) exit program
+
+. LARAVEL_APP_DIR = dsn( 'prefix' )  +  'to_mysql\Laravel\app\'
+. LARAVEL_MODELS_DIR = LARAVEL_APP_DIR + 'models\'
+. LARAVEL_CONOTROLLERS_DIR = LARAVEL_APP_DIR + 'controllers\'
+. LARAVEL_VIEWS_DIR = LARAVEL_APP_DIR + 'views\'
+
+. STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
+. for EACH_REC = 1, STOP_REC
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   THIS_SIR_REC_NAME = CLEAN_WORD
+.   THIS_SQL_REC_NAME = sglobal('table_prefix') + THIS_SIR_REC_NAME
+.   EACH_PATH  = LARAVEL_MODELS_DIR + capital(THIS_SQL_REC_NAME ) + '.php'
+.   open EACH_FILENAME / dsnvar = EACH_PATH  /write iostat = IO_FEEDBACK lrecl=3000
+.     if ( IO_FEEDBACK <> 0 ) write 'Failed to open ' EACH_PATH LARAVEL_MODELS_DIR
+.     write (EACH_FILENAME) '<?php'
+.     write (EACH_FILENAME) ['class ' + capital(THIS_SQL_REC_NAME) + ' extends Eloquent {']
+.     write (EACH_FILENAME) ["protected $table = '" + THIS_SQL_REC_NAME + "';"]
+.     ifthen ( dbtype(0) eq 1 )
+.       write (EACH_FILENAME) ["protected $primaryKey = '" + lower( varname(0,1 ) )+ "';"]
+.     endif
+.     write (EACH_FILENAME) '}'
+.     write (EACH_FILENAME) '?>'
+.   close (EACH_FILENAME)
+. end for
+
+. FILE_PATH = LARAVEL_MODELS_DIR + 'Db_config.php'
+. open db_config / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (db_config) '<?php' /
+                    'class Db_config extends Eloquent {' /
+                    5t "protected $table = 'db_config';" /
+                    5t "public $fillable= array('db_label','db_type','db_caseid');"/
+                    '}'/
+                    '?>'
+. close db_config
+
+
+. FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_variable.php'
+. open sch_var / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (sch_var) '<?php' /
+                    'class Schema_variable  extends Eloquent {' /
+                    5t "protected $table = 'Schema_variable';" /
+                    5t "protected $guarded = array('_token');" /
+                    5t "protected $primaryKey = 'id';"/
+                    5t "public $timestamps = false;"/
+                    '}'/
+                    '?>'
+. close sch_var
+
+. FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_table.php'
+. open sch_table / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (sch_table) '<?php'
+.   write (sch_table) 'class Schema_table  extends Eloquent {'
+.   write (sch_table) "protected $table = 'Schema_table';"
+.   write (sch_table) '}'
+.   write (sch_table) '?>'
+. close sch_table
+
+
+. FILE_PATH = LARAVEL_MODELS_DIR + 'Schema_value_labels' + '.php'
+. open val_labs / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (val_labs) '<?php'
+.   write (val_labs) 'class Schema_value_labels extends Eloquent {'
+.   write (val_labs) "protected $table = 'schema_value_labels';"
+.   write (val_labs) '}'
+.   write (val_labs) '?>'
+. close val_labs
+
+
+. FILE_PATH = LARAVEL_MODELS_DIR + 'ShowTables.php'
+. open show_tables / dsnvar = FILE_PATH /write iostat = IO_FEEDBACK lrecl=3000
+.   write (show_tables) '<?php' //
+.   write (show_tables) 'class ShowTables {'
+.   write (show_tables) '   public $allTables;'/
+.   write (show_tables) '   public function __construct()'
+.   write (show_tables) '   {'
+.   write (show_tables) '      $this->allTables = DB::select(''SHOW TABLES'');'
+.   write (show_tables) '   }'/
+
+.   write (show_tables) '   public function firstTable () {'
+.   write (show_tables) '   }'/
+.   write (show_tables) '}'
+.   write (show_tables) '?>'
+. close show_tables
+
+end program
+END PROCEDURE

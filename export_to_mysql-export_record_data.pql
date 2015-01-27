@@ -1,0 +1,233 @@
+PROCEDURE      EXPORT_TO_MYSQL.EXPORT_RECORD_DATA:T  (157890,37309)  |Last amended Jan 27, 2015,10:21:49
+C -------------------------------------------------------------------------------------------------------------
+C ------------------------------          EXPORT DATA          ------------------------------------------------
+
+
+program crwarn
+string  *   78   THIS_SIR_REC_NAME THIS_SQL_REC_NAME
+STRING  *   78   THIS_VAR_NAME
+STRING  *  300   Z_SQLFN  Z_DATFN
+STRING  *  300   Z_LOADIT
+STRING  *  300   Z_DATA
+string  *  3000  THIS_LINE
+string  *  300   BASE_DIR
+INTEGER *    1   PASSFAIL
+real    *    8   Z_DUMMY
+integer *    1   THIS_VTYPE
+integer *    4   EACH_REC   EACH_VAR    THIS_VARLENG   EACH_KEY
+STRING  *   32   THIS_VAR_SQL_TYPE
+STRING  *  100   Z_VTERM
+INTEGER *    4   IO_FEEDBACK
+INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
+STRING  *  200   MYSQL_FILENAME   | JUST INCASE THE FILE NAME FOR DATA IMPORT NEEDS TO BE MANIPULATED BASED ON THE SYSTEM
+STRING  *  300   CHECK_WORD  CHECK_FILE
+STRING  *  300   CLEAN_WORD
+STRING  *  300   CSV_VALUE
+STRING  *  3000  CSV_LINE
+STRING  *    6   LINE_TERMINATOR
+integer *    4   STOP_REC        | What record number should this stop at.  Used for sampling and testing.
+
+LINE_TERMINATOR = '<LINE_TERMINATOR>'
+
+STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
+
+BASE_DIR = dsn( 'output_dir' )
+
+compute Z_DATA    =  BASE_DIR +  trim( '<DBNAME>' ) + "_data.pql"
+compute Z_LOADIT  =  BASE_DIR +  '07_' + trim( '<DBNAME>' ) + "_loadit"
+compute Z_DUMMY   =  globals( "DATAPROG",  Z_DATA )
+compute Z_DUMMY   =  globals( "LOADIT",  Z_LOADIT )
+compute Z_DUMMY   =  globalN( "G_CONTINUE",  1) | RETRIEVAL EXECUTED.
+C OPEN THE NECESSARY FILES
+
+DO REPEAT EACH_FILENAME = F_LOADIT  F_DATA /
+          EACH_PATH =     Z_LOADIT  Z_DATA
+
+. open EACH_FILENAME / dsnvar = EACH_PATH  /write iostat = IO_FEEDBACK lrecl=3000
+. CHECK_FILE = EACH_PATH
+. execute subprocedure CHECK_IO
+end repeat
+
+
+
+write 'Files created ' / 'f_loadit: '           [ dsn( 'f_loadit' ) ] /
+                         'f_data:   '           [ dsn( 'f_data' ) ] /
+      '-------------------------' //
+
+
+. write( f_loadit ) "#!/bin/sh"
+. ifthen( '<NEW>' = 'no' )
+.   write( f_loadit )["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'drop database <DBNAME>'"]
+. endif
+. write( f_loadit )["mysql --local-infile = 1 --password = <password> --user = <username> --execute = 'source " + dsn( 'f_db_create' ) + "'"]
+. write( f_loadit )["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'source " + DSN( 'f_constr' ) + "'"]
+
+for EACH_REC = 1, STOP_REC
+. THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+. if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+. THIS_SQL_REC_NAME = sglobal( 'TABLE_PREFIX' ) + THIS_SIR_REC_NAME
+. compute Z_SQLFN = BASE_DIR +  THIS_SQL_REC_NAME + '.sql'
+. compute Z_DATFN = BASE_DIR +  THIS_SQL_REC_NAME + '.<FILE_ENDING>'
+. write( f_data ) 'remark "Creating Rec# ' EACH_REC ': ' THIS_SIR_REC_NAME '"'
+. write( f_data ) 'remark "' Z_SQLFN  '"'
+. write( f_data ) 'remark "' Z_DATFN  '"'
+. write( f_data ) // 'RETRIEVAL SEED = <CASE_SEEDER> |' EACH_REC ': ' THIS_SIR_REC_NAME
+. write( f_data ) 'string * 4094  DATA_LINE'
+. write( f_data ) 'string * 4094  DATA_VALUE'
+
+. write( f_loadit )["mysql --local-infile = 1 --database = <DBNAME> --password = <password> --user = <username> --execute = 'source " + Z_SQLFN + "'"]
+. open f_zsqlfn / dsnvar = Z_SQLFN / write
+
+. MYSQL_FILENAME = Z_DATFN
+. EXECUTE SUBPROCEDURE ESCAPE_SLASHES
+. write( f_zsqlfn ) "LOAD DATA LOCAL "
+. write( f_zsqlfn ) ["INFILE '" + MYSQL_FILENAME + "'"] /
+                    " INTO TABLE " THIS_SQL_REC_NAME /
+                    " COLUMNS TERMINATED BY '<SQL_DELIMINATOR>'" /
+                    " OPTIONALLY ENCLOSED BY '""'"/
+                    " ESCAPED BY '""'"/
+                    " LINES TERMINATED BY '<LINE_TERMINATOR>'"  /
+                    " IGNORE 1 LINES;"/
+
+
+. write( f_data ) 'compute DELIM = <PQL_DELIMINATOR>'
+. write( f_data ) ['open f_datafile / dsn = "' + Z_DATFN + '"/write/lrecl = 4000']
+
+c include column headers
+. write( f_data/noeol) 'write( f_datafile) '
+. THIS_LINE = '"'
+
+c longitudinal records in redcap have a funny field called "redcap_event_name".  It is their version of a key field
+c KEY VALUES MUST BE CONVERTED TO SHIT LIKE THIS "1_arm_1" AND "2_arm_1" AND AND "1_arm_2" instead of their original values for data import!
+cif eq '<redcap>', 'yes'
+. ifthen ( nkeys ( EACH_REC) gt 0 ) | has a key field
+.   for EACH_KEY = 1, nkeys( EACH_REC )
+.     compute THIS_VAR_NAME = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
+.     THIS_LINE = THIS_LINE + THIS_VAR_NAME
+.     IF ( EACH_KEY LT nkeys( EACH_REC ) ) THIS_LINE = THIS_LINE + '_'
+.   end for
+.   THIS_LINE = THIS_LINE + 'redcap_event_name<DELIMINATOR>'
+.   write 'redcap_event_name for ' THIS_SIR_REC_NAME ' is a combination of variables: '
+. endif
+cif end
+. for EACH_VAR = 1, nvarsc( EACH_REC )
+.   compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.   THIS_LINE = THIS_LINE + THIS_VAR_NAME
+.   if ( EACH_VAR lt nvarsc( EACH_REC ) ) THIS_LINE = THIS_LINE + '<DELIMINATOR>'
+.   ifthen ( amod( EACH_VAR, 10 ) GE 0 ) | keep it to 10 variables on a line
+.     THIS_LINE = THIS_LINE + '"'
+.     write( f_data) 5T THIS_LINE
+.     THIS_LINE = '     "'  | add indented space to make the new line readable
+.   endif
+. end for
+
+. write( f_data ) 'process cases <CASE_RESTRICTION> '
+. write( f_data ) 'process rec ' THIS_SIR_REC_NAME
+. write( f_data ) 'get vars all'
+. write( f_data ) 'DATA_LINE = ""'
+
+. for EACH_VAR = 1, nvarsc( EACH_REC )
+.   ifthen(  EACH_VAR LT nvarsc( EACH_REC ) )
+.     compute Z_VTERM = 'DELIM'
+.   else
+.     compute Z_VTERM = ""
+.   endif
+.   compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.   compute THIS_VTYPE    = vtype( EACH_REC, THIS_VAR_NAME )
+.   compute THIS_VARLENG  = varleng( EACH_REC, THIS_VAR_NAME )
+
+.   recode THIS_VAR_SQL_TYPE = THIS_VTYPE( 1 = 'VARCHAR' )( 2 = 'VARCHAR' )( 3 = 'DATE' )( 4 = 'TIME' )( 5 = 'INTEGER' )
+    ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' )( 8 = 'BIGINT' )
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_VAR_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   write( f_datafile/noeol ) CLEAN_WORD
+
+.   THIS_LINE = ''
+.   ifthen( THIS_VAR_SQL_TYPE  = 'VARCHAR' )
+.     THIS_LINE = 'DATA_VALUE = fst( ' + THIS_VAR_NAME + ', missing( ' + THIS_VAR_NAME + ' ) )'
+.     write( f_data ) THIS_LINE
+.     THIS_LINE = 'DATA_VALUE = ''"'' + DATA_VALUE + ''"'''
+.   elseif( THIS_VAR_SQL_TYPE = 'INTEGER' or 'FLOAT' or 'DOUBLE PRECISION' or 'BIGINT' )
+.     THIS_LINE = 'DATA_VALUE = format( fst( ' + THIS_VAR_NAME + ', missing( ' + THIS_VAR_NAME + ' ) ) )'
+.   else
+.     ifthen( THIS_VTYPE = 3 )
+.       THIS_LINE = 'DATA_VALUE = datec( ' + THIS_VAR_NAME + ', "<date_format>" )'
+.     else
+.       THIS_LINE = 'DATA_VALUE = timec( ' + THIS_VAR_NAME + ', "<time_format>" )'
+.     endif
+.   endif
+.   write( f_data ) THIS_LINE
+.   write( f_data ) 'EXECUTE SUBPROCEDURE ADD_VALUE_TO_LINE' /
+
+|   close the create table sql statement
+.   ifthen(  EACH_VAR lt nvarsc( EACH_REC ) )
+.     | DO NOTHING
+.   else
+.     write( f_data ) 'write( f_datafile ) DATA_LINE'
+.     write( f_data ) 'end process rec'
+.     write( f_data ) 'end process cases'
+.     write( f_data ) 'close( f_datafile )'
+
+.     write( f_data ) //
+.     write( f_data ) 'SUBPROCEDURE ADD_VALUE_TO_LINE'
+.     write( f_data ) '. IFTHEN ( ( DATA_VALUE NE "" ) OR ( EXISTS( DATA_VALUE ) EQ 1 ) )'
+.     write( f_data ) '.   DATA_LINE = DATA_LINE + DATA_VALUE'
+.     write( f_data ) '. ELSE'
+.     write( f_data ) '.   DATA_LINE = DATA_LINE + "<NULL_VALUE>"'
+.     write( f_data ) '. ENDIF'
+.     write( f_data ) '. DATA_LINE = DATA_LINE + DELIM'
+.     write( f_data ) 'end subprocedure'
+
+.     write( f_data ) 'end retrieval'
+.     close( f_zsqlfn )
+.   end if
+. end for
+end for
+
+close ( f_data )
+close ( loadit )
+
+SUBPROCEDURE CHECK_IO
+. IFNOTTHEN ( IO_FEEDBACK EQ 0 )
+.   WRITE 'ERRORS WITH NECESSARY FILE: ' CHECK_FILE ' ERROR: ' IO_FEEDBACK
+.   Z_DUMMY = globals( "G_CONTINUE",  '0')
+. ENDIF
+END SUBPROCEDURE
+
+subprocedure MAKE_FILE_LINE
+C CREATE A LINE THAT CAN BE READ IN BY MYSQL
+. IF ( EXISTS( CSV_LINE ) EQ 0 ) CSV_LINE = ""
+. CSV_VALUE =  replace( CSV_VALUE, '"', '""', 99, 2, 0 ) | 2 double qoutes when imported turn into 1 double qoute
+. CSV_VALUE =  replace( CSV_VALUE, "’", "'", 99, 2, 0 )  | There is an issue with the back qoutes and importing into MySQL`
+
+. IFTHEN ( EXISTS( CSV_VALUE ) EQ 0)
+.   CSV_VALUE = '<NULL_VALUE>'
+. ELSEIF ( pack( trimlr( CSV_VALUE ) ) EQ '' )
+.   CSV_VALUE = '<NULL_VALUE>'
+. ELSEIF ( CSV_VALUE EQ 'NULL' )
+.   CSV_VALUE = '<NULL_VALUE>'
+. ELSE
+.   CSV_VALUE =  '"' + TRIMR( CSV_VALUE) + '"'       | ADD QOUTES AND GET RID OF TRAILING SPACES
+. ENDIF
+
+. CSV_LINE = CSV_LINE + CSV_VALUE + '<DELIMINATOR>'
+end subprocedure
+
+SUBPROCEDURE TRIM_LAST_COMMA
+. CSV_LINE = TRIMR( CSV_LINE )
+C . IF ( SUBSTR( CSV_LINE, LEN( CSV_LINE ), 1 ) EQ ',' ) CSV_LINE = SUBSTR( CSV_LINE, 1, LEN( CSV_LINE )  -1)
+END SUBPROCEDURE
+
+SUBPROCEDURE ESCAPE_SLASHES
+c for windows the "\" in the file path must be escaped as it is a SQL reserved keyword
+. IFNOT ( 0<WINDOWS_MACHINE> EQ 1 ) EXIT SUBPROCEDURE
+. MYSQL_FILENAME = replace( MYSQL_FILENAME , '\', '\\', 99, 2, 0 )
+END SUBPROCEDURE
+
+end program
+
+REMARK 'INCLUDING <DATAPROG>'
+
+include file "<DATAPROG>"
+
+REMARK 'CONTINUING TO CREATE DATABASE AND LOAD DATA: <LOADIT>'
+END PROCEDURE

@@ -1,0 +1,414 @@
+PROCEDURE      EXPORT_TO_MYSQL.CONVERT_DB_SCHEMA_TO_MYSQL:T  (157890,36704)  |Last amended Jan 27, 2015,10:11:44
+c Create talbes to hold SIR schema information that is not stored in MySQL
+
+program
+. STRING  *  300   DB_SCHEMA  DB_SCHEMA_DATA
+. STRING  *  300   Z_TABLE_SCHEMA  Z_TABLE_SCHEMA_DATA
+. STRING  *  300   Z_VAR_SCHEMA    Z_VAR_SCHEMA_DATA
+. STRING  *  300   Z_VALUE_LABELS  Z_VALUE_LABEL_DATA
+. string  *  300   THIS_SIR_REC_NAME THIS_SQL_REC_NAME   THIS_VAR_NAME
+. integer *    1   THIS_VTYPE
+. integer *    4   EACH_REC   EACH_VAR    THIS_VARLENG   EACH_KEY
+. INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
+. STRING  *  300   CHECK_WORD  CHECK_FILE
+. STRING  *  300   CLEAN_WORD
+. STRING  *  300   CSV_VALUE
+. STRING  *  3000  CSV_LINE
+. INTEGER *    4   IO_FEEDBACK
+. STRING  *  200   MYSQL_FILENAME   | JUST INCASE THE FILE NAME FOR DATA IMPORT NEEDS TO BE MANIPULATED BASED ON THE SYSTEM
+. STRING  *    6   LINE_TERMINATOR
+. integer *    4   STOP_REC        | What record number should this stop at.  Used for sampling and testing.
+
+. STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
+. LINE_TERMINATOR = '<LINE_TERMINATOR>'
+
+compute DB_SCHEMA      =  DSN('OUTPUT_DIR') +  '03a_' + trim( '<DBNAME>' ) + "_db_schema.sql"
+compute DB_SCHEMA_DATA =  DSN('OUTPUT_DIR') +  '03b_' + trim( '<DBNAME>' ) + "_db_schema_data.csv"
+compute Z_TABLE_SCHEMA      =  DSN('OUTPUT_DIR') +  '04a_' + trim( '<DBNAME>' ) + "_table_schema.sql"
+compute Z_TABLE_SCHEMA_DATA =  DSN('OUTPUT_DIR') +  '04b_' + trim( '<DBNAME>' ) + "_table_schema_data.csv"
+compute Z_VAR_SCHEMA        =  DSN('OUTPUT_DIR') +  '04c_' + trim( '<DBNAME>' ) + "_var_schema.sql"
+compute Z_VAR_SCHEMA_DATA   =  DSN('OUTPUT_DIR') +  '04d_' + trim( '<DBNAME>' ) + "_var_schema_data.csv"
+compute Z_VALUE_LABELS      =  DSN('OUTPUT_DIR') +  '05a_' + trim( '<DBNAME>' ) + "_value_label_schema.sql"
+compute Z_VALUE_LABEL_DATA  =  DSN('OUTPUT_DIR') +  '05b_' + trim( '<DBNAME>' ) + "_value_label_data.csv"
+
+
+DO REPEAT EACH_FILENAME = F_DB_SCHEMA      F_DB_SCHEMA_DATA
+                          F_TABLE_SCHEMA   F_TABLE_SCHEMA_DATA
+                          F_VAR_SCHEMA     F_VAR_SCHEMA_DATA
+                          F_VALUE_LABELS   F_VALUE_LABEL_DATA  /
+          EACH_PATH =     DB_SCHEMA        DB_SCHEMA_DATA
+                          Z_TABLE_SCHEMA   Z_TABLE_SCHEMA_DATA
+                          Z_VAR_SCHEMA     Z_VAR_SCHEMA_DATA
+                          Z_VALUE_LABELS   Z_VALUE_LABEL_DATA
+
+. open EACH_FILENAME / dsnvar = EACH_PATH  /write iostat = IO_FEEDBACK lrecl=3000
+. CHECK_FILE = EACH_PATH
+. execute subprocedure CHECK_IO
+end repeat
+
+C ------------------
+C DATABASE META
+MYSQL_FILENAME = DB_SCHEMA_DATA
+EXECUTE SUBPROCEDURE ESCAPE_SLASHES
+write ( F_DB_SCHEMA ) 'LOAD DATA LOCAL ' /
+                          ["INFILE '" + MYSQL_FILENAME  + "'" ] /
+                          'INTO TABLE DB_CONFIG' /
+                          "COLUMNS TERMINATED BY ','" /
+			  "OPTIONALLY ENCLOSED BY '""'"/
+			  "ESCAPED BY '""'"/
+			  "LINES TERMINATED BY '<LINE_TERMINATOR>'"  /
+                          "IGNORE 1 LINES;"/
+
+write( F_DB_SCHEMA_DATA ) '"id"<DELIMINATOR>'
+                          '"db_name"<DELIMINATOR>'
+                          '"db_label"<DELIMINATOR>'
+                          '"db_type"<DELIMINATOR>'
+                          '"db_caseid"<DELIMINATOR>'
+CSV_LINE = '0<DELIMINATOR>"' + dbname(0) + '"<DELIMINATOR>"' +
+           fst( recdoc(0,0), dbname(0) )  +  '"<DELIMINATOR>"' +
+           format(dbtype(0)) + '"<DELIMINATOR>"' +
+           fst(varname(0,1), '') + '"'
+. ifthen ( sglobal( 'LARAVEL' ) eq 'yes' )
+.  CSV_LINE = CSV_LINE + ',' + datec(today(0),'yyyymmdd') + ',' + datec(today(0),'yyyymmdd')
+. endif
+. write( F_DB_SCHEMA_DATA ) CSV_LINE
+
+
+C ------------------
+c variable details
+write( F_VAR_SCHEMA ) 'CREATE TABLE SCHEMA_VARIABLE (' /
+                     4T 'id int NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                     4T 'table_name varchar(255),' /
+                     4T 'variable_name varchar(255),' /
+                     4T 'variable_label varchar(255),' /
+                     4T 'variable_document varchar(255),' /
+                     4T 'variable_read_security varchar(255),' /
+                     4T 'variable_write_security varchar(255),' /
+                     4T 'variable_stattype varchar(255),' /
+                     4T 'variable_type varchar(255),' /
+                     4T 'variable_length varchar(255),' /
+                     4T 'variable_scale varchar(255),' /
+                     4T 'variable_missing1 varchar(255),' /
+                     4T 'variable_missing2 varchar(255),' /
+                     4T 'variable_missing3 varchar(255),' /
+                     4T 'variable_range_min varchar(255),' /
+                     4T 'variable_range_max varchar(255),' /
+                     4T 'variable_valid_value varchar(255),' /
+                     4T 'variable_required INTEGER' /
+                     ');' /
+
+MYSQL_FILENAME = Z_VAR_SCHEMA_DATA
+EXECUTE SUBPROCEDURE ESCAPE_SLASHES
+write ( f_VAR_SCHEMA ) 'LOAD DATA LOCAL ' /
+                          ["INFILE '" + MYSQL_FILENAME  + "'" ] /
+                          'INTO TABLE SCHEMA_VARIABLE' /
+                          "COLUMNS TERMINATED BY ','" /
+			  "OPTIONALLY ENCLOSED BY '""'"/
+			  "ESCAPED BY '""'"/
+			  "LINES TERMINATED BY '<LINE_TERMINATOR>'"  /
+                          "IGNORE 1 LINES;"/
+
+C ------------------
+C TABLE SCHEMA
+write( F_TABLE_SCHEMA ) 'CREATE TABLE schema_table('/
+                       4T ' table_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+                       4T ' table_name VARCHAR ( 200 ),' /
+                       4T ' table_label VARCHAR ( 200 ),' /
+                       4T ' table_document VARCHAR ( 20000 )' /
+                       ');' /
+MYSQL_FILENAME = Z_TABLE_SCHEMA_DATA
+EXECUTE SUBPROCEDURE ESCAPE_SLASHES
+write ( F_TABLE_SCHEMA ) 'LOAD DATA LOCAL ' /
+                          ["INFILE '" + MYSQL_FILENAME + "'" ] /
+                          'INTO TABLE SCHEMA_TABLE' /
+                          "COLUMNS TERMINATED BY ','" /
+                          "OPTIONALLY ENCLOSED BY '""'"/
+                          "ESCAPED BY '""'"/
+			  "LINES TERMINATED BY '<LINE_TERMINATOR>'"  /
+                          "IGNORE 0 LINES;"/
+
+C ------------------
+C VALUE LABELS TABLE
+write( f_value_labels ) 'CREATE TABLE SCHEMA_VALUE_LABELS ('/
+                     4T 'id int NOT NULL AUTO_INCREMENT PRIMARY KEY ,'/
+                     4T 'table_name varchar(255),'/
+                     4T 'variable_name varchar(255),'/
+                     4T 'value_value varchar(255),'/
+                     4T 'value_label varchar(255)'/
+                     ');'
+MYSQL_FILENAME = Z_value_label_data
+EXECUTE SUBPROCEDURE ESCAPE_SLASHES
+write ( f_value_labels ) 'LOAD DATA LOCAL ' /
+                          ["INFILE '" + MYSQL_FILENAME + "'" ] /
+                          'INTO TABLE SCHEMA_VALUE_LABELS' /
+                          "COLUMNS TERMINATED BY ','" /
+                          "OPTIONALLY ENCLOSED BY '""'"/
+                          "ESCAPED BY '""'"/
+			  "LINES TERMINATED BY '<LINE_TERMINATOR>'"  /
+                          "IGNORE 0 LINES;"/
+
+
+
+WRITE ( F_VAR_SCHEMA_DATA ) '"id"<DELIMINATOR>'
+                            '"table_name"<DELIMINATOR>'
+                            '"variable_name"<DELIMINATOR>'
+                            '"variable_label"<DELIMINATOR>'
+                            '"variable_document"<DELIMINATOR>'
+                            '"variable_read_security"<DELIMINATOR>'
+                            '"variable_write_security"<DELIMINATOR>'
+                            '"variable_stattype"<DELIMINATOR>'
+                            '"variable_type"<DELIMINATOR>'
+                            '"variable_length"<DELIMINATOR>'
+                            '"variable_scale"<DELIMINATOR>'
+                            '"variable_missing1"<DELIMINATOR>'
+                            '"variable_missing2"<DELIMINATOR>'
+                            '"variable_missing3"<DELIMINATOR>'
+                            '"variable_range_min"<DELIMINATOR>'
+                            '"variable_range_max"<DELIMINATOR>'
+                            '"variable_valid_value"<DELIMINATOR>'
+                            '"variable_required"<DELIMINATOR>'
+
+
+write 'Files created ' / 'F_DB_SCHEMA: '         [ dsn( 'f_DB_SCHEMA' ) ] /
+                         'f_DB_SCHEMA_data: '    [ dsn( 'f_DB_SCHEMA_data' ) ] /
+                         'F_TABLE_SCHEMA: '      [ dsn( 'f_TABLE_SCHEMA' ) ] /
+                         'f_TABLE_SCHEMA_data: ' [ dsn( 'f_TABLE_SCHEMA_data' ) ] /
+                         'f_VAR_SCHEMA: '        [ dsn( 'f_VAR_SCHEMA' ) ] /
+                         'f_VAR_SCHEMA_data: '   [ dsn( 'f_VAR_SCHEMA_data' ) ] /
+                         'f_value_labels: '      [ dsn( 'f_value_labels' ) ] /
+                         'f_value_label_data: '  [ dsn( 'f_value_label_data' ) ] /
+
+for EACH_REC = 1, STOP_REC
+. compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+. if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+
+
+C ---------------
+C TABLE SCHEMA
+
+C FIRST COLUMN IS AUTO-INT
+. CSV_LINE = "0<DELIMINATOR>"
+
+c variable schema
+. EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+. THIS_SQL_REC_NAME = sglobal( 'table_prefix' ) + CLEAN_WORD
+. CSV_LINE = CSV_LINE + '"' + THIS_SQL_REC_NAME + '",'  |table name
+
+. CSV_VALUE = trim( recname( EACH_REC ) )
+. EXECUTE SUBPROCEDURE MAKE_FILE_LINE;
+
+. CSV_VALUE = trimlr( recdoc( EACH_REC, 0) )
+. EXECUTE SUBPROCEDURE MAKE_FILE_LINE;
+
+. IF ( SUBSTR( CSV_LINE, LEN( CSV_LINE ), 1 ) EQ ',' ) CSV_LINE = SUBSTR( CSV_LINE, 1, LEN( CSV_LINE )  -1)
+. WRITE ( f_TABLE_SCHEMA_data ) CSV_LINE
+
+C ---------------
+C VARIABLE SCHEMA
+. for EACH_VAR = 1, nvarsc( EACH_REC )
+.   compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+.   compute THIS_VTYPE    = vtype( EACH_REC, THIS_VAR_NAME )
+.   compute THIS_VARLENG  = varleng( EACH_REC, THIS_VAR_NAME )
+
+.   recode THIS_VAR_SQL_TYPE = THIS_VTYPE( 1 = 'VARCHAR' )( 2 = 'VARCHAR' )( 3 = 'DATE' )( 4 = 'TIME' )( 5 = 'INTEGER' )
+    ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' )( 8 = 'BIGINT' )
+
+C   FIRST COLUMN IS AUTO-INT
+.   CSV_LINE = "0<DELIMINATOR>"
+
+c   variable schema
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   THIS_SQL_REC_NAME = sglobal( 'table_prefix' ) + CLEAN_WORD
+.   CSV_LINE = CSV_LINE + '"' + THIS_SQL_REC_NAME + '",'  |table name
+
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_VAR_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   CSV_LINE = CSV_LINE + '"' + CLEAN_WORD + '",'  | variable name
+
+C   - VARIABLE LABEL
+.   CSV_VALUE = VARLABSC ( EACH_REC, THIS_VAR_NAME )
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE;
+
+C   - VARIABLE DOCUMENT
+.   CSV_VALUE = ""
+.   FOR EACH_LINE = 1, NVARDOC ( EACH_REC, THIS_VAR_NAME )
+.     CSV_VALUE = CSV_VALUE + VARDOCSN ( EACH_REC, THIS_VAR_NAME, EACH_LINE )
+.   END FOR
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_READ_SECURITY
+.   CSV_VALUE = FORMAT( RVARSEC( EACH_REC, THIS_VAR_NAME ) )
+.   if (CSV_VALUE = '0') CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_WRITE_SECURITY
+.   CSV_VALUE = FORMAT( WVARSEC( EACH_REC, THIS_VAR_NAME ) )
+.   if (CSV_VALUE = '0') CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_STATTYPE 0=None, 1=Observation, 2=Control
+.   CSV_VALUE = FORMAT( STATTYPE ( EACH_REC, THIS_VAR_NAME ) )
+.   if (CSV_VALUE = '0') CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_TYPE
+.   CSV_VALUE = FORMAT( VTYPE    ( EACH_REC, THIS_VAR_NAME ) )
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   -  VARIABLE_LENGTH  FOR STRINGS
+.   IFTHEN( VTYPE ( EACH_REC, THIS_VAR_NAME ) = 1 OR 2 )
+.     CSV_VALUE = FORMAT( VARLENG  ( EACH_REC, THIS_VAR_NAME ) )
+.   ELSE
+.     CSV_VALUE = ''
+.   ENDIF
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_SCALE
+.   CSV_VALUE = FORMAT( VSCALE   ( EACH_REC, THIS_VAR_NAME ) )
+.   if (CSV_VALUE = '0') CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_MISSING1
+.   CSV_VALUE = MISS     ( EACH_REC, THIS_VAR_NAME, 1 )
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_MISSING2
+.   CSV_VALUE = MISS     ( EACH_REC, THIS_VAR_NAME, 2 )
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_MISSING3
+.   CSV_VALUE = MISS     ( EACH_REC, THIS_VAR_NAME, 3 )
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_RANGE_MIN
+.   ifthen ( vtype( EACH_REC, THIS_VAR_NAME ) eq 3 ) | Date
+.     CSV_VALUE = datec( nmin( EACH_REC, THIS_VAR_NAME) , 'mm/dd/yyyy' )
+.   elseif ( vtype( EACH_REC, THIS_VAR_NAME ) eq 4 ) | time
+.     CSV_VALUE = timec( nmin( EACH_REC, THIS_VAR_NAME) , 'hh:mm:ss' )
+.   else
+.     CSV_VALUE = fst( format( nmin( EACH_REC, THIS_VAR_NAME) ), smin ( EACH_REC, THIS_VAR_NAME ) )
+.   endif
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+C   - VARIABLE_RANGE_Max
+.   ifthen( vtype( EACH_REC, THIS_VAR_NAME ) eq 3 ) | Date
+.     CSV_VALUE = datec( nmax( EACH_REC, THIS_VAR_NAME) , 'mm/dd/yyyy' )
+.   elseif( vtype( EACH_REC, THIS_VAR_NAME ) eq 4 ) | time
+.     CSV_VALUE = timec( nmax( EACH_REC, THIS_VAR_NAME) , 'hh:mm:ss' )
+.   else
+.     CSV_VALUE = fst( format( nmax( EACH_REC, THIS_VAR_NAME) ), smin( EACH_REC, THIS_VAR_NAME ) )
+.   endif
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+c   Valid Values
+C   COME BACK ON WORK ON THIS.  SHOULD IT BE A COMMA SEPARATED LIST?  CHECK OUT HOW WORDPRESS AND JOOMLA HANDLE THINGS LIKE THIS
+C.  WRITE ( f_value_label_data/noeol ) VARIABLE_VALID_VALUE
+.   CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+c   Required  Note: SIR Does NOT have "required" in the variable schema
+.   CSV_VALUE = ''
+.   EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+
+.   EXECUTE SUBPROCEDURE TRIM_LAST_COMMA
+.   WRITE ( f_VAR_SCHEMA_data ) CSV_LINE
+
+C ------------------
+C -  VALUE LABELS  -
+.   CSV_LINE = ''
+.   for EACH_LABEL = 1, nvallab( EACH_REC,  THIS_VAR_NAME)
+.     CSV_LINE = '0<DELIMINATOR>'
+.     CSV_VALUE = THIS_SQL_REC_NAME; EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+.     CSV_VALUE = THIS_VAR_NAME; EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+.     CSV_VALUE = VALLABSV ( EACH_REC, THIS_VAR_NAME, EACH_LABEL ); EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+.     CSV_VALUE = VALLABSN( EACH_REC, THIS_VAR_NAME ,EACH_LABEL ) ; EXECUTE SUBPROCEDURE MAKE_FILE_LINE
+.     EXECUTE SUBPROCEDURE TRIM_LAST_COMMA
+.     WRITE ( f_value_label_data ) CSV_LINE
+.   end for
+
+
+. END FOR
+END FOR
+
+
+
+C CREATE VARIABLE INFORMATION FOR BUILT IN TABLE USER_INFORMATION
+C USER ID
+WRITE ( F_VAR_SCHEMA_DATA ) '0<DELIMINATOR>"user_information"<DELIMINATOR>"user_id"<DELIMINATOR>'
+                            '"User ID"<DELIMINATOR>Auto Incrementing User ID.  Unique<DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR>"INTEGER"<DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR><NULL_VALUE>'
+C USER LOGIN NAME
+WRITE ( F_VAR_SCHEMA_DATA ) '0<DELIMINATOR>"user_information"<DELIMINATOR>"user_login"<DELIMINATOR>'
+                            '"User Login"<DELIMINATOR>Unique<DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR>"VARCHAR"<DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR><NULL_VALUE>'
+C USER LOGIN Password
+WRITE ( F_VAR_SCHEMA_DATA ) '0<DELIMINATOR>"user_information"<DELIMINATOR>"user_password"<DELIMINATOR>'
+                            '"User Password"<DELIMINATOR>Encrypted<DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR>"VARCHAR"<DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR>'
+                            '<NULL_VALUE><DELIMINATOR><NULL_VALUE><DELIMINATOR><NULL_VALUE>'
+
+
+
+
+
+
+close ( DB_SCHEMA )
+close ( DB_SCHEMA_data )
+close ( f_TABLE_SCHEMA )
+close ( f_TABLE_SCHEMA_data )
+close ( f_VAR_SCHEMA )
+close ( f_VAR_SCHEMA_data )
+close ( f_value_labels )
+close ( f_value_label_data)
+
+
+SUBPROCEDURE CHECK_IO
+. IFNOTTHEN ( IO_FEEDBACK EQ 0 )
+.   WRITE 'ERRORS WITH NECESSARY FILE: ' CHECK_FILE ' ERROR: ' IO_FEEDBACK
+.   Z_DUMMY = globals( "G_CONTINUE",  '0')
+. ENDIF
+END SUBPROCEDURE
+
+subprocedure MAKE_FILE_LINE
+C CREATE A LINE THAT CAN BE READ IN BY MYSQL
+. IF ( EXISTS( CSV_LINE ) EQ 0 ) CSV_LINE = ""
+. CSV_VALUE =  replace( CSV_VALUE, '"', '""', 99, 2, 0 ) | 2 double qoutes when imported turn into 1 double qoute
+. CSV_VALUE =  replace( CSV_VALUE, "’", "'", 99, 2, 0 )  | Back qoutes must be changed.  Back qoute is MYSQL KEYWORD
+
+. IFTHEN ( EXISTS( CSV_VALUE ) EQ 0)
+.   CSV_VALUE = '<NULL_VALUE>'
+. ELSEIF ( pack( trimlr( CSV_VALUE ) ) EQ '' )
+.   CSV_VALUE = '<NULL_VALUE>'
+. ELSEIF ( CSV_VALUE EQ 'NULL' )
+.   CSV_VALUE = '<NULL_VALUE>'
+. ELSE
+.   CSV_VALUE =  '"' + TRIMR( CSV_VALUE) + '"'       | ADD QOUTES AND GET RID OF TRAILING SPACES
+. ENDIF
+
+. CSV_LINE = CSV_LINE + CSV_VALUE + '<DELIMINATOR>'
+end subprocedure
+
+SUBPROCEDURE TRIM_LAST_COMMA
+. CSV_LINE = TRIMR( CSV_LINE )
+c bug in code.  I don't remember why this is commented out!
+C . IF ( SUBSTR( CSV_LINE, LEN( CSV_LINE ), 1 ) EQ ',' ) CSV_LINE = SUBSTR( CSV_LINE, 1, LEN( CSV_LINE )  -1)
+END SUBPROCEDURE
+
+SUBPROCEDURE ESCAPE_SLASHES
+c for windows the "\" in the file path must be escaped as it is a SQL reserved keyword
+. IFNOT ( 0<WINDOWS_MACHINE> EQ 1 ) EXIT SUBPROCEDURE
+. MYSQL_FILENAME = replace( MYSQL_FILENAME , '\', '\\', 99, 2, 0 )
+END SUBPROCEDURE
+
+end program
+END PROCEDURE

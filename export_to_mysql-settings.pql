@@ -1,0 +1,76 @@
+PROCEDURE      EXPORT_TO_MYSQL.SETTINGS:T  (157890,35971)  |Last amended Jan 27, 2015,09:59:31
+C -----------------------------------------------
+C ---- Global Settings   ------------------------
+
+GLOBAL username    = dcd
+GLOBAL password    = dcd
+GLOBAL redcap      = yes
+GLOBAL new         = no
+GLOBAL STOP_REC    = 99 | DON'T SET THIS TO GET ALL RECORD TYPES
+GLOBAL LARAVEL     = yes | add specif stuff for Laravel Framework
+GLOBAL NULL_VALUE  = '' | NULL
+GLOBAL date_format = 'mm/dd/yyyy'  |  'yyyy-mm-dd'
+GLOBAL time_format = 'hh:mm'    |  'hh:mm:ss'
+GLOBAL G_CONTINUE  = 0  | 0=Do Not Continue   1=Continue
+GLOBAL CASE_RESTRICTION   = ' COUNT = 25'
+| global CASE_RESTRICTION = 'SAMPLE_SIZE = 1'
+GLOBAL WINDOWS_MACHINE = 1
+GLOBAL LINE_TERMINATOR = '\n'  | Will be overwritten by WINDOWS_MACHINE if WINDOWS_MAHCINE = 1
+GLOBAL TABLE_PREFIX = 'crf_'
+GLOBAL FILE_ENDING  = 'csv'  | possible values csv or tab
+GLOBAL STOP_ON_ERROR = 0  | 0=No 1=Yes
+
+c feedback
+PRINT BACK OFF
+C PRINT BACK REMARKS
+
+
+C -----------------------------------------------
+C ----LINE TERMINATOR and file endinds-----------
+C
+PROGRAM
+. integer * 1 T
+. string  * 4 FILE_ENDING  | "csv, tab"
+. T = globaln ( 'CASE_SEEDER', NOW(0) )
+. IFTHEN  ( 0<WINDOWS_MACHINE> EQ 1 )
+.   T = globals ( 'LINE_TERMINATOR', '\r\n' )  | WINDOWS END OF LINE.  change according to your system.
+.   WRITE 'PATHS TO WINDOWS FILE WILL BE HAVE THE BACKSLASH (SQL KEYWORD) ESCAPED.  LOOK FOR DOUBLE BACKSLASHES '/
+. ENDIF
+
+| set the file ending and everything else will be set.  |add new options when needed.
+. FILE_ENDING = lower( sglobal( 'FILE_ENDING' ) )
+. IFTHEN  ( FILE_ENDING  EQ 'tab' )
+.   T = globals ( 'DELIMINATOR', char(9) )  | tab
+.   T = globals ( 'SQL_DELIMINATOR', '\t' )  | tab
+.   T = globals ( 'PQL_DELIMINATOR', 'char(9)' )  | tab
+
+. elseif   ( FILE_ENDING EQ 'csv' )
+.   T = globals ( 'DELIMINATOR', char(44) )
+.   T = globals ( 'SQL_DELIMINATOR', ',' )
+.   T = globals ( 'PQL_DELIMINATOR', 'char(44)' )
+. else
+.   write /////'  !!!!! A BIG MISTAKE HAPPENED.  PLEASE CHOOSE A FILE ENDING  !!!!!  ///'
+. ENDIF
+end program
+
+C -----------------------------------------------
+C ---   report back settings --------------------
+Program
+write 'YOUR SETTINGS ARE' /
+      5t 'SEED = <CASE_SEEDER>' /
+      5t 'SAMPLE SIZE = <SAMPLE_SIZE>'  /
+      5t 'USERNAME = <USERNAME>' /
+      5t 'PASSWORD = <PASSWORD>' /
+      5t 'NEW = <NEW> ' /
+      5t 'Laravel= <laravel> ' /
+      5t 'CASE_RESTRICTION = <CASE_RESTRICTION>' /
+      5t 'WINDOWS MACHINE  = <WINDOWS_MACHINE>' /
+      5t 'LINE TERMINATOR  = <LINE_TERMINATOR>' /
+      5T 'FILE_ENDING= <FILE_ENDING>' /
+      5T 'DELIMINATOR= <DELIMINATOR>' /
+      5T 'SQL_DELIMINATOR = <SQL_DELIMINATOR>' /
+      5T 'PQL_DELIMINATOR = <PQL_DELIMINATOR>' /
+      5t 'redcap= <redcap>' / /
+
+end program
+END PROCEDURE
