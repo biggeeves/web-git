@@ -1,4 +1,4 @@
-PROCEDURE      EXPORT_TO_MYSQL.START:T  (157890,46964)  |Last amended Jan 27, 2015,13:02:44
+PROCEDURE      EXPORT_TO_MYSQL.START:T  (157897,47444)  |Last amended Feb 03, 2015,13:10:44
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
 
 C COMPILE NECESSARY TOOLS
@@ -68,6 +68,32 @@ program
                        ' db_caseid VARCHAR (100)'
 . EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
 . write( f_db_create ) ');' |end db_config
+
+. ifthen( dbtype(0) eq 1 )  | Case structured dbs
+.   write( f_db_create ) '##############################################'
+.   write( f_db_create ) '## Database CIR- Common Information Record  ##' //
+.   write( f_db_create ) 'CREATE TABLE crf_cir (' /
+                         ' id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,' /
+
+
+.   compute THIS_VAR_NAME = lower( trim( varnamec( 0, 1 ) ) )
+.   compute THIS_VTYPE = vtype( 0, THIS_VAR_NAME )
+.   compute THIS_VARLENG = varleng( 0, THIS_VAR_NAME )
+.   recode THIS_VAR_SQL_TYPE = THIS_VTYPE( 1 = 'VARCHAR' ) ( 2 = 'VARCHAR' ) ( 3 = 'DATE' ) ( 4 = 'TIME' ) ( 5 = 'INTEGER' )
+                     ( 6 = 'FLOAT' )( 7 = 'DOUBLE PRECISION' ) ( 8 = 'BIGINT' )
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_VAR_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   THIS_VAR_NAME = CLEAN_WORD
+
+.   THIS_LINE = THIS_VAR_NAME + '  ' + THIS_VAR_SQL_TYPE
+.   ifthen( THIS_VAR_SQL_TYPE = 'VARCHAR' )
+.     THIS_LINE = THIS_LINE  + '( ' + format( THIS_VARLENG ) + ' )'
+.   endif
+.   write ( f_db_create ) 2T THIS_LINE
+
+.   EXECUTE SUBPROCEDURE ADD_LARAVEL_COLUMNS
+.   write( f_db_create ) ');' |end db_config
+. endif
+
 
 | system config
 . write( f_db_create ) 'CREATE TABLE system_config (' /
