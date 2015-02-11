@@ -1,4 +1,4 @@
-PROCEDURE      EXPORT_TO_MYSQL.START:T  (157897,47444)  |Last amended Feb 03, 2015,13:10:44
+PROCEDURE      EXPORT_TO_MYSQL.START:T  (157904,42467)  |Last amended Feb 10, 2015,11:47:47
 c TRANSFER SIR DATA TO A MYSQL DATABASE.
 
 C COMPILE NECESSARY TOOLS
@@ -236,96 +236,7 @@ c variable constraints
 . close ( f_constr )
 
 
-c   EXPORT TO REDCAP SECTION
-cif eq '<redcap>', 'yes'
-. compute REDCAP_FILE   =  DSN('OUTPUT_DIR') +  '03_' + trim( '<DBNAME>' ) + "_redcap.csv"
-. open redcap / dsnvar = REDCAP_FILE /write iostat = IO_FEEDBACK lrecl=3000
-. IFNOTTHEN ( IO_FEEDBACK EQ 0 )
-.   WRITE 'ERRORS WITH NECESSARY FILE: ' REDCAP_FILE ' ERROR: ' IO_FEEDBACK
-.   Z_DUMMY = globals( "G_CONTINUE",  '0')
-.   EXIT PROGRAM
-. ELSE
-.   WRITE 'redcap: '  REDCAP_FILE /
-. ENDIF
-| THE REDCAP HEADERS ARE NECCESSARY FOR IMPORT.  REDCAP AUTOMATICALLY IGNORES THE FIRST LINE OF THE FILE
-. THIS_LINE =  'Variable / Field Name,Form Name,Section Header,Field Type,Field Label,' +
-               '"Choices, Calculations, OR Slider Labels",Field Note,' +
-               'Text Validation Type OR Show Slider Number,Text Validation Min,Text Validation Max,' +
-               'Identifier?,Branching Logic'
-. write( redcap )
-. for EACH_REC = 1, STOP_REC
-.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
-.   if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
-.   THIS_SQL_REC_NAME = sglobal( 'TABLE_PREFIX' ) + THIS_SIR_REC_NAME
-.   for EACH_VAR = 1, nvarsc( EACH_REC )
-.     compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
-.     compute THIS_VTYPE    = vtype( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
-.     compute THIS_VARLENG  = varleng( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
-.     compute THIS_VARLAB   = varlabsc ( EACH_REC, THIS_VAR_NAME )
-.     compute THIS_VARMIN   = FST( FORMAT( NMIN( EACH_REC, THIS_VAR_NAME) ), SMIN ( EACH_REC, THIS_VAR_NAME ), '' )
-.     compute THIS_VARMAX   = FST( FORMAT( NMAX( EACH_REC, THIS_VAR_NAME) ), SMAX ( EACH_REC, THIS_VAR_NAME ), '' )
 
-.     ifthen (THIS_VTYPE eq 3)
-.       if ( THIS_VARMIN EQ '1' ) THIS_VARMIN = ''
-.       if ( THIS_VARMIN EQ '3660000' ) THIS_VARMIN = ''
-.       if ( THIS_VARMAX EQ '1' ) THIS_VARMAX = ''
-.       if ( THIS_VARMAX EQ '3660000' ) THIS_VARMAX = ''
-.       THIS_VARMIN = fst( datec( numbr(THIS_VARMIN), '<date_format>'), '')
-.       THIS_VARMAX = fst( datec( numbr(THIS_VARMAX), '<date_format>'), '')
-.     elseif (THIS_VTYPE eq 4)
-.       THIS_VARMIN = TIMEC( numbr(THIS_VARMIN), '<time_format>')
-.       THIS_VARMAX = TIMEC( numbr(THIS_VARMAX), '<time_format>')
-.     endif
-
-.     recode  THIS_VAR_REDCAP_TYPE = THIS_VTYPE( 1 = '' ) ( 2 = '' ) ( 3 = 'date' ) ( 4 = 'time' ) ( 5 = 'integer' )
-                     ( 6 = 'number' )( 7 = 'number' ) ( 8 = 'number' )
-.     ifthen ( nvallab( EACH_REC,  THIS_VAR_NAME) lt 2)
-.       THIS_FIELD_TYPE = 'text'
-.     elseif ( nvallab( EACH_REC,  THIS_VAR_NAME) eq 2)
-.       THIS_FIELD_TYPE = 'radio'
-.     else
-.       THIS_FIELD_TYPE = 'dropdown'
-.     endif
-
-| crazy field min and maxs must be removed if it is a drop down or radio.  ONLY TEXT can have mins and maxs
-| for radios and dropdowns there is no field type either!
-.     ifthen ( THIS_FIELD_TYPE eq 'radio' or 'dropdown' )
-.       THIS_VARMIN = ''
-.       THIS_VARMAX = ''
-.       THIS_VAR_REDCAP_TYPE = ''
-.     endif
-
-
-|     value labels
-.     REDCAP_VALLABS = '"'
-.     for EACH_LABEL = 1, nvallab( EACH_REC,  THIS_VAR_NAME)
-.       REDCAP_VALLABS = REDCAP_VALLABS + trim( pack( VALLABSV( EACH_REC, THIS_VAR_NAME, EACH_LABEL ) ) )
-.       REDCAP_VALLABS = REDCAP_VALLABS + ', '
-.       REDCAP_VALLABS = REDCAP_VALLABS + trim( pack( VALLABSN( EACH_REC, THIS_VAR_NAME ,EACH_LABEL ) ) )
-.       if (EACH_LABEL lt  nvallab( EACH_REC,  THIS_VAR_NAME) ) REDCAP_VALLABS = REDCAP_VALLABS +  ' | '
-.     end for
-.     REDCAP_VALLABS = REDCAP_VALLABS + '"'
-
-
-.     REDCAP_CSV_LINE = THIS_VAR_NAME + ',' +
-                    THIS_SQL_REC_NAME + ',' +
-                    ',' +
-                    THIS_FIELD_TYPE + ',' +
-                    THIS_VARLAB + ',' +
-                    REDCAP_VALLABS + ',' +
-                    ',' +
-                    THIS_VAR_REDCAP_TYPE + ',' +
-                    THIS_VARMIN + ',' + THIS_VARMAX + ',' +
-                    ',' +
-                    ',' +
-                    ',' +
-                    ',' +
-                    ','
-.     write( redcap ) REDCAP_CSV_LINE
-.   end for
-. end for
-CLOSE (REDCAP)
-cif end | end redcap cif
 
 
 SUBPROCEDURE ADD_LARAVEL_COLUMNS
@@ -338,6 +249,7 @@ END SUBPROCEDURE
 
 end program
 
+CALL EXPORT_TO_MYSQL.REDCAP
 
 CALL EXPORT_TO_MYSQL.CONVERT_DB_SCHEMA_TO_MYSQL
 

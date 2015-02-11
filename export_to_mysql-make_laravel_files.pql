@@ -1,4 +1,4 @@
-PROCEDURE      EXPORT_TO_MYSQL.MAKE_LARAVEL_FILES:T  (157890,37950)  |Last amended Jan 27, 2015,10:32:30
+PROCEDURE      EXPORT_TO_MYSQL.MAKE_LARAVEL_FILES:T  (157904,43022)  |Last amended Feb 10, 2015,11:57:02
 c create laravel files
 program
 . string  *  250   LARAVEL_DIR
@@ -27,17 +27,30 @@ program
 
 . STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
 . for EACH_REC = 1, STOP_REC
-.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   compute THIS_SIR_REC_NAME = capital( trim( lower( recname( EACH_REC ) ) ) )
 .   if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
 .   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
 .   THIS_SIR_REC_NAME = CLEAN_WORD
 .   THIS_SQL_REC_NAME = sglobal('table_prefix') + THIS_SIR_REC_NAME
-.   EACH_PATH  = LARAVEL_MODELS_DIR + capital(THIS_SQL_REC_NAME ) + '.php'
+.   EACH_PATH  = LARAVEL_MODELS_DIR + THIS_SQL_REC_NAME + '.php'
 .   open EACH_FILENAME / dsnvar = EACH_PATH  /write iostat = IO_FEEDBACK lrecl=3000
 .     if ( IO_FEEDBACK <> 0 ) write 'Failed to open ' EACH_PATH LARAVEL_MODELS_DIR
 .     write (EACH_FILENAME) '<?php'
 .     write (EACH_FILENAME) ['class ' + capital(THIS_SQL_REC_NAME) + ' extends Eloquent {']
 .     write (EACH_FILENAME) ["protected $table = '" + THIS_SQL_REC_NAME + "';"]
+
+
+c     CODE IN DEVELOPMENT.  DONT KNOW HOW TO PROTECT PRIMARY KEYS YET
+C     PROTECTED KEY VALUES
+.     THIS_LINE = "protected $primaryKey = '" + lower( varname(0,1 ) ) + "';"
+.     for EACH_KEY = 1, nkeys( EACH_REC ) + DBTYPE(0)
+.       CHECK_WORD = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
+.       EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (CHECK_WORD) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.       compute THIS_LINE = THIS_LINE + CLEAN_WORD
+.       if (EACH_KEY lt nkeys( EACH_REC ) + DBTYPE(0) ) compute THIS_LINE = THIS_LINE + ', '
+.     end for
+C     END DEVELOPMENT CODE
+
 .     ifthen ( dbtype(0) eq 1 )
 .       write (EACH_FILENAME) ["protected $primaryKey = '" + lower( varname(0,1 ) )+ "';"]
 .     endif

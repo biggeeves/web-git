@@ -1,4 +1,4 @@
-PROCEDURE      EXPORT_TO_MYSQL.EXPORT_RECORD_DATA:T  (157890,37309)  |Last amended Jan 27, 2015,10:21:49
+PROCEDURE      EXPORT_TO_MYSQL.EXPORT_RECORD_DATA:T  (157904,42674)  |Last amended Feb 10, 2015,11:51:14
 C -------------------------------------------------------------------------------------------------------------
 C ------------------------------          EXPORT DATA          ------------------------------------------------
 
@@ -97,19 +97,6 @@ c include column headers
 . write( f_data/noeol) 'write( f_datafile) '
 . THIS_LINE = '"'
 
-c longitudinal records in redcap have a funny field called "redcap_event_name".  It is their version of a key field
-c KEY VALUES MUST BE CONVERTED TO SHIT LIKE THIS "1_arm_1" AND "2_arm_1" AND AND "1_arm_2" instead of their original values for data import!
-cif eq '<redcap>', 'yes'
-. ifthen ( nkeys ( EACH_REC) gt 0 ) | has a key field
-.   for EACH_KEY = 1, nkeys( EACH_REC )
-.     compute THIS_VAR_NAME = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
-.     THIS_LINE = THIS_LINE + THIS_VAR_NAME
-.     IF ( EACH_KEY LT nkeys( EACH_REC ) ) THIS_LINE = THIS_LINE + '_'
-.   end for
-.   THIS_LINE = THIS_LINE + 'redcap_event_name<DELIMINATOR>'
-.   write 'redcap_event_name for ' THIS_SIR_REC_NAME ' is a combination of variables: '
-. endif
-cif end
 . for EACH_VAR = 1, nvarsc( EACH_REC )
 .   compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
 .   THIS_LINE = THIS_LINE + THIS_VAR_NAME
