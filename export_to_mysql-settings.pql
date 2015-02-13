@@ -1,4 +1,4 @@
-PROCEDURE      EXPORT_TO_MYSQL.SETTINGS:T  (157890,35971)  |Last amended Jan 27, 2015,09:59:31
+PROCEDURE      EXPORT_TO_MYSQL.SETTINGS:T  (157907,42510)  |Last amended Feb 13, 2015,11:48:30
 C -----------------------------------------------
 C ---- Global Settings   ------------------------
 
@@ -19,6 +19,7 @@ GLOBAL LINE_TERMINATOR = '\n'  | Will be overwritten by WINDOWS_MACHINE if WINDO
 GLOBAL TABLE_PREFIX = 'crf_'
 GLOBAL FILE_ENDING  = 'csv'  | possible values csv or tab
 GLOBAL STOP_ON_ERROR = 0  | 0=No 1=Yes
+
 
 c feedback
 PRINT BACK OFF
@@ -52,6 +53,8 @@ PROGRAM
 .   write /////'  !!!!! A BIG MISTAKE HAPPENED.  PLEASE CHOOSE A FILE ENDING  !!!!!  ///'
 . ENDIF
 end program
+
+
 
 C -----------------------------------------------
 C ---   report back settings --------------------

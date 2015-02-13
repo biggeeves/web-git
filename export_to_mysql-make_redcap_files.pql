@@ -1,0 +1,187 @@
+PROCEDURE      EXPORT_TO_MYSQL.MAKE_REDCAP_FILES:T  (157907,48913)  |Last amended Feb 13, 2015,13:35:13
+C -----------------------------------------------------
+C ---  create REDCAP FILES ----------------------------
+
+program CRWARN
+. STRING  *  300   CREATE_DB_FILE
+. string  *  300   EACH_PATH
+. string  *  300   REDCAP_FILE
+. STRING  *  300   REDCAP_BASE_DIR
+. string  * 4094   REDCAP_CSV_LINE
+. string  * 4094   REDCAP_VALLABS
+. STRING  *  300   CREATE_CONSTRAINT_FILE
+. INTEGER *    4   IO_FEEDBACK
+. INTEGER *    4   Z_DUMMY
+. INTEGER *    4   STOP_REC
+. STRING  *  300   CHECK_WORD
+. STRING  *  300   CLEAN_WORD
+. STRING  *  300   CHECK_FILE
+. STRING  *   90   THIS_VAR_NAME
+. integer *    1   THIS_VTYPE
+. STRING  *  300   THIS_VARLAB
+. STRING  *   32   THIS_VAR_SQL_TYPE
+. STRING  *   32   THIS_VAR_REDCAP_VALIDATION
+. string  *   32   THIS_VARMIN THIS_VARMAX
+. string  *   32   THIS_FIELD_TYPE
+. string  *   32   THIS_SIR_REC_NAME
+. string  *   32   THIS_SQL_REC_NAME
+. integer *    4   THIS_VARLENG
+. STRING  *  300   THIS_LINE
+. STRING  *  300   REDCAP_FILE_HEADER
+. STRING  *  300   FEEDBACK_LINE
+. integer *    4   EACH_REC   EACH_VAR  EACH_KEY
+. INTEGER *    2   Z_INDS
+. INTEGER *    4   EACH_INDEX  EACH_INDEX_VAR
+. INTEGER *    4   MAX_INDEX_VAR
+. INTEGER *    1   MYSQL_RESERVED   | IS IT A RESERVED WORD IN MYSQL?  BOOLEAN
+. INTEGER *    1   FIRST_TIME_THROUGH
+
+. set FIRST_TIME_THROUGH (1)
+
+. IFNOTTHEN ( '<redcap>' = 'yes' )
+.   WRITE 'Redcap files will not be created as per setting.'
+.   EXIT PROGRAM
+. ENDIF
+
+. STOP_REC = fst ( nglobal( 'STOP_REC'), nrecs (0) )
+
+. REDCAP_BASE_DIR = dsn('redcap_base_dir')
+. ifthen (0 eq exists (REDCAP_BASE_DIR ) or len(REDCAP_BASE_DIR) )
+.   write // 'REDCAP_BASE_DIR IS NOT SET.   CAN NOT MAKE REDCAP FILES'
+.   EXIT PROGRAM
+. endif
+
+| THE REDCAP HEADERS ARE NECCESSARY FOR IMPORT.  REDCAP AUTOMATICALLY IGNORES THE FIRST LINE OF THE FILE
+. REDCAP_FILE_HEADER =  'Variable / Field Name,Form Name,Section Header,Field Type,Field Label,' +
+               '"Choices, Calculations, OR Slider Labels",Field Note,' +
+               'Text Validation Type OR Show Slider Number,Text Validation Min,Text Validation Max,' +
+               'Identifier?,Branching Logic'
+
+
+. REDCAP_FILE = REDCAP_BASE_DIR +   'entire_dictionary.csv'
+. open REDCAP_FILE / dsnvar = REDCAP_FILE  /write iostat = IO_FEEDBACK lrecl=5000
+. if ( IO_FEEDBACK <> 0 ) write 'Failed to open ' REDCAP_FILE ',' REDCAP_BASE_DIR
+. write( REDCAP_FILE ) REDCAP_FILE_HEADER
+
+
+. for EACH_REC = 1, STOP_REC
+.   compute THIS_SIR_REC_NAME = trim( lower( recname( EACH_REC ) ) )
+.   if( exists( THIS_SIR_REC_NAME ) eq 0 ) next for
+
+.   EACH_PATH  = REDCAP_BASE_DIR +  THIS_SIR_REC_NAME + '.csv'
+.   open EACH_FILENAME / dsnvar = EACH_PATH  /write iostat = IO_FEEDBACK lrecl=5000
+.     if ( IO_FEEDBACK <> 0 ) write 'Failed to open ' EACH_PATH ',' REDCAP_BASE_DIR
+.     write( EACH_FILENAME ) REDCAP_FILE_HEADER
+
+
+.   EXECUTE SUBROUTINE TOOLS.CHECK_RESERVED_WORDS (THIS_SIR_REC_NAME) RETURNING (CLEAN_WORD MYSQL_RESERVED)
+.   THIS_SIR_REC_NAME = CLEAN_WORD
+.   THIS_SQL_REC_NAME = THIS_SIR_REC_NAME
+c UNDER DEVELOPMENT
+c longitudinal records in redcap have a funny field called "redcap_event_name".  It is their version of a key field
+c KEY VALUES MUST BE CONVERTED TO SHIT LIKE THIS "1_arm_1" AND "2_arm_1" AND AND "1_arm_2" instead of their original values for data import!
+.   ifthen ( nkeys ( EACH_REC) gt 0 ) | has a key field
+.     for EACH_KEY = 1, nkeys( EACH_REC )
+.       compute THIS_VAR_NAME = lower( trim( keyname( EACH_REC, EACH_KEY ) ) )
+.       THIS_LINE = THIS_LINE + THIS_VAR_NAME
+.       IF ( EACH_KEY LT nkeys( EACH_REC ) ) THIS_LINE = THIS_LINE + '_'
+.     end for
+.     THIS_LINE = THIS_LINE + 'redcap_event_name<DELIMINATOR>'
+.     write 'redcap_event_name for ' THIS_SIR_REC_NAME ' is a combination of variables: '
+.   endif
+
+.   for EACH_VAR = 1, nvarsc( EACH_REC )
+.     compute THIS_VAR_NAME = lower( trim( varnamec( EACH_REC, EACH_VAR ) ) )
+
+C     !!! WARNING !!! REDCAP DOES IT'S OWN CASE VARAIBLE UPON UPLOADING EACH RECORD.
+.     ifthen ( dbtype(0) eq 1 ) | case structured.
+.       ifthen ( FIRST_TIME_THROUGH EQ 0 )
+.         IF ( THIS_VAR_NAME EQ lower( trim( varnamec( 0, 1 ) ) ) )  NEXT FOR | !!!! CASE ID SHOUDL BE SKIPPED EXCEPT FOR FIRST RECORD
+.       endif
+.     endif
+.     compute THIS_VTYPE    = vtype( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
+.     compute THIS_VARLENG  = varleng( EACH_REC, varnamec( EACH_REC, EACH_VAR ) )
+.     compute THIS_VARLAB   = varlabsc ( EACH_REC, THIS_VAR_NAME )
+.     compute THIS_VARMIN   = FST( FORMAT( NMIN( EACH_REC, THIS_VAR_NAME) ), SMIN ( EACH_REC, THIS_VAR_NAME ), '' )
+.     compute THIS_VARMAX   = FST( FORMAT( NMAX( EACH_REC, THIS_VAR_NAME) ), SMAX ( EACH_REC, THIS_VAR_NAME ), '' )
+
+.     ifthen (THIS_VTYPE eq 3)
+.       if ( THIS_VARMIN EQ '1' ) THIS_VARMIN = ''
+.       if ( THIS_VARMIN EQ '3660000' ) THIS_VARMIN = ''
+.       if ( THIS_VARMAX EQ '1' ) THIS_VARMAX = ''
+.       if ( THIS_VARMAX EQ '3660000' ) THIS_VARMAX = ''
+.       THIS_VARMIN = fst( datec( numbr(THIS_VARMIN), '<date_format>'), '')
+.       THIS_VARMAX = fst( datec( numbr(THIS_VARMAX), '<date_format>'), '')
+.     elseif (THIS_VTYPE eq 4)
+.       THIS_VARMIN = TIMEC( numbr(THIS_VARMIN), '<time_format>')
+.       THIS_VARMAX = TIMEC( numbr(THIS_VARMAX), '<time_format>')
+.     endif
+
+.     recode  THIS_VAR_REDCAP_VALIDATION = THIS_VTYPE( 1 = '' ) ( 2 = '' ) ( 3 = 'date_mdy' ) ( 4 = 'time' ) ( 5 = 'integer' )
+                     ( 6 = 'integer' )( 7 = 'integer' ) ( 8 = 'integer' )
+.     ifthen ( nvallab( EACH_REC,  THIS_VAR_NAME) lt 2)
+.       THIS_FIELD_TYPE = 'text'
+.     elseif ( nvallab( EACH_REC,  THIS_VAR_NAME) eq 2)
+.       THIS_FIELD_TYPE = 'radio'
+.     else
+.       THIS_FIELD_TYPE = 'dropdown'
+.     endif
+
+| crazy field min and maxs must be removed if it is a drop down or radio.  ONLY TEXT can have mins and maxs
+| for radios and dropdowns there is no field type either!
+.     ifthen ( THIS_FIELD_TYPE eq 'radio' or 'dropdown' )
+.       THIS_VARMIN = ''
+.       THIS_VARMAX = ''
+.       THIS_VAR_REDCAP_VALIDATION = ''
+.     endif
+
+
+|     value labels
+.     REDCAP_VALLABS = '"'
+.     for EACH_LABEL = 1, nvallab( EACH_REC,  THIS_VAR_NAME)
+.       REDCAP_VALLABS = REDCAP_VALLABS + trim( pack( VALLABSV( EACH_REC, THIS_VAR_NAME, EACH_LABEL ) ) )
+.       REDCAP_VALLABS = REDCAP_VALLABS + ', '
+.       REDCAP_VALLABS = REDCAP_VALLABS + trim( pack( VALLABSN( EACH_REC, THIS_VAR_NAME ,EACH_LABEL ) ) )
+.       if (EACH_LABEL lt  nvallab( EACH_REC,  THIS_VAR_NAME) ) REDCAP_VALLABS = REDCAP_VALLABS +  ' | '
+.       IFTHEN (LEN(REDCAP_VALLABS ) GT 3900 )
+.         WRITE '!!!WARNING!!! VALUE LABLES FOR ' THIS_SIR_REC_NAME ':' THIS_VAR_NAME /
+                5T  ' WERE TRUNCATED: MAX TOTAL LENGHT 3900'
+.         EXIT FOR
+.       ENDIF
+.     end for
+.     REDCAP_VALLABS = REDCAP_VALLABS + '"'
+
+.     execute subprocedure REPLACE_COMMAS
+
+C     !!!!  WARNING !!!!
+c     Variable Name must be unique in REDCAP.  Simpel solution is to append table before variable name
+C .     compute THIS_VAR_NAME = THIS_SIR_REC_NAME + '_' + THIS_VAR_NAME
+.     THIS_VAR_NAME = THIS_SQL_REC_NAME + '_' + THIS_VAR_NAME
+
+.     REDCAP_CSV_LINE = THIS_VAR_NAME + ',' +
+                    THIS_SQL_REC_NAME + ',' +
+                    ',' +
+                    THIS_FIELD_TYPE + ',' +
+                    THIS_VARLAB + ',' +
+                    REDCAP_VALLABS + ',' +
+                    ',' +
+                    THIS_VAR_REDCAP_VALIDATION + ',' +
+                    THIS_VARMIN + ',' + THIS_VARMAX + ',' +
+                    ',' +
+                    ',' +
+                    ',' +
+                    ',' +
+                    ','
+.     write( EACH_FILENAME ) REDCAP_CSV_LINE
+.     write( REDCAP_FILE ) REDCAP_CSV_LINE
+.   FIRST_TIME_THROUGH = 0
+.   end for
+.   CLOSE (EACH_FILENAME)
+. end for
+
+. subprocedure REPLACE_COMMAS
+.   THIS_VARLAB = replace( THIS_VARLAB, ',', ':', 99, 1, 0 )
+. end subprocedure
+
+END PROGRAM
+END PROCEDURE

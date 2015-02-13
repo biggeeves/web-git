@@ -1,4 +1,4 @@
-PROCEDURE      EXPORT_TO_MYSQL.MAKE_LARAVEL_FILES:T  (157904,43022)  |Last amended Feb 10, 2015,11:57:02
+PROCEDURE      EXPORT_TO_MYSQL.MAKE_LARAVEL_FILES:T  (157907,42673)  |Last amended Feb 13, 2015,11:51:13
 c create laravel files
 program
 . string  *  250   LARAVEL_DIR
@@ -20,7 +20,7 @@ program
 
 . ifNOT ( sglobal( 'LARAVEL' ) eq 'yes' ) exit program
 
-. LARAVEL_APP_DIR = dsn( 'prefix' )  +  'to_mysql\Laravel\app\'
+. LARAVEL_APP_DIR = dsn( 'OUTPUT_DIR' )  +  'Laravel\app\'
 . LARAVEL_MODELS_DIR = LARAVEL_APP_DIR + 'models\'
 . LARAVEL_CONOTROLLERS_DIR = LARAVEL_APP_DIR + 'controllers\'
 . LARAVEL_VIEWS_DIR = LARAVEL_APP_DIR + 'views\'

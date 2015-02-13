@@ -1,58 +1,81 @@
-PROCEDURE      EXPORT_TO_MYSQL.MAKE_DIRS:T  (157890,36511)  |Last amended Jan 27, 2015,10:08:31
+PROCEDURE      EXPORT_TO_MYSQL.MAKE_DIRS:T  (157907,43461)  |Last amended Feb 13, 2015,12:04:21
 C -----------------------------------------------
 C --- create OUTPUT FOLDERS     -----------------
 c
 program CRWARN
 . string  *  250   OUTPUT_DIR DIR$
 . string  *  250   LARAVEL_DIR
+. string  *  250   REDCAP_DIR
 . string  *  250   FILE_PATH FILE_NAME
 . STRING  *    6   FILE_EXT
 . INTEGER *    2   EACH_CHAR
 . integer *    4   PASSFAIL
 . string  *  300   DBMS_LINE
 
+
 . OUTPUT_DIR = dsn( 'prefix' )  +  'to_mysql\'
 . execute SUBROUTINE SYSPROC.TOOLS.FILENAME ( OUTPUT_DIR ) RETURNING ( FILE_PATH, FILE_NAME, FILE_EXT )
 
-. for EACH_CHAR = 1, len(  FILE_PATH  )
-.   IF (  sbst(  FILE_PATH , EACH_CHAR, 2 ) = ':' ) NEXT FOR  | EXCEPTION FOR c:\
-.   IF (  FILEIS(  SBST(  FILE_PATH, 1, EACH_CHAR )  ) EQ -1 ) NEXT FOR | FOLDER ALREADY EXISTS
-.   IFTHEN (  sbst( FILE_PATH , EACH_CHAR, 1 ) EQ "\"  )
-.     DIR$ = SBST( FILE_PATH, 1, EACH_CHAR )
-.     EXECUTE SUBPROCEDURE MAKE_DIR
-.   ENDIF
-. end for
+
+. DIR$ = OUTPUT_DIR
+. execute subroutine WEBPROCF.TOOLS.MAKE_DIRS ( OUTPUT_DIR ) RETURNING ( PASSFAIL )
+. execute subprocedure CHECK_PASSFAIL
+
 
 . DBMS_LINE = 'set attribute output_dir = "' + OUTPUT_DIR + '"'
 . execute dbms DBMS_LINE
 
 . ifthen ( sglobal( 'LARAVEL' ) eq 'yes' )
 
-.   LARAVEL_DIR = OUTPUT_DIR + 'Laravel\'
+c   base Larvel directory
+.   LARAVEL_DIR = OUTPUT_DIR + 'laravel\'
+
+
+.   DBMS_LINE = 'set attribute laravel_base_dir = "' + LARAVEL_DIR + '"'
+.   execute dbms DBMS_LINE
+
+
 .   DIR$ = LARAVEL_DIR
-.   EXECUTE SUBPROCEDURE MAKE_DIR
+.   execute subroutine WEBPROCF.TOOLS.MAKE_DIRS ( DIR$ ) RETURNING ( PASSFAIL )
+.   execute subprocedure CHECK_PASSFAIL
 
 .   DIR$ = LARAVEL_DIR + 'app\'
-.   EXECUTE SUBPROCEDURE MAKE_DIR
+.   execute subroutine WEBPROCF.TOOLS.MAKE_DIRS ( DIR$ ) RETURNING ( PASSFAIL )
+.   execute subprocedure CHECK_PASSFAIL
 
 .   DIR$ = LARAVEL_DIR + 'app\models\'
-.   EXECUTE SUBPROCEDURE MAKE_DIR
+.   execute subroutine WEBPROCF.TOOLS.MAKE_DIRS ( DIR$ ) RETURNING ( PASSFAIL )
+.   execute subprocedure CHECK_PASSFAIL
 
 .   DIR$ = LARAVEL_DIR + 'app\controllers\'
-.   EXECUTE SUBPROCEDURE MAKE_DIR
+.   execute subroutine WEBPROCF.TOOLS.MAKE_DIRS ( DIR$ ) RETURNING ( PASSFAIL )
+.   execute subprocedure CHECK_PASSFAIL
 
 .   DIR$ = LARAVEL_DIR + 'app\views\'
-.   EXECUTE SUBPROCEDURE MAKE_DIR
+.   execute subroutine WEBPROCF.TOOLS.MAKE_DIRS ( DIR$ ) RETURNING ( PASSFAIL )
+.   execute subprocedure CHECK_PASSFAIL
 . endif
 
-SUBPROCEDURE MAKE_DIR  | RECIEVES DIR$
-. if ( fileis ( DIR$ ) EQ -1 ) EXIT SUBPROCEDURE | FOLDER ALREADY EXISTS
-. PASSFAIL = makedir( DIR$ )
-. ifthen ( PASSFAIL  EQ -1 )
-.   write 'FAILED TO MAKE NECESSARY DIRECTORY: ' DIR$
-.   if ( nglobal( 'STOP_ON_ERROR' ) eq 0 ) pql exit dbms
+. ifthen ( sglobal( 'REDCAP' ) eq 'yes' )
+
+c   base REDCap directory
+.   REDCAP_DIR = OUTPUT_DIR + 'redcap\'
+
+.   DBMS_LINE = 'set attribute redcap_base_dir = "' + REDCAP_DIR + '"'
+.   execute dbms DBMS_LINE
+
+.   DIR$ = REDCAP_DIR
+.   execute subroutine WEBPROCF.TOOLS.MAKE_DIRS ( DIR$ ) RETURNING ( PASSFAIL )
+.   execute subprocedure CHECK_PASSFAIL
 . endif
-END SUBPROCEDURE
+
+subprocedure CHECK_PASSFAIL
+. IFNOTTHEN (PASSFAIL EQ 1)
+.   WRITE 'FAILED TO MAKE OUTPUT DIRECTORY.  CHECK PERMISSIONS OR OUTPUT_DIR VALUE'
+.   WRITE 'OUTPUT_DIR: ' DIR$
+.   PQL EXIT DBMS
+. ENDIF
+end subprocedure
 
 end program
 END PROCEDURE
